@@ -129,6 +129,15 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski et 🇺🇦 Українська**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.147.1
+
+**Appareils listés une seule fois, lien dans les guides**
+
+- **Appareils connectés.** Un appareil connecté deux fois au même moment (p. ex. le tableau de bord familial sur un Mac) apparaissait deux fois avec le même ID. Il est désormais listé une fois, compté une fois, et « Se déconnecter » le supprime entièrement.
+- **Plus de « Notifications uniquement ».** Une adresse de notification restante d'un appareil déjà connecté est supprimée automatiquement, pour que rien n'arrive en double.
+- **Commande vocale et widgets.** Le lien personnel se trouve maintenant dans les champs « Raccourci Siri » et « Android » (avec son bouton de copie) et plus dans la vue d'ensemble.
+- Modifié : `js/geraete.js`, `js/sprachsteuerung.js`, `js/sprachen.js`, `pb_hooks/pinn-sitzungen.js`, `src/`, `index.html`, `i18n/`, tous les README. Partie serveur : installer les hooks, PocketBase redémarre.
+
 ## Nouveautés de la 1.147.0
 
 **Face ID et empreinte, appareils bien reconnus, widget avec maison & jardin**
@@ -252,15 +261,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - C’est le même lien secret que pour Siri, en lecture seule, et les invités ne l’ont pas. Les textes sont dans la langue du profil.
 - Modifié : `js/sprachsteuerung.js`, `js/versionslog.js`, `i18n/` (16 nouveaux textes et un sous-titre modifié dans les quatorze langues), `src/` (`index.html`, réglages), `.github/scripts/check-hooks.js`, tous les README. Serveur (remplacer les hooks, PocketBase redémarre) : `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
 
-## Nouveautés de la 1.139.0
-
-**Planificateur de cadeaux : qui offre quoi, sans que le destinataire le voie**
-
-- **Qui offre quoi.** Dans l'onglet « Cadeaux », pinn. affiche désormais tout ce qui est prévu par personne (idées de cadeaux de tes listes et souhaits réservés par les autres) avec date, état, donateur et total. Celui qui doit recevoir quelque chose ne le voit jamais ici.
-- **Cacher aux destinataires.** Dans une liste de cadeaux (non privée), tu choisis « Cacher à » ; ces personnes ne voient pas la liste, donc plusieurs peuvent préparer ensemble (p. ex. les parents pour les enfants). Un cadeau saisi pour toi ne t'est jamais montré. Comme pour les listes privées, cela vaut pour l'affichage dans l'appli ; ce n'est pas du chiffrement.
-- **Qui l'offre ? / Cadeaux à plusieurs.** Pour chaque cadeau, tu choisis qui l'offre. Sur un souhait déjà réservé par quelqu'un d'autre, touche « Je participe » ; les autres voient qui participe, pas la personne qui l'a souhaité.
-- Modifié : `js/listen.js`, `css/listen.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (12 nouveaux textes et une introduction modifiée dans les quatorze langues), `src/` (`index.html`, fenêtre des listes), tous les README. Pas de partie serveur : PocketBase n'a pas besoin de redémarrer.
-
 ## Comment ça marche
 
 ```mermaid
@@ -287,7 +287,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.147.0` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.147.1` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -133,6 +133,15 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.147.1의 새 소식
+
+**기기는 한 번만 표시, 링크는 안내 안에**
+
+- **로그인된 기기.** 동시에 두 번 로그인한 기기(예: Mac의 가족 대시보드)가 같은 ID로 두 번 표시되었습니다. 이제 한 번만 표시되고 한 번만 집계되며 ‘로그아웃’하면 완전히 삭제됩니다.
+- **‘알림만’ 항목 삭제.** 이미 로그인된 기기에 남은 알림 주소는 자동으로 삭제되어 알림이 중복으로 오지 않습니다.
+- **음성 제어 및 위젯.** 개인 링크가 전체 개요 대신 ‘Siri 단축어’와 ‘Android’ 칸 안(복사 버튼 포함)에 표시됩니다.
+- 변경: `js/geraete.js`, `js/sprachsteuerung.js`, `js/sprachen.js`, `pb_hooks/pinn-sitzungen.js`, `src/`, `index.html`, `i18n/`, 모든 README. 서버 부분: hooks를 설치하면 PocketBase가 다시 시작됩니다.
+
 ## 1.147.0의 새 소식
 
 **Face ID와 지문, 기기 정확히 인식, 위젯에 집과 정원**
@@ -222,14 +231,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - **알림과 푸시는 다른 전망과 같아요.** 위쪽 알림은 1월 10일까지 보이고, 푸시 알림은 설정에서 끌 수 있어요. 지출은 재정 접근 권한이 있을 때만 보이고, 게스트에게는 푸시 알림이 가지 않아요.
 - 변경: `js/ausblick.js`, `js/hinweise.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (14개 언어의 새 문구와 바뀐 문구 32개), `src/` (버전, 설정), `index.html`, 모든 README. 서버(hooks 교체, PocketBase가 다시 시작돼요): `pb_hooks/pinn-ausblick.js`, `pb_hooks/ausblick.pb.js`.
 
-## 1.141.2의 새 소식
-
-**위젯: 초록 대신 골드, 체크 표시, 더 현대적인 타일**
-
-- **골드와 체크 표시.** 위젯이 초록 대신 앱의 골드를 쓰고, 열린 할 일에는 원 대신 체크 표시가 나와요. 체크한 할 일은 회색 체크 표시로 열린 할 일 아래에 남아요.
-- **빠른 실행 위젯.** 타일이 조금 작아져서 모든 것이 위젯 안에 들어오고, 더 현대적으로 보여요. 기호가 들어간 둥근 골드 배지, 얇은 테두리, 어두운 그라데이션이에요. 탭하면 지금처럼 Safari에서 pinn.이 열려요. iOS는 링크로 설치한 앱을 열 수 없기 때문이에요.
-- 변경: `js/sprachsteuerung.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (버전), `index.html`, 모든 README. 서버 쪽 변경은 없어요. 스크립트를 다시 복사해서 Scriptable에서 바꿔 주세요.
-
 ## 작동 방식
 
 ```mermaid
@@ -258,7 +259,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.147.0` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.147.1` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

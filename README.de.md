@@ -133,6 +133,15 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski und 🇺🇦 Українська**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.147.1
+
+**Geräte einmal in der Liste, Link in den Anleitungen**
+
+- **Angemeldete Geräte.** Ein Gerät, das sich zweimal gleichzeitig angemeldet hat (z. B. das Familien-Dashboard am Mac), stand doppelt mit derselben ID in der Liste. Jetzt steht es einmal da, zählt einmal, und „Abmelden“ entfernt es ganz.
+- **Kein „Nur Benachrichtigungen“ mehr.** Eine übrig gebliebene Benachrichtigungs-Adresse eines Geräts, das schon angemeldet ist, wird automatisch entfernt – damit nichts doppelt ankommt.
+- **Sprachsteuerung & Widgets.** Der persönliche Link steht jetzt direkt in den Feldern „Siri-Kurzbefehl“ und „Android“ (mit Kopieren-Knopf) statt in der Gesamtübersicht.
+- Geändert: `js/geraete.js`, `js/sprachsteuerung.js`, `js/sprachen.js`, `pb_hooks/pinn-sitzungen.js`, `src/`, `index.html`, `i18n/`, alle READMEs. Server-Teil: Hooks einspielen, PocketBase startet neu.
+
 ## Neu in 1.147.0
 
 **Face ID & Fingerabdruck, Geräte richtig erkannt, Widget mit Haus & Garten**
@@ -231,14 +240,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Schnellzugriff-Widget.** Die Kacheln sind etwas kleiner, damit alles im Widget bleibt, und wirken moderner: ein runder goldener Kreis mit dem Symbol, ein feiner Rand und ein dunkler Verlauf. Ein Tipp öffnet pinn. weiter in Safari, weil iOS die installierte App nicht über einen Link öffnet.
 - Geändert: `js/sprachsteuerung.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (Version), `index.html`, alle READMEs. Kein Server-Teil. Skripte neu kopieren und in Scriptable ersetzen.
 
-## Neu in 1.141.1
-
-**Widgets: Apple-Stil und ein Schnellzugriff-Widget**
-
-- **Aussehen wie Apple Aufgaben.** Das Aufgaben-Widget ist jetzt dunkelgrau mit großer weißer Schrift und runden Kreisen. Abgehakte Aufgaben rutschen nach unten, werden grau und der Kreis füllt sich. Die Einkaufslisten sind nicht mehr Teil des Widgets; du wählst zwischen Terminen, Aufgaben und Haushaltsaufgaben.
-- **Schnellzugriff-Widget.** Ein zweites Skript („Schnellzugriff-Skript kopieren“) macht ein Widget mit drei Kacheln: Listen, Finanzen (mit dem Währungszeichen deiner Region) und Aufgaben. Ein Tipp öffnet die Seite von pinn. in Safari, weil iOS die installierte App nicht über einen Link öffnet – melde dich dort einmal an.
-- Geändert: `js/sprachsteuerung.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (neue und geänderte Texte in allen vierzehn Sprachen), `src/` (Version), `index.html`, `.github/scripts/check-hooks.js`, alle READMEs. Server (Hooks ersetzen, PocketBase startet neu): `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
-
 ## So funktioniert’s
 
 ```mermaid
@@ -267,7 +268,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.147.0` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.147.1` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

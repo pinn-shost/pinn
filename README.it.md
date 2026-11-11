@@ -133,6 +133,15 @@ Tocca un’immagine per aprirla a dimensione intera.
 
 pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
 
+## Novità della 1.147.1
+
+**Dispositivi una sola volta, link dentro le guide**
+
+- **Dispositivi connessi.** Un dispositivo che ha effettuato l'accesso due volte nello stesso momento (ad es. la dashboard familiare su un Mac) compariva due volte con lo stesso ID. Ora compare una volta, conta una volta e «Esci» lo rimuove del tutto.
+- **Niente più «Solo notifiche».** Un indirizzo di notifica rimasto di un dispositivo già connesso viene rimosso automaticamente, così nulla arriva due volte.
+- **Controllo vocale e widget.** Il link personale è ora dentro i campi «Comando Siri» e «Android» (con il pulsante Copia) invece che nella panoramica generale.
+- Modificato: `js/geraete.js`, `js/sprachsteuerung.js`, `js/sprachen.js`, `pb_hooks/pinn-sitzungen.js`, `src/`, `index.html`, `i18n/`, tutti i README. Parte del server: installare gli hook, PocketBase si riavvia.
+
 ## Novità della 1.147.0
 
 **Face ID e impronta, dispositivi riconosciuti, widget con casa e giardino**
@@ -222,14 +231,6 @@ pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Avviso e push come per le altre anteprime.** Un avviso in alto fino al 10 gennaio e una notifica push che puoi disattivare nelle impostazioni. Le spese si vedono solo con accesso alle finanze; gli ospiti non ricevono la notifica push.
 - Modificati: `js/ausblick.js`, `js/hinweise.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (32 testi nuovi e modificati in tutte le quattordici lingue), `src/` (versione, impostazioni), `index.html`, tutti i README. Server (sostituire gli hook, PocketBase si riavvia): `pb_hooks/pinn-ausblick.js`, `pb_hooks/ausblick.pb.js`.
 
-## Novità della 1.141.2
-
-**Widget: oro al posto del verde, spunte, riquadri più moderni**
-
-- **Oro e spunte.** I widget usano ora l’oro dell’app invece del verde, e le attività aperte mostrano una spunta al posto di un cerchio. Le attività spuntate mantengono una spunta grigia e restano sotto quelle aperte.
-- **Widget di accesso rapido.** I riquadri sono un po’ più piccoli, così tutto resta dentro il widget, e hanno un aspetto più moderno: un badge dorato rotondo con il simbolo, un bordo sottile e uno sfumato scuro. Un tocco apre ancora pinn. in Safari, perché iOS non apre l’app installata da un link.
-- Modificati: `js/sprachsteuerung.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (versione), `index.html`, tutti i README. Nessuna parte server. Copia di nuovo gli script e sostituiscili in Scriptable.
-
 ## Come funziona
 
 ```mermaid
@@ -258,7 +259,7 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 ## Installazione
 
 1. Scarica lo ZIP dell’[ultima release](https://github.com/pinn-shost/pinn/releases/latest) e decomprimilo.
-2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.147.0` o `pinn-main`) così com’è.
+2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.147.1` o `pinn-main`) così com’è.
 3. Accedi via SSH ed esegui:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

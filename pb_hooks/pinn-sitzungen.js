@@ -52,8 +52,14 @@
 //    also when the name of the sign-in was too vague ("Browser"). The list shows a short ID (first characters of the
 //    device identifier) so two devices of the same kind can be told apart.
 //  - Own name per device (eigenname, "umbenennen") – wins over the detected name.
-//  - Push subscriptions of the profile that belong to no session (e.g. a device that was signed in before the device
-//    management existed) appear in the list as their own entry (art "push") and can be removed there.
+//  - Push subscriptions of the profile that belong to no session are no longer listed as an entry of their own
+//    (since 1.147.1). A leftover subscription of a device that already has a session with a push address
+//    (same device name) is removed instead - otherwise that device would get every message twice.
+//
+// Since 1.147.1:
+//  - Entries of the same profile with the same device identifier (geraet_id) are one device: the list shows them
+//    once (most recently used entry), they count once, and signing out removes all of them. Two sign-ins at the
+//    same moment (family dashboard) used to leave two entries with the same short ID.
 
 const COL = "sitzungen";
 const USERS = "benutzer";
@@ -546,6 +552,35 @@ function rowOf(r, currentSid) {
         dieses: r.id === currentSid,
     };
 }
+// Device name without the kind suffix ("iPhone · App" -> "iphone"), to compare names of one device
+function baseName(v) { return String(v || "").split("·")[0].trim().toLowerCase(); }
+
+// Remove leftover push subscriptions of a profile: no session owns the address, but a session of the same
+// device (same name) already has its own push address - the leftover would only send every message twice.
+function waisenPushEntfernen(userId) {
+    if (!schemaReady()) return 0;
+    let recs = [];
+    let abos = [];
+    try { recs = $app.findRecordsByFilter(COL, "benutzer = {:u}", "", 200, 0, { u: String(userId) }); } catch (err) { return 0; }
+    try { abos = $app.findRecordsByFilter("push_abos", "benutzer = {:u}", "", 50, 0, { u: String(userId) }); } catch (err) { return 0; }
+    const owned = {};
+    const withPush = {};
+    recs.forEach(r => {
+        const ep = r.getString("push");
+        if (!ep) return;
+        owned[ep] = true;
+        withPush[baseName(r.getString("name") || nameFromAgent(r.getString("agent")))] = true;
+    });
+    let n = 0;
+    abos.forEach(a => {
+        if (owned[a.getString("endpoint")]) return;
+        const nm = baseName(a.getString("geraet"));
+        if (!nm || !withPush[nm]) return;
+        try { $app.delete(a); n++; } catch (err) { /* already gone */ }
+    });
+    return n;
+}
+
 function liste(e, userId) {
     const rec = targetUser(e, userId);
     const currentSid = sidOf(e);
@@ -554,21 +589,26 @@ function liste(e, userId) {
         try { recs = $app.findRecordsByFilter(COL, "benutzer = {:u}", "-zuletzt", 200, 0, { u: rec.id }); } catch (err) { recs = []; }
     }
     const lib = require(`${__hooks}/pinn-benutzer.js`);
-    const rows = recs.map(r => rowOf(r, currentSid));
-    // Push subscriptions without a session: they still get notifications, so they are shown too
-    const known = {};
-    recs.forEach(r => { if (r.getString("push")) known[r.getString("push")] = true; });
-    let abos = [];
-    try { abos = $app.findRecordsByFilter("push_abos", "benutzer = {:u}", "-updated", 50, 0, { u: rec.id }); } catch (err) { abos = []; }
-    abos.forEach(a => {
-        if (known[a.getString("endpoint")]) return;
-        let kurz = "";
-        try { kurz = String($security.sha256("pinn-push:" + a.getString("endpoint"))).slice(0, 4).toUpperCase(); } catch (err) { kurz = ""; }
-        rows.push({
-            id: "push:" + a.id, name: a.getString("geraet") || "", erkannt: a.getString("geraet") || "", eigenname: "",
-            typ: "", kurz: kurz, art: "push", ip: "", zuletzt: a.getString("updated"), seit: a.getString("created"),
-            push: true, nurPush: true, gebunden: false, dieses: false,
-        });
+    try { waisenPushEntfernen(rec.id); } catch (err) { /* ignore */ }
+    // Sorted by last use: the first entry of a device is the one shown; "this device" wins if it is among them
+    const rows = [];
+    const byGid = {};
+    recs.forEach(r => {
+        const gid = r.getString("geraet_id");
+        const row = rowOf(r, currentSid);
+        if (!gid) { rows.push(row); return; }
+        const first = byGid[gid];
+        if (!first) { byGid[gid] = row; rows.push(row); return; }
+        if (row.dieses && !first.dieses) {
+            // keep the position of the first entry but show the current session
+            const at = rows.indexOf(first);
+            row.zuletzt = first.zuletzt;
+            if (first.push && !row.push) row.push = true;
+            rows[at] = row;
+            byGid[gid] = row;
+        } else if (r.getString("push") && !first.push) {
+            first.push = true;
+        }
     });
     const out = {
         benutzer: { id: rec.id, username: rec.getString("username"), rolle: rec.getString("rolle") },
@@ -592,8 +632,11 @@ function uebersicht(e, familyId) {
     const counts = {};
     if (schemaReady() && users.length) {
         try {
+            const seenDev = {};
             $app.findRecordsByFilter(COL, "familie = {:f}", "", 0, 0, { f: fam }).forEach(r => {
                 const u = r.getString("benutzer");
+                const gid = r.getString("geraet_id");
+                if (gid) { if (seenDev[u + "|" + gid]) return; seenDev[u + "|" + gid] = true; }
                 counts[u] = (counts[u] || 0) + 1;
             });
         } catch (err) { /* ignore */ }
@@ -656,6 +699,16 @@ function abmelden(e, id) {
     targetUser(e, sess.getString("benutzer")); // Check the rights (throws)
     const userId = sess.getString("benutzer");
     const gebunden = sess.getBool("gebunden");
+    // Other entries of the same device (same device identifier) go with it
+    const gid = sess.getString("geraet_id");
+    if (gid) {
+        try {
+            $app.findRecordsByFilter(COL, "benutzer = {:u} && geraet_id = {:g} && id != {:i}", "", 20, 0, { u: userId, g: gid, i: sess.id }).forEach(o => {
+                if (o.id === sidOf(e)) return; // never the entry of the requesting device
+                deleteSession(o);
+            });
+        } catch (err) { /* ignore */ }
+    }
     deleteSession(sess);
     trenneEchtzeit(userId);
     return { success: true, dieses: sid === sidOf(e), gebunden: gebunden };
@@ -899,7 +952,6 @@ function doppelteZusammenfuehren() {
     ipsLeeren();
     let recs = [];
     try { recs = $app.findRecordsByFilter(COL, "id != ''", "", 0, 0); } catch (err) { recs = []; }
-    if (recs.length < 2) return 0;
     const gruppen = {};
     recs.forEach(r => {
         const key = r.getString("benutzer") + "|" + (r.getString("art") || "app") + "|" + merkmalVon(r);
@@ -933,6 +985,14 @@ function doppelteZusammenfuehren() {
         if (keepChanged) { try { $app.save(keep); } catch (err) { /* ignore */ } }
     });
     if (n) console.log("[Geräte] " + n + " doppelte Geräte-Einträge zusammengeführt.");
+    // Leftover push subscriptions of devices that already have a session with push
+    try {
+        const users = {};
+        recs.forEach(r => { users[r.getString("benutzer")] = true; });
+        let m = 0;
+        Object.keys(users).forEach(u => { m += waisenPushEntfernen(u); });
+        if (m) console.log("[Geräte] " + m + " übrig gebliebene Push-Anmeldungen entfernt.");
+    } catch (err) { /* ignore */ }
     return n;
 }
 
@@ -954,7 +1014,7 @@ module.exports = {
     COL,
     ensureSchema, pruefe, beimAnmelden, sidOf, clientIp,
     geraetKennung, merkmalOf, agentOhneVersion, msOf, doppelteZusammenfuehren, betterName, kurzId,
-    liste, uebersicht, abmelden, alleAbmelden, entferneAndere, entsperren, lockStatus, geraetMelden, umbenennen,
+    liste, uebersicht, waisenPushEntfernen, abmelden, alleAbmelden, entferneAndere, entsperren, lockStatus, geraetMelden, umbenennen,
     merkePush, vergissPush, erneuerePush,
     ipGesperrt, ipFehlversuch, meldeSperre, waitText,
     aufraeumen,

@@ -7,7 +7,9 @@
    device count per profile, and the date helpers devFmtDate/devFmtWhen (also used by js/fehlerprotokoll.js).
    Since 1.147.0: the app reports its device on every start (devReportDevice: name, kind, device ID, push address), the
    icon follows the kind of device, every entry shows a short ID, a device can get an own name (✏️), and push
-   subscriptions without a session are listed as entries of their own („only notifications“) that can be removed. */
+   subscriptions without a session are listed as entries of their own („only notifications“) that can be removed.
+   Since 1.147.1 those entries are gone again (a leftover subscription of a device that already has a session is removed by the
+   server), and entries of one device with the same device ID are shown once. */
 
 /* ==========================================================
    Device management – signed-in devices per profile (pb_hooks/sitzungen.pb.js)
@@ -59,21 +61,20 @@ function devRowsHtml(list) {
   if (!list.length) return `<p class="sm-empty">${escapeHtml(tk('devices.none'))}</p>`;
   return list.map(s => {
     const sub = [];
-    if (s.nurPush) sub.push(tk('devices.pushOnly'));
-    sub.push(tk(s.nurPush ? 'devices.pushSince' : 'devices.lastActive', { when: devFmtWhen(s.zuletzt) }));
-    if (s.seit && !s.nurPush) sub.push(tk('devices.signedInSince', { date: devFmtDate(s.seit) }));
-    if (s.push && !s.nurPush) sub.push('🔔 Push');
+    sub.push(tk('devices.lastActive', { when: devFmtWhen(s.zuletzt) }));
+    if (s.seit) sub.push(tk('devices.signedInSince', { date: devFmtDate(s.seit) }));
+    if (s.push) sub.push('🔔 Push');
     if (s.kurz) sub.push(tk('devices.shortId', { id: s.kurz }));
     if (s.eigenname && s.erkannt && s.erkannt !== s.eigenname) sub.push(s.erkannt);
     if (s.ip) sub.push(s.ip);
-    const rename = s.nurPush ? '' : `<button type="button" class="dev-rename" data-id="${escapeHtml(s.id)}" data-name="${escapeHtml(s.eigenname || '')}" data-auto="${escapeHtml(s.erkannt || '')}" title="${escapeHtml(tk('devices.rename'))}" aria-label="${escapeHtml(tk('devices.rename'))}" style="margin-left:4px;opacity:.55;font-size:.85em;background:none;border:0;padding:0 2px;cursor:pointer">✏️</button>`;
+    const rename = `<button type="button" class="dev-rename" data-id="${escapeHtml(s.id)}" data-name="${escapeHtml(s.eigenname || '')}" data-auto="${escapeHtml(s.erkannt || '')}" title="${escapeHtml(tk('devices.rename'))}" aria-label="${escapeHtml(tk('devices.rename'))}" style="margin-left:4px;opacity:.55;font-size:.85em;background:none;border:0;padding:0 2px;cursor:pointer">✏️</button>`;
     return `<div class="sm-row dev-row">
       <div class="sm-row-ico">${devIcon(s)}</div>
       <div class="sm-row-main">
         <span class="sm-row-title">${escapeHtml(s.name || tk('devices.device'))}${rename}${s.dieses ? ` <span class="sm-tag">${escapeHtml(tk('devices.thisDevice'))}</span>` : ''}</span>
         <span class="sm-row-sub">${escapeHtml(sub.join(' · '))}</span>
       </div>
-      <button type="button" class="sm-btn sm-small dev-out shrink-0" data-id="${escapeHtml(s.id)}" data-name="${escapeHtml(s.name || '')}" data-dieses="${s.dieses ? '1' : ''}" data-push="${s.nurPush ? '1' : ''}">${escapeHtml(tk(s.nurPush ? 'common.remove' : 'common.logOut'))}</button>
+      <button type="button" class="sm-btn sm-small dev-out shrink-0" data-id="${escapeHtml(s.id)}" data-name="${escapeHtml(s.name || '')}" data-dieses="${s.dieses ? '1' : ''}">${escapeHtml(tk('common.logOut'))}</button>
     </div>`;
   }).join('');
 }
@@ -87,19 +88,6 @@ async function devFetchList(userId) {
 // Sign out one device; „Dieses Gerät“ (this device) = sign out the normal way
 async function devLogoutOne(btn, statusEl, after) {
   const name = btn.dataset.name || tk('devices.device');
-  if (btn.dataset.push === '1') {
-    if (!confirm(tk('devices.pushRemoveConfirm', { name }))) return;
-    btn.disabled = true;
-    statusEl.textContent = '';
-    try {
-      await postJson('/api/pinn/sitzungen/abmelden', { id: btn.dataset.id });
-      statusEl.textContent = tk('devices.pushRemoved');
-    } catch (e) {
-      statusEl.textContent = e.message;
-    }
-    after();
-    return;
-  }
   if (btn.dataset.dieses === '1') {
     if (confirm(tk('devices.logoutThisConfirm'))) logout();
     return;

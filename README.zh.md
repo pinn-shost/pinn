@@ -133,6 +133,15 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski和 🇺🇦 Українська**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.147.1 新功能
+
+**设备只显示一次，链接放进说明里**
+
+- **已登录设备。** 同时登录两次的设备（例如 Mac 上的家庭看板）以前会以相同 ID 出现两次。现在只显示一次、只计一次，“退出登录”会彻底移除它。
+- **不再有“仅通知”。** 已登录设备遗留的通知地址会被自动移除，避免通知重复到达。
+- **语音控制与小组件。** 个人链接现在位于“Siri 快捷指令”和“Android”栏内（带复制按钮），不再放在总览里。
+- 已更改：`js/geraete.js`、`js/sprachsteuerung.js`、`js/sprachen.js`、`pb_hooks/pinn-sitzungen.js`、`src/`、`index.html`、`i18n/`、所有 README。服务器部分：安装 hooks，PocketBase 会重启。
+
 ## 1.147.0 新功能
 
 **面容 ID 与指纹、正确识别设备、小组件新增房屋与花园**
@@ -222,14 +231,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 - **提示和推送与其他展望相同。** 顶部提示会保留到 1 月 10 日，推送通知可在设置中关闭。只有拥有财务访问权限才能看到支出；访客不会收到推送通知。
 - 更改：`js/ausblick.js`, `js/hinweise.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`、`i18n/`（十四种语言中的 32 条新增和更改文本）、`src/`（版本、设置）、`index.html`、所有 README。服务器（替换 hooks，PocketBase 会重启）：`pb_hooks/pinn-ausblick.js`、`pb_hooks/ausblick.pb.js`。
 
-## 1.141.2 新功能
-
-**小组件：金色代替绿色、对勾、更现代的图块**
-
-- **金色和对勾。** 小组件现在使用应用的金色，而不是绿色；未完成的任务显示对勾，而不是圆圈。已勾选的任务保留灰色对勾，并排在未完成任务下方。
-- **快捷入口小组件。** 图块稍微缩小，所有内容都留在小组件内，外观也更现代：带符号的金色圆形徽章、细边框和深色渐变。点按仍会在 Safari 中打开 pinn.，因为 iOS 不会通过链接打开已安装的应用。
-- 更改：`js/sprachsteuerung.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`、`src/`（版本）、`index.html`、所有 README。没有服务器部分。请重新复制脚本，并在 Scriptable 中替换。
-
 ## 工作原理
 
 ```mermaid
@@ -258,7 +259,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.147.0` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.147.1` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

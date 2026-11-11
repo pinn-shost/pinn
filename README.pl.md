@@ -110,6 +110,15 @@ Dotknij obrazu, aby otworzyć go w pełnym rozmiarze.
 
 pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski i 🇺🇦 Українська**; dostosowuje walutę i numery alarmowe do twojego regionu i przełącza się między określeniami **rodzina** i **wspólne mieszkanie**. Jeden serwer może obsługiwać wiele rodzin, każdą z własnymi administratorami.
 
+## Nowości w 1.147.1
+
+**Urządzenia raz na liście, link w instrukcjach**
+
+- **Zalogowane urządzenia.** Urządzenie, które zalogowało się dwa razy w tej samej chwili (np. panel rodzinny na Macu), pojawiało się dwa razy z tym samym ID. Teraz jest na liście raz, liczy się raz, a „Wyloguj” usuwa je całkowicie.
+- **Koniec z „Tylko powiadomienia”.** Pozostały adres powiadomień urządzenia, które jest już zalogowane, jest usuwany automatycznie, aby nic nie przychodziło podwójnie.
+- **Sterowanie głosowe i widżety.** Link osobisty znajduje się teraz w polach „Skrót Siri” i „Android” (z przyciskiem kopiowania), a nie w ogólnym przeglądzie.
+- Zmieniono: `js/geraete.js`, `js/sprachsteuerung.js`, `js/sprachen.js`, `pb_hooks/pinn-sitzungen.js`, `src/`, `index.html`, `i18n/`, wszystkie README. Część serwerowa: zainstalować hooki, PocketBase uruchomi się ponownie.
+
 ## Nowości w 1.147.0
 
 **Face ID i odcisk palca, poprawnie rozpoznane urządzenia, widżet z domem i ogrodem**
@@ -168,14 +177,6 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 - **Domyślnie włączone.** Ustawienie z 1.143.0 było wyłączone i pokazywało tylko zadania; teraz obie liczby są włączone w każdej rodzinie. Administrator może je wyłączyć w Konto → „Zadania i czaty na pulpicie”. Wyciszone czaty się nie liczą, czaty oznaczone jako nieprzeczytane liczą się jako jeden – tak jak liczba przy „Czat” w menu.
 - Zmienione: `js/profilauswahl.js`, `js/dashboardkonto.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (1 nowy i 4 zmienione teksty we wszystkich czternastu językach), `src/` (wersja, strona konta), `index.html`, wszystkie pliki README. Serwer (wymienić hooki, PocketBase uruchomi się ponownie): `pb_hooks/pinn-chat.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`.
 
-## Nowości w 1.143.0
-
-**Pulpit: otwarte zadania pod zdjęciem profilu i czat na iPadzie**
-
-- **Otwarte zadania pod zdjęciem.** Na ekranie wyboru profilu rodzinnego pulpitu pinn. może pokazywać pod zdjęciem każdej osoby liczbę jej otwartych zadań z terminem – jak liczba na ikonie aplikacji na iPhonie. Administrator włącza to w Konto → „Otwarte zadania na pulpicie”; dotyczy wszystkich pulpitów rodziny.
-- **Czat na pulpicie.** Kto otworzył swój profil na pulpicie za pomocą PIN-u, może teraz korzystać także z czatu. Goście i dzieci z „tylko stroną dziecka” nie. Przy pierwszym użyciu na urządzeniu czat jak zwykle poprosi o kod odzyskiwania.
-- Zmienione: `pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`, `js/profilauswahl.js`, `js/dashboard.js`, `js/dashboardkonto.js`, `js/konto.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (5 nowych tekstów we wszystkich czternastu językach), `src/` (wersja, strona konta), `index.html`, wszystkie pliki README. Serwer (wymienić hooki, PocketBase uruchomi się ponownie): `pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`.
-
 ## Wymagania
 
 - NAS lub mini PC z zainstalowanym **Dockerem** i **Docker Compose** (np. Synology, UGREEN, QNAP albo zwykły serwer z Linuksem)
@@ -185,7 +186,7 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 ## Instalacja
 
 1. Pobierz i rozpakuj plik ZIP [najnowszej wersji](https://github.com/pinn-shost/pinn/releases/latest).
-2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.147.0` lub `pinn-main`) bez zmian.
+2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.147.1` lub `pinn-main`) bez zmian.
 3. Połącz się przez SSH i uruchom:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

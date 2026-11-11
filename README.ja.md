@@ -133,6 +133,15 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski、🇺🇦 Українська** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.147.1の新機能
+
+**デバイスは1回だけ表示、リンクはガイドの中に**
+
+- **ログイン中のデバイス。** 同時に2回ログインしたデバイス（例：Macの家族ダッシュボード）が同じIDで2件表示されていました。今は1件だけ表示・1回だけカウントされ、「ログアウト」で完全に削除されます。
+- **「通知のみ」は廃止。** すでにログイン済みのデバイスに残った通知アドレスは自動的に削除され、通知が二重に届くことはありません。
+- **音声操作とウィジェット。** 個人用リンクは、全体の概要ではなく「Siriショートカット」と「Android」の欄の中（コピーボタン付き）に表示されます。
+- 変更：`js/geraete.js`、`js/sprachsteuerung.js`、`js/sprachen.js`、`pb_hooks/pinn-sitzungen.js`、`src/`、`index.html`、`i18n/`、すべてのREADME。サーバー側：hooksを入れ替えるとPocketBaseが再起動します。
+
 ## 1.147.0の新機能
 
 **Face ID・指紋、デバイスを正しく認識、ウィジェットに家と庭**
@@ -222,14 +231,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - **お知らせとプッシュは他の見通しと同じです。** 上部のお知らせは1月10日まで表示され、プッシュ通知は設定でオフにできます。支出は家計へのアクセス権がある場合のみ表示され、ゲストにはプッシュ通知が届きません。
 - 変更：`js/ausblick.js`, `js/hinweise.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`、`i18n/`（14言語すべての新規・変更文言32件）、`src/`（バージョン、設定）、`index.html`、すべての README。サーバー（hooks を置き換え、PocketBase が再起動）：`pb_hooks/pinn-ausblick.js`、`pb_hooks/ausblick.pb.js`。
 
-## 1.141.2の新機能
-
-**ウィジェット：緑の代わりにゴールド、チェックマーク、より現代的なタイル**
-
-- **ゴールドとチェックマーク。** ウィジェットは緑の代わりにアプリのゴールドを使うようになり、未完了のタスクは丸ではなくチェックマークで表示されます。完了したタスクはグレーのチェックマークのまま、未完了の下に並びます。
-- **クイックアクセスウィジェット。** タイルを少し小さくして、すべてがウィジェットに収まるようにし、見た目もより現代的にしました。シンボル付きの丸いゴールドのバッジ、細い縁、暗いグラデーションです。タップすると、これまでどおり Safari で pinn. が開きます（iOS はリンクからインストール済みのアプリを開けないため）。
-- 変更：`js/sprachsteuerung.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`、`src/`（バージョン）、`index.html`、すべての README。サーバー側の変更はありません。スクリプトをもう一度コピーして、Scriptable で置き換えてください。
-
 ## しくみ
 
 ```mermaid
@@ -258,7 +259,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.147.0`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.147.1`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

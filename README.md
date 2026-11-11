@@ -129,6 +129,15 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski and 🇺🇦 Українська**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.147.1
+
+**Devices listed once, link inside the guides**
+
+- **Signed-in devices.** A device that signed in twice at the same moment (e.g. the family dashboard on a Mac) showed up twice with the same ID. It is now listed once, counted once, and “Sign out” removes it completely.
+- **No more “Notifications only”.** A leftover notification address of a device that is already signed in is removed automatically, so nothing arrives twice.
+- **Voice control & widgets.** The personal link now sits inside the fields “Siri shortcut” and “Android” (with its copy button) instead of the general overview.
+- Changed: `js/geraete.js`, `js/sprachsteuerung.js`, `js/sprachen.js`, `pb_hooks/pinn-sitzungen.js`, `src/`, `index.html`, `i18n/`, all READMEs. Server part: install the hooks, PocketBase restarts.
+
 ## What's new in 1.147.0
 
 **Face ID & fingerprint, devices recognised correctly, widget with house & garden**
@@ -252,15 +261,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - It is the same secret link as for Siri, read only, and guests do not have it. Texts come in the language of the profile.
 - Changed: `js/sprachsteuerung.js`, `js/versionslog.js`, `i18n/` (16 new texts and a changed subtitle in all fourteen languages), `src/` (`index.html`, settings), `.github/scripts/check-hooks.js`, all READMEs. Server (replace the hooks, PocketBase restarts): `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
 
-## What's new in 1.139.0
-
-**Gift planner: who gives what – without the recipient seeing it**
-
-- **Who gives what.** On the “Gifts” tab pinn. now shows everything planned per person – gift ideas from your lists and the reserved wishes of the others – with date, status, giver and total. Whoever is meant to receive something never sees it there.
-- **Hide from the recipients.** In a gift list (not private) you choose “Hide from”; those people do not see the list, so several people can plan together (e.g. the parents for the children). A gift entered for yourself is never shown to you. As with private lists this applies to the view in the app; it is not encryption.
-- **Who gives it? / Shared gifts.** Choose who gives each gift. On a wish somebody else has already reserved, tap “Join in” for a shared gift; the others see who takes part, the person who wished for it does not.
-- Changed: `js/listen.js`, `css/listen.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (12 new texts and a changed intro in all fourteen languages), `src/` (`index.html`, lists popup), all READMEs. No server part – PocketBase does not need to restart.
-
 ## How it works
 
 ```mermaid
@@ -287,7 +287,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.147.0` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.147.1` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

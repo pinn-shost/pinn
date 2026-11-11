@@ -8,6 +8,7 @@
    ticks it off in pinn. as well (server: POST /api/pinn/widget/abhaken). Since 1.141.2 gold of the app instead of green, ticks instead of circles, new look of the quick access tiles.
    Since 1.147.0 open tasks show an empty ring and ticked ones a filled tick, the tasks of the maintenance plan
    (Home -> house & garden) are a group of their own, and the three guides (iPhone, Android, widgets) start closed.
+   Since 1.147.1 the personal link is shown inside the Siri shortcut and Android fields instead of the general overview.
    Since 1.141.1 in the style of Apple Reminders, without
    shopping lists, plus a second script with three quick access tiles (widgetQuickScript).
    Since 1.140.0: widgets and Apple Watch – read-only links on the same secret link (widgetLink), the ready-made
@@ -347,12 +348,12 @@ function renderVoiceSettings() {
   const link = voiceLink(st.token);
   box.innerHTML = `
     <p class="text-xs text-ink/60">${tk('voice.personalLinkWorksLike')}</p>
-    <div class="flex items-center gap-2">
-      <input id="voiceLinkInput" type="text" readonly class="flex-1 min-w-0 rounded-lg border border-ink/15 px-3 py-2 text-xs bg-ink/5" value="${escapeHtml(link)}" />
-      <button type="button" id="voiceCopyBtn" class="shrink-0 px-3 py-2 rounded-lg border border-ink/15 text-xs hover:border-pine hover:text-pine transition">${tk('common.copy')}</button>
-    </div>
     <details class="rounded-xl border border-ink/10 bg-white p-3">
       <summary class="text-sm font-medium cursor-pointer">${escapeHtml(tk('voice.iosTitle'))}</summary>
+      <div class="flex items-center gap-2 mt-2">
+        <input type="text" readonly class="voiceLinkInput flex-1 min-w-0 rounded-lg border border-ink/15 px-3 py-2 text-xs bg-ink/5" value="${escapeHtml(link)}" />
+        <button type="button" class="voiceCopyBtn shrink-0 px-3 py-2 rounded-lg border border-ink/15 text-xs hover:border-pine hover:text-pine transition">${tk('common.copy')}</button>
+      </div>
       <ol class="text-[12px] text-ink/70 leading-relaxed mt-2 list-decimal pl-5 flex flex-col gap-1">
         <li>${tk('voice.ios1')}</li>
         <li>${tk('voice.ios2')}</li>
@@ -363,6 +364,10 @@ function renderVoiceSettings() {
     </details>
     <details class="rounded-xl border border-ink/10 bg-white p-3">
       <summary class="text-sm font-medium cursor-pointer">🤖 Android</summary>
+      <div class="flex items-center gap-2 mt-2">
+        <input type="text" readonly class="voiceLinkInput flex-1 min-w-0 rounded-lg border border-ink/15 px-3 py-2 text-xs bg-ink/5" value="${escapeHtml(link)}" />
+        <button type="button" class="voiceCopyBtn shrink-0 px-3 py-2 rounded-lg border border-ink/15 text-xs hover:border-pine hover:text-pine transition">${tk('common.copy')}</button>
+      </div>
       <ol class="text-[12px] text-ink/70 leading-relaxed mt-2 list-decimal pl-5 flex flex-col gap-1">
         <li>${tk('voice.and1')}</li>
         <li>${tk('voice.and2', { var: escapeHtml(tk('voice.inputVar')), code: '<code class="text-[11px]">{"text": "{{' + escapeHtml(tk('voice.inputVar')) + '}}"}</code>' })}</li>
@@ -402,10 +407,11 @@ function renderVoiceSettings() {
       <button type="button" id="voiceOffBtn" class="px-3 py-1.5 rounded-lg text-xs text-red-600 hover:bg-red-50 transition">${tk('smart.service.turnOff')}</button>
     </div>
     <p id="voiceTestOut" class="hidden text-xs rounded-lg bg-pine/10 text-pine px-3 py-2"></p>`;
-  document.getElementById('voiceCopyBtn').addEventListener('click', async () => {
+  // The link sits inside the Siri shortcut and Android fields (not in the general overview)
+  box.querySelectorAll('.voiceCopyBtn').forEach((btn) => btn.addEventListener('click', async () => {
     const ok = await copyTextRobust(link);
     finShowToast(ok === false ? tk('voice.copyingNotPossiblePlease') : tk('voice.linkCopied'));
-  });
+  }));
   document.getElementById('widgetScriptBtn').addEventListener('click', async () => {
     const sel = widgetPickRead();
     if (!sel.cfg.events && !sel.cfg.tasks && !sel.cfg.household && !sel.cfg.house) { finShowToast(tk('voice.widgetNeedOne')); return; }

@@ -110,6 +110,15 @@ Tam boyutta açmak için bir resme dokun.
 
 pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski ve 🇺🇦 Українська**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
 
+## 1.147.1 sürümündeki yenilikler
+
+**Cihazlar tek kez listelenir, bağlantı kılavuzların içinde**
+
+- **Oturum açık cihazlar.** Aynı anda iki kez oturum açan bir cihaz (ör. Mac'teki aile panosu) aynı kimlikle iki kez görünüyordu. Artık listede bir kez görünür, bir kez sayılır ve “Oturumu kapat” onu tamamen kaldırır.
+- **“Yalnızca bildirimler” kaldırıldı.** Zaten oturum açmış bir cihazdan kalan bildirim adresi otomatik silinir; böylece hiçbir şey iki kez gelmez.
+- **Sesli kontrol ve widget'lar.** Kişisel bağlantı artık genel özet yerine “Siri kısayolu” ve “Android” alanlarının içinde (kopyalama düğmesiyle) yer alır.
+- Değişenler: `js/geraete.js`, `js/sprachsteuerung.js`, `js/sprachen.js`, `pb_hooks/pinn-sitzungen.js`, `src/`, `index.html`, `i18n/`, tüm README dosyaları. Sunucu kısmı: hook'ları kurun, PocketBase yeniden başlar.
+
 ## 1.147.0 sürümündeki yenilikler
 
 **Face ID ve parmak izi, cihazlar doğru tanınıyor, widget'ta ev ve bahçe**
@@ -168,14 +177,6 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 - **Varsayılan olarak açık.** 1.143.0’daki ayar kapalıydı ve yalnızca görevleri gösteriyordu; artık iki sayı da her aile için açık. Bir yönetici bunları Hesap → “Panoda görevler ve sohbetler” altında kapatabilir. Sessize alınan sohbetler sayılmaz, okunmamış olarak işaretlenenler bir sayılır – menüde “Sohbet”in yanındaki sayı gibi.
 - Değişenler: `js/profilauswahl.js`, `js/dashboardkonto.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (on dört dilde 1 yeni ve 4 değişen metin), `src/` (sürüm, hesap sayfası), `index.html`, tüm README dosyaları. Sunucu (hook’ları değiştir, PocketBase yeniden başlar): `pb_hooks/pinn-chat.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`.
 
-## 1.143.0 sürümündeki yenilikler
-
-**Pano: profil fotoğrafının altında açık görevler ve iPad’de sohbet**
-
-- **Fotoğrafın altında açık görevler.** Aile panosunun profil seçiminde pinn., her kişinin fotoğrafının altında açık ve zamanı gelmiş görevlerinin sayısını gösterebilir – iPhone’daki uygulama simgesindeki sayı gibi. Bir yönetici bunu Hesap → “Panoda açık görevler” bölümünden açar; ailenin tüm panoları için geçerlidir.
-- **Panoda sohbet.** Profilini panoda PIN ile açan kişi artık sohbeti de kullanabilir. Konuklar ve “yalnızca çocuk sayfası” olan çocuklar kullanamaz. Cihazda ilk seferde sohbet her zamanki gibi kurtarma kodunu sorar.
-- Değişenler: `pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`, `js/profilauswahl.js`, `js/dashboard.js`, `js/dashboardkonto.js`, `js/konto.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (on dört dilde 5 yeni metin), `src/` (sürüm, hesap sayfası), `index.html`, tüm README dosyaları. Sunucu (hook’ları değiştir, PocketBase yeniden başlar): `pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`.
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -185,7 +186,7 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.147.0` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.147.1` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
