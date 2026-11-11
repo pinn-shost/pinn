@@ -45,6 +45,15 @@
 //  - If a profile is locked because of too many wrong passwords, the admins of the family
 //    (or the main admin) get a push message and it appears in the error log (area "Sign-in").
 //    An admin can lift the lock in the profile's device management.
+//
+// Since 1.147.0:
+//  - The app reports its device on every start (POST /api/pinn/sitzungen/geraet, geraetMelden): readable name, kind of
+//    device (typ: phone | tablet | desktop) and its device identifier. The entry thus always shows the right device,
+//    also when the name of the sign-in was too vague ("Browser"). The list shows a short ID (first characters of the
+//    device identifier) so two devices of the same kind can be told apart.
+//  - Own name per device (eigenname, "umbenennen") – wins over the detected name.
+//  - Push subscriptions of the profile that belong to no session (e.g. a device that was signed in before the device
+//    management existed) appear in the list as their own entry (art "push") and can be removed there.
 
 const COL = "sitzungen";
 const USERS = "benutzer";
@@ -58,14 +67,17 @@ const IP_MAX = 20;
 const IP_FENSTER_MS = 30 * 60 * 1000;
 const IP_MAX_SPERRE_S = 30 * 60;
 const MELDUNG_PREFIX = "pinnSperrMeldung:";
-const FELDER_KEY = "pinnSitzFelder2";
+const FELDER_KEY = "pinnSitzFelder3";
 const COOKIE = "pinn_geraet";
 const COOKIE_TAGE = 400;
 // Fields that were added after the first version (are added when needed)
 const NEUE_FELDER = [
     { name: "kennung", max: 64 },   // Device cookie
     { name: "merkmal", max: 64 },   // Device characteristics (checksum)
+    { name: "typ", max: 16 },       // phone | tablet | desktop (since 1.147.0)
+    { name: "eigenname", max: 60 }, // own name given in the app (since 1.147.0)
 ];
+const TYPEN = ["phone", "tablet", "desktop"];
 
 function findCol(name) {
     try { return $app.findCollectionByNameOrId(name); } catch (e) { return null; }
@@ -119,6 +131,8 @@ function ensureSchema() {
                 { name: "geraet_id", type: "text", max: 64 },
                 { name: "kennung", type: "text", max: 64 },
                 { name: "merkmal", type: "text", max: 64 },
+                { name: "typ", type: "text", max: 16 },
+                { name: "eigenname", type: "text", max: 60 },
                 { name: "art", type: "text", max: 20 },
                 { name: "push", type: "text", max: 2000 },
                 { name: "gebunden", type: "bool" },
@@ -213,6 +227,18 @@ function nameFromAgent(ua) {
     else if (/Safari/.test(s)) br = "Safari";
     return br ? dev + " · " + br : dev;
 }
+
+// Does a name say which device it is? ("Browser" alone does not – then the browser identifier is asked)
+const DEVICE_WORDS = /iPhone|iPad|iPod|Android|Mac|Windows|Chromebook|Linux|PC|Pixel|Galaxy/i;
+function betterName(name, agent) {
+    const n = String(name || "");
+    if (!n || DEVICE_WORDS.test(n)) return n;
+    const fromAgent = nameFromAgent(agent);
+    return DEVICE_WORDS.test(fromAgent) ? fromAgent : n;
+}
+function cleanTyp(v) { const s = String(v || ""); return TYPEN.indexOf(s) >= 0 ? s : ""; }
+// Short, readable ID of a device: first 4 characters of the device identifier (or of the cookie)
+function kurzId(v) { return String(v || "").replace(/[^A-Za-z0-9]/g, "").slice(0, 4).toUpperCase(); }
 
 // ---------------------------------------------------------------------------------------------
 // Device cookie and device characteristics (recognition without a network address)
@@ -418,7 +444,7 @@ function beimAnmelden(e) {
         sess = new Record($app.findCollectionByNameOrId(COL));
         sess.set("benutzer", userId);
     }
-    const name = headerName || sess.getString("name") || nameFromAgent(agent);
+    const name = betterName(headerName, agent) || sess.getString("name") || nameFromAgent(agent);
     sess.set("familie", rec.getString("familie"));
     sess.set("name", name);
     if (agent) sess.set("agent", agent);
@@ -503,9 +529,14 @@ function entsperren(e, userId) {
 // List and sign out
 // ---------------------------------------------------------------------------------------------
 function rowOf(r, currentSid) {
+    const erkannt = r.getString("name") || nameFromAgent(r.getString("agent"));
     return {
         id: r.id,
-        name: r.getString("name") || nameFromAgent(r.getString("agent")),
+        name: r.getString("eigenname") || erkannt,
+        erkannt: erkannt,
+        eigenname: r.getString("eigenname"),
+        typ: r.getString("typ"),
+        kurz: kurzId(r.getString("geraet_id") || r.getString("kennung")),
         art: r.getString("art") || "app",
         ip: "",
         zuletzt: r.getString("zuletzt"),
@@ -523,10 +554,26 @@ function liste(e, userId) {
         try { recs = $app.findRecordsByFilter(COL, "benutzer = {:u}", "-zuletzt", 200, 0, { u: rec.id }); } catch (err) { recs = []; }
     }
     const lib = require(`${__hooks}/pinn-benutzer.js`);
+    const rows = recs.map(r => rowOf(r, currentSid));
+    // Push subscriptions without a session: they still get notifications, so they are shown too
+    const known = {};
+    recs.forEach(r => { if (r.getString("push")) known[r.getString("push")] = true; });
+    let abos = [];
+    try { abos = $app.findRecordsByFilter("push_abos", "benutzer = {:u}", "-updated", 50, 0, { u: rec.id }); } catch (err) { abos = []; }
+    abos.forEach(a => {
+        if (known[a.getString("endpoint")]) return;
+        let kurz = "";
+        try { kurz = String($security.sha256("pinn-push:" + a.getString("endpoint"))).slice(0, 4).toUpperCase(); } catch (err) { kurz = ""; }
+        rows.push({
+            id: "push:" + a.id, name: a.getString("geraet") || "", erkannt: a.getString("geraet") || "", eigenname: "",
+            typ: "", kurz: kurz, art: "push", ip: "", zuletzt: a.getString("updated"), seit: a.getString("created"),
+            push: true, nurPush: true, gebunden: false, dieses: false,
+        });
+    });
     const out = {
         benutzer: { id: rec.id, username: rec.getString("username"), rolle: rec.getString("rolle") },
         eigenes: rec.id === e.auth.id,
-        sitzungen: recs.map(r => rowOf(r, currentSid)),
+        sitzungen: rows,
         aktuellOhneSitzung: rec.id === e.auth.id && !currentSid,
     };
     if (lib.isAdmin(e)) out.sperre = lockStatus(rec);
@@ -590,6 +637,15 @@ function deleteSession(sess) {
 // Sign out one device. id = session ID or "dieses" (the requesting device)
 function abmelden(e, id) {
     const want = String(id || "");
+    // Push subscription without a session: remove it (the device gets no notifications any more)
+    if (/^push:[a-z0-9]{15}$/.test(want)) {
+        let abo = null;
+        try { abo = $app.findRecordById("push_abos", want.slice(5)); } catch (err) { abo = null; }
+        if (!abo) return { success: true };
+        targetUser(e, abo.getString("benutzer")); // Check the rights (throws)
+        try { $app.delete(abo); } catch (err) { /* already gone */ }
+        return { success: true, nurPush: true };
+    }
     const sid = want === "dieses" ? sidOf(e) : cleanSid(want);
     if (!sid) {
         if (want === "dieses") return { success: true };
@@ -650,6 +706,55 @@ function entferneAndere(userId, keepSid) {
         });
     } catch (err) { /* ignore */ }
     trenneEchtzeit(String(userId));
+}
+
+// ---------------------------------------------------------------------------------------------
+// The app reports its device (on every start, since 1.147.0): name, kind and device identifier of the current session
+// ---------------------------------------------------------------------------------------------
+function geraetMelden(e, body) {
+    const b = body || {};
+    const sid = sidOf(e);
+    if (!sid || !schemaReady()) return { success: false, ohneSitzung: true };
+    const sess = findSession(sid);
+    if (!sess || sess.getString("benutzer") !== e.auth.id) return { success: false, ohneSitzung: true };
+    const felder = ensureFelder();
+    const agent = header(e, "User-Agent").slice(0, 400);
+    const name = betterName(cleanName(b.name), agent);
+    const typ = cleanTyp(b.typ);
+    const deviceId = cleanDeviceId(b.id);
+    let changed = false;
+    const put = (field, val) => { if (val && sess.getString(field) !== val) { sess.set(field, val); changed = true; } };
+    put("name", name);
+    if (agent && sess.getString("agent") !== agent) { sess.set("agent", agent); changed = true; }
+    if (deviceId && !sess.getString("geraet_id")) put("geraet_id", deviceId);
+    if (felder) {
+        put("typ", typ);
+        const m = merkmalOf(sess.getString("art") || "app", sess.getString("name"), sess.getString("agent"));
+        put("merkmal", m);
+    }
+    if (changed) { try { $app.save(sess); } catch (err) { return { success: false }; } }
+    const endpoint = String(b.push || "");
+    if (/^https:\/\//i.test(endpoint) && endpoint.length <= 2000 && sess.getString("push") !== endpoint) {
+        // Only an address that really belongs to this profile is taken over
+        try {
+            const abo = $app.findFirstRecordByFilter("push_abos", "endpoint = {:p}", { p: endpoint });
+            if (abo.getString("benutzer") === e.auth.id) merkePush(e, endpoint);
+        } catch (err) { /* unknown address */ }
+    }
+    return { success: true, id: sess.id, kurz: kurzId(sess.getString("geraet_id") || sess.getString("kennung")) };
+}
+
+// Own name of a device (empty = back to the detected name)
+function umbenennen(e, id, name) {
+    const sid = cleanSid(id);
+    const sess = sid ? findSession(sid) : null;
+    if (!sess) throw new Error("Gerät nicht gefunden.");
+    targetUser(e, sess.getString("benutzer")); // Check the rights (throws)
+    if (!ensureFelder()) throw new Error("Gerät nicht gefunden.");
+    const n = cleanName(name).slice(0, 60);
+    sess.set("eigenname", n);
+    $app.save(sess);
+    return { success: true, name: n || sess.getString("name") };
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -848,8 +953,8 @@ function aufraeumen() {
 module.exports = {
     COL,
     ensureSchema, pruefe, beimAnmelden, sidOf, clientIp,
-    geraetKennung, merkmalOf, agentOhneVersion, msOf, doppelteZusammenfuehren,
-    liste, uebersicht, abmelden, alleAbmelden, entferneAndere, entsperren, lockStatus,
+    geraetKennung, merkmalOf, agentOhneVersion, msOf, doppelteZusammenfuehren, betterName, kurzId,
+    liste, uebersicht, abmelden, alleAbmelden, entferneAndere, entsperren, lockStatus, geraetMelden, umbenennen,
     merkePush, vergissPush, erneuerePush,
     ipGesperrt, ipFehlversuch, meldeSperre, waitText,
     aufraeumen,

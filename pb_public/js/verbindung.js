@@ -2,7 +2,7 @@
    Part of the app code that used to be a single block in index.html. Classic script, no build step:
    it is loaded right after the inline script of index.html and before the other files in js/
    (the load order is listed at the bottom of index.html and in pinn-setup.sh).
-   Contents: the PocketBase client (PB_URL, pb), the device ID and name for the device management (pinnDeviceId, pinnDeviceName), the fetch wrapper that adds them to login requests (PINN_AUTH_URL), pb.afterSend and handleRemoteLogout for a device that was logged out remotely. It must load before every file in js/ that uses pb (only js/grundlagen.js and js/popups.js come earlier; they do not use pb). */
+   Contents: the PocketBase client (PB_URL, pb), the device ID, name and kind for the device management (pinnDeviceId, pinnDeviceName, pinnDeviceType), the fetch wrapper that adds them to login requests (PINN_AUTH_URL), pb.afterSend and handleRemoteLogout for a device that was logged out remotely. It must load before every file in js/ that uses pb (only js/grundlagen.js and js/popups.js come earlier; they do not use pb). */
 
 /* ==========================================================
    PocketBase connection
@@ -24,7 +24,10 @@ const pb = new PocketBase(PB_URL);
    sends a random device ID and a readable name (e.g. „iPhone · App“). If
    the same device logs in again, the server continues the existing session.
    If the device was logged out (Account → Logged-in devices or by an admin), the
-   server answers with 401 and "X-Pinn-Abgemeldet: 1" – then the app deletes its data on the device. */
+   server answers with 401 and "X-Pinn-Abgemeldet: 1" – then the app deletes its data on the device.
+   Since 1.147.0 the app also reports name and kind on every start (devReportDevice in js/geraete.js). If the browser
+   identifier says nothing useful, the client hints of the browser and finally touch and screen size decide
+   (phone / tablet / computer) – so an entry never stays a bare „Browser“. */
 const LS_DEVICE_ID = 'pinn.geraetId';
 function pinnDeviceId() {
   try {
@@ -38,9 +41,28 @@ function pinnDeviceId() {
     return id;
   } catch (e) { return ''; }
 }
+// Kind of this device: 'phone' | 'tablet' | 'desktop'
+function pinnDeviceType() {
+  const ua = navigator.userAgent || '';
+  const touch = (navigator.maxTouchPoints || 0) > 1;
+  if (/iPad/.test(ua) || (/Macintosh/.test(ua) && touch)) return 'tablet';
+  if (/iPhone|iPod/.test(ua)) return 'phone';
+  if (/Android/.test(ua)) return /Mobile/.test(ua) ? 'phone' : 'tablet';
+  try {
+    const hints = navigator.userAgentData;
+    if (hints && typeof hints.mobile === 'boolean' && hints.mobile) return 'phone';
+  } catch (e) { /* no client hints */ }
+  if (/Macintosh|Mac OS X|Windows|CrOS|Linux/.test(ua) && !touch) return 'desktop';
+  let small = 9999;
+  try { small = Math.min(screen.width || 9999, screen.height || 9999); } catch (e) { small = 9999; }
+  if (touch && small < 600) return 'phone';
+  if (touch) return 'tablet';
+  return 'desktop';
+}
 function pinnDeviceName() {
   const ua = navigator.userAgent || '';
-  let dev = tk('devices.browser');
+  const typ = pinnDeviceType();
+  let dev = '';
   if (/iPad/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)) dev = 'iPad';
   else if (/iPhone|iPod/.test(ua)) dev = 'iPhone';
   else if (/Android/.test(ua)) dev = /Mobile/.test(ua) ? tk('devices.androidPhone') : tk('devices.androidTablet');
@@ -48,6 +70,17 @@ function pinnDeviceName() {
   else if (/Windows/.test(ua)) dev = tk('devices.windowsPc');
   else if (/CrOS/.test(ua)) dev = 'Chromebook';
   else if (/Linux/.test(ua)) dev = tk('devices.linuxPc');
+  if (!dev) {
+    // Unknown browser identifier: platform of the client hints, otherwise the kind of device
+    let platform = '';
+    try { platform = (navigator.userAgentData && navigator.userAgentData.platform) || ''; } catch (e) { platform = ''; }
+    if (/android/i.test(platform)) dev = typ === 'phone' ? tk('devices.androidPhone') : tk('devices.androidTablet');
+    else if (typ !== 'desktop') dev = typ === 'phone' ? tk('devices.phone') : tk('devices.tablet');
+    else if (/mac/i.test(platform)) dev = 'Mac';
+    else if (/win/i.test(platform)) dev = tk('devices.windowsPc');
+    else if (/chrome os/i.test(platform)) dev = 'Chromebook';
+    else dev = typ === 'phone' ? tk('devices.phone') : (typ === 'tablet' ? tk('devices.tablet') : tk('devices.computer'));
+  }
   let br = '';
   if (/EdgA?\/|EdgiOS/.test(ua)) br = 'Edge';
   else if (/SamsungBrowser/.test(ua)) br = 'Samsung Internet';

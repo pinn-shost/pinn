@@ -119,7 +119,9 @@ async function currentPushSubscription() {
 }
 async function sendSubscriptionToServer(sub) {
   const j = sub.toJSON();
-  await postJson('/api/pinn/push/abo', { endpoint: j.endpoint, keys: j.keys, geraet: deviceLabel() });
+  // Readable device name (same as in the device management; since 1.147.0)
+  const label = typeof pinnDeviceName === 'function' ? pinnDeviceName() : deviceLabel();
+  await postJson('/api/pinn/push/abo', { endpoint: j.endpoint, keys: j.keys, geraet: label });
   // Tell the service worker the current address (for a later change of address)
   try {
     const reg = await getPushRegistration();

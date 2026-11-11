@@ -36,6 +36,7 @@ async function renderAccountSettings() {
   renderDashDeviceSection();
   renderDashPinSection();
   renderDevicesSection();
+  if (typeof renderBioSection === 'function') renderBioSection(); // Face ID / fingerprint (js/entsperren.js)
   const pinsLoaded = guest ? Promise.resolve(dashPinInfo) : loadDashboardPins().then(info => { renderDashPinSection(); return info; });
   const famEl = document.getElementById('accountFamily');
   if (famEl && u && u.familie) {

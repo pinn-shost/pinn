@@ -7,7 +7,7 @@
 //   POST /api/pinn/sprache?token=...        { text }  -> answer as plain text to be read aloud
 //   GET  /api/pinn/sprache?token=...&text=...          (e.g. for Home Assistant)
 //   with &json=1: { ok, antwort, art, geaendert }
-//   GET  /api/pinn/widget?token=...[&ansicht=heute|morgen|einkauf|alles|aufgaben|haushalt][&liste=<id>][&format=text]
+//   GET  /api/pinn/widget?token=...[&ansicht=heute|morgen|einkauf|alles|aufgaben|haushalt|haus][&liste=<id>][&format=text]
 //        data for iPhone widgets (Scriptable), the Shortcuts widget and the Apple Watch: JSON, or with
 //        &format=text a ready-made plain text (since 1.140.0; tasks, household tasks and one shopping list
 //        each on their own since 1.141.0)

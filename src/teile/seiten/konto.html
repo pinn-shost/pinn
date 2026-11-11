@@ -38,6 +38,33 @@
         </div>
       </div>
 
+      <!-- Unlock with Face ID / Touch ID / fingerprint, per device (js/entsperren.js) -->
+      <div id="bioSection" class="set-card hidden">
+        <div class="set-head-row"><span class="set-ico">🔐</span><div class="set-head"><h3 id="bioTitle" class="sa-title" data-no-i18n>Face ID / fingerprint</h3><small data-tk="account.bio.subtitle">Lock pinn. on this device</small></div></div>
+        <div class="set-body">
+          <label class="flex items-center gap-3 cursor-pointer w-fit">
+            <span class="relative inline-block w-11 h-6">
+              <input id="bioToggle" type="checkbox" class="peer sr-only" />
+              <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
+              <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span>
+            </span>
+            <span data-tk="account.bio.toggle" class="text-sm">Unlock pinn. with it</span>
+          </label>
+          <div id="bioAfterRow" class="hidden flex items-center gap-3 mt-3">
+            <span data-tk="account.bio.after" class="text-sm">Lock after</span>
+            <select id="bioAfter" class="rounded-lg border border-ink/15 px-2 py-1.5 text-sm bg-white">
+              <option value="0" data-tk="account.bio.now">immediately</option>
+              <option value="1" data-tk="account.bio.min1">1 minute</option>
+              <option value="5" data-tk="account.bio.min5">5 minutes</option>
+              <option value="15" data-tk="account.bio.min15">15 minutes</option>
+            </select>
+          </div>
+          <p id="bioStatus" class="text-xs text-ink/50 mt-2"></p>
+          <p data-tk="account.bio.unavailable" id="bioUnavailable" class="hidden text-xs text-mustard mt-2">Not possible on this device: it needs Face ID, Touch ID or a fingerprint sensor and an address starting with https://.</p>
+          <p data-tk="account.bio.hint" class="text-[11px] text-ink/40 mt-2">Applies to this device only. The device itself checks your face or finger – pinn. never sees it. If it ever does not work, simply sign in again with your password.</p>
+        </div>
+      </div>
+
       <!-- Push notifications (personal for each profile) -->
       <div id="pushSection" class="set-card">
         <div class="set-head-row"><span class="set-ico">🔔</span><div class="set-head"><h3 data-tk="account.push.title" class="sa-title">Notifications</h3><small data-tk="account.push.subtitle">Push on this device, reminders, board</small></div></div>

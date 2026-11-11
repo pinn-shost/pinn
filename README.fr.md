@@ -129,6 +129,16 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski et 🇺🇦 Українська**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.147.0
+
+**Face ID et empreinte, appareils bien reconnus, widget avec maison & jardin**
+
+- **Face ID, Touch ID, empreinte.** Sous Compte, pinn. peut être verrouillé par appareil : à l'ouverture et après une pause (immédiatement, 1, 5 ou 15 minutes), l'appareil demande ton visage ou ton doigt – iPhone, iPad, Android, Mac avec Touch ID, Windows Hello. L'appareil vérifie lui-même, rien n'est envoyé. En cas d'échec, reconnecte-toi avec ton mot de passe.
+- **Appareils connectés.** L'application indique le nom et le type d'appareil à chaque démarrage – fini le « Navigateur » avec une icône d'ordinateur sur le téléphone. Chaque entrée affiche un court ID, ✏️ lui donne un nom, et les appareils qui reçoivent seulement des notifications apparaissent dans la liste et peuvent être retirés.
+- **Widget.** Tâches ouvertes avec un cercle vide, terminées avec une coche, et le nouveau groupe « Maison & jardin » pour le plan d'entretien (à l'avance avec la date). Copie le script une nouvelle fois.
+- **Saisons.** Sous Apparence → Saisons, les boutons « Hiver » et « Noël » ouvrent une fenêtre pour choisir la période (par défaut 1/12–6/1 et 1–26/12) et activer ou désactiver chaque élément : neige sur le texte et les tuiles, chute de neige à l'écran, paysage du tableau de bord, guirlande, père Noël, bonnet et houx. « Commande vocale & widgets » s'ouvre avec les guides fermés.
+- Modifié : `js/entsperren.js` (nouveau), `js/geraete.js`, `js/verbindung.js`, `js/sprachsteuerung.js`, `js/winterzeit.js`, `pb_hooks/pinn-sitzungen.js`, `pb_hooks/sitzungen.pb.js`, `pb_hooks/pinn-sprache.js`, `src/`, `index.html`, `pinn-setup.sh`, `i18n/`, tous les README. Partie serveur : installer les hooks, PocketBase redémarre.
+
 ## Nouveautés de la 1.146.1
 
 **De la neige sur chaque lettre, l’hiver sur le tableau de bord**
@@ -251,15 +261,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Qui l'offre ? / Cadeaux à plusieurs.** Pour chaque cadeau, tu choisis qui l'offre. Sur un souhait déjà réservé par quelqu'un d'autre, touche « Je participe » ; les autres voient qui participe, pas la personne qui l'a souhaité.
 - Modifié : `js/listen.js`, `css/listen.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (12 nouveaux textes et une introduction modifiée dans les quatorze langues), `src/` (`index.html`, fenêtre des listes), tous les README. Pas de partie serveur : PocketBase n'a pas besoin de redémarrer.
 
-## Nouveautés de la 1.138.0
-
-**Mode sombre automatique et mises à jour automatiques**
-
-- **Mode sombre.** Sous Réglages → Affichage, pinn. peut désormais passer en mode sombre selon l’heure (p. ex. de 20 h à 7 h) ou du coucher au lever du soleil. Les heures du soleil sont calculées sur l’appareil pour l’adresse du domicile de la famille (sinon le lieu météo), sans accès à la position. Si vous changez à la main, cela vaut jusqu’au prochain changement automatique. Le réglage appartient à votre profil et s’applique sur tous vos appareils.
-- **Mises à jour automatiques.** Sous Réglages → Système → Sauvegardes & mises à jour, pinn. peut rechercher une nouvelle version à une heure fixe, chaque jour ou une fois par semaine, créer d’abord une sauvegarde puis installer la mise à jour. Les versions préliminaires ne sont jamais installées automatiquement, et si la sauvegarde échoue, rien n’est installé. Le résultat et la prochaine exécution s’affichent dans la même fenêtre, les erreurs dans le journal des erreurs. Réservé aux administrateurs autorisés à installer les mises à jour.
-- **Animaux.** Plusieurs heures de repas par animal : dans l’éditeur, vous ajoutez autant d’heures que vous voulez (jusqu’à 12) avec un sélecteur d’heure et une note facultative sur la quantité ou la nourriture (p. ex. « 1 tasse de croquettes »). La note apparaît sur le bouton du repas et dans la carte nourriture. Nouvelle bannière sur la page des animaux : une prairie avec une clôture où passent les animaux de la famille, la nuit avec des étoiles.
-- Modifié : `js/dunkelzeit.js` (nouveau), `js/design.js`, `js/familie.js`, `css/haustierewetter.css`, `js/einstellungen.js`, `js/sicherungen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (19 nouveaux textes dans les quatorze langues), `src/` (`index.html`), `pinn-setup.sh`, `.github/scripts/check-hooks.js`, tous les README. Serveur (remplacer les hooks, PocketBase redémarre) : `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`.
-
 ## Comment ça marche
 
 ```mermaid
@@ -286,7 +287,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.146.1` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.147.0` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

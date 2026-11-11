@@ -110,6 +110,15 @@ Dotknij obrazu, aby otworzyć go w pełnym rozmiarze.
 
 pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski i 🇺🇦 Українська**; dostosowuje walutę i numery alarmowe do twojego regionu i przełącza się między określeniami **rodzina** i **wspólne mieszkanie**. Jeden serwer może obsługiwać wiele rodzin, każdą z własnymi administratorami.
 
+## Nowości w 1.147.0
+
+**Face ID i odcisk palca, poprawnie rozpoznane urządzenia, widżet z domem i ogrodem**
+
+- **Face ID, Touch ID, odcisk palca.** W sekcji Konto możesz zablokować pinn. na każdym urządzeniu: przy otwarciu i po przerwie urządzenie prosi o twarz lub palec. Sprawdza samo urządzenie, nic nie jest wysyłane.
+- **Zalogowane urządzenia.** Poprawna nazwa i rodzaj (koniec z „Przeglądarką” z ikoną laptopa na telefonie), krótki identyfikator, własna nazwa przez ✏️; urządzenia otrzymujące tylko powiadomienia są teraz na liście.
+- **Widżet.** Puste kółko dla otwartych zadań, ptaszek dla wykonanych, nowa grupa „Dom i ogród”. Skopiuj skrypt jeszcze raz.
+- **Pory roku.** W Wygląd → Pory roku wybierasz dla zimy i Bożego Narodzenia okres i każdy element (śnieg, opady, lampki, Mikołaj …); „Sterowanie głosowe i widżety” ze zwiniętymi instrukcjami. Część serwerowa: zainstaluj hooki.
+
 ## Nowości w 1.146.1
 
 **Śnieg na każdej literze, zima na panelu**
@@ -167,14 +176,6 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 - **Czat na pulpicie.** Kto otworzył swój profil na pulpicie za pomocą PIN-u, może teraz korzystać także z czatu. Goście i dzieci z „tylko stroną dziecka” nie. Przy pierwszym użyciu na urządzeniu czat jak zwykle poprosi o kod odzyskiwania.
 - Zmienione: `pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`, `js/profilauswahl.js`, `js/dashboard.js`, `js/dashboardkonto.js`, `js/konto.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (5 nowych tekstów we wszystkich czternastu językach), `src/` (wersja, strona konta), `index.html`, wszystkie pliki README. Serwer (wymienić hooki, PocketBase uruchomi się ponownie): `pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`.
 
-## Nowości w 1.142.2
-
-**Podsumowanie roku: przychody, terminy, zadania, urodziny i zdjęcia z podróży**
-
-- **Więcej w podsumowaniu roku.** Pod wydatkami widać teraz także przychody i saldo. Nowe karty pokazują terminy (z najbardziej zajętym miesiącem), wykonane zadania (z udziałem zadań domowych) i świętowane urodziny (także wyjątkowe, jak 18, 30, 40 …). Każda podróż pokazuje zdjęcia z tablicy opublikowane w trakcie podróży.
-- **Wykonane zadania liczy serwer,** ponieważ są usuwane po jednym lub dwóch dniach. W tym roku liczenie zaczyna się w dniu aktualizacji.
-- Zmienione: `js/ausblick.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (14 nowych tekstów i jeden zmieniony we wszystkich czternastu językach), `src/` (wersja), `index.html`, wszystkie pliki README. Serwer (wymienić hooki, PocketBase uruchomi się ponownie): `pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-aufgaben.js`, `pb_hooks/ausblick.pb.js`.
-
 ## Wymagania
 
 - NAS lub mini PC z zainstalowanym **Dockerem** i **Docker Compose** (np. Synology, UGREEN, QNAP albo zwykły serwer z Linuksem)
@@ -184,7 +185,7 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 ## Instalacja
 
 1. Pobierz i rozpakuj plik ZIP [najnowszej wersji](https://github.com/pinn-shost/pinn/releases/latest).
-2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.146.1` lub `pinn-main`) bez zmian.
+2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.147.0` lub `pinn-main`) bez zmian.
 3. Połącz się przez SSH i uruchom:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

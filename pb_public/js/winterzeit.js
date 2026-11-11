@@ -12,9 +12,19 @@
    - Snow on text: every letter of the headings, the family name and the dashboard clock is measured; snow lies only on its
      upward-facing parts (flat tops get a layer, round tops a blob in the middle, steep sides stay free). Recalculated when
      a text, the size or the font changes. Dashboard tiles get a snow cap of their own, each one a little different.
+   - Seasons (since 1.147.0, Settings → Appearance → Seasons): the periods of winter and Christmas can be chosen
+     (default 1 December – 6 January and 1 – 26 December) and every part switched off on its own:
+       winter:    snow (on letters, tiles, logo, sidebar), flurry (snow shower over the whole screen), land (dashboard landscape)
+       Christmas: lights (fairy lights), deco (Santa hat, holly, small tree), santa (Santa flying by)
+     Personal design values seasonOff ("snow,santa" = parts switched off), seasonWinter and seasonXmas ("MM-DD|MM-DD").
+     Classes on <html>: pinn-nosnow, pinn-noland, pinn-nolights, pinn-nodeco. The preview always shows everything.
    The look only adds classes on <html> and one fixed layer – it never changes the layout (see css/winterzeit.css). */
 
 var seasonFx = true;                 // personal switch
+var SEASON_PARTS = ['snow', 'flurry', 'land', 'lights', 'deco', 'santa'];
+var SEASON_DEFAULT = { winter: '12-01|01-06', xmas: '12-01|12-26' };
+var seasonOff = {};                  // part -> true when switched off (since 1.147.0)
+var seasonRange = { winter: SEASON_DEFAULT.winter, xmas: SEASON_DEFAULT.xmas };
 var seasonPreviewUntil = 0;          // ms timestamp – preview of the Christmas look runs until then
 var seasonPreviewTimer = null;
 var seasonSantaTimer = null;
@@ -26,20 +36,36 @@ var seasonStarted = false;           // first snow shower after the start done?
 var seasonLastFlurry = 0;
 var SEASON_DEVICE_KEY = 'pinn.saison';        // '1' | '0' – last state of the switch on this device
 var SEASON_SANTA_KEY = 'pinn.saison.santa';   // time of the last flight on this device
+var SEASON_PARTS_KEY = 'pinn.saison.teile';   // { off, winter, xmas } – last state of the season settings on this device
 var SEASON_FLURRY_MS = 32000;                 // length of a snow shower
 var SEASON_BREAK_MS = 20 * 60 * 1000;         // pinn. in the background at least this long -> new shower when it comes back
 
-// Which parts of the look belong to the date? (month 11 = December, 0 = January)
+// A period "MM-DD|MM-DD" (may run over New Year); anything broken falls back to the default
+function seasonCleanRange(v, fallback) {
+  var m = /^(\d{2})-(\d{2})\|(\d{2})-(\d{2})$/.exec(String(v || ''));
+  if (!m) return fallback;
+  var ok = function (mo, d) { return mo >= 1 && mo <= 12 && d >= 1 && d <= 31; };
+  return ok(+m[1], +m[2]) && ok(+m[3], +m[4]) ? String(v) : fallback;
+}
+function seasonInRange(md, range) {
+  var p = range.split('|');
+  return p[0] <= p[1] ? (md >= p[0] && md <= p[1]) : (md >= p[0] || md <= p[1]);
+}
+// Which parts of the look belong to the date? (periods from the settings, Christmas Eve = 24 December)
 function seasonPhase(now) {
-  var m = now.getMonth(), d = now.getDate();
+  var md = ('0' + (now.getMonth() + 1)).slice(-2) + '-' + ('0' + now.getDate()).slice(-2);
+  var xmas = seasonInRange(md, seasonRange.xmas);
   return {
-    winter: (m === 11) || (m === 0 && d <= 6),
-    xmas: m === 11 && d <= 26,
-    eve: m === 11 && d === 24,
+    winter: seasonInRange(md, seasonRange.winter),
+    xmas: xmas,
+    eve: xmas && md === '12-24',
   };
 }
 
 function seasonPreviewing() { return Date.now() < seasonPreviewUntil; }
+// Is a part of the look switched on? The preview always shows everything
+function seasonOn(part) { return seasonPreviewing() || !seasonOff[part]; }
+function seasonSnowOn() { return seasonOn('snow'); }
 
 // Phase that is shown right now (switch, date and preview together)
 function seasonCurrent() {
@@ -60,11 +86,16 @@ function seasonApply() {
   var root = document.documentElement;
   root.classList.toggle('pinn-winter', p.winter);
   root.classList.toggle('pinn-xmas', p.xmas);
+  root.classList.toggle('pinn-nosnow', p.winter && !seasonOn('snow'));
+  root.classList.toggle('pinn-noland', p.winter && !seasonOn('land'));
+  root.classList.toggle('pinn-nolights', p.xmas && !seasonOn('lights'));
+  root.classList.toggle('pinn-nodeco', p.xmas && !seasonOn('deco'));
   if (!p.winter) {
     seasonStopMotion();
     seasonSnowStop();
   } else {
-    seasonSnowStart();
+    if (seasonSnowOn()) seasonSnowStart();
+    else seasonSnowStop();
     if (!seasonStarted) {
       seasonStarted = true;
       setTimeout(function () { seasonFlurry(); }, 1200);
@@ -110,7 +141,7 @@ function seasonLayerTidy() {
 
 // A short snow shower (light flakes, ends on its own)
 function seasonFlurry() {
-  if (!seasonCurrent().winter || !seasonCanMove()) return;
+  if (!seasonCurrent().winter || !seasonOn('flurry') || !seasonCanMove()) return;
   var now = Date.now();
   if (now - seasonLastFlurry < 4000) return;
   seasonLastFlurry = now;
@@ -175,7 +206,7 @@ var SEASON_SANTA_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 210
   + '</svg>';
 
 function seasonSanta() {
-  if (!seasonCurrent().xmas || !seasonCanMove()) return false;
+  if (!seasonCurrent().xmas || !seasonOn('santa') || !seasonCanMove()) return false;
   var layer = seasonGetLayer();
   if (layer.querySelector('.pinn-santa')) return false;
   var santa = document.createElement('div');
@@ -197,7 +228,7 @@ function seasonSanta() {
 function seasonScheduleSanta() {
   if (seasonSantaTimer) { clearTimeout(seasonSantaTimer); seasonSantaTimer = null; }
   var p = seasonCurrent();
-  if (!p.xmas || seasonReduceMotion()) return;
+  if (!p.xmas || !seasonOn('santa') || seasonReduceMotion()) return;
   var last = 0;
   try { last = Number(localStorage.getItem(SEASON_SANTA_KEY)) || 0; } catch (e) { last = 0; }
   var gap = p.eve ? (4 + Math.random() * 2) * 60000 : (10 + Math.random() * 8) * 60000;
@@ -281,7 +312,7 @@ function seasonSnowScanSoon() {
 
 function seasonSnowScan() {
   seasonSnowTimer = null;
-  if (!seasonCurrent().winter) return;
+  if (!seasonCurrent().winter || !seasonSnowOn()) return;
   document.querySelectorAll(SEASON_TEXT_SNOW + ', ' + SEASON_TILE_SNOW).forEach(function (el) {
     if (seasonSnowIO) seasonSnowIO.observe(el);   // observing twice is harmless
     seasonSnowUpdate(el);
@@ -302,11 +333,11 @@ function seasonRandom(text) {
 }
 
 function seasonSnowUpdate(el) {
-  if (!seasonCurrent().winter || !el.isConnected) return;
+  if (!seasonCurrent().winter || !seasonSnowOn() || !el.isConnected) return;
   var box = el.getBoundingClientRect();
   if (box.width < 2 || box.height < 2) return;   // not shown right now – done when it appears
   var dark = document.documentElement.classList.contains('dark');
-  var xmas = seasonCurrent().xmas;
+  var xmas = seasonCurrent().xmas && seasonOn('deco');
   var tile = el.matches(SEASON_TILE_SNOW);
   var key = [tile ? 'tile' : el.textContent, Math.round(box.width), Math.round(box.height), dark, xmas,
     tile ? '' : getComputedStyle(el).font].join('|');
@@ -530,17 +561,127 @@ function seasonTileSnow(el, box, dark) {
   return { svg: svg, pad: pad, w: w, h: h };
 }
 
-// Takes the switch from the personal design (called by applyPersonalDesign in js/design.js)
+// Settings of the season look as stored (device or profile): { off: [parts], winter, xmas }
+function seasonReadParts(off, winter, xmas) {
+  seasonOff = {};
+  String(off || '').split(',').forEach(function (k) { if (SEASON_PARTS.indexOf(k) >= 0) seasonOff[k] = true; });
+  seasonRange = { winter: seasonCleanRange(winter, SEASON_DEFAULT.winter), xmas: seasonCleanRange(xmas, SEASON_DEFAULT.xmas) };
+}
+function seasonOffText() { return SEASON_PARTS.filter(function (k) { return seasonOff[k]; }).join(','); }
+function seasonStoreDevice() {
+  try {
+    localStorage.setItem(SEASON_DEVICE_KEY, seasonFx ? '1' : '0');
+    localStorage.setItem(SEASON_PARTS_KEY, JSON.stringify({ off: seasonOffText(), winter: seasonRange.winter, xmas: seasonRange.xmas }));
+  } catch (e) { /* storage full or blocked */ }
+}
+
+// Takes the switches from the personal design (called by applyPersonalDesign in js/design.js)
 function seasonLoad(w) {
   seasonFx = !(w && w.seasonFx === false);
-  try { localStorage.setItem(SEASON_DEVICE_KEY, seasonFx ? '1' : '0'); } catch (e) { /* storage full or blocked */ }
+  seasonReadParts(w && w.seasonOff, w && w.seasonWinter, w && w.seasonXmas);
+  seasonStoreDevice();
   seasonApply();
   seasonSyncInputs();
+}
+
+// Values for the personal design (js/design.js → currentDesignValues)
+function seasonDesignValues() {
+  return { seasonFx: seasonFx, seasonOff: seasonOffText(), seasonWinter: seasonRange.winter, seasonXmas: seasonRange.xmas };
 }
 
 function seasonSyncInputs() {
   var t = document.getElementById('seasonFxToggle');
   if (t) t.checked = seasonFx;
+  var box = document.getElementById('seasonBtns');
+  if (box) box.style.opacity = seasonFx ? '' : '0.5';
+  // Short summary on the two buttons: the period
+  var fmt = function (range) {
+    var p = range.split('|');
+    var d = function (md) {
+      var x = new Date(2000, Number(md.slice(0, 2)) - 1, Number(md.slice(3, 5)));
+      try { return x.toLocaleDateString(typeof sysLocale === 'function' ? sysLocale() : undefined, { day: 'numeric', month: 'short' }); }
+      catch (e) { return md.slice(3, 5) + '.' + md.slice(0, 2) + '.'; }
+    };
+    return d(p[0]) + ' – ' + d(p[1]);
+  };
+  var w = document.getElementById('seasonWinterRange');
+  if (w) w.textContent = fmt(seasonRange.winter);
+  var x = document.getElementById('seasonXmasRange');
+  if (x) x.textContent = fmt(seasonRange.xmas);
+}
+
+/* ---------- Popup "Winter" / "Christmas": period and parts ---------- */
+var seasonModalKind = '';
+var SEASON_MODAL_PARTS = { winter: ['snow', 'flurry', 'land'], xmas: ['lights', 'deco', 'santa'] };
+// Days of a month as options (31 for every month – 30/31 February is simply read as the last day)
+function seasonFillSelects() {
+  var monthSel = ['seasonFromM', 'seasonToM'], daySel = ['seasonFromD', 'seasonToD'];
+  daySel.forEach(function (id) {
+    var el = document.getElementById(id);
+    if (!el || el.options.length) return;
+    for (var d = 1; d <= 31; d++) el.add(new Option(String(d), ('0' + d).slice(-2)));
+  });
+  monthSel.forEach(function (id) {
+    var el = document.getElementById(id);
+    if (!el || el.options.length) return;
+    for (var m = 1; m <= 12; m++) {
+      var name = String(m);
+      try { name = new Date(2000, m - 1, 1).toLocaleDateString(typeof sysLocale === 'function' ? sysLocale() : undefined, { month: 'long' }); } catch (e) { name = String(m); }
+      el.add(new Option(name, ('0' + m).slice(-2)));
+    }
+  });
+}
+function seasonOpenModal(kind) {
+  seasonModalKind = kind;
+  seasonFillSelects();
+  var range = seasonRange[kind].split('|');
+  document.getElementById('seasonModalTitle').textContent = tk(kind === 'winter' ? 'settings.season.winter' : 'settings.season.xmas');
+  document.getElementById('seasonFromM').value = range[0].slice(0, 2);
+  document.getElementById('seasonFromD').value = range[0].slice(3, 5);
+  document.getElementById('seasonToM').value = range[1].slice(0, 2);
+  document.getElementById('seasonToD').value = range[1].slice(3, 5);
+  document.querySelectorAll('#seasonModal [data-season-part]').forEach(function (row) {
+    var part = row.getAttribute('data-season-part');
+    var mine = SEASON_MODAL_PARTS[kind].indexOf(part) >= 0;
+    row.classList.toggle('hidden', !mine);
+    var input = row.querySelector('input');
+    if (input) input.checked = !seasonOff[part];
+  });
+  pinnModalToTop('seasonModal').classList.remove('hidden');
+}
+function seasonCloseModal() {
+  var m = document.getElementById('seasonModal');
+  if (m) m.classList.add('hidden');
+  seasonModalKind = '';
+}
+function seasonSaveModal() {
+  var kind = seasonModalKind;
+  if (!kind) return;
+  var v = function (id) { return document.getElementById(id).value; };
+  seasonRange[kind] = seasonCleanRange(v('seasonFromM') + '-' + v('seasonFromD') + '|' + v('seasonToM') + '-' + v('seasonToD'), SEASON_DEFAULT[kind]);
+  SEASON_MODAL_PARTS[kind].forEach(function (part) {
+    var input = document.querySelector('#seasonModal [data-season-part="' + part + '"] input');
+    if (!input) return;
+    if (input.checked) delete seasonOff[part];
+    else seasonOff[part] = true;
+  });
+  seasonStoreDevice();
+  seasonLastFlurry = 0;
+  seasonSnowRedoAll();
+  seasonApply();
+  seasonSyncInputs();
+  if (typeof savePersonalDesign === 'function') savePersonalDesign();
+  seasonCloseModal();
+}
+function seasonResetModal() {
+  var kind = seasonModalKind;
+  if (!kind) return;
+  var range = SEASON_DEFAULT[kind].split('|');
+  document.getElementById('seasonFromM').value = range[0].slice(0, 2);
+  document.getElementById('seasonFromD').value = range[0].slice(3, 5);
+  document.getElementById('seasonToM').value = range[1].slice(0, 2);
+  document.getElementById('seasonToD').value = range[1].slice(3, 5);
+  document.querySelectorAll('#seasonModal [data-season-part] input').forEach(function (input) { input.checked = true; });
 }
 
 function seasonPreview() {
@@ -562,22 +703,39 @@ function seasonLogoTap() {
   if (!seasonCurrent().winter) return;
   seasonLastFlurry = 0;
   seasonFlurry();
-  if (seasonCurrent().xmas && Math.random() < 0.5) setTimeout(seasonSanta, 900);
+  if (seasonCurrent().xmas && seasonOn('santa') && Math.random() < 0.5) setTimeout(seasonSanta, 900);
 }
 
 (function seasonInit() {
   try { seasonFx = localStorage.getItem(SEASON_DEVICE_KEY) !== '0'; } catch (e) { seasonFx = true; }
+  try {
+    var dev = JSON.parse(localStorage.getItem(SEASON_PARTS_KEY) || 'null') || {};
+    seasonReadParts(dev.off, dev.winter, dev.xmas);
+  } catch (e) { seasonReadParts('', '', ''); }
   var toggle = document.getElementById('seasonFxToggle');
   if (toggle) {
     toggle.addEventListener('change', function () {
       seasonFx = !!toggle.checked;
-      try { localStorage.setItem(SEASON_DEVICE_KEY, seasonFx ? '1' : '0'); } catch (e) { /* storage full or blocked */ }
+      seasonStoreDevice();
       seasonLastFlurry = 0;
       seasonStarted = false;
       seasonApply();
+      seasonSyncInputs();
       if (typeof savePersonalDesign === 'function') savePersonalDesign();
     });
   }
+  var wBtn = document.getElementById('seasonWinterBtn');
+  if (wBtn) wBtn.addEventListener('click', function () { seasonOpenModal('winter'); });
+  var xBtn = document.getElementById('seasonXmasBtn');
+  if (xBtn) xBtn.addEventListener('click', function () { seasonOpenModal('xmas'); });
+  var save = document.getElementById('seasonModalSave');
+  if (save) save.addEventListener('click', seasonSaveModal);
+  var cancel = document.getElementById('seasonModalCancel');
+  if (cancel) cancel.addEventListener('click', seasonCloseModal);
+  var reset = document.getElementById('seasonModalReset');
+  if (reset) reset.addEventListener('click', seasonResetModal);
+  var modal = document.getElementById('seasonModal');
+  if (modal) modal.addEventListener('click', function (e) { if (e.target === modal) seasonCloseModal(); });
   var btn = document.getElementById('seasonPreviewBtn');
   if (btn) btn.addEventListener('click', seasonPreview);
   document.querySelectorAll('.pinn-logo-wrap').forEach(function (el) { el.addEventListener('click', seasonLogoTap); });

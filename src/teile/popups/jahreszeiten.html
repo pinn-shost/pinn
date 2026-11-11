@@ -1,0 +1,49 @@
+<!-- Seasons: period and parts of the winter or Christmas look (js/winterzeit.js) -->
+<div id="seasonModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[310] grid place-items-center p-6">
+  <div class="bg-white rounded-2xl p-6 w-full max-w-sm fade-in max-h-[90vh] overflow-y-auto">
+    <h3 id="seasonModalTitle" class="font-serif text-lg mb-4" data-no-i18n></h3>
+    <p data-tk="settings.season.period" class="text-xs uppercase tracking-wide text-ink/40 mb-1">Period</p>
+    <div class="grid items-center gap-2 mb-2" style="grid-template-columns: auto 1fr auto">
+      <span data-tk="settings.season.from" class="text-sm text-ink/60">From</span>
+      <select id="seasonFromM" class="rounded-lg border border-ink/15 px-2 py-1.5 text-sm bg-white"></select>
+      <select id="seasonFromD" class="rounded-lg border border-ink/15 px-2 py-1.5 text-sm bg-white"></select>
+      <span data-tk="settings.season.to" class="text-sm text-ink/60">To</span>
+      <select id="seasonToM" class="rounded-lg border border-ink/15 px-2 py-1.5 text-sm bg-white"></select>
+      <select id="seasonToD" class="rounded-lg border border-ink/15 px-2 py-1.5 text-sm bg-white"></select>
+    </div>
+    <p data-tk="settings.season.shows" class="text-xs uppercase tracking-wide text-ink/40 mt-4 mb-2">Show</p>
+    <div class="flex flex-col gap-3">
+      <label data-season-part="snow" class="flex items-center gap-3 cursor-pointer">
+        <span class="relative inline-block w-11 h-6 shrink-0"><input type="checkbox" class="peer sr-only" /><span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span><span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span></span>
+        <span data-tk="settings.season.snow" class="text-sm">Snow on text, logo and tiles</span>
+      </label>
+      <label data-season-part="flurry" class="flex items-center gap-3 cursor-pointer">
+        <span class="relative inline-block w-11 h-6 shrink-0"><input type="checkbox" class="peer sr-only" /><span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span><span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span></span>
+        <span data-tk="settings.season.flurry" class="text-sm">Snow falling over the whole screen</span>
+      </label>
+      <label data-season-part="land" class="flex items-center gap-3 cursor-pointer">
+        <span class="relative inline-block w-11 h-6 shrink-0"><input type="checkbox" class="peer sr-only" /><span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span><span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span></span>
+        <span data-tk="settings.season.land" class="text-sm">Winter landscape on the family dashboard</span>
+      </label>
+      <label data-season-part="lights" class="flex items-center gap-3 cursor-pointer">
+        <span class="relative inline-block w-11 h-6 shrink-0"><input type="checkbox" class="peer sr-only" /><span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span><span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span></span>
+        <span data-tk="settings.season.lights" class="text-sm">Fairy lights</span>
+      </label>
+      <label data-season-part="santa" class="flex items-center gap-3 cursor-pointer">
+        <span class="relative inline-block w-11 h-6 shrink-0"><input type="checkbox" class="peer sr-only" /><span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span><span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span></span>
+        <span data-tk="settings.season.santa" class="text-sm">Santa flying by</span>
+      </label>
+      <label data-season-part="deco" class="flex items-center gap-3 cursor-pointer">
+        <span class="relative inline-block w-11 h-6 shrink-0"><input type="checkbox" class="peer sr-only" /><span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span><span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span></span>
+        <span data-tk="settings.season.deco" class="text-sm">Santa hat, holly and small tree</span>
+      </label>
+    </div>
+    <div class="flex flex-wrap justify-between items-center gap-2 mt-6">
+      <button data-tk="settings.season.reset" id="seasonModalReset" type="button" class="px-2 py-2 rounded-lg text-xs text-ink/50 hover:text-pine">Default</button>
+      <div class="flex gap-2">
+        <button data-tk="common.cancel" id="seasonModalCancel" type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Cancel</button>
+        <button data-tk="common.save" id="seasonModalSave" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Save</button>
+      </div>
+    </div>
+  </div>
+</div>

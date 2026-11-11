@@ -13,7 +13,8 @@
 //   - create a task:             "Erinnere mich morgen an den Müll" - "Aufgabe: Fenster putzen am Samstag"
 //   - daily overview:            "Was steht heute an?" - "Was steht morgen an?" (events + open tasks)
 //   - widget data (since 1.140.0): overview for iPhone widgets and the Apple Watch (widgetData); since 1.141.0 with
-//     separate tasks / household tasks / shopping lists and ticking off from the widget (widgetTick)
+//     separate tasks / household tasks / shopping lists and ticking off from the widget (widgetTick); since 1.147.0 the
+//     tasks of the maintenance plan (Home -> house & garden) are a group of their own (house: true)
 //
 // Collection "sprache_zugaenge" (locked, only via the routes): { benutzer, familie, token }
 // Guests have no voice control; profiles with child lock can only ask what is on.
@@ -1176,20 +1177,20 @@ function dayOverview(familyId, auth, intent, L) {
 // Shortcuts widget and the Apple Watch (a shortcut). Texts in the language of the profile.
 // ---------------------------------------------------------------------------------------------
 const WIDGET_T = {
-    de: { shop: "Einkauf", events: "Termine", tasks: "Aufgaben", none: "Nichts geplant", empty: "Liste leer", more: "+{n} weitere", household: "Haushalt", finish: "Einkauf abschließen" },
-    en: { shop: "Shopping", events: "Events", tasks: "Tasks", none: "Nothing planned", empty: "List empty", more: "+{n} more", household: "Household", finish: "Finish shopping" },
-    fr: { shop: "Courses", events: "Rendez-vous", tasks: "Tâches", none: "Rien de prévu", empty: "Liste vide", more: "+{n} autres", household: "Ménage", finish: "Terminer les courses" },
-    es: { shop: "Compra", events: "Citas", tasks: "Tareas", none: "Nada previsto", empty: "Lista vacía", more: "+{n} más", household: "Hogar", finish: "Terminar la compra" },
-    ru: { shop: "Покупки", events: "События", tasks: "Задачи", none: "Ничего не запланировано", empty: "Список пуст", more: "+ещё {n}", household: "Дом", finish: "Завершить покупки" },
-    nl: { shop: "Boodschappen", events: "Afspraken", tasks: "Taken", none: "Niets gepland", empty: "Lijst leeg", more: "+{n} meer", household: "Huishouden", finish: "Boodschappen afronden" },
-    it: { shop: "Spesa", events: "Appuntamenti", tasks: "Attività", none: "Niente in programma", empty: "Lista vuota", more: "+{n} altri", household: "Casa", finish: "Concludi la spesa" },
-    pt: { shop: "Compras", events: "Compromissos", tasks: "Tarefas", none: "Nada planeado", empty: "Lista vazia", more: "+{n} mais", household: "Casa", finish: "Concluir as compras" },
-    zh: { shop: "购物", events: "日程", tasks: "任务", none: "暂无安排", empty: "清单为空", more: "另有 {n} 项", household: "家务", finish: "完成购物" },
-    ja: { shop: "買い物", events: "予定", tasks: "タスク", none: "予定なし", empty: "リストは空です", more: "ほか {n} 件", household: "家事", finish: "買い物を完了" },
-    ko: { shop: "장보기", events: "일정", tasks: "할 일", none: "예정된 일 없음", empty: "목록이 비었습니다", more: "외 {n}개", household: "집안일", finish: "장보기 완료" },
-    tr: { shop: "Alışveriş", events: "Randevular", tasks: "Görevler", none: "Planlanmış bir şey yok", empty: "Liste boş", more: "+{n} tane daha", household: "Ev işleri", finish: "Alışverişi bitir" },
-    pl: { shop: "Zakupy", events: "Terminy", tasks: "Zadania", none: "Nic nie zaplanowano", empty: "Lista pusta", more: "+{n} więcej", household: "Dom", finish: "Zakończ zakupy" },
-    uk: { shop: "Покупки", events: "Події", tasks: "Завдання", none: "Нічого не заплановано", empty: "Список порожній", more: "+ще {n}", household: "Дім", finish: "Завершити покупки" },
+    de: { shop: "Einkauf", events: "Termine", tasks: "Aufgaben", none: "Nichts geplant", empty: "Liste leer", more: "+{n} weitere", household: "Haushalt", finish: "Einkauf abschließen", house: "Haus & Garten" },
+    en: { shop: "Shopping", events: "Events", tasks: "Tasks", none: "Nothing planned", empty: "List empty", more: "+{n} more", household: "Household", finish: "Finish shopping", house: "House & garden" },
+    fr: { shop: "Courses", events: "Rendez-vous", tasks: "Tâches", none: "Rien de prévu", empty: "Liste vide", more: "+{n} autres", household: "Ménage", finish: "Terminer les courses", house: "Maison & jardin" },
+    es: { shop: "Compra", events: "Citas", tasks: "Tareas", none: "Nada previsto", empty: "Lista vacía", more: "+{n} más", household: "Hogar", finish: "Terminar la compra", house: "Casa y jardín" },
+    ru: { shop: "Покупки", events: "События", tasks: "Задачи", none: "Ничего не запланировано", empty: "Список пуст", more: "+ещё {n}", household: "Дом", finish: "Завершить покупки", house: "Дом и сад" },
+    nl: { shop: "Boodschappen", events: "Afspraken", tasks: "Taken", none: "Niets gepland", empty: "Lijst leeg", more: "+{n} meer", household: "Huishouden", finish: "Boodschappen afronden", house: "Huis & tuin" },
+    it: { shop: "Spesa", events: "Appuntamenti", tasks: "Attività", none: "Niente in programma", empty: "Lista vuota", more: "+{n} altri", household: "Casa", finish: "Concludi la spesa", house: "Casa e giardino" },
+    pt: { shop: "Compras", events: "Compromissos", tasks: "Tarefas", none: "Nada planeado", empty: "Lista vazia", more: "+{n} mais", household: "Casa", finish: "Concluir as compras", house: "Casa e jardim" },
+    zh: { shop: "购物", events: "日程", tasks: "任务", none: "暂无安排", empty: "清单为空", more: "另有 {n} 项", household: "家务", finish: "完成购物", house: "房屋与花园" },
+    ja: { shop: "買い物", events: "予定", tasks: "タスク", none: "予定なし", empty: "リストは空です", more: "ほか {n} 件", household: "家事", finish: "買い物を完了", house: "家と庭" },
+    ko: { shop: "장보기", events: "일정", tasks: "할 일", none: "예정된 일 없음", empty: "목록이 비었습니다", more: "외 {n}개", household: "집안일", finish: "장보기 완료", house: "집과 정원" },
+    tr: { shop: "Alışveriş", events: "Randevular", tasks: "Görevler", none: "Planlanmış bir şey yok", empty: "Liste boş", more: "+{n} tane daha", household: "Ev işleri", finish: "Alışverişi bitir", house: "Ev ve bahçe" },
+    pl: { shop: "Zakupy", events: "Terminy", tasks: "Zadania", none: "Nic nie zaplanowano", empty: "Lista pusta", more: "+{n} więcej", household: "Dom", finish: "Zakończ zakupy", house: "Dom i ogród" },
+    uk: { shop: "Покупки", events: "Події", tasks: "Завдання", none: "Нічого не заплановано", empty: "Список порожній", more: "+ще {n}", household: "Дім", finish: "Завершити покупки", house: "Дім і сад" },
 };
 function widgetDay(familyId, user, offset, W, L) {
     const day = addDays(todayIso(), offset);
@@ -1228,16 +1229,37 @@ function plainTitle(t) {
 }
 // Tasks that are due today or earlier (since 1.141.0 with id and household flag, so the widget can tick them off).
 // Since 1.141.1 the ones ticked off today stay in the list (done: true) so the widget can show them grey below the open ones.
-function widgetTasks(familyId) {
+// Since 1.147.0 the tasks of the maintenance plan (Home -> house & garden) carry house: true. They are created ahead of
+// time ("lead" of the maintenance item), so the open ones count from the moment they exist, up to HOUSE_AHEAD_DAYS ahead.
+// household stays true for them, so widget scripts made before 1.147.0 keep showing them with the household tasks.
+const HOUSE_AHEAD_DAYS = 62;
+function houseKeysOf(data) {
+    const keys = {};
+    (Array.isArray(data && data.houseMaintenance) ? data.houseMaintenance : []).forEach(m => {
+        if (!m || !String(m.title || "").trim()) return;
+        const icon = String(m.icon || "").trim();
+        keys[((icon ? icon + " " : "") + String(m.title || "").trim()).slice(0, 300)] = true;
+    });
+    return keys;
+}
+function widgetTasks(familyId, houseKeys) {
     const today = todayIso();
+    const ahead = addDays(today, HOUSE_AHEAD_DAYS);
+    const keys = houseKeys || {};
+    const isHouse = t => !!(t.household && keys[t.household]);
     const doneToday = t => !!(t.done && t.doneAt && !isNaN(Date.parse(t.doneAt)) && wallIso(Date.parse(t.doneAt)) === today);
+    const shown = t => {
+        if (!t || !(t.title || t.titel) || !t.dueDate) return false;
+        if (t.done) return doneToday(t);
+        return t.dueDate <= today || (isHouse(t) && t.dueDate <= ahead);
+    };
     let list = [];
     try {
         list = (require(`${__hooks}/pinn-aufgaben.js`).listAll(familyId) || [])
-            .filter(t => t && (t.title || t.titel) && t.dueDate && t.dueDate <= today && (!t.done || doneToday(t)))
+            .filter(shown)
             .sort((a, b) => (a.done ? 1 : 0) - (b.done ? 1 : 0) || String(a.dueDate).localeCompare(String(b.dueDate)) || String(a.title || "").localeCompare(String(b.title || "")))
-            .slice(0, 30)
-            .map(t => ({ id: t.id || "", title: plainTitle(t), household: !!t.household, due: t.dueDate, done: !!t.done }));
+            .slice(0, 40)
+            .map(t => ({ id: t.id || "", title: plainTitle(t), household: !!t.household, house: isHouse(t), due: t.dueDate, done: !!t.done }));
     } catch (e) { list = []; }
     return list;
 }
@@ -1267,11 +1289,12 @@ function widgetData(token, view, format, listId) {
         const data = require(`${__hooks}/pinn-benutzer.js`).loadFamilyDataFor(familyId) || {};
         const open = (Array.isArray(data.shoppingItems) ? data.shoppingItems : []).filter(x => x && !x.done && x.name);
         const shop = open.slice(0, 12).map(itemText);
-        const tasks = widgetTasks(familyId);
+        const tasks = widgetTasks(familyId, houseKeysOf(data));
         const lists = widgetLists(data, W);
         const out = {
             ok: true, language: lang, updated: new Date().toISOString(),
-            texts: { shop: W.shop, events: W.events, tasks: W.tasks, none: W.none, empty: W.empty, allday: L.allday, household: W.household, finish: W.finish },
+            texts: { shop: W.shop, events: W.events, tasks: W.tasks, none: W.none, empty: W.empty, allday: L.allday, household: W.household, finish: W.finish, house: W.house || W.household },
+            today: todayIso(),
             canTick: !isChildLocked(user, data),
             days: days,
             tasks: tasks,
@@ -1308,7 +1331,8 @@ function widgetData(token, view, format, listId) {
                 }
             } else if (view === "einkauf") shopLines();
             else if (view === "aufgaben") taskLines(W.tasks, tasks.filter(t => !t.household && !t.done));
-            else if (view === "haushalt") taskLines(W.household, tasks.filter(t => t.household && !t.done));
+            else if (view === "haushalt") taskLines(W.household, tasks.filter(t => t.household && !t.house && !t.done));
+            else if (view === "haus") taskLines(W.house || W.household, tasks.filter(t => t.house && !t.done));
             else if (view === "morgen") dayLines(days[1]);
             else if (view === "alles") {
                 dayLines(days[0]);

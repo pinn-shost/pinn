@@ -110,6 +110,15 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski en 🇺🇦 Українська**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.147.0
+
+**Face ID & vingerafdruk, apparaten goed herkend, widget met huis & tuin**
+
+- **Face ID, Touch ID, vingerafdruk.** Onder Account kun je pinn. per apparaat vergrendelen: bij het openen en na een pauze vraagt het apparaat om je gezicht of vinger. Het apparaat controleert zelf, er wordt niets verstuurd.
+- **Aangemelde apparaten.** Juiste naam en soort (geen „Browser” met laptop-icoon meer op de telefoon), korte ID, eigen naam met ✏️; apparaten die alleen meldingen krijgen staan nu in de lijst.
+- **Widget.** Lege cirkel voor open taken, vinkje voor afgeronde, nieuwe groep „Huis & tuin”. Kopieer het script één keer opnieuw.
+- **Seizoenen.** Onder Weergave → Seizoenen kies je voor Winter en Kerstmis de periode en elk onderdeel (sneeuw, sneeuwval, lichtjes, Kerstman …); „Spraakbesturing & widgets” met dichtgeklapte handleidingen. Serverdeel: hooks installeren.
+
 ## Nieuw in 1.146.1
 
 **Sneeuw op elke letter, winter op het dashboard**
@@ -167,14 +176,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Chat op het dashboard.** Wie zijn profiel op het dashboard met de pincode heeft geopend, kan nu ook de chat gebruiken. Gasten en kinderen met “alleen kinderpagina” niet. De eerste keer op het apparaat vraagt de chat zoals altijd om de herstelcode.
 - Gewijzigd: `pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`, `js/profilauswahl.js`, `js/dashboard.js`, `js/dashboardkonto.js`, `js/konto.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (5 nieuwe teksten in alle veertien talen), `src/` (versie, accountpagina), `index.html`, alle README’s. Server (hooks vervangen, PocketBase start opnieuw): `pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`.
 
-## Nieuw in 1.142.2
-
-**Jaaroverzicht: inkomsten, afspraken, taken, verjaardagen en reisfoto’s**
-
-- **Meer in het jaaroverzicht.** Onder de uitgaven zie je nu ook de inkomsten en het saldo. Nieuwe kaarten tonen afspraken (met de drukste maand), afgeronde taken (met het aandeel huishouden) en gevierde verjaardagen (ook bijzondere, zoals 18, 30, 40 …). Bij elke reis staan de prikbordfoto’s die tijdens de reis zijn geplaatst.
-- **De server telt afgeronde taken,** omdat ze na een of twee dagen worden verwijderd. Voor dit jaar begint het tellen op de dag van de update.
-- Gewijzigd: `js/ausblick.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (14 nieuwe teksten en één gewijzigde tekst in alle veertien talen), `src/` (versie), `index.html`, alle README’s. Server (hooks vervangen, PocketBase start opnieuw): `pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-aufgaben.js`, `pb_hooks/ausblick.pb.js`.
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -184,7 +185,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.146.1` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.147.0` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -2,6 +2,11 @@
    Switched on by js/winterzeit.js with two classes on <html>:
      pinn-winter  1 December – 6 January: snow on the logo, on headings and on the sidebar
      pinn-xmas    1 – 26 December: in addition fairy lights, a Santa hat on the logo, holly at headings and the bell
+   Parts switched off in Settings → Appearance → Seasons (since 1.147.0; js/winterzeit.js also stops what it draws):
+     pinn-nosnow    no snow on logo, sidebar, letters and tiles
+     pinn-noland    no winter landscape on the family dashboard
+     pinn-nolights  no fairy lights under the header
+     pinn-nodeco    no Santa hat, no holly at the bell, no small tree in the sidebar
    pinn-season-live is set only while a snow shower runs (the lights twinkle only then – saves battery).
    On the family dashboard: snow on the family name, the clock and every tile, a winter landscape at the bottom.
    RULE: every decoration is an absolutely positioned pseudo element or lives in the fixed layer .pinn-season-layer,
@@ -34,6 +39,17 @@ html.pinn-winter .pinn-snowy::before {
   left: 0; top: calc(-1 * var(--pinn-snow-pad, 0px)); width: var(--pinn-snow-w, 0px); height: var(--pinn-snow-h, 0px);
   background: var(--pinn-snow, none) left top / 100% 100% no-repeat;
 }
+
+/* Parts switched off in the settings (Appearance → Seasons) */
+html.pinn-nosnow .pinn-logo-wrap::before,
+html.pinn-nosnow #sidebar .sidebar-foot:not(#sidebarVersionBtn)::before,
+html.pinn-nosnow .pinn-snowy::before,
+html.pinn-noland #dashboardScreen::after,
+html.pinn-nolights #appShell > header::after,
+html.pinn-nolights #appShell > header::before,
+html.pinn-nodeco .pinn-logo-wrap::after,
+html.pinn-nodeco .nt-bell::before,
+html.pinn-nodeco #sidebar .sidebar-foot:not(#sidebarVersionBtn)::after { display: none !important; }
 
 /* ---------- Bell: a sprig of holly ---------- */
 html.pinn-xmas .nt-bell::before {
@@ -111,3 +127,9 @@ html.pinn-ruhe .pinn-season-layer *, html.pinn-ruhe #appShell > header::before {
   .pinn-season-layer { display: none; }
   html.pinn-xmas.pinn-season-live #appShell > header::before { animation: none; }
 }
+
+/* ---------- Settings → Appearance → Seasons (collapsible block, since 1.147.0) ---------- */
+#seasonDetails > summary { list-style: none; }
+#seasonDetails > summary::-webkit-details-marker { display: none; }
+#seasonDetails > summary .accordion-chevron { transition: transform 0.18s ease; }
+#seasonDetails[open] > summary .accordion-chevron { transform: rotate(90deg); }

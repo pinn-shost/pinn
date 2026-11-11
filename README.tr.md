@@ -110,6 +110,15 @@ Tam boyutta açmak için bir resme dokun.
 
 pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski ve 🇺🇦 Українська**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
 
+## 1.147.0 sürümündeki yenilikler
+
+**Face ID ve parmak izi, cihazlar doğru tanınıyor, widget'ta ev ve bahçe**
+
+- **Face ID, Touch ID, parmak izi.** Hesap bölümünde pinn. her cihazda kilitlenebilir: açılışta ve bir aradan sonra cihaz yüzünü veya parmağını ister. Kontrolü cihazın kendisi yapar, hiçbir şey gönderilmez.
+- **Oturum açık cihazlar.** Doğru ad ve tür (telefonda dizüstü simgeli “Tarayıcı” artık yok), kısa kimlik, ✏️ ile özel ad; yalnızca bildirim alan cihazlar da listede.
+- **Widget.** Açık görevler boş daire, bitenler onay işaretiyle, yeni grup “Ev ve bahçe”. Betiği bir kez yeniden kopyala.
+- **Mevsimler.** Görünüm → Mevsimler altında Kış ve Noel için dönemi ve her parçayı (kar, kar yağışı, ışık zinciri, Noel Baba …) seçebilirsin; “Sesli komut ve widget'lar” kılavuzları kapalı açılır. Sunucu kısmı: hook'ları yükle.
+
 ## 1.146.1 sürümündeki yenilikler
 
 **Her harfte kar, panoda kış**
@@ -167,14 +176,6 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 - **Panoda sohbet.** Profilini panoda PIN ile açan kişi artık sohbeti de kullanabilir. Konuklar ve “yalnızca çocuk sayfası” olan çocuklar kullanamaz. Cihazda ilk seferde sohbet her zamanki gibi kurtarma kodunu sorar.
 - Değişenler: `pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`, `js/profilauswahl.js`, `js/dashboard.js`, `js/dashboardkonto.js`, `js/konto.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (on dört dilde 5 yeni metin), `src/` (sürüm, hesap sayfası), `index.html`, tüm README dosyaları. Sunucu (hook’ları değiştir, PocketBase yeniden başlar): `pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`.
 
-## 1.142.2 sürümündeki yenilikler
-
-**Yıl özeti: gelirler, randevular, görevler, doğum günleri ve gezi fotoğrafları**
-
-- **Yıl özetinde daha fazlası.** Giderlerin altında artık gelirleri ve bakiyeyi de görürsün. Yeni kartlar randevuları (en yoğun ayla), tamamlanan görevleri (ev işi payıyla) ve kutlanan doğum günlerini (18, 30, 40 gibi özel olanlar dahil) gösterir. Her gezide, gezi sırasında panoya eklenen fotoğraflar görünür.
-- **Tamamlanan görevleri sunucu sayar,** çünkü bir iki gün sonra silinirler. Bu yıl için sayım güncelleme gününde başlar.
-- Değişenler: `js/ausblick.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (on dört dilde 14 yeni ve 1 değişen metin), `src/` (sürüm), `index.html`, tüm README dosyaları. Sunucu (hook’ları değiştir, PocketBase yeniden başlar): `pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-aufgaben.js`, `pb_hooks/ausblick.pb.js`.
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -184,7 +185,7 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.146.1` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.147.0` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -112,6 +112,8 @@ function currentDesignValues() {
     darkTo: typeof darkTo === 'string' ? darkTo : '07:00',
     // Winter & Christmas look in December/January (js/winterzeit.js)
     seasonFx: typeof seasonFx === 'boolean' ? seasonFx : true,
+    // Seasons (since 1.147.0): parts switched off and the periods of winter and Christmas
+    ...(typeof seasonDesignValues === 'function' ? seasonDesignValues() : {}),
     colorPaper: themeColors.paper, colorPine: themeColors.pine, colorMustard: themeColors.mustard,
     defaultViewModeDesktop, defaultViewScopeDesktop, defaultViewModeMobile, defaultViewScopeMobile,
     // Overview (tiles)

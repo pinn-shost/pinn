@@ -22,6 +22,18 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.147', datum: '11.11.2026', titel: 'Face ID & Fingerabdruck, Geräte richtig erkannt, Widget mit Haus & Garten, Jahreszeiten nach Wunsch',
+    punkte: [
+      ['neu', 'Face ID, Touch ID und Fingerabdruck: Unter Konto lässt sich pinn. pro Gerät sperren. Beim Öffnen und nach einer Pause (sofort, 1, 5 oder 15 Minuten) fragt das Handy nach Gesicht oder Finger – auf iPhone und iPad, Android und Computern mit Touch ID oder Windows Hello. Das Gerät prüft selbst, pinn. sieht davon nichts. Klappt es nicht, meldest du dich mit dem Passwort neu an. Nicht auf dem Familien-Dashboard und nicht für Gäste.'],
+      ['neu', 'Angemeldete Geräte zeigen das richtige Gerät: Die App meldet bei jedem Start Name und Art des Geräts (Handy, Tablet, Computer) – statt „Browser“ mit Laptop-Symbol steht dort jetzt z. B. „iPhone · App“ mit Handy-Symbol. Jeder Eintrag hat eine kurze ID zum Unterscheiden, und mit ✏️ gibst du einem Gerät einen eigenen Namen.'],
+      ['fix', 'Geräte, die Benachrichtigungen bekommen, aber nicht in der Liste standen (z. B. ein älterer Mac-Login), erscheinen jetzt als „Nur Benachrichtigungen“ und lassen sich dort entfernen.'],
+      ['neu', 'Widget: offene Aufgaben mit leerem Kreis, erledigte mit Haken. Neue Auswahl „Haus & Garten“ – die Aufgaben aus dem Wartungsplan (z. B. Rauchmelder, Dachrinne, Hecke) erscheinen im Widget, auch schon vor dem Fälligkeitstag mit Datum. Skript dafür einmal neu kopieren.'],
+      ['neu', 'Jahreszeiten: Unter Darstellung → Jahreszeiten (zum Aufklappen) gibt es die Knöpfe „Winter“ und „Weihnachten“. Im Fenster dazu wählst du den Zeitraum selbst (voreingestellt 1. Dezember – 6. Januar bzw. 1. – 26. Dezember) und schaltest einzelne Teile an oder aus: Schnee auf Schrift, Logo und Kacheln, Schneefall über den ganzen Bildschirm, Winterlandschaft auf dem Dashboard, Lichterkette, Weihnachtsmann, Mütze, Stechpalme und Bäumchen. Gilt für dein Profil auf allen Geräten.'],
+      ['info', 'Einstellungen: „Sprachsteuerung“ heißt jetzt „Sprachsteuerung & Widgets“, die drei Anleitungen (iPhone, Android, Widgets) sind beim Öffnen zugeklappt.'],
+      ['info', 'Geändert: js/entsperren.js (neu), js/geraete.js, js/verbindung.js, js/mitteilungen.js, js/konto.js, js/sprachsteuerung.js, js/winterzeit.js, css/winterzeit.css, js/design.js, js/sprachen.js, js/versionslog.js, pb_hooks/pinn-sitzungen.js, pb_hooks/sitzungen.pb.js, pb_hooks/pinn-sprache.js, pb_hooks/sprache.pb.js, src/ (Konto, Einstellungen, neues Fenster „Jahreszeiten“, Liste der Skripte, Version), index.html, pinn-setup.sh, i18n/ (45 neue Texte in allen vierzehn Sprachen), i18n/versionslog.en.js, alle READMEs. Server-Teil: Hooks einspielen, PocketBase startet neu.'],
+    ],
+  },
+  {
     v: '1.146', datum: '10.11.2026', titel: 'Schnee passend zu jeder Überschrift, Update-Uhrzeit nach Region',
     punkte: [
       ['neu', 'Schnee nach Maß: Der Schnee auf den Überschriften wird jetzt für jede Überschrift einzeln gezeichnet. pinn. misst jeden Buchstaben der ersten Zeile in der echten Schrift – der Schnee liegt direkt auf den Buchstaben (auf hohen höher, auf kleinen tiefer), hat Klumpen und hier und da einen Tropfen, lässt die Lücken zwischen Wörtern frei und spart Emoji aus. Nichts wird in die Länge gezogen, und es klappt in jeder Sprache und Schrift. Die Stechpalme sitzt jetzt auf dem Schnee am Ende des ersten Wortes.'],

@@ -13,11 +13,14 @@
 // Signed in (own profile; family admins for profiles of their family; main admin for all):
 //   GET  /api/pinn/sitzungen?benutzer=          { benutzer, eigenes, sitzungen[], sperre? }
 //   GET  /api/pinn/sitzungen/uebersicht?familie= (admins) per profile: number of devices and lock
-//   POST /api/pinn/sitzungen/abmelden           { id }  session ID or "dieses"
+//   POST /api/pinn/sitzungen/abmelden           { id }  session ID, "dieses" or "push:<id>" (push subscription
+//                                               without a session, since 1.147.0)
 //   POST /api/pinn/sitzungen/alle-abmelden      { benutzer? }  own profile: all other devices
 //                                               (response: new sign-in for this device),
 //                                               other profile: sign out everywhere
 //   POST /api/pinn/sitzungen/entsperren         { benutzer }  (admins) lift the lock after failed attempts
+//   POST /api/pinn/sitzungen/geraet             { name, typ, id, push? }  the app reports its device (since 1.147.0)
+//   POST /api/pinn/sitzungen/umbenennen         { id, name }  own name for a device ("" = detected name again)
 //
 // Schedule: at night 03:52 - merge duplicate devices and delete sessions whose
 //   sign-in expired long ago.
@@ -105,6 +108,26 @@ routerAdd("POST", "/api/pinn/sitzungen/alle-abmelden", (e) => {
     // Own profile: this device gets a new, valid sign-in (same session)
     if (r.own && r.rec) return $apis.recordAuthResponse(e, r.rec);
     return e.json(200, { success: true, abgemeldet: r.anzahl });
+}, $apis.requireAuth("benutzer"));
+
+// The app reports its device on every start (name, kind, device identifier; since 1.147.0)
+routerAdd("POST", "/api/pinn/sitzungen/geraet", (e) => {
+    const body = e.requestInfo().body || {};
+    try {
+        return e.json(200, require(`${__hooks}/pinn-sitzungen.js`).geraetMelden(e, body));
+    } catch (err) {
+        return e.json(400, { error: err.message });
+    }
+}, $apis.requireAuth("benutzer"));
+
+// Own name for a device (since 1.147.0)
+routerAdd("POST", "/api/pinn/sitzungen/umbenennen", (e) => {
+    const body = e.requestInfo().body || {};
+    try {
+        return e.json(200, require(`${__hooks}/pinn-sitzungen.js`).umbenennen(e, body.id, body.name));
+    } catch (err) {
+        return e.json(400, { error: err.message });
+    }
 }, $apis.requireAuth("benutzer"));
 
 routerAdd("POST", "/api/pinn/sitzungen/entsperren", (e) => {

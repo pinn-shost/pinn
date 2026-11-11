@@ -133,6 +133,16 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski und 🇺🇦 Українська**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.147.0
+
+**Face ID & Fingerabdruck, Geräte richtig erkannt, Widget mit Haus & Garten**
+
+- **Face ID, Touch ID, Fingerabdruck.** Unter Konto lässt sich pinn. pro Gerät sperren: beim Öffnen und nach einer Pause (sofort, 1, 5 oder 15 Minuten) fragt das Gerät nach Gesicht oder Finger – iPhone, iPad, Android, Mac mit Touch ID, Windows Hello. Das Gerät prüft selbst, nichts wird gesendet. Klappt es einmal nicht, meldest du dich mit dem Passwort neu an.
+- **Angemeldete Geräte.** Die App meldet bei jedem Start Name und Art des Geräts – kein „Browser“ mit Laptop-Symbol mehr auf dem Handy. Jeder Eintrag zeigt eine kurze ID, mit ✏️ bekommt er einen eigenen Namen, und Geräte, die nur Benachrichtigungen bekommen, stehen jetzt in der Liste und lassen sich entfernen.
+- **Widget.** Offene Aufgaben mit leerem Kreis, erledigte mit Haken, dazu die neue Gruppe „Haus & Garten“ für den Wartungsplan (schon vorab mit Datum). Skript einmal neu kopieren.
+- **Jahreszeiten.** Unter Darstellung → Jahreszeiten öffnen „Winter“ und „Weihnachten“ ein Fenster: Zeitraum selbst wählen (voreingestellt 1.12.–6.1. bzw. 1.–26.12.) und jeden Teil an- oder ausschalten – Schnee auf Schrift und Kacheln, Schneefall über den Bildschirm, Dashboard-Landschaft, Lichterkette, Weihnachtsmann, Mütze und Stechpalme. „Sprachsteuerung & Widgets“ startet mit zugeklappten Anleitungen.
+- Geändert: `js/entsperren.js` (neu), `js/geraete.js`, `js/verbindung.js`, `js/sprachsteuerung.js`, `js/winterzeit.js`, `pb_hooks/pinn-sitzungen.js`, `pb_hooks/sitzungen.pb.js`, `pb_hooks/pinn-sprache.js`, `src/`, `index.html`, `pinn-setup.sh`, `i18n/`, alle READMEs. Server-Teil: Hooks einspielen, PocketBase startet neu.
+
 ## Neu in 1.146.1
 
 **Schnee auf jedem Buchstaben, Winter auf dem Dashboard**
@@ -229,14 +239,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Schnellzugriff-Widget.** Ein zweites Skript („Schnellzugriff-Skript kopieren“) macht ein Widget mit drei Kacheln: Listen, Finanzen (mit dem Währungszeichen deiner Region) und Aufgaben. Ein Tipp öffnet die Seite von pinn. in Safari, weil iOS die installierte App nicht über einen Link öffnet – melde dich dort einmal an.
 - Geändert: `js/sprachsteuerung.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (neue und geänderte Texte in allen vierzehn Sprachen), `src/` (Version), `index.html`, `.github/scripts/check-hooks.js`, alle READMEs. Server (Hooks ersetzen, PocketBase startet neu): `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
 
-## Neu in 1.141.0
-
-**Widgets: getrennt wählbar und direkt abhakbar**
-
-- **Widgets nach Wunsch.** In den Einstellungen unter „Sprachsteuerung“ → „Widgets & Apple Watch“ hakst du Termine von heute, Aufgaben (ohne Haushalt), Haushaltsaufgaben und jede Einkaufsliste einzeln an und kopierst dann das Skript in Scriptable – für jedes Widget ein eigenes Skript. Aufgaben und Haushaltsaufgaben zusammen angehakt ergeben „Aufgaben mit Haushalt“.
-- **Abhaken im Widget.** Im mittleren und großen Widget tippst du eine Aufgabe oder einen Einkaufs-Eintrag an, und er ist auch in pinn. abgehakt (iOS öffnet dafür kurz Scriptable). Abgehakte Einträge bleiben durchgestrichen auf der Liste; „Einkauf abschließen“ machst du wie gewohnt in pinn. (ein Knopf unten im Widget öffnet die App). Profile mit Kindersperre können nichts abhaken. Wer das Skript aus 1.140.0 nutzt, kopiert es neu und ersetzt es in Scriptable.
-- Geändert: `js/sprachsteuerung.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (7 neue Texte in allen vierzehn Sprachen), `src/` (Version), `index.html`, `.github/scripts/check-hooks.js`, alle READMEs. Server (Hooks ersetzen, PocketBase startet neu): `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
-
 ## So funktioniert’s
 
 ```mermaid
@@ -265,7 +267,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.146.1` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.147.0` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

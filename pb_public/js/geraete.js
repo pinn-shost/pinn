@@ -4,7 +4,10 @@
    (the load order is listed at the bottom of index.html and in pinn-setup.sh).
    Contents: signed-in devices (Account → own devices, Manage profiles → devices & sign-in of a profile,
    main admin screen): list, sign out one/all others/everywhere, lift the lock after wrong passwords,
-   device count per profile, and the date helpers devFmtDate/devFmtWhen (also used by js/fehlerprotokoll.js). */
+   device count per profile, and the date helpers devFmtDate/devFmtWhen (also used by js/fehlerprotokoll.js).
+   Since 1.147.0: the app reports its device on every start (devReportDevice: name, kind, device ID, push address), the
+   icon follows the kind of device, every entry shows a short ID, a device can get an own name (✏️), and push
+   subscriptions without a session are listed as entries of their own („only notifications“) that can be removed. */
 
 /* ==========================================================
    Device management – signed-in devices per profile (pb_hooks/sitzungen.pb.js)
@@ -42,8 +45,12 @@ function devLockText(pin, sec) {
   return tk(pin ? 'devices.lockPinMinutes' : 'devices.lockSignInMinutes', { n: Math.ceil(s / 60) });
 }
 function devIcon(s) {
-  const n = String(s.name || '');
+  const n = String(s.erkannt || s.name || '');
+  if (s.art === 'push') return '🔔';
   if (s.art === 'dashboard' || /^Familien-Dashboard/.test(n)) return '🖥️';
+  if (s.typ === 'phone') return '📱';
+  if (s.typ === 'tablet') return '📲';
+  if (s.typ === 'desktop') return '💻';
   if (/iPhone|Android-Handy/.test(n)) return '📱';
   if (/iPad|Tablet/.test(n)) return '📲';
   return '💻';
@@ -51,17 +58,22 @@ function devIcon(s) {
 function devRowsHtml(list) {
   if (!list.length) return `<p class="sm-empty">${escapeHtml(tk('devices.none'))}</p>`;
   return list.map(s => {
-    const sub = [tk('devices.lastActive', { when: devFmtWhen(s.zuletzt) })];
-    if (s.seit) sub.push(tk('devices.signedInSince', { date: devFmtDate(s.seit) }));
-    if (s.push) sub.push('🔔 Push');
+    const sub = [];
+    if (s.nurPush) sub.push(tk('devices.pushOnly'));
+    sub.push(tk(s.nurPush ? 'devices.pushSince' : 'devices.lastActive', { when: devFmtWhen(s.zuletzt) }));
+    if (s.seit && !s.nurPush) sub.push(tk('devices.signedInSince', { date: devFmtDate(s.seit) }));
+    if (s.push && !s.nurPush) sub.push('🔔 Push');
+    if (s.kurz) sub.push(tk('devices.shortId', { id: s.kurz }));
+    if (s.eigenname && s.erkannt && s.erkannt !== s.eigenname) sub.push(s.erkannt);
     if (s.ip) sub.push(s.ip);
+    const rename = s.nurPush ? '' : `<button type="button" class="dev-rename" data-id="${escapeHtml(s.id)}" data-name="${escapeHtml(s.eigenname || '')}" data-auto="${escapeHtml(s.erkannt || '')}" title="${escapeHtml(tk('devices.rename'))}" aria-label="${escapeHtml(tk('devices.rename'))}" style="margin-left:4px;opacity:.55;font-size:.85em;background:none;border:0;padding:0 2px;cursor:pointer">✏️</button>`;
     return `<div class="sm-row dev-row">
       <div class="sm-row-ico">${devIcon(s)}</div>
       <div class="sm-row-main">
-        <span class="sm-row-title">${escapeHtml(s.name || tk('devices.device'))}${s.dieses ? ` <span class="sm-tag">${escapeHtml(tk('devices.thisDevice'))}</span>` : ''}</span>
+        <span class="sm-row-title">${escapeHtml(s.name || tk('devices.device'))}${rename}${s.dieses ? ` <span class="sm-tag">${escapeHtml(tk('devices.thisDevice'))}</span>` : ''}</span>
         <span class="sm-row-sub">${escapeHtml(sub.join(' · '))}</span>
       </div>
-      <button type="button" class="sm-btn sm-small dev-out shrink-0" data-id="${escapeHtml(s.id)}" data-name="${escapeHtml(s.name || '')}" data-dieses="${s.dieses ? '1' : ''}">${escapeHtml(tk('common.logOut'))}</button>
+      <button type="button" class="sm-btn sm-small dev-out shrink-0" data-id="${escapeHtml(s.id)}" data-name="${escapeHtml(s.name || '')}" data-dieses="${s.dieses ? '1' : ''}" data-push="${s.nurPush ? '1' : ''}">${escapeHtml(tk(s.nurPush ? 'common.remove' : 'common.logOut'))}</button>
     </div>`;
   }).join('');
 }
@@ -75,6 +87,19 @@ async function devFetchList(userId) {
 // Sign out one device; „Dieses Gerät“ (this device) = sign out the normal way
 async function devLogoutOne(btn, statusEl, after) {
   const name = btn.dataset.name || tk('devices.device');
+  if (btn.dataset.push === '1') {
+    if (!confirm(tk('devices.pushRemoveConfirm', { name }))) return;
+    btn.disabled = true;
+    statusEl.textContent = '';
+    try {
+      await postJson('/api/pinn/sitzungen/abmelden', { id: btn.dataset.id });
+      statusEl.textContent = tk('devices.pushRemoved');
+    } catch (e) {
+      statusEl.textContent = e.message;
+    }
+    after();
+    return;
+  }
   if (btn.dataset.dieses === '1') {
     if (confirm(tk('devices.logoutThisConfirm'))) logout();
     return;
@@ -108,6 +133,51 @@ async function devLogoutOthers(statusEl, after) {
   after();
 }
 
+// Own name for a device (empty = the detected name again)
+async function devRename(btn, statusEl, after) {
+  const now = btn.dataset.name || '';
+  const typed = prompt(tk('devices.renamePrompt', { name: btn.dataset.auto || tk('devices.device') }), now);
+  if (typed === null) return;
+  statusEl.textContent = '';
+  try {
+    await postJson('/api/pinn/sitzungen/umbenennen', { id: btn.dataset.id, name: typed.trim().slice(0, 60) });
+  } catch (e) {
+    statusEl.textContent = e.message;
+  }
+  after();
+}
+function devWireRows(listEl, statusEl, after) {
+  listEl.querySelectorAll('.dev-out').forEach(b => b.addEventListener('click', () => devLogoutOne(b, statusEl, after)));
+  listEl.querySelectorAll('.dev-rename').forEach(b => b.addEventListener('click', () => devRename(b, statusEl, after)));
+}
+
+/* ---------- Report this device (name, kind, device ID) – on every start and before the list is shown ---------- */
+let devReportedAt = 0;
+async function devReportDevice(force) {
+  if (!force && Date.now() - devReportedAt < 10 * 60 * 1000) return;
+  try {
+    if (!pb.authStore.isValid || !navigator.onLine) return;
+    if (typeof isCurrentUserMainAdmin === 'function' && isCurrentUserMainAdmin()) return;
+  } catch (e) { return; }
+  devReportedAt = Date.now();
+  let push = '';
+  try {
+    if (typeof currentPushSubscription === 'function') {
+      const sub = await Promise.race([currentPushSubscription(), new Promise(r => setTimeout(() => r(null), 3000))]);
+      push = sub && sub.endpoint ? sub.endpoint : '';
+    }
+  } catch (e) { push = ''; }
+  try {
+    await apiFetch('/api/pinn/sitzungen/geraet', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: pinnDeviceName(), typ: pinnDeviceType(), id: pinnDeviceId(), push }),
+    });
+  } catch (e) { /* older server or offline – nothing to do */ }
+}
+// Shortly after the start (the sign-in is renewed first) and when pinn. comes back after a while
+setTimeout(() => devReportDevice(false), 6000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) devReportDevice(false); });
+
 /* ---------- Account: own devices ---------- */
 let devSectionLoading = false;
 async function renderDevicesSection() {
@@ -122,6 +192,7 @@ async function renderDevicesSection() {
   devSectionLoading = true;
   let data = null;
   try {
+    await devReportDevice(true);
     data = await devFetchList('');
   } catch (e) {
     devSectionLoading = false;
@@ -134,7 +205,7 @@ async function renderDevicesSection() {
   list.innerHTML = devRowsHtml(ses);
   btn.classList.toggle('hidden', !ses.some(s => !s.dieses) && !data.aktuellOhneSitzung);
   const status = document.getElementById('devicesStatus');
-  list.querySelectorAll('.dev-out').forEach(b => b.addEventListener('click', () => devLogoutOne(b, status, renderDevicesSection)));
+  devWireRows(list, status, renderDevicesSection);
 }
 document.getElementById('devicesLogoutOthersBtn').addEventListener('click', () =>
   devLogoutOthers(document.getElementById('devicesStatus'), renderDevicesSection));
@@ -209,7 +280,7 @@ async function loadDevModal() {
   const ses = data.sitzungen || [];
   list.innerHTML = devRowsHtml(ses);
   const status = document.getElementById('devModalStatus');
-  list.querySelectorAll('.dev-out').forEach(b => b.addEventListener('click', () => devLogoutOne(b, status, loadDevModal)));
+  devWireRows(list, status, loadDevModal);
   allBtn.textContent = tk(u.own ? 'devices.logoutOthers' : 'devices.logoutEverywhere');
   allBtn.classList.toggle('hidden', u.own ? (!ses.some(s => !s.dieses) && !data.aktuellOhneSitzung) : false);
 }

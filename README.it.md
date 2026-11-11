@@ -133,6 +133,15 @@ Tocca un’immagine per aprirla a dimensione intera.
 
 pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
 
+## Novità della 1.147.0
+
+**Face ID e impronta, dispositivi riconosciuti, widget con casa e giardino**
+
+- **Face ID, Touch ID, impronta.** In Account puoi bloccare pinn. su ogni dispositivo: all'apertura e dopo una pausa il dispositivo chiede volto o dito. Lo controlla il dispositivo stesso, non viene inviato nulla.
+- **Dispositivi.** Nome e tipo corretti (niente più «Browser» con l'icona del portatile sul telefono), ID breve, nome personale con ✏️; i dispositivi che ricevono solo notifiche compaiono nell'elenco.
+- **Widget.** Cerchio vuoto per le attività aperte, spunta per quelle fatte, nuovo gruppo «Casa e giardino». Copia di nuovo lo script.
+- **Stagioni.** In Aspetto → Stagioni scegli periodo e singole parti (neve, nevicata, luci, Babbo Natale …) per Inverno e Natale; «Controllo vocale e widget» con le guide chiuse. Parte del server: installare gli hook.
+
 ## Novità della 1.146.1
 
 **Neve su ogni lettera, inverno sulla dashboard**
@@ -221,14 +230,6 @@ pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Widget di accesso rapido.** I riquadri sono un po’ più piccoli, così tutto resta dentro il widget, e hanno un aspetto più moderno: un badge dorato rotondo con il simbolo, un bordo sottile e uno sfumato scuro. Un tocco apre ancora pinn. in Safari, perché iOS non apre l’app installata da un link.
 - Modificati: `js/sprachsteuerung.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (versione), `index.html`, tutti i README. Nessuna parte server. Copia di nuovo gli script e sostituiscili in Scriptable.
 
-## Novità della 1.141.1
-
-**Widget: stile Apple e un widget di accesso rapido**
-
-- **Aspetto come Promemoria di Apple.** Il widget delle attività ora è grigio scuro, con testo bianco grande e cerchi rotondi. Le attività spuntate scendono in basso, diventano grigie e il cerchio si riempie. Le liste della spesa non fanno più parte del widget; scegli tra appuntamenti, attività e faccende di casa.
-- **Widget di accesso rapido.** Un secondo script («Copia script di accesso rapido») crea un widget con tre riquadri: liste, finanze (con il simbolo della valuta della tua regione) e attività. Un tocco apre quella pagina di pinn. in Safari, perché iOS non apre l’app installata da un link; accedi lì una volta.
-- Modificati: `js/sprachsteuerung.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (testi nuovi e modificati in tutte le quattordici lingue), `src/` (versione), `index.html`, `.github/scripts/check-hooks.js`, tutti i README. Server (sostituire gli hook, PocketBase si riavvia): `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
-
 ## Come funziona
 
 ```mermaid
@@ -257,7 +258,7 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 ## Installazione
 
 1. Scarica lo ZIP dell’[ultima release](https://github.com/pinn-shost/pinn/releases/latest) e decomprimilo.
-2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.146.1` o `pinn-main`) così com’è.
+2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.147.0` o `pinn-main`) così com’è.
 3. Accedi via SSH ed esegui:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
