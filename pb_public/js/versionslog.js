@@ -22,6 +22,15 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.148', datum: '12.11.2026', titel: 'Weiter, wo du aufgehört hast',
+    punkte: [
+      ['neu', 'Familien-Dashboard: Öffnest du dein Profil nach einer Pause wieder mit der PIN, landest du dort, wo du aufgehört hast – nicht mehr auf der Übersicht. Ein offenes Rezept ist wieder offen, mit der eingestellten Personenzahl und an der Stelle, bis zu der du gelesen hast.'],
+      ['neu', 'Gemerkt werden außerdem die Seite (z. B. Listen, Aufgaben, Finanzen), die geöffnete Liste, der Reiter in Zuhause und bei Fahrzeugen und auf dem Handy der Reiter der Übersicht. Jedes Profil hat seinen eigenen Platz.'],
+      ['info', 'Das gilt, solange die App geöffnet bleibt (auch im Hintergrund) und höchstens 12 Stunden. Nach dem Schließen der App, nach „Abmelden“ auf dem eigenen Gerät oder über einen Link aus einer Benachrichtigung startest du wie gewohnt. Auch auf dem eigenen Gerät bleibt die Seite jetzt erhalten, wenn die App neu lädt (z. B. nach einem Update).'],
+      ['info', 'Geändert: js/fortsetzen.js (neu), js/appstart.js, js/dashboard.js, js/anmeldung.js, js/rezepte.js, js/sprachen.js, js/versionslog.js, src/ (Version, rahmen.html), index.html, pinn-setup.sh, i18n/versionslog.en.js, alle READMEs. Kein Server-Teil.'],
+    ],
+  },
+  {
     v: '1.147', datum: '11.11.2026', titel: 'Face ID & Fingerabdruck, Geräte richtig erkannt, Widget mit Haus & Garten, Jahreszeiten nach Wunsch',
     punkte: [
       ['neu', 'Face ID, Touch ID und Fingerabdruck: Unter Konto lässt sich pinn. pro Gerät sperren. Beim Öffnen und nach einer Pause (sofort, 1, 5 oder 15 Minuten) fragt das Handy nach Gesicht oder Finger – auf iPhone und iPad, Android und Computern mit Touch ID oder Windows Hello. Das Gerät prüft selbst, pinn. sieht davon nichts. Klappt es nicht, meldest du dich mit dem Passwort neu an. Nicht auf dem Familien-Dashboard und nicht für Gäste.'],

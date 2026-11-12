@@ -68,6 +68,7 @@ async function bootApp() {
   attachSwipeNavigation(document.getElementById('calendarBody'));
   checkForAppUpdate(false); // set the base value for the update detection
   setView('uebersicht');
+  try { resumeRestore(); resumeStart(); } catch (e) { console.warn('Could not continue at the last page', e); } // back to where this profile left off (js/fortsetzen.js)
   setTimeout(() => { try { hlpTourMaybeStart(); } catch (e) { /* ignore */ } }, 1800); // tutorial for a new profile (js/hilfe.js)
   openDashboardKidPageIfNeeded(); // child profile on the dashboard: go straight to the kids page
   setTimeout(() => { try { bdayCheck(); } catch (e) { /* ignore */ } }, 1500); // birthday: play Happy Birthday once

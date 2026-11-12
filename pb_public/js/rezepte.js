@@ -614,12 +614,17 @@ function renderRecipeWeekSlider() {
 
 /* ---------- Recipe detail page ---------- */
 let recipeDetailCurrentServings = 2;
+// Opened recipe ({ id } or { pub: id of the public entry }) and a setter for the servings –
+// js/fortsetzen.js uses both to continue at the same recipe
+let recipeDetailCurrent = null;
+let recipeDetailSetServings = null;
 
 // publicEntry set = public recipe of another family (view/take over only)
 function openRecipeDetailPage(recipeId, publicEntry = null) {
   const r = publicEntry ? publicEntryToRecipe(publicEntry) : recipes.find(x => x.id === recipeId);
   if (!r) return;
   const isForeign = !!publicEntry;
+  recipeDetailCurrent = isForeign ? { pub: publicEntry.id } : { id: r.id };
 
   document.getElementById('recipeListHeader').classList.add('hidden');
   document.getElementById('recipeListContainer').classList.add('hidden');
@@ -702,6 +707,7 @@ function openRecipeDetailPage(recipeId, publicEntry = null) {
       renderRecipeItemsHtml(r.ingredients, false, (line) => scaleIngredientLine(line, factor));
   }
   renderDetailServings();
+  recipeDetailSetServings = (n) => { recipeDetailCurrentServings = Math.max(1, Math.round(n) || baseServings); renderDetailServings(); };
   document.getElementById('recipeDetailServingsMinus').onclick = () => {
     recipeDetailCurrentServings = Math.max(1, recipeDetailCurrentServings - 1);
     renderDetailServings();
@@ -787,6 +793,8 @@ function scrollRecipeDetailToTop() {
 let recipeDetailOpenedFromUebersicht = false;
 
 function closeRecipeDetailPage() {
+  recipeDetailCurrent = null;
+  recipeDetailSetServings = null;
   document.getElementById('recipeDetailView').classList.add('hidden');
   document.getElementById('recipeListHeader').classList.remove('hidden');
   document.getElementById('recipeListContainer').classList.remove('hidden');

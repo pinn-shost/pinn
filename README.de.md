@@ -133,6 +133,15 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski und 🇺🇦 Українська**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.148.0
+
+**Weiter, wo du aufgehört hast**
+
+- **Familien-Dashboard.** Öffnest du dein Profil nach einer Pause wieder mit der PIN, landest du dort, wo du aufgehört hast – nicht mehr auf der Übersicht. Ein offenes Rezept ist wieder offen, mit der eingestellten Personenzahl und an der Stelle, bis zu der du gelesen hast.
+- **Nicht nur Rezepte.** Gemerkt werden auch die Seite (z. B. Listen, Aufgaben, Finanzen), die geöffnete Liste, der Reiter in Zuhause und bei Fahrzeugen und auf dem Handy der Reiter der Übersicht. Jedes Profil hat seinen eigenen Platz.
+- **Wie lange.** Solange die App geöffnet bleibt (auch im Hintergrund), höchstens 12 Stunden. Nach dem Schließen der App, nach „Abmelden“ auf dem eigenen Gerät oder über einen Link aus einer Benachrichtigung startest du wie gewohnt. Auch auf dem eigenen Gerät bleibt die Seite erhalten, wenn die App neu lädt, z. B. nach einem Update.
+- Geändert: `js/fortsetzen.js` (neu), `js/appstart.js`, `js/dashboard.js`, `js/anmeldung.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`, `pinn-setup.sh`, alle READMEs. Kein Server-Teil.
+
 ## Neu in 1.147.1
 
 **Geräte einmal in der Liste, Link in den Anleitungen**
@@ -232,14 +241,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Hinweis und Push wie bei den anderen Ausblicken.** Ein Hinweis oben bis zum 10. Januar und eine Push-Nachricht, die du in den Einstellungen abschalten kannst. Ausgaben siehst du nur mit Zugriff auf die Finanzen; Gäste bekommen keine Push-Nachricht.
 - Geändert: `js/ausblick.js`, `js/hinweise.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (32 neue und geänderte Texte in allen vierzehn Sprachen), `src/` (Version, Einstellungen), `index.html`, alle READMEs. Server (Hooks ersetzen, PocketBase startet neu): `pb_hooks/pinn-ausblick.js`, `pb_hooks/ausblick.pb.js`.
 
-## Neu in 1.141.2
-
-**Widgets: Gold statt Grün, Haken, modernere Kacheln**
-
-- **Gold und Haken.** Die Widgets nutzen jetzt das Gold der App statt Grün, und offene Aufgaben zeigen einen Haken statt eines Kreises. Abgehakte Aufgaben behalten einen grauen Haken und bleiben unter den offenen.
-- **Schnellzugriff-Widget.** Die Kacheln sind etwas kleiner, damit alles im Widget bleibt, und wirken moderner: ein runder goldener Kreis mit dem Symbol, ein feiner Rand und ein dunkler Verlauf. Ein Tipp öffnet pinn. weiter in Safari, weil iOS die installierte App nicht über einen Link öffnet.
-- Geändert: `js/sprachsteuerung.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (Version), `index.html`, alle READMEs. Kein Server-Teil. Skripte neu kopieren und in Scriptable ersetzen.
-
 ## So funktioniert’s
 
 ```mermaid
@@ -268,7 +269,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.147.1` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.148.0` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

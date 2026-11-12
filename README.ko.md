@@ -133,6 +133,15 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.148.0의 새 소식
+
+**멈춘 곳에서 이어서**
+
+- **가족 대시보드.** 잠시 쉬었다가 PIN으로 프로필을 다시 열면 개요가 아니라 멈췄던 곳으로 돌아갑니다. 열어 둔 레시피는 선택한 인원수 그대로, 읽던 위치에서 다시 열립니다.
+- **레시피만이 아닙니다.** 페이지(예: 목록, 할 일, 가계부), 열어 둔 목록, ‘집’과 ‘차량’의 탭, 휴대폰에서는 개요의 탭도 기억합니다. 프로필마다 따로 기억합니다.
+- **유지 시간.** 앱이 열려 있는 동안(백그라운드 포함), 최대 12시간입니다. 앱을 닫은 뒤, 내 기기에서 ‘로그아웃’한 뒤, 알림의 링크로 들어올 때는 평소처럼 시작합니다. 내 기기에서도 업데이트 후처럼 앱이 다시 로드될 때 페이지가 유지됩니다.
+- 변경: `js/fortsetzen.js`(신규), `js/appstart.js`, `js/dashboard.js`, `js/anmeldung.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`, `pinn-setup.sh`, 모든 README. 서버 부분 없음.
+
 ## 1.147.1의 새 소식
 
 **기기는 한 번만 표시, 링크는 안내 안에**
@@ -223,14 +232,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - **삭제할 때 안내.** 목적지와 기간이 있는 짐 목록을 삭제하면, 그 여행이 캘린더와 올해 돌아보기에서도 사라진다고 pinn.이 알려 줘요.
 - 변경: `js/listen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (14개 언어의 새 문구 1개), `src/` (버전), `index.html`, 모든 README. 서버 쪽 변경은 없어요.
 
-## 1.142.0의 새 소식
-
-**올해 돌아보기: 지출, 만든 요리, 여행**
-
-- **올해 돌아보기.** 12월 28일 오후 6시부터(그리고 '설정 → 전망'에서 언제든) pinn.이 한 해를 한눈에 보여 줘요. 월별 막대가 있는 지출, 카테고리와 가장 큰 지출, 만든 요리와 즐겨 만든 요리, 모든 여행과 여행한 날수예요. 위쪽 화살표로 이전 해로 넘겨 볼 수 있어요.
-- **알림과 푸시는 다른 전망과 같아요.** 위쪽 알림은 1월 10일까지 보이고, 푸시 알림은 설정에서 끌 수 있어요. 지출은 재정 접근 권한이 있을 때만 보이고, 게스트에게는 푸시 알림이 가지 않아요.
-- 변경: `js/ausblick.js`, `js/hinweise.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (14개 언어의 새 문구와 바뀐 문구 32개), `src/` (버전, 설정), `index.html`, 모든 README. 서버(hooks 교체, PocketBase가 다시 시작돼요): `pb_hooks/pinn-ausblick.js`, `pb_hooks/ausblick.pb.js`.
-
 ## 작동 방식
 
 ```mermaid
@@ -259,7 +260,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.147.1` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.148.0` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

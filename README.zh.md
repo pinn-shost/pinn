@@ -133,6 +133,15 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski和 🇺🇦 Українська**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.148.0 新功能
+
+**从上次离开的地方继续**
+
+- **家庭看板。** 休息之后用 PIN 重新打开自己的个人资料时，会回到上次离开的地方，而不再是总览。打开的食谱仍然打开着——保留所选的份数，并停在你读到的位置。
+- **不只是食谱。** 还会记住页面（例如清单、任务、财务）、打开的清单、“住家”和“车辆”里的标签页，以及手机上总览的标签页。每个个人资料都有自己的位置。
+- **保留多久。** 只要应用保持打开（包括在后台），最长 12 小时。关闭应用后、在自己的设备上“退出登录”后，或从通知里的链接进入时，照常从头开始。在自己的设备上，应用重新加载时（例如更新之后）也会保留页面。
+- 已更改：`js/fortsetzen.js`（新增）、`js/appstart.js`、`js/dashboard.js`、`js/anmeldung.js`、`js/rezepte.js`、`js/sprachen.js`、`js/versionslog.js`、`src/`、`index.html`、`pinn-setup.sh`、所有 README。没有服务器部分。
+
 ## 1.147.1 新功能
 
 **设备只显示一次，链接放进说明里**
@@ -223,14 +232,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 - **删除时的提示。** 删除带目的地和日期的行李清单时，pinn. 现在会提醒：这次旅行也会从日历和年度回顾中消失。
 - 更改：`js/listen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`、`i18n/`（十四种语言中的 1 条新文本）、`src/`（版本）、`index.html`、所有 README。没有服务器部分。
 
-## 1.142.0 新功能
-
-**年度回顾：支出、做过的菜和旅行**
-
-- **年度回顾。** 12 月 28 日 18 点起（也可随时在“设置 → 展望”中打开），pinn. 会一目了然地展示你们的一年：带月度柱状图的支出、各分类和单笔最大支出，做过的菜以及最爱的菜式，还有所有旅行及外出天数。点按顶部的箭头可翻看往年。
-- **提示和推送与其他展望相同。** 顶部提示会保留到 1 月 10 日，推送通知可在设置中关闭。只有拥有财务访问权限才能看到支出；访客不会收到推送通知。
-- 更改：`js/ausblick.js`, `js/hinweise.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`、`i18n/`（十四种语言中的 32 条新增和更改文本）、`src/`（版本、设置）、`index.html`、所有 README。服务器（替换 hooks，PocketBase 会重启）：`pb_hooks/pinn-ausblick.js`、`pb_hooks/ausblick.pb.js`。
-
 ## 工作原理
 
 ```mermaid
@@ -259,7 +260,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.147.1` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.148.0` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

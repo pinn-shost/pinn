@@ -264,8 +264,10 @@ function dashboardTimeoutMinutes() {
   return Number.isFinite(n) && n >= 0 ? n : DASH_DEFAULT_TIMEOUT;
 }
 // Back to the profile selection. Changes not yet sent stay saved on the device and
-// are sent with the next opened profile (same family).
+// are sent with the next opened profile (same family). The opened page is noted first, so the profile
+// continues there when it is opened again (js/fortsetzen.js).
 function returnToDashboard() {
+  try { resumeRemember(); } catch (e) { /* start at the overview next time */ }
   ssSet(SS_DASH_ACTIVE, null);
   ssSet(SS_DASH_KID, null);
   pb.authStore.clear();

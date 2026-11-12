@@ -129,6 +129,15 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski et 🇺🇦 Українська**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.148.0
+
+**Reprends là où tu t'étais arrêté**
+
+- **Tableau de bord familial.** Quand tu rouvres ton profil avec le code PIN après une pause, tu arrives là où tu t'étais arrêté et non plus sur l'aperçu. Une recette ouverte est de nouveau ouverte, avec le nombre de portions choisi et à l'endroit où tu en étais.
+- **Pas seulement les recettes.** La page (p. ex. Listes, Tâches, Finances), la liste ouverte, l'onglet dans Maison et dans Véhicules et, sur le téléphone, l'onglet de l'aperçu sont aussi mémorisés. Chaque profil a sa propre place.
+- **Combien de temps.** Tant que l'app reste ouverte (aussi en arrière-plan), 12 heures au maximum. Après la fermeture de l'app, après « Se déconnecter » sur ton propre appareil ou en arrivant par un lien d'une notification, tu démarres comme d'habitude. Sur ton propre appareil, la page est aussi conservée quand l'app se recharge, p. ex. après une mise à jour.
+- Modifié : `js/fortsetzen.js` (nouveau), `js/appstart.js`, `js/dashboard.js`, `js/anmeldung.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`, `pinn-setup.sh`, tous les README. Pas de partie serveur.
+
 ## Nouveautés de la 1.147.1
 
 **Appareils listés une seule fois, lien dans les guides**
@@ -252,15 +261,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Cocher dans le widget.** Dans le widget moyen ou grand, touchez une tâche ou un article : c’est aussi coché dans pinn. (iOS ouvre brièvement Scriptable). Ce qui est coché reste dans la liste, barré ; « Terminer les courses » se fait comme d’habitude dans pinn. (un bouton en bas du widget ouvre l’app). Les profils avec contrôle parental ne peuvent rien cocher. Si vous utilisez déjà le script de la 1.140.0, copiez-le de nouveau et remplacez-le dans Scriptable.
 - Modifié : `js/sprachsteuerung.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (7 nouveaux textes dans les quatorze langues), `src/` (version), `index.html`, `.github/scripts/check-hooks.js`, tous les README. Serveur (remplacer les hooks, PocketBase redémarre) : `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
 
-## Nouveautés de la 1.140.0
-
-**Widgets et Apple Watch**
-
-- **Widgets.** Dans Réglages → Commande vocale, il y a maintenant « Widgets et Apple Watch ». Avec l’app gratuite Scriptable, un widget sur l’écran d’accueil ou de verrouillage affiche les rendez-vous du jour, les tâches ouvertes et le nombre d’articles de courses ; le script prêt à l’emploi se copie d’un geste.
-- **Apple Watch.** Avec un raccourci (« Obtenir le contenu de l’URL » → « Afficher le résultat », « Afficher sur l’Apple Watch »), vous voyez aujourd’hui, demain, la liste de courses ou tout sur la montre, ou vous vous le faites lire. Les étapes sont dans l’app.
-- C’est le même lien secret que pour Siri, en lecture seule, et les invités ne l’ont pas. Les textes sont dans la langue du profil.
-- Modifié : `js/sprachsteuerung.js`, `js/versionslog.js`, `i18n/` (16 nouveaux textes et un sous-titre modifié dans les quatorze langues), `src/` (`index.html`, réglages), `.github/scripts/check-hooks.js`, tous les README. Serveur (remplacer les hooks, PocketBase redémarre) : `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
-
 ## Comment ça marche
 
 ```mermaid
@@ -287,7 +287,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.147.1` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.148.0` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

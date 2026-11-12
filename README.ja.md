@@ -133,6 +133,15 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski、🇺🇦 Українська** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.148.0の新機能
+
+**中断したところから再開**
+
+- **家族ダッシュボード。** 休憩のあとPINでプロフィールを開き直すと、概要ではなく中断した場所に戻ります。開いていたレシピは、選んだ人数分のまま、読んでいた位置で再び開きます。
+- **レシピ以外も。** ページ（リスト、タスク、家計など）、開いていたリスト、「住まい」と「車両」のタブ、スマートフォンでは概要のタブも記憶されます。プロフィールごとに別々に記憶します。
+- **有効な時間。** アプリを開いたままにしている間（バックグラウンドを含む）、最長12時間です。アプリを閉じたあと、自分のデバイスで「ログアウト」したあと、通知のリンクから開いたときは、これまでどおりに始まります。自分のデバイスでも、更新後などにアプリが再読み込みされたときはページが保たれます。
+- 変更：`js/fortsetzen.js`（新規）、`js/appstart.js`、`js/dashboard.js`、`js/anmeldung.js`、`js/rezepte.js`、`js/sprachen.js`、`js/versionslog.js`、`src/`、`index.html`、`pinn-setup.sh`、すべてのREADME。サーバー側の変更はありません。
+
 ## 1.147.1の新機能
 
 **デバイスは1回だけ表示、リンクはガイドの中に**
@@ -223,14 +232,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - **削除時の注意。** 目的地と日付のある持ち物リストを削除すると、その旅行がカレンダーと1年のふりかえりからも消えることを pinn. が知らせます。
 - 変更：`js/listen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`、`i18n/`（14言語すべての新規文言1件）、`src/`（バージョン）、`index.html`、すべての README。サーバー側の変更はありません。
 
-## 1.142.0の新機能
-
-**1年のふりかえり：支出、作った料理、旅行**
-
-- **1年のふりかえり。** 12月28日18時から（「設定 → 見通し」からはいつでも）、pinn. が1年をひと目で見せます。月ごとの棒グラフ付きの支出、カテゴリと最も大きな支出、作った料理とよく作ったもの、すべての旅行と旅行日数です。上の矢印で前の年に戻れます。
-- **お知らせとプッシュは他の見通しと同じです。** 上部のお知らせは1月10日まで表示され、プッシュ通知は設定でオフにできます。支出は家計へのアクセス権がある場合のみ表示され、ゲストにはプッシュ通知が届きません。
-- 変更：`js/ausblick.js`, `js/hinweise.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`、`i18n/`（14言語すべての新規・変更文言32件）、`src/`（バージョン、設定）、`index.html`、すべての README。サーバー（hooks を置き換え、PocketBase が再起動）：`pb_hooks/pinn-ausblick.js`、`pb_hooks/ausblick.pb.js`。
-
 ## しくみ
 
 ```mermaid
@@ -259,7 +260,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.147.1`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.148.0`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

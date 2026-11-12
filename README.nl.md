@@ -110,6 +110,15 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski en 🇺🇦 Українська**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.148.0
+
+**Verder waar je gebleven was**
+
+- **Familiedashboard.** Open je je profiel na een pauze opnieuw met de pincode, dan kom je uit waar je gebleven was en niet meer op het overzicht. Een geopend recept is weer open, met het gekozen aantal personen en op de plek tot waar je gelezen had.
+- **Niet alleen recepten.** Ook de pagina (bijv. Lijsten, Taken, Financiën), de geopende lijst, het tabblad in Thuis en bij Voertuigen en op de telefoon het tabblad van het overzicht worden onthouden. Elk profiel heeft zijn eigen plek.
+- **Hoe lang.** Zolang de app open blijft (ook op de achtergrond), hooguit 12 uur. Na het sluiten van de app, na „Afmelden“ op je eigen apparaat of via een link uit een melding start je zoals gewoonlijk. Ook op je eigen apparaat blijft de pagina behouden als de app opnieuw laadt, bijv. na een update.
+- Gewijzigd: `js/fortsetzen.js` (nieuw), `js/appstart.js`, `js/dashboard.js`, `js/anmeldung.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`, `pinn-setup.sh`, alle README's. Geen serverdeel.
+
 ## Nieuw in 1.147.1
 
 **Apparaten één keer in de lijst, link in de handleidingen**
@@ -169,14 +178,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Automatische updates** liepen niet op het gekozen tijdstip: de server rekende in UTC in plaats van Europe/Berlin-tijd en zat er één tot twee uur naast; ook „Volgende controle” toonde een verkeerde tijd. Nu werkt de tijd zoals bij alle andere herinneringen (zomer- en wintertijd inbegrepen).
 - Gewijzigd: `pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, alle README’s. Server (hooks vervangen, PocketBase herstart): `pb_hooks/pinn-system.js`.
 
-## Nieuw in 1.144.0
-
-**Dashboard: ongelezen chats en openstaande taken onder iedere persoon**
-
-- **Twee getallen onder iedere persoon.** Op de profielkeuze van het gezinsdashboard (iPad) toont een tekstballon de ongelezen chatberichten en een vinkje de openstaande taken die aan de beurt zijn – zichtbaar zonder in te loggen. Bij 0 verdwijnt het, boven de 9 staat er 9⁺. De getallen worden elke minuut bijgewerkt.
-- **Standaard aan.** De instelling uit 1.143.0 stond uit en toonde alleen taken; nu staan beide getallen voor elk gezin aan. Een beheerder kan ze uitzetten onder Account → ‘Taken en chats op het dashboard’. Gedempte chats tellen niet mee, als ongelezen gemarkeerde chats tellen als één – net als het getal achter ‘Chat’ in het menu.
-- Gewijzigd: `js/profilauswahl.js`, `js/dashboardkonto.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (1 nieuwe en 4 gewijzigde teksten in alle veertien talen), `src/` (versie, accountpagina), `index.html`, alle README’s. Server (hooks vervangen, PocketBase start opnieuw): `pb_hooks/pinn-chat.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`.
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -186,7 +187,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.147.1` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.148.0` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -96,6 +96,7 @@ async function logout() {
   try { hasPending = !!localStorage.getItem('pinn.pendingSync') || !!localStorage.getItem('pinn.outbox') || !!localStorage.getItem(LS_AREAS_PENDING_KEY); } catch (e) { /* ignore */ }
   if (hasPending && !confirm(tk('app.logoutUnsynced'))) return;
   clearAppBadgeNow(); // logged out: no number on the app icon any more
+  try { resumeForget(); } catch (e) { /* ignore */ } // the next login starts at the overview
   // After logging out, this device should not receive personal notifications any more
   try { await Promise.race([disablePushOnThisDevice(), new Promise(r => setTimeout(r, 3000))]); } catch (e) { /* ignore */ }
   // device management: end the session of this device on the server

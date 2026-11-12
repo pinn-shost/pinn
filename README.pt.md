@@ -133,6 +133,15 @@ Toque em qualquer imagem para abri-la em tamanho real.
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.148.0
+
+**Continue de onde parou**
+
+- **Painel da família.** Ao abrir de novo o seu perfil com o PIN depois de uma pausa, você chega onde parou, e não mais na visão geral. Uma receita aberta volta a estar aberta, com o número de porções escolhido e no ponto até onde você tinha lido.
+- **Não só receitas.** Também são lembrados a página (p. ex. Listas, Tarefas, Finanças), a lista aberta, a aba em Casa e em Veículos e, no celular, a aba da visão geral. Cada perfil tem o seu próprio lugar.
+- **Por quanto tempo.** Enquanto o app continuar aberto (também em segundo plano), no máximo 12 horas. Depois de fechar o app, depois de «Sair» no seu próprio dispositivo ou ao chegar por um link de uma notificação, você começa como sempre. No seu próprio dispositivo a página também é mantida quando o app recarrega, p. ex. após uma atualização.
+- Alterado: `js/fortsetzen.js` (novo), `js/appstart.js`, `js/dashboard.js`, `js/anmeldung.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`, `pinn-setup.sh`, todos os README. Sem parte de servidor.
+
 ## Novidades da 1.147.1
 
 **Dispositivos listados uma vez, link dentro dos guias**
@@ -223,14 +232,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Aviso ao apagar.** Se apagar uma lista de bagagem com destino e datas, o pinn. avisa agora que a viagem também desaparece do calendário e do resumo do ano.
 - Alterado: `js/listen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (um texto novo nas catorze línguas), `src/` (versão), `index.html`, todos os README. Sem parte de servidor.
 
-## Novidades da 1.142.0
-
-**Resumo do ano: despesas, refeições cozinhadas e viagens**
-
-- **Resumo do ano.** A 28 de dezembro, a partir das 18:00 (e a qualquer momento em Definições → Previsão), o pinn. mostra o vosso ano num relance: despesas com barras mensais, categorias e a maior despesa individual, refeições cozinhadas com as favoritas e todas as viagens com os dias fora. Com as setas no topo volta a anos anteriores.
-- **Aviso e push como nas outras previsões.** Um aviso no topo até 10 de janeiro e uma notificação push que pode desativar nas definições. As despesas só são visíveis com acesso às finanças; os convidados não recebem a notificação push.
-- Alterado: `js/ausblick.js`, `js/hinweise.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (32 textos novos e alterados nas catorze línguas), `src/` (versão, definições), `index.html`, todos os README. Servidor (substituir os hooks, o PocketBase reinicia): `pb_hooks/pinn-ausblick.js`, `pb_hooks/ausblick.pb.js`.
-
 ## Como funciona
 
 ```mermaid
@@ -259,7 +260,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.147.1` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.148.0` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
