@@ -77,6 +77,7 @@ window.PINN_I18N && window.PINN_I18N.keys("nl", {
   "account.dashDevice.never": "nooit automatisch",
   "account.dashDevice.noAdmin": "Alleen een beheerder van het gezin kan een dashboard instellen.",
   "account.dashDevice.noAdmin#wg": "Alleen een beheerder van de woongroep kan een dashboard instellen.",
+  "account.dashDevice.otherFamily": "Dit apparaat is het dashboard van “{family}”. Een apparaat kan maar één dashboard zijn – stel je eigen dashboard in op een ander apparaat.",
   "account.dashDevice.settingUp": "Instellen …",
   "account.dashDevice.subtitle": "Profielkeuze bij het openen, bijv. op de iPad in de keuken",
   "account.dashDevice.title": "Gezinsdashboard op dit apparaat",

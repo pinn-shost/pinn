@@ -83,6 +83,7 @@ window.PINN_I18N && window.PINN_I18N.keys("ru", {
   "account.dashDevice.never": "никогда автоматически",
   "account.dashDevice.noAdmin": "Настроить семейную панель может только администратор семьи.",
   "account.dashDevice.noAdmin#wg": "Настроить общую панель может только администратор квартиры.",
+  "account.dashDevice.otherFamily": "Это устройство — панель «{family}». Одно устройство может быть только одной панелью — настройте свою панель на другом устройстве.",
   "account.dashDevice.settingUp": "Настройка …",
   "account.dashDevice.subtitle": "Выбор профиля при открытии, например на iPad на кухне",
   "account.dashDevice.title": "Семейная панель на этом устройстве",

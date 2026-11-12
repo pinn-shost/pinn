@@ -77,6 +77,7 @@ window.PINN_I18N && window.PINN_I18N.keys("ko", {
   "account.dashDevice.never": "자동으로는 하지 않음",
   "account.dashDevice.noAdmin": "대시보드는 가족 관리자만 설정할 수 있어요.",
   "account.dashDevice.noAdmin#wg": "대시보드는 셰어하우스 관리자만 설정할 수 있어요.",
+  "account.dashDevice.otherFamily": "이 기기는 “{family}”의 대시보드입니다. 기기 하나는 대시보드 하나만 될 수 있습니다. 내 대시보드는 다른 기기에서 설정하세요.",
   "account.dashDevice.settingUp": "설정 중…",
   "account.dashDevice.subtitle": "열 때의 프로필 선택(예: 주방 iPad)",
   "account.dashDevice.title": "이 기기의 가족 대시보드",

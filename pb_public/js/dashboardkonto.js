@@ -142,6 +142,15 @@ function renderDashDeviceSection() {
     document.getElementById('dashDeviceActivateBtn').disabled = false;
     return;
   }
+  const other = isOtherFamilyThanDashboard();
+  document.getElementById('dashDeviceTimeoutRow').classList.toggle('hidden', other);
+  document.getElementById('dashDeviceBtnRow').classList.toggle('hidden', other);
+  if (other) {
+    // This device is the dashboard of another family (one dashboard per device): only explain it
+    document.getElementById('dashDeviceActiveText').textContent = tk('account.dashDevice.otherFamily', { family: cfg.familyName || '…' });
+    document.getElementById('dashDeviceEndHint').classList.add('hidden');
+    return;
+  }
   document.getElementById('dashDeviceActiveText').textContent = tk('account.dashDevice.active', { name: cfg.name || 'Dashboard' });
   const select = document.getElementById('dashTimeoutSelect');
   const minutes = String(dashboardTimeoutMinutes());

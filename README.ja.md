@@ -133,6 +133,14 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski、🇺🇦 Українська** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.148.2の新機能
+
+**ダッシュボード端末で別の家族にログイン**
+
+- **別の家族でのログイン。** ダッシュボード端末で「パスワードでログイン」を使って別の家族のプロフィールにログインすると、通常のセッションになります。ダッシュボードのボタンは表示されず、「ログアウト」で終了します。以前はこのボタンが最初の家族のダッシュボードに戻っていました。
+- **設定にわかりやすい案内。** ダッシュボードの項目に、この端末が別の家族のダッシュボードであることが表示されます（1台の端末で設定できるダッシュボードは1つだけです）。
+- 変更：`js/dashboard.js`, `js/anmeldung.js`, `js/profilauswahl.js`, `js/dashboardkonto.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`、すべてのREADME。サーバー側の変更はありません。
+
 ## 1.148.1の新機能
 
 **ダッシュボードでレシピが開いたままに**
@@ -226,14 +234,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - **ダッシュボードでチャット。** ダッシュボードでPINを使ってプロフィールを開いた人は、チャットも使えるようになりました。ゲストと「子どもページのみ」の子どもは使えません。端末で初めて使うときは、いつもどおり回復コードを尋ねます。
 - 変更：`pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`, `js/profilauswahl.js`, `js/dashboard.js`, `js/dashboardkonto.js`, `js/konto.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/`（14言語すべての新規文言5件）, `src/`（バージョン、アカウントページ）, `index.html`, すべての README. サーバー（hooks を置き換え、PocketBase が再起動）：`pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`.
 
-## 1.142.2の新機能
-
-**1年のふりかえり：収入、予定、タスク、誕生日、旅行の写真**
-
-- **ふりかえりがさらに充実。** 支出の下に収入と収支も表示されます。新しいカードには、予定（最も多かった月つき）、完了したタスク（うち家事）、お祝いした誕生日（18歳や30歳、40歳などの特別な誕生日つき）が並びます。各旅行には、旅行中に掲示板へ投稿された写真も表示されます。
-- **完了したタスクはサーバーが数えます。** 完了後1〜2日で削除されるためです。今年の分は、アップデートした日から数えます。
-- 変更：`js/ausblick.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`、`i18n/`（14言語すべての新規文言14件と変更文言1件）、`src/`（バージョン）、`index.html`、すべての README。サーバー（hooks を置き換え、PocketBase が再起動）：`pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-aufgaben.js`, `pb_hooks/ausblick.pb.js`。
-
 ## しくみ
 
 ```mermaid
@@ -262,7 +262,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.148.1`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.148.2`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

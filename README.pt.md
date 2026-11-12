@@ -133,6 +133,14 @@ Toque em qualquer imagem para abri-la em tamanho real.
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.148.2
+
+**Outra família no dispositivo do painel**
+
+- **Entrar com outra família.** Se num dispositivo com painel usares «Entrar com senha» com um perfil de outra família, passa a ser uma sessão normal: o botão do painel desaparece e «Sair» termina-a. Antes o botão levava ao painel da primeira família.
+- **Aviso claro nas definições.** A secção do painel indica agora que este dispositivo é o painel de outra família – um dispositivo só pode ser um painel.
+- Alterado: `js/dashboard.js`, `js/anmeldung.js`, `js/profilauswahl.js`, `js/dashboardkonto.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, todos os README. Sem parte de servidor.
+
 ## Novidades da 1.148.1
 
 **A receita continua aberta no painel**
@@ -226,14 +234,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Chat no painel.** Quem abriu o seu perfil no painel com o PIN agora também pode usar o chat. Convidados e crianças com “só página infantil” não. Na primeira vez no aparelho, o chat pede o código de recuperação como de costume.
 - Alterado: `pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`, `js/profilauswahl.js`, `js/dashboard.js`, `js/dashboardkonto.js`, `js/konto.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (5 textos novos nas catorze línguas), `src/` (versão, página da conta), `index.html`, todos os README. Servidor (substituir os hooks, o PocketBase reinicia): `pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`.
 
-## Novidades da 1.142.2
-
-**Resumo do ano: receitas, compromissos, tarefas, aniversários e fotos de viagens**
-
-- **Mais no resumo do ano.** Por baixo das despesas vês agora também as receitas e o saldo. Novos cartões mostram os compromissos (com o mês mais cheio), as tarefas concluídas (com a parte da casa) e os aniversários celebrados (incluindo os especiais, como 18, 30, 40 …). Cada viagem mostra as fotos do quadro publicadas durante a viagem.
-- **O servidor conta as tarefas concluídas,** porque são apagadas ao fim de um ou dois dias. Neste ano a contagem começa no dia da atualização.
-- Alterado: `js/ausblick.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (14 textos novos e um alterado nas catorze línguas), `src/` (versão), `index.html`, todos os README. Servidor (substituir os hooks, o PocketBase reinicia): `pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-aufgaben.js`, `pb_hooks/ausblick.pb.js`.
-
 ## Como funciona
 
 ```mermaid
@@ -262,7 +262,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.148.1` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.148.2` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

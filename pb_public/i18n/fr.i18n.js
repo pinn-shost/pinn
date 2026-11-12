@@ -77,6 +77,7 @@ window.PINN_I18N && window.PINN_I18N.keys("fr", {
   "account.dashDevice.never": "jamais automatiquement",
   "account.dashDevice.noAdmin": "Seul un admin de la famille peut configurer un tableau de bord.",
   "account.dashDevice.noAdmin#wg": "Seul un admin de la colocation peut configurer un tableau de bord.",
+  "account.dashDevice.otherFamily": "Cet appareil est le tableau de bord de « {family} ». Un appareil ne peut être qu’un seul tableau de bord – configure le tien sur un autre appareil.",
   "account.dashDevice.settingUp": "Configuration …",
   "account.dashDevice.subtitle": "Sélection du profil à l'ouverture, p. ex. sur l'iPad de la cuisine",
   "account.dashDevice.title": "Tableau de bord familial sur cet appareil",

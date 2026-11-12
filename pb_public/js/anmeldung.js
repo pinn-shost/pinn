@@ -49,7 +49,8 @@ async function ensureAuthenticated() {
   // while the app is open (sessionStorage) - after that the profile selection appears again.
   const dash = readDashboardConfig();
   if (dash) {
-    if (ssGet(SS_DASH_ACTIVE) !== '1') pb.authStore.clear();
+    // A profile of another family that signed in with a password stays signed in (normal session, no dashboard)
+    if (ssGet(SS_DASH_ACTIVE) !== '1' && ssGet(SS_DASH_FOREIGN) !== '1') pb.authStore.clear();
     if (pb.authStore.isValid) {
       try {
         await pb.collection(PINN_USERS).authRefresh();
@@ -59,13 +60,19 @@ async function ensureAuthenticated() {
     }
     if (pb.authStore.isValid) return;
     ssSet(SS_DASH_ACTIVE, null);
+    ssSet(SS_DASH_FOREIGN, null);
     ssSet(SS_DASH_KID, null);
     const result = await showDashboardScreen(dash);
     if (result === 'ok') return; // no forced password change at the dashboard (access via profile/PIN)
     if (result === 'password') {
       await showLoginScreen();
-      ssSet(SS_DASH_ACTIVE, '1'); // counts as a dashboard session: afterwards back to the profile selection
       const u0 = currentUser();
+      if (isOtherFamilyThanDashboard(u0)) {
+        // The dashboard of this device belongs to another family: a normal session, "Log out" ends it
+        ssSet(SS_DASH_FOREIGN, '1');
+      } else {
+        ssSet(SS_DASH_ACTIVE, '1'); // counts as a dashboard session: afterwards back to the profile selection
+      }
       if (u0 && u0.mustChangePassword) await showForcePasswordScreen();
       return;
     }
@@ -112,6 +119,7 @@ async function logout() {
   try {
     ['pinn.cache', 'pinn.pendingSync', 'pinn.outbox', 'pinn.aufgabenCache', 'pinn.icsCache', 'pinn.profileCache', LS_AREAS_KEY, LS_AREAS_PENDING_KEY, LS_SESSION_ONLY].forEach(k => localStorage.removeItem(k));
     sessionStorage.removeItem(SS_SESSION_ALIVE);
+    sessionStorage.removeItem(SS_DASH_FOREIGN);
   } catch (e) { /* ignore */ }
   try { if (window.caches) await caches.delete('pinn-daten'); } catch (e) { /* ignore */ }
   location.reload();

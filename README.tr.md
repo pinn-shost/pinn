@@ -110,6 +110,14 @@ Tam boyutta açmak için bir resme dokun.
 
 pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski ve 🇺🇦 Українська**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
 
+## 1.148.2 sürümündeki yenilikler
+
+**Pano cihazında başka bir aile**
+
+- **Başka bir aileyle giriş.** Pano cihazında “Parolayla giriş yap” ile başka bir ailenin profiliyle giriş yaparsan bu artık normal bir oturumdur: pano düğmesi görünmez ve “Çıkış yap” oturumu bitirir. Önceden düğme ilk ailenin panosuna geri götürüyordu.
+- **Ayarlarda net bilgi.** Pano bölümü artık bu cihazın başka bir ailenin panosu olduğunu söylüyor – bir cihaz yalnızca tek bir pano olabilir.
+- Değişenler: `js/dashboard.js`, `js/anmeldung.js`, `js/profilauswahl.js`, `js/dashboardkonto.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, tüm README’ler. Sunucu kısmı yok.
+
 ## 1.148.1 sürümündeki yenilikler
 
 **Tarif gösterge panelinde açık kalır**
@@ -173,13 +181,6 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 - **Varsayılan olarak açık, profil bazında kapatılabilir**: Ayarlar → Görünüm; „Önizleme“ her zaman bir dakikalığına gösterir. Pil dostu ve ayrı bir katman: bekleme modunda hiçbir şey hareket etmez, düzen kaymaz.
 - Değişenler: `js/winterzeit.js` (yeni), `css/winterzeit.css` (yeni), `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`, tüm README’ler. Sunucu kısmı yok.
 
-## 1.144.2 sürümündeki yenilikler
-
-**Otomatik güncellemeler: bugün için de planlanabilir**
-
-- **Aynı gün mümkün.** Seçilen saat henüz gelmediyse pinn. aynı gün kontrol eder – bugün zaten kontrol etmiş olsa bile. Böylece yeni bir ayar hemen denenebilir. Kaydederken geçmiş olan bir saat yarından itibaren geçerlidir; „Sonraki kontrol” bunu doğru gösterir.
-- Değişenler: `pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, tüm README’ler. Sunucu (hook’ları değiştirin, PocketBase yeniden başlar): `pb_hooks/pinn-system.js`.
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -189,7 +190,7 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.148.1` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.148.2` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

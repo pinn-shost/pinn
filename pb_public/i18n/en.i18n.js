@@ -77,6 +77,7 @@ window.PINN_I18N && window.PINN_I18N.keys("en", {
   "account.dashDevice.never": "never automatically",
   "account.dashDevice.noAdmin": "Only an admin of the family can set up a dashboard.",
   "account.dashDevice.noAdmin#wg": "Only an admin of the flatshare can set up a dashboard.",
+  "account.dashDevice.otherFamily": "This device is the dashboard of “{family}”. A device can only be one dashboard – set up your own dashboard on another device.",
   "account.dashDevice.settingUp": "Setting up …",
   "account.dashDevice.subtitle": "Profile selection when opening, e.g. on the kitchen iPad",
   "account.dashDevice.title": "Family dashboard on this device",

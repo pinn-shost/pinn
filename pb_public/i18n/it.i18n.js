@@ -77,6 +77,7 @@ window.PINN_I18N && window.PINN_I18N.keys("it", {
   "account.dashDevice.never": "Mai automaticamente",
   "account.dashDevice.noAdmin": "Solo un amministratore della famiglia può configurare una dashboard.",
   "account.dashDevice.noAdmin#wg": "Solo un amministratore della casa condivisa può configurare una dashboard.",
+  "account.dashDevice.otherFamily": "Questo dispositivo è la dashboard di «{family}». Un dispositivo può essere una sola dashboard: configura la tua su un altro dispositivo.",
   "account.dashDevice.settingUp": "Configurazione…",
   "account.dashDevice.subtitle": "Selezione del profilo all’apertura, ad esempio sull’iPad in cucina",
   "account.dashDevice.title": "Dashboard familiare su questo dispositivo",

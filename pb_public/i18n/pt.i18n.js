@@ -77,6 +77,7 @@ window.PINN_I18N && window.PINN_I18N.keys("pt", {
   "account.dashDevice.never": "nunca automaticamente",
   "account.dashDevice.noAdmin": "Só um administrador da família pode configurar um painel.",
   "account.dashDevice.noAdmin#wg": "Só um administrador da casa compartilhada pode configurar um painel.",
+  "account.dashDevice.otherFamily": "Este dispositivo é o painel de «{family}». Um dispositivo só pode ser um painel – configura o teu painel noutro dispositivo.",
   "account.dashDevice.settingUp": "Configurando …",
   "account.dashDevice.subtitle": "Seleção de perfil ao abrir, por exemplo, no iPad da cozinha",
   "account.dashDevice.title": "Painel da família neste aparelho",

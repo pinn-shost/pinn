@@ -129,6 +129,14 @@ Pulsa cualquier imagen para verla en tamaño completo.
 
 pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski y 🇺🇦 Українська**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades de la 1.148.2
+
+**Otra familia en el dispositivo del panel**
+
+- **Iniciar sesión con otra familia.** Si en un dispositivo con panel usas «Iniciar sesión con contraseña» con un perfil de otra familia, ahora es una sesión normal: el botón del panel desaparece y «Cerrar sesión» la termina. Antes el botón llevaba al panel de la primera familia.
+- **Aviso claro en Ajustes.** La sección del panel indica ahora que este dispositivo es el panel de otra familia: un dispositivo solo puede ser un panel.
+- Cambios: `js/dashboard.js`, `js/anmeldung.js`, `js/profilauswahl.js`, `js/dashboardkonto.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, todos los README. Sin parte de servidor.
+
 ## Novedades de la 1.148.1
 
 **La receta sigue abierta en el panel**
@@ -254,14 +262,6 @@ pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Widget de acceso rápido.** Las teselas son algo más pequeñas, así todo queda dentro del widget, y se ven más modernas: una insignia dorada redonda con el símbolo, un borde fino y un degradado oscuro. Un toque sigue abriendo pinn. en Safari, porque iOS no abre la app instalada desde un enlace.
 - Cambiado: `js/sprachsteuerung.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (versión), `index.html`, todos los README. Sin parte de servidor. Copia los scripts de nuevo y sustitúyelos en Scriptable.
 
-## Novedades de la 1.141.1
-
-**Widgets: estilo Apple y un widget de acceso rápido**
-
-- **Aspecto de Recordatorios de Apple.** El widget de tareas es ahora gris oscuro, con texto blanco grande y círculos redondos. Las tareas marcadas bajan, se ponen grises y el círculo se rellena. Las listas de la compra ya no forman parte del widget; eliges entre citas, tareas y tareas del hogar.
-- **Widget de acceso rápido.** Un segundo script («Copiar script de acceso rápido») crea un widget con tres teselas: listas, finanzas (con el símbolo de la moneda de tu región) y tareas. Un toque abre esa página de pinn. en Safari, porque iOS no abre la app instalada desde un enlace; inicia sesión allí una vez.
-- Cambiado: `js/sprachsteuerung.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (textos nuevos y cambiados en los catorce idiomas), `src/` (versión), `index.html`, `.github/scripts/check-hooks.js`, todos los README. Servidor (sustituir los hooks, PocketBase se reinicia): `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
-
 ## Cómo funciona
 
 ```mermaid
@@ -288,7 +288,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.148.1` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.148.2` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

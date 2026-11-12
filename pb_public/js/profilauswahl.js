@@ -281,6 +281,7 @@ function showDashboardScreen(dash) {
       }
       pb.authStore.save(r.body.token, r.body.record);
       ssSet(SS_DASH_ACTIVE, '1');
+      ssSet(SS_DASH_FOREIGN, null);
       ssSet(SS_DASH_KID, tile.kid && tile.member ? tile.member.id : null);
       authExpiredHandled = false;
       busyText.textContent = tile.kid ? tk('dashboard.helloKid', { name: tile.name }) : tk('dashboard.hello', { name: tile.name });

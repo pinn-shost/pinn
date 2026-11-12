@@ -76,6 +76,7 @@ window.PINN_I18N && window.PINN_I18N.keys("ja", {
   "account.dashDevice.never": "自動では行わない",
   "account.dashDevice.noAdmin": "ダッシュボードを設定できるのは家族の管理者のみです。",
   "account.dashDevice.noAdmin#wg": "ダッシュボードを設定できるのはルームシェアの管理者のみです。",
+  "account.dashDevice.otherFamily": "この端末は「{family}」のダッシュボードです。1台の端末で設定できるダッシュボードは1つだけです。自分のダッシュボードは別の端末で設定してください。",
   "account.dashDevice.settingUp": "設定中…",
   "account.dashDevice.subtitle": "起動時のプロフィール選択（例：キッチンのiPad）",
   "account.dashDevice.title": "このデバイスのファミリーダッシュボード",

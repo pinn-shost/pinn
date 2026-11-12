@@ -77,6 +77,7 @@ window.PINN_I18N && window.PINN_I18N.keys("de", {
   "account.dashDevice.never": "nie automatisch",
   "account.dashDevice.noAdmin": "Ein Dashboard kann nur ein Admin der Familie einrichten.",
   "account.dashDevice.noAdmin#wg": "Ein Dashboard kann nur ein Admin der WG einrichten.",
+  "account.dashDevice.otherFamily": "Dieses Gerät ist das Dashboard von „{family}“. Pro Gerät gibt es nur ein Dashboard – richte dein eigenes Dashboard auf einem anderen Gerät ein.",
   "account.dashDevice.settingUp": "Wird eingerichtet …",
   "account.dashDevice.subtitle": "Profilauswahl beim Öffnen, z. B. am Küchen-iPad",
   "account.dashDevice.title": "Familien-Dashboard auf diesem Gerät",

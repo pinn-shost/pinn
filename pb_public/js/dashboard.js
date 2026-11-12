@@ -25,6 +25,7 @@
    ========================================================== */
 const LS_DASHBOARD = 'pinn.dashboard';      // { key, id, name, familie, familyName, timeout }
 const SS_DASH_ACTIVE = 'pinn.dashSession';  // profile was opened via the dashboard
+const SS_DASH_FOREIGN = 'pinn.dashForeign'; // password login of a profile from ANOTHER family on this dashboard device (normal session)
 const SS_DASH_KID = 'pinn.dashKid';         // kid profile: member whose kids' page is open
 const DASH_DEFAULT_TIMEOUT = 5;             // minutes without interaction until the profile selection
 const GUEST_BLOCKED_VIEWS = ['chat', 'finanzen', 'dokumente', 'fahrzeuge', 'haus', 'einstellungen']; // always locked for guests
@@ -57,6 +58,13 @@ function ssSet(key, value) {
   } catch (e) { /* ignore */ }
 }
 function isDashboardDevice() { return !!readDashboardConfig(); }
+// The dashboard of this device belongs to one family only (stored in the browser). True if the given
+// profile (default: the signed-in one) belongs to a different family than the device's dashboard.
+function isOtherFamilyThanDashboard(user) {
+  const cfg = readDashboardConfig();
+  const u = user || currentUser();
+  return !!(cfg && cfg.familie && u && u.familie && u.familie !== cfg.familie);
+}
 function isDashboardSession() { return isDashboardDevice() && ssGet(SS_DASH_ACTIVE) === '1'; }
 function dashboardKidMemberId() { return isDashboardSession() ? (ssGet(SS_DASH_KID) || '') : ''; }
 function isDashboardKidSession() { return !!dashboardKidMemberId(); }
@@ -269,6 +277,7 @@ function dashboardTimeoutMinutes() {
 function returnToDashboard() {
   try { resumeRemember(); } catch (e) { /* start at the overview next time */ }
   ssSet(SS_DASH_ACTIVE, null);
+  ssSet(SS_DASH_FOREIGN, null);
   ssSet(SS_DASH_KID, null);
   pb.authStore.clear();
   location.reload();

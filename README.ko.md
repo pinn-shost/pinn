@@ -133,6 +133,14 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.148.2의 새 소식
+
+**대시보드 기기에서 다른 가족으로 로그인**
+
+- **다른 가족으로 로그인.** 대시보드 기기에서 “비밀번호로 로그인”으로 다른 가족의 프로필에 로그인하면 이제 일반 세션이 됩니다. 대시보드 버튼은 보이지 않고 “로그아웃”으로 끝납니다. 이전에는 이 버튼이 첫 번째 가족의 대시보드로 돌아갔습니다.
+- **설정의 명확한 안내.** 대시보드 항목에 이 기기가 다른 가족의 대시보드라는 안내가 표시됩니다. 기기 하나는 대시보드 하나만 될 수 있습니다.
+- 변경: `js/dashboard.js`, `js/anmeldung.js`, `js/profilauswahl.js`, `js/dashboardkonto.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, 모든 README. 서버 부분 없음.
+
 ## 1.148.1의 새 소식
 
 **대시보드에서 레시피가 열린 채로 유지**
@@ -226,14 +234,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - **대시보드에서 채팅.** 대시보드에서 PIN으로 프로필을 연 사람은 이제 채팅도 쓸 수 있어요. 손님과 “아이 페이지만” 쓰는 아이는 쓸 수 없어요. 기기에서 처음 쓸 때는 평소처럼 복구 코드를 물어봐요.
 - 변경: `pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`, `js/profilauswahl.js`, `js/dashboard.js`, `js/dashboardkonto.js`, `js/konto.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (14개 언어의 새 문구 5개), `src/` (버전, 계정 페이지), `index.html`, 모든 README. 서버(hooks 교체, PocketBase가 다시 시작돼요): `pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`.
 
-## 1.142.2의 새 소식
-
-**올해의 돌아보기: 수입, 일정, 할 일, 생일, 여행 사진**
-
-- **돌아보기가 더 풍성해졌어요.** 지출 아래에 수입과 잔액도 보여요. 새 카드에는 일정(가장 바쁜 달 포함), 완료한 할 일(집안일 비율 포함), 축하한 생일(18세, 30세, 40세 같은 특별한 생일 포함)이 나와요. 각 여행에는 여행 중에 게시판에 올린 사진도 함께 보여요.
-- **완료한 할 일은 서버가 집계해요.** 하루 이틀 뒤에 삭제되기 때문이에요. 올해 분은 업데이트한 날부터 세기 시작해요.
-- 변경: `js/ausblick.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (14개 언어의 새 문구 14개와 바뀐 문구 1개), `src/` (버전), `index.html`, 모든 README. 서버(hooks 교체, PocketBase가 다시 시작돼요): `pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-aufgaben.js`, `pb_hooks/ausblick.pb.js`.
-
 ## 작동 방식
 
 ```mermaid
@@ -262,7 +262,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.148.1` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.148.2` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

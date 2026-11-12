@@ -110,6 +110,14 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski en 🇺🇦 Українська**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.148.2
+
+**Een andere familie op het dashboardapparaat**
+
+- **Inloggen met een andere familie.** Log je op een dashboardapparaat via “Inloggen met wachtwoord” in met een profiel van een andere familie, dan is dat nu een gewone sessie: de dashboardknop ontbreekt en “Uitloggen” beëindigt haar. Eerder bracht de knop je terug naar het dashboard van de eerste familie.
+- **Duidelijke melding in de instellingen.** Het dashboardgedeelte zegt nu dat dit apparaat het dashboard van een andere familie is – een apparaat kan maar één dashboard zijn.
+- Gewijzigd: `js/dashboard.js`, `js/anmeldung.js`, `js/profilauswahl.js`, `js/dashboardkonto.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, alle README's. Geen serverdeel.
+
 ## Nieuw in 1.148.1
 
 **Recept blijft open op het dashboard**
@@ -173,13 +181,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Standaard aan, per profiel uit te zetten** onder Instellingen → Weergave; „Voorbeeld” toont het altijd een minuut lang. Zuinig met de batterij en een eigen laag: in rustmodus beweegt niets en er verschuift niets in de opmaak.
 - Gewijzigd: `js/winterzeit.js` (nieuw), `css/winterzeit.css` (nieuw), `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`, alle README’s. Geen serverdeel.
 
-## Nieuw in 1.144.2
-
-**Automatische updates: ook voor vandaag**
-
-- **Zelfde dag mogelijk.** Ligt het gekozen tijdstip nog in de toekomst, dan controleert pinn. nog dezelfde dag – ook als er vandaag al gecontroleerd is. Zo kun je een nieuwe instelling meteen uitproberen. Een tijdstip dat bij het opslaan al voorbij is, geldt vanaf morgen; „Volgende controle” toont dat correct.
-- Gewijzigd: `pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, alle README’s. Server (hooks vervangen, PocketBase herstart): `pb_hooks/pinn-system.js`.
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -189,7 +190,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.148.1` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.148.2` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

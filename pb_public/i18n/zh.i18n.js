@@ -77,6 +77,7 @@ window.PINN_I18N && window.PINN_I18N.keys("zh", {
   "account.dashDevice.never": "永不自动",
   "account.dashDevice.noAdmin": "只有家庭的管理员可以设置看板。",
   "account.dashDevice.noAdmin#wg": "只有合租的管理员可以设置看板。",
+  "account.dashDevice.otherFamily": "此设备是“{family}”的仪表盘。每台设备只能作为一个仪表盘——请在另一台设备上设置你自己的仪表盘。",
   "account.dashDevice.settingUp": "正在设置 …",
   "account.dashDevice.subtitle": "打开时的个人资料选择，例如在厨房的 iPad 上",
   "account.dashDevice.title": "此设备上的家庭看板",

@@ -133,6 +133,14 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski和 🇺🇦 Українська**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.148.2 新功能
+
+**在仪表盘设备上登录另一个家庭**
+
+- **用另一个家庭登录。** 在仪表盘设备上通过“使用密码登录”以另一个家庭的成员登录时，现在是一次普通会话：仪表盘按钮不再出现，点“退出登录”即结束。之前该按钮会返回第一个家庭的仪表盘。
+- **设置中的明确提示。** 仪表盘部分现在会说明此设备是另一个家庭的仪表盘——一台设备只能是一个仪表盘。
+- 更改：`js/dashboard.js`, `js/anmeldung.js`, `js/profilauswahl.js`, `js/dashboardkonto.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`、所有 README。无服务器部分。
+
 ## 1.148.1 新功能
 
 **仪表板上的食谱保持打开**
@@ -226,14 +234,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 - **仪表板上的聊天。** 在仪表板上用 PIN 打开自己个人资料的人，现在也可以使用聊天。访客和“仅儿童页面”的孩子不可以。首次在该设备上使用时，聊天会像往常一样询问恢复码。
 - 更改：`pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`, `js/profilauswahl.js`, `js/dashboard.js`, `js/dashboardkonto.js`, `js/konto.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/`（十四种语言中的 5 条新文本）, `src/`（版本、账户页面）, `index.html`, 所有 README. 服务器（替换 hooks，PocketBase 会重启）：`pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`.
 
-## 1.142.2 新功能
-
-**年度回顾：收入、日程、任务、生日和旅行照片**
-
-- **年度回顾更丰富了。** 支出下方现在还能看到收入和结余。新增卡片显示日程（含日程最多的月份）、已完成的任务（含家务占比）和已庆祝的生日（包括 18、30、40 岁等特别的生日）。每次旅行还会显示旅行期间发布到留言板的照片。
-- **已完成的任务由服务器统计，** 因为它们在一两天后就会被删除。今年的统计从更新当天开始。
-- 更改：`js/ausblick.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`、`i18n/`（十四种语言中的 14 条新文本和 1 条更改文本）、`src/`（版本）、`index.html`、所有 README。服务器（替换 hooks，PocketBase 会重启）：`pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-aufgaben.js`, `pb_hooks/ausblick.pb.js`。
-
 ## 工作原理
 
 ```mermaid
@@ -262,7 +262,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.148.1` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.148.2` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

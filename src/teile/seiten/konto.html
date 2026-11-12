@@ -283,7 +283,7 @@
         </div>
         <div id="dashDeviceActive" class="hidden">
           <p id="dashDeviceActiveText" class="text-sm text-ink/70 mb-3"></p>
-          <label class="flex flex-wrap items-center gap-2 text-sm mb-4">
+          <label id="dashDeviceTimeoutRow" class="flex flex-wrap items-center gap-2 text-sm mb-4">
             <span data-tk="account.dashDevice.backAfter">Back to profile selection after</span>
             <select id="dashTimeoutSelect" class="rounded-lg border border-ink/15 px-2 py-1.5 text-sm bg-white">
               <option data-tk="account.dashDevice.never" value="0">never automatically</option>
@@ -294,7 +294,7 @@
               <option data-tk="account.dashDevice.idle30" value="30">30 minutes without use</option>
             </select>
           </label>
-          <div class="flex flex-wrap items-center gap-2">
+          <div id="dashDeviceBtnRow" class="flex flex-wrap items-center gap-2">
             <button data-tk="app.toProfileSelection" type="button" id="dashDeviceHomeBtn" class="px-3 py-2 rounded-lg bg-pine text-white text-sm hover:bg-pine/90 transition">To profile selection</button>
             <button data-tk="account.dashDevice.end" type="button" id="dashDeviceEndBtn" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-red-500 hover:border-red-500 transition">End dashboard on this device</button>
           </div>

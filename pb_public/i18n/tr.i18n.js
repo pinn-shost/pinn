@@ -77,6 +77,7 @@ window.PINN_I18N && window.PINN_I18N.keys("tr", {
   "account.dashDevice.never": "otomatik olarak asla",
   "account.dashDevice.noAdmin": "Gösterge panelini yalnızca ailenin bir yöneticisi kurabilir.",
   "account.dashDevice.noAdmin#wg": "Gösterge panelini yalnızca ortak evin bir yöneticisi kurabilir.",
+  "account.dashDevice.otherFamily": "Bu cihaz “{family}” panosudur. Bir cihaz yalnızca tek bir pano olabilir – kendi panonu başka bir cihazda kur.",
   "account.dashDevice.settingUp": "Kuruluyor …",
   "account.dashDevice.subtitle": "Açılışta profil seçimi, ör. mutfaktaki iPad'de",
   "account.dashDevice.title": "Bu cihazda aile gösterge paneli",
