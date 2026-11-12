@@ -65,6 +65,7 @@ async function bootApp() {
   renderLastName();
   renderMemberChips();
   document.body.classList.toggle('mobile-mode', isMobile());
+  lastKnownPortrait = isPortraitOrientation(); // the page is built for this orientation (js/ansichten.js)
   attachSwipeNavigation(document.getElementById('calendarBody'));
   checkForAppUpdate(false); // set the base value for the update detection
   setView('uebersicht');

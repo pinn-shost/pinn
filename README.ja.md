@@ -133,6 +133,15 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski、🇺🇦 Українська** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.148.1の新機能
+
+**ダッシュボードでレシピが開いたままに**
+
+- **家族ダッシュボード。** 「プロフィール選択へ」とPINのあと、開いていたレシピが確実に再び開くようになりました。起動後の最初の画面変化（iPadがアプリを再表示したときなど）でページが作り直され、レシピが閉じていた問題を修正しました。
+- **iOSがアプリを終了しても。** ダッシュボードでは、プロフィール選択で待機中にiOSがアプリを終了しても記録が残ります（最長12時間）。アドレスに残った付加情報で再開が妨げられることもなくなりました。
+- **iPadを回転**しても、人数と読んでいた位置を保ったままレシピは開いたままです。
+- 変更：`js/fortsetzen.js`, `js/ansichten.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`、すべてのREADME。サーバー側の変更はありません。
+
 ## 1.148.0の新機能
 
 **中断したところから再開**
@@ -225,13 +234,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - **完了したタスクはサーバーが数えます。** 完了後1〜2日で削除されるためです。今年の分は、アップデートした日から数えます。
 - 変更：`js/ausblick.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`、`i18n/`（14言語すべての新規文言14件と変更文言1件）、`src/`（バージョン）、`index.html`、すべての README。サーバー（hooks を置き換え、PocketBase が再起動）：`pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-aufgaben.js`, `pb_hooks/ausblick.pb.js`。
 
-## 1.142.1の新機能
-
-**旅行の持ち物リストを削除するときの注意表示**
-
-- **削除時の注意。** 目的地と日付のある持ち物リストを削除すると、その旅行がカレンダーと1年のふりかえりからも消えることを pinn. が知らせます。
-- 変更：`js/listen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`、`i18n/`（14言語すべての新規文言1件）、`src/`（バージョン）、`index.html`、すべての README。サーバー側の変更はありません。
-
 ## しくみ
 
 ```mermaid
@@ -260,7 +262,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.148.0`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.148.1`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

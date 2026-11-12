@@ -133,6 +133,15 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.148.1의 새 소식
+
+**대시보드에서 레시피가 열린 채로 유지**
+
+- **가족 대시보드.** „프로필 선택으로“와 PIN 입력 후 열려 있던 레시피가 이제 확실히 다시 열려요. 시작 후 첫 화면 변화(예: iPad가 앱을 다시 보여줄 때)에서 페이지가 다시 만들어지며 레시피가 닫히던 문제를 고쳤어요.
+- **iOS가 앱을 종료해도.** 대시보드에서는 프로필 선택 화면에서 기다리는 동안 iOS가 앱을 종료해도 기록이 남아요(최대 12시간). 주소에 남은 덧붙임 때문에 이어 하기가 막히지도 않아요.
+- **iPad를 돌려도** 인원 수와 읽던 위치를 그대로 둔 채 레시피가 열려 있어요.
+- 변경: `js/fortsetzen.js`, `js/ansichten.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`, 모든 README. 서버 부분 없음.
+
 ## 1.148.0의 새 소식
 
 **멈춘 곳에서 이어서**
@@ -225,13 +234,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - **완료한 할 일은 서버가 집계해요.** 하루 이틀 뒤에 삭제되기 때문이에요. 올해 분은 업데이트한 날부터 세기 시작해요.
 - 변경: `js/ausblick.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (14개 언어의 새 문구 14개와 바뀐 문구 1개), `src/` (버전), `index.html`, 모든 README. 서버(hooks 교체, PocketBase가 다시 시작돼요): `pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-aufgaben.js`, `pb_hooks/ausblick.pb.js`.
 
-## 1.142.1의 새 소식
-
-**여행 짐 목록을 삭제할 때 안내**
-
-- **삭제할 때 안내.** 목적지와 기간이 있는 짐 목록을 삭제하면, 그 여행이 캘린더와 올해 돌아보기에서도 사라진다고 pinn.이 알려 줘요.
-- 변경: `js/listen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (14개 언어의 새 문구 1개), `src/` (버전), `index.html`, 모든 README. 서버 쪽 변경은 없어요.
-
 ## 작동 방식
 
 ```mermaid
@@ -260,7 +262,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.148.0` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.148.1` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

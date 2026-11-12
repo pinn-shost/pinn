@@ -110,6 +110,15 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski en 🇺🇦 Українська**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.148.1
+
+**Recept blijft open op het dashboard**
+
+- **Familiedashboard.** Na „Naar profielkeuze“ en de pincode is een geopend recept nu echt weer open. De eerste schermwissel na het starten (bijv. als de iPad de app weer toont) bouwde de pagina opnieuw op en sloot het recept – opgelost.
+- **Ook als iOS de app sluit.** Op een dashboard blijft de notitie bewaard, ook als iOS de app sluit terwijl die op de profielkeuze wacht (hooguit 12 uur). Een overgebleven toevoeging in het adres houdt het niet meer tegen.
+- **De iPad draaien** houdt een geopend recept open, met aantal personen en leesplek.
+- Gewijzigd: `js/fortsetzen.js`, `js/ansichten.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`, alle README's. Geen serverdeel.
+
 ## Nieuw in 1.148.0
 
 **Verder waar je gebleven was**
@@ -171,13 +180,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Zelfde dag mogelijk.** Ligt het gekozen tijdstip nog in de toekomst, dan controleert pinn. nog dezelfde dag – ook als er vandaag al gecontroleerd is. Zo kun je een nieuwe instelling meteen uitproberen. Een tijdstip dat bij het opslaan al voorbij is, geldt vanaf morgen; „Volgende controle” toont dat correct.
 - Gewijzigd: `pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, alle README’s. Server (hooks vervangen, PocketBase herstart): `pb_hooks/pinn-system.js`.
 
-## Nieuw in 1.144.1
-
-**Bugfix: automatische updates op het juiste tijdstip**
-
-- **Automatische updates** liepen niet op het gekozen tijdstip: de server rekende in UTC in plaats van Europe/Berlin-tijd en zat er één tot twee uur naast; ook „Volgende controle” toonde een verkeerde tijd. Nu werkt de tijd zoals bij alle andere herinneringen (zomer- en wintertijd inbegrepen).
-- Gewijzigd: `pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, alle README’s. Server (hooks vervangen, PocketBase herstart): `pb_hooks/pinn-system.js`.
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -187,7 +189,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.148.0` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.148.1` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

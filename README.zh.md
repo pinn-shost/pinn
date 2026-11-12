@@ -133,6 +133,15 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski和 🇺🇦 Українська**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.148.1 新功能
+
+**仪表板上的食谱保持打开**
+
+- **家庭仪表板。** 点击“返回选择个人资料”并输入 PIN 后，之前打开的食谱现在会真正重新打开。启动后的第一次屏幕变化（例如 iPad 重新显示应用时）会重建页面并关闭食谱——已修复。
+- **即使 iOS 关闭了应用。** 在仪表板上，即使应用在个人资料选择界面等待时被 iOS 关闭，记录也会保留（最长 12 小时）。地址中残留的附加内容不再阻止继续。
+- **旋转 iPad** 时食谱保持打开，份量和阅读位置不变。
+- 更改：`js/fortsetzen.js`, `js/ansichten.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`、所有 README。无服务器部分。
+
 ## 1.148.0 新功能
 
 **从上次离开的地方继续**
@@ -225,13 +234,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 - **已完成的任务由服务器统计，** 因为它们在一两天后就会被删除。今年的统计从更新当天开始。
 - 更改：`js/ausblick.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`、`i18n/`（十四种语言中的 14 条新文本和 1 条更改文本）、`src/`（版本）、`index.html`、所有 README。服务器（替换 hooks，PocketBase 会重启）：`pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-aufgaben.js`, `pb_hooks/ausblick.pb.js`。
 
-## 1.142.1 新功能
-
-**删除旅行行李清单时的提示**
-
-- **删除时的提示。** 删除带目的地和日期的行李清单时，pinn. 现在会提醒：这次旅行也会从日历和年度回顾中消失。
-- 更改：`js/listen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`、`i18n/`（十四种语言中的 1 条新文本）、`src/`（版本）、`index.html`、所有 README。没有服务器部分。
-
 ## 工作原理
 
 ```mermaid
@@ -260,7 +262,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.148.0` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.148.1` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -133,6 +133,15 @@ Tocca un’immagine per aprirla a dimensione intera.
 
 pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
 
+## Novità della 1.148.1
+
+**La ricetta resta aperta sulla dashboard**
+
+- **Dashboard di famiglia.** Dopo «Alla scelta del profilo» e il PIN una ricetta aperta torna davvero aperta. Il primo cambio di schermo dopo l’avvio (ad es. quando l’iPad mostra di nuovo l’app) ricostruiva la pagina e chiudeva la ricetta: corretto.
+- **Anche se iOS chiude l’app.** Su una dashboard la nota resta anche se iOS chiude l’app mentre attende sulla scelta del profilo (al massimo 12 ore). Un’aggiunta rimasta nell’indirizzo non lo impedisce più.
+- **Ruotare l’iPad** lascia aperta la ricetta, con porzioni e punto di lettura.
+- Modificati: `js/fortsetzen.js`, `js/ansichten.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`, tutti i README. Nessuna parte server.
+
 ## Novità della 1.148.0
 
 **Riprendi da dove eri rimasto**
@@ -225,13 +234,6 @@ pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Il server conta le attività completate,** perché vengono eliminate dopo uno o due giorni. Per quest’anno il conteggio parte il giorno dell’aggiornamento.
 - Modificati: `js/ausblick.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (14 testi nuovi e uno modificato in tutte le quattordici lingue), `src/` (versione), `index.html`, tutti i README. Server (sostituire gli hook, PocketBase si riavvia): `pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-aufgaben.js`, `pb_hooks/ausblick.pb.js`.
 
-## Novità della 1.142.1
-
-**Avviso quando si elimina la lista valigia di un viaggio**
-
-- **Avviso all’eliminazione.** Se elimini una lista valigia con destinazione e date, pinn. ora avvisa che il viaggio scompare anche dal calendario e dal riepilogo dell’anno.
-- Modificati: `js/listen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (un nuovo testo in tutte le quattordici lingue), `src/` (versione), `index.html`, tutti i README. Nessuna parte server.
-
 ## Come funziona
 
 ```mermaid
@@ -260,7 +262,7 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 ## Installazione
 
 1. Scarica lo ZIP dell’[ultima release](https://github.com/pinn-shost/pinn/releases/latest) e decomprimilo.
-2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.148.0` o `pinn-main`) così com’è.
+2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.148.1` o `pinn-main`) così com’è.
 3. Accedi via SSH ed esegui:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

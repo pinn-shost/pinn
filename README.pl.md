@@ -110,6 +110,15 @@ Dotknij obrazu, aby otworzyć go w pełnym rozmiarze.
 
 pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski i 🇺🇦 Українська**; dostosowuje walutę i numery alarmowe do twojego regionu i przełącza się między określeniami **rodzina** i **wspólne mieszkanie**. Jeden serwer może obsługiwać wiele rodzin, każdą z własnymi administratorami.
 
+## Nowości w 1.148.1
+
+**Przepis zostaje otwarty na pulpicie**
+
+- **Pulpit rodzinny.** Po „Do wyboru profilu” i PIN-ie otwarty przepis jest teraz naprawdę znowu otwarty. Pierwsza zmiana ekranu po starcie (np. gdy iPad znowu pokazuje aplikację) przebudowywała stronę i zamykała przepis – naprawione.
+- **Także gdy iOS zamknie aplikację.** Na pulpicie notatka zostaje, nawet jeśli iOS zamknie aplikację, gdy czeka ona na wyborze profilu (najwyżej 12 godzin). Pozostały dodatek w adresie już tego nie blokuje.
+- **Obrócenie iPada** nie zamyka przepisu – liczba porcji i miejsce czytania zostają.
+- Zmienione: `js/fortsetzen.js`, `js/ansichten.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`, wszystkie README. Bez części serwerowej.
+
 ## Nowości w 1.148.0
 
 **Wróć tam, gdzie skończyłeś**
@@ -171,13 +180,6 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 - **Ten sam dzień możliwy.** Jeśli wybrana godzina jeszcze nie minęła, pinn. sprawdza tego samego dnia – nawet jeśli dziś już sprawdzał. Nowe ustawienie można więc od razu wypróbować. Godzina, która przy zapisie już minęła, obowiązuje od jutra; „Następne sprawdzenie” pokazuje to poprawnie.
 - Zmieniono: `pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, wszystkie README. Serwer (podmień hooki, PocketBase uruchamia się ponownie): `pb_hooks/pinn-system.js`.
 
-## Nowości w 1.144.1
-
-**Poprawka: automatyczne aktualizacje o właściwej godzinie**
-
-- **Automatyczne aktualizacje** nie uruchamiały się o wybranej godzinie: serwer liczył w UTC zamiast w czasie Europe/Berlin i mylił się o jedną do dwóch godzin; „Następne sprawdzenie” też pokazywało złą godzinę. Teraz godzina działa jak przy wszystkich innych przypomnieniach (czas letni i zimowy uwzględniony).
-- Zmieniono: `pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, wszystkie README. Serwer (podmień hooki, PocketBase uruchamia się ponownie): `pb_hooks/pinn-system.js`.
-
 ## Wymagania
 
 - NAS lub mini PC z zainstalowanym **Dockerem** i **Docker Compose** (np. Synology, UGREEN, QNAP albo zwykły serwer z Linuksem)
@@ -187,7 +189,7 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 ## Instalacja
 
 1. Pobierz i rozpakuj plik ZIP [najnowszej wersji](https://github.com/pinn-shost/pinn/releases/latest).
-2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.148.0` lub `pinn-main`) bez zmian.
+2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.148.1` lub `pinn-main`) bez zmian.
 3. Połącz się przez SSH i uruchom:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

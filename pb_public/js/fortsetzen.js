@@ -6,22 +6,57 @@
    servings and scroll position, the tab of the mobile overview, the opened list, the tab in Home and
    Vehicles). bootApp() calls resumeRestore() after the first view was built, so a profile opened again
    at the family dashboard (PIN) – or a page that was reloaded – continues at the same place.
-   The note lives in sessionStorage: it only lasts while the app stays open (also in the background)
-   and is gone once the app is closed. Nothing is sent to the server.
+   Where the note lives:
+   - family dashboard device: localStorage. While the dashboard waits at the profile selection, iOS may end
+     the web app in the background (screen off) – sessionStorage would be gone then (1.148.1).
+   - own device: sessionStorage. It only lasts while the app stays open (also in the background).
+   Notes older than 12 hours are ignored and dropped. Nothing is sent to the server.
    Contents: resumeSnapshot, resumeRemember, resumeRestore, resumeForget, resumeStart. */
 
-const SS_RESUME = 'pinn.fortsetzen';          // { <profile id>: { t, view, … } }
+const SS_RESUME = 'pinn.fortsetzen';          // { <profile id>: { t, view, … } } – same key in both stores
 const RESUME_MAX_AGE_MS = 12 * 60 * 60 * 1000; // older notes are ignored: start at the overview
 const RESUME_SCROLL_DELAY_MS = 700;            // after scrollRecipeDetailToTop() has finished
+// Address parameters that open a place themselves (push messages, widgets, notices, returns from a login).
+// Only these stop the restore – other leftovers in the address do not.
+const RESUME_URL_TARGETS = ['seite', 'chat', 'sos', 'heimweg', 'hinweise', 'liste', 'kasse', 'vertrag', 'dokument',
+  'pinnwand', 'familie', 'system', 'sterne', 'google', 'packliste', 'wobistdu', 'geburtstag', 'haustier', 'urlaub',
+  'wetter', 'ausblick', 'ausgabe', 'fahrzeug', 'mitglied', 'aufgabe', 'termin', 'rezept', 'essen', 'vorrat', 'listen',
+  'einkauf', 'konto'];
 
-function resumeReadAll() {
+function resumeOnDashboard() {
+  try { return isDashboardDevice(); } catch (e) { return false; }
+}
+function resumeStore() {
+  try { return resumeOnDashboard() ? localStorage : sessionStorage; } catch (e) { return null; }
+}
+function resumeParse(store) {
   try {
-    const all = JSON.parse(sessionStorage.getItem(SS_RESUME) || '{}');
+    const all = JSON.parse((store && store.getItem(SS_RESUME)) || '{}');
     return (all && typeof all === 'object' && !Array.isArray(all)) ? all : {};
   } catch (e) { return {}; }
 }
+function resumeReadAll() {
+  const all = resumeParse(resumeStore());
+  // dashboard: take over notes written into sessionStorage by 1.148.0 (the newer one wins)
+  if (resumeOnDashboard()) {
+    let old = {};
+    try { old = resumeParse(sessionStorage); } catch (e) { old = {}; }
+    Object.keys(old).forEach(id => {
+      if (old[id] && (!all[id] || Number(old[id].t) > Number(all[id].t))) all[id] = old[id];
+    });
+  }
+  return all;
+}
 function resumeWriteAll(all) {
-  try { sessionStorage.setItem(SS_RESUME, JSON.stringify(all)); } catch (e) { /* storage blocked */ }
+  const now = Date.now();
+  Object.keys(all).forEach(id => { if (!all[id] || !(now - Number(all[id].t) < RESUME_MAX_AGE_MS)) delete all[id]; });
+  const store = resumeStore();
+  try {
+    if (!store) return;
+    if (Object.keys(all).length) store.setItem(SS_RESUME, JSON.stringify(all));
+    else store.removeItem(SS_RESUME);
+  } catch (e) { /* storage blocked */ }
+  if (resumeOnDashboard()) { try { sessionStorage.removeItem(SS_RESUME); } catch (e) { /* ignore */ } }
 }
 function resumeUserId() {
   try { const u = currentUser(); return u && u.id ? String(u.id) : ''; } catch (e) { return ''; }
@@ -87,18 +122,19 @@ function resumeRemember() {
 // Logging out for good: the next login starts at the overview
 function resumeForget() {
   const id = resumeUserId();
-  if (!id) return;
-  const all = resumeReadAll();
-  if (!(id in all)) return;
-  delete all[id];
-  resumeWriteAll(all);
+  if (id) {
+    const all = resumeReadAll();
+    if (id in all) { delete all[id]; resumeWriteAll(all); }
+  }
+  // own device: no note stays behind in localStorage (e.g. the device was a dashboard before)
+  if (!resumeOnDashboard()) { try { localStorage.removeItem(SS_RESUME); } catch (e) { /* ignore */ } }
 }
 
 // A link from a push message, a widget … decides where the app opens – then nothing is restored
 function resumeUrlHasTarget() {
   try {
-    const keys = [...new URLSearchParams(location.search).keys()].filter(k => k !== '_r');
-    return keys.length > 0;
+    const q = new URLSearchParams(location.search);
+    return RESUME_URL_TARGETS.some(k => q.get(k));
   } catch (e) { return false; }
 }
 

@@ -133,6 +133,15 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski und 🇺🇦 Українська**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.148.1
+
+**Rezept bleibt am Dashboard offen**
+
+- **Familien-Dashboard.** Nach „Zur Profilauswahl“ und der PIN ist ein offenes Rezept jetzt wirklich wieder offen. Der erste Bildschirm-Wechsel nach dem Start (z. B. wenn das iPad die App wieder zeigt) baute die Seite neu auf und schloss das Rezept – behoben.
+- **Auch wenn iOS die App beendet.** Auf einem Dashboard bleibt die Notiz jetzt erhalten, auch wenn iOS die App beendet, während sie auf der Profilauswahl wartet (höchstens 12 Stunden). Ein übrig gebliebener Zusatz in der Adresse verhindert das Weitermachen nicht mehr.
+- **iPad drehen** lässt ein offenes Rezept offen, mit Personenzahl und Lesestelle.
+- Geändert: `js/fortsetzen.js`, `js/ansichten.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`, alle READMEs. Kein Server-Teil.
+
 ## Neu in 1.148.0
 
 **Weiter, wo du aufgehört hast**
@@ -233,14 +242,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Hinweis beim Löschen.** Wer eine Packliste mit Ziel und Zeitraum löscht, wird jetzt gewarnt: Die Reise verschwindet damit auch aus dem Kalender und aus dem Jahresrückblick.
 - Geändert: `js/listen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (ein neuer Text in allen vierzehn Sprachen), `src/` (Version), `index.html`, alle READMEs. Kein Server-Teil.
 
-## Neu in 1.142.0
-
-**Jahresrückblick: Ausgaben, gekochte Gerichte und Urlaube**
-
-- **Jahresrückblick.** Am 28. Dezember ab 18 Uhr (und jederzeit unter Einstellungen → Ausblick) zeigt pinn. dein Jahr auf einen Blick: Ausgaben mit Monatsbalken, Kategorien und größter Einzelausgabe, gekochte Gerichte mit den Lieblingsgerichten und alle Urlaube mit den Reisetagen. Mit den Pfeilen oben blätterst du zu früheren Jahren.
-- **Hinweis und Push wie bei den anderen Ausblicken.** Ein Hinweis oben bis zum 10. Januar und eine Push-Nachricht, die du in den Einstellungen abschalten kannst. Ausgaben siehst du nur mit Zugriff auf die Finanzen; Gäste bekommen keine Push-Nachricht.
-- Geändert: `js/ausblick.js`, `js/hinweise.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (32 neue und geänderte Texte in allen vierzehn Sprachen), `src/` (Version, Einstellungen), `index.html`, alle READMEs. Server (Hooks ersetzen, PocketBase startet neu): `pb_hooks/pinn-ausblick.js`, `pb_hooks/ausblick.pb.js`.
-
 ## So funktioniert’s
 
 ```mermaid
@@ -269,7 +270,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.148.0` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.148.1` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -110,6 +110,15 @@ Tam boyutta açmak için bir resme dokun.
 
 pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski ve 🇺🇦 Українська**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
 
+## 1.148.1 sürümündeki yenilikler
+
+**Tarif gösterge panelinde açık kalır**
+
+- **Aile gösterge paneli.** „Profil seçimine“ ve PIN’den sonra açık bir tarif artık gerçekten yeniden açık. Başlangıçtan sonraki ilk ekran değişikliği (ör. iPad uygulamayı yeniden gösterdiğinde) sayfayı yeniden kuruyor ve tarifi kapatıyordu – düzeltildi.
+- **iOS uygulamayı kapatsa bile.** Gösterge panelinde not, uygulama profil seçiminde beklerken iOS onu kapatsa bile korunur (en fazla 12 saat). Adreste kalan bir ek artık engel olmaz.
+- **iPad’i döndürmek** açık tarifi kapatmaz; porsiyon ve okuma yeri korunur.
+- Değişenler: `js/fortsetzen.js`, `js/ansichten.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`, tüm README’ler. Sunucu kısmı yok.
+
 ## 1.148.0 sürümündeki yenilikler
 
 **Kaldığın yerden devam et**
@@ -171,13 +180,6 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 - **Aynı gün mümkün.** Seçilen saat henüz gelmediyse pinn. aynı gün kontrol eder – bugün zaten kontrol etmiş olsa bile. Böylece yeni bir ayar hemen denenebilir. Kaydederken geçmiş olan bir saat yarından itibaren geçerlidir; „Sonraki kontrol” bunu doğru gösterir.
 - Değişenler: `pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, tüm README’ler. Sunucu (hook’ları değiştirin, PocketBase yeniden başlar): `pb_hooks/pinn-system.js`.
 
-## 1.144.1 sürümündeki yenilikler
-
-**Hata düzeltmesi: otomatik güncellemeler doğru saatte**
-
-- **Otomatik güncellemeler** seçilen saatte çalışmıyordu: sunucu Europe/Berlin saati yerine UTC ile hesaplıyor ve bir iki saat kayıyordu; „Sonraki kontrol” da yanlış saati gösteriyordu. Artık saat, diğer tüm hatırlatıcılarda olduğu gibi çalışıyor (yaz ve kış saati dahil).
-- Değişenler: `pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, tüm README’ler. Sunucu (hook’ları değiştirin, PocketBase yeniden başlar): `pb_hooks/pinn-system.js`.
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -187,7 +189,7 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.148.0` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.148.1` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

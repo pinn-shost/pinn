@@ -422,7 +422,9 @@ document.querySelectorAll('.mobile-section-tab').forEach(btn => {
   });
 });
 
-let lastKnownPortrait = null;
+// Orientation the page was built for. Set right away (before 1.148.1 it started empty, so the first resize after the
+// start – e.g. when iOS shows the app again – rebuilt the page and closed a recipe that had just been opened again)
+let lastKnownPortrait = isPortraitOrientation();
 function updateResponsiveMode() {
   const wasMobile = document.body.classList.contains('mobile-mode');
   const nowMobile = isMobile();
@@ -433,7 +435,13 @@ function updateResponsiveMode() {
   // When switching between mobile/wide OR when rotating (portrait/landscape, esp. iPad), rebuild the current
   // view so that e.g. the forced day/week view, the 2-column overview and the
   // calendar/recipe tabs apply correctly or disappear again.
-  if (currentView !== 'einstellungen' && currentView !== 'konto' && familyRecordId) setView(currentView);
+  if (currentView !== 'einstellungen' && currentView !== 'konto' && familyRecordId) {
+    // an opened recipe stays open (with servings and scroll position) – rotating the iPad while cooking
+    let openRecipe = null;
+    try { const snap = resumeSnapshot(); openRecipe = snap && snap.recipe ? snap.recipe : null; } catch (e) { openRecipe = null; }
+    setView(currentView);
+    if (openRecipe) { try { resumeOpenRecipe(openRecipe).catch(() => { /* recipe gone */ }); } catch (e) { /* ignore */ } }
+  }
 }
 let responsiveResizeTimer = null;
 window.addEventListener('resize', () => {

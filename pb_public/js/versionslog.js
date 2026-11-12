@@ -28,6 +28,8 @@ const PINN_CHANGELOG = [
       ['neu', 'Gemerkt werden außerdem die Seite (z. B. Listen, Aufgaben, Finanzen), die geöffnete Liste, der Reiter in Zuhause und bei Fahrzeugen und auf dem Handy der Reiter der Übersicht. Jedes Profil hat seinen eigenen Platz.'],
       ['info', 'Das gilt, solange die App geöffnet bleibt (auch im Hintergrund) und höchstens 12 Stunden. Nach dem Schließen der App, nach „Abmelden“ auf dem eigenen Gerät oder über einen Link aus einer Benachrichtigung startest du wie gewohnt. Auch auf dem eigenen Gerät bleibt die Seite jetzt erhalten, wenn die App neu lädt (z. B. nach einem Update).'],
       ['info', 'Geändert: js/fortsetzen.js (neu), js/appstart.js, js/dashboard.js, js/anmeldung.js, js/rezepte.js, js/sprachen.js, js/versionslog.js, src/ (Version, rahmen.html), index.html, pinn-setup.sh, i18n/versionslog.en.js, alle READMEs. Kein Server-Teil.'],
+      ['fix', '1.148.1: Familien-Dashboard – nach „Zur Profilauswahl“ und der PIN ist ein offenes Rezept jetzt wieder offen. Behoben: Beim ersten Bildschirm-Wechsel nach dem Start (z. B. wenn das iPad die App wieder zeigt) wurde die Seite neu aufgebaut und das Rezept geschlossen. Beendet iOS die App, während das Dashboard auf der Profilauswahl wartet, bleibt die Notiz auf dem Dashboard jetzt trotzdem erhalten (höchstens 12 Stunden), und ein übrig gebliebener Zusatz in der Adresse verhindert das Weitermachen nicht mehr. Dreht man das iPad, bleibt ein offenes Rezept offen.'],
+      ['info', '1.148.1 geändert: js/fortsetzen.js, js/ansichten.js, js/appstart.js, js/sprachen.js, js/versionslog.js, i18n/versionslog.en.js, src/ (Version), index.html, alle READMEs. Kein Server-Teil.'],
     ],
   },
   {
