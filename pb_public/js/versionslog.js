@@ -22,6 +22,17 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.149', datum: '13.11.2026', titel: 'Gesundheit – Trinken, Medikamente und Notfallpass',
+    punkte: [
+      ['neu', 'Gesundheit unter Familie: Der Reiter „Notfall“ heißt jetzt „Gesundheit“, ebenso der Knopf in der Familien-Übersicht. Jede Person hat eine eigene Gesundheitsseite aus Bausteinen (wie bei Zuhause): Trinken, Medikamente & Vitamine, Hände waschen, Werte (Gewicht, Blutdruck, Puls), Impfungen und Arzttermine – jeder schaltet ein, was er braucht.'],
+      ['neu', 'Trinken: Tagesziel wählen und auf „Getrunken“ tippen – erst das Getränk (Wasser, Saft, Kaffee, Tee, Milch, Limo & Schorle), dann die Menge als mehr oder weniger volles Glas. pinn. zählt mit und sagt, wie viel bis zum Ziel noch fehlt, wie viel das pro Stunde ist und ob du im Plan liegst.'],
+      ['neu', 'Medikamente & Vitamine mit Uhrzeiten und täglichem Abhaken; Hände waschen zählt mit; Werte, Impfungen (mit Auffrisch-Termin) und Arzttermine lassen sich eintragen.'],
+      ['info', 'Notfallpass: steckt jetzt in der Gesundheitsseite und wird mit einem Haken eingeschaltet – ist er noch leer, öffnet sich gleich das Formular. Alles bisher Eingetragene bleibt erhalten und ist weiter für die ganze Familie sichtbar, auch offline. Ausschalten blendet ihn nur aus.'],
+      ['info', 'Wer was sieht: Gesundheitsdaten sieht nur die Person selbst, bei Kindern (Kindersperre, Kinderseite oder unter 18) auch die Erwachsenen. Sie liegen in einer eigenen, geschützten Sammlung auf dem Server. Push-Erinnerungen (Medikamente, Trinken, Hände waschen) folgen mit 1.149.1.'],
+      ['info', 'Geändert: js/gesundheit.js, css/gesundheit.css, pb_hooks/gesundheit.pb.js, pb_hooks/pinn-gesundheit.js (alle neu), pb_hooks/pinn-schema.js, js/familie.js, js/serverzugriff.js, js/sprachen.js, js/versionslog.js, i18n/ (alle Sprachen), i18n/versionslog.en.js, src/ (Version, rahmen.html, teile/seiten/familie.html), index.html, pinn-setup.sh, alle READMEs. Enthält 1.148.2.'],
+    ],
+  },
+  {
     v: '1.148', datum: '12.11.2026', titel: 'Weiter, wo du aufgehört hast',
     punkte: [
       ['neu', 'Familien-Dashboard: Öffnest du dein Profil nach einer Pause wieder mit der PIN, landest du dort, wo du aufgehört hast – nicht mehr auf der Übersicht. Ein offenes Rezept ist wieder offen, mit der eingestellten Personenzahl und an der Stelle, bis zu der du gelesen hast.'],

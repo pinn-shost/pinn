@@ -11,6 +11,10 @@
 let authExpiredHandled = false;
 // Known German server messages -> text key (the server keeps writing German, the app translates)
 const SERVER_MESSAGE_KEYS = {
+  "Unbekannte Person.": 'srv.unknownPerson',
+  "Die Gesundheitsdaten sind zu groß.": 'srv.healthTooBig',
+  "Die Sammlung für Gesundheit fehlt auf dem Server.": 'srv.healthMissing',
+  "Diese Gesundheitsdaten darfst du nicht ändern.": 'srv.healthDenied',
   "Anmeldung fehlgeschlagen. Bitte Profil und Passwort prüfen.": 'srv.loginFailed',
   "Das neue Passwort muss mindestens 8 Zeichen lang sein.": 'srv.newPasswordShort',
   "Profil nicht gefunden.": 'srv.profileNotFound',

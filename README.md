@@ -129,6 +129,16 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski and 🇺🇦 Українська**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.149.0
+
+**Health**
+
+- **Health under Family.** The tab “Emergency” is now “Health”, and so is the button in the family overview. Every person gets their own health page built from blocks, like Home: drinking, medication & vitamins, hand washing, values, vaccinations and doctor’s appointments.
+- **Drinking.** Daily goal, then tap “I had a drink”: pick the drink (water, juice, coffee, tea, milk, soda) and the amount as a more or less full glass. pinn. adds it up and tells you how much is left and whether you are on track.
+- **Emergency card inside.** Switched on with a tick on the health page; an empty card opens the form right away. Existing emergency cards are kept and stay visible to the whole family, also offline.
+- **Private.** Health data is seen only by the person themself, for children also by the adults. Push reminders follow in 1.149.1.
+- Changed: `js/gesundheit.js`, `css/gesundheit.css`, `pb_hooks/gesundheit.pb.js`, `pb_hooks/pinn-gesundheit.js`, `pb_hooks/pinn-schema.js`, `js/familie.js`, `js/serverzugriff.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, all READMEs. With a server part (new collection “gesundheit”). Includes 1.148.2.
+
 ## What's new in 1.148.2
 
 **Another family on the dashboard device**
@@ -254,14 +264,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Notice and push like the other outlooks.** A notice at the top until 10 January and a push message that you can switch off in the settings. Expenses are only shown with access to finances; guests get no push message.
 - Changed: `js/ausblick.js`, `js/hinweise.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (32 new and changed texts in all fourteen languages), `src/` (version, settings), `index.html`, all READMEs. Server (replace the hooks, PocketBase restarts): `pb_hooks/pinn-ausblick.js`, `pb_hooks/ausblick.pb.js`.
 
-## What's new in 1.141.2
-
-**Widgets: gold instead of green, ticks, more modern tiles**
-
-- **Gold and ticks.** The widgets now use the gold of the app instead of green, and open tasks show a tick instead of a circle. Ticked tasks keep a grey tick and stay below the open ones.
-- **Quick access widget.** The tiles are a little smaller, so everything stays inside the widget, and they look more modern: a round gold badge with the symbol, a thin edge and a dark gradient. A tap still opens pinn. in Safari, because iOS does not open the installed app from a link.
-- Changed: `js/sprachsteuerung.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (version), `index.html`, all READMEs. No server part. Copy the scripts again and replace them in Scriptable.
-
 ## How it works
 
 ```mermaid
@@ -288,7 +290,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.148.2` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.149.0` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

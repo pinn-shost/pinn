@@ -110,6 +110,16 @@ Tam boyutta açmak için bir resme dokun.
 
 pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski ve 🇺🇦 Українська**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
 
+## 1.149.0 sürümündeki yenilikler
+
+**Sağlık**
+
+- **Aile altında Sağlık.** “Acil” sekmesinin adı artık “Sağlık”, aile özetindeki düğmenin de. Herkesin, Ev’deki gibi bloklardan oluşan kendi sağlık sayfası var: su içme, ilaçlar ve vitaminler, el yıkama, değerler, aşılar ve doktor randevuları.
+- **Su içme.** Günlük hedef seç ve “İçtim”e dokun: içeceği (su, meyve suyu, kahve, çay, süt, gazoz) ve miktarı az ya da çok dolu bir bardak olarak seç. pinn. toplar, ne kadar kaldığını ve plana uyup uymadığını söyler.
+- **Acil durum kartı içinde.** Sağlık sayfasında bir tikle açılır; boş kart hemen formu açar. Mevcut acil durum kartları korunur ve tüm aile tarafından, çevrimdışı da görülür.
+- **Gizli.** Sağlık verilerini yalnızca kişinin kendisi, çocuklarda ayrıca yetişkinler görür. Push hatırlatmaları 1.149.1 ile gelecek.
+- Değişenler: `js/gesundheit.js`, `css/gesundheit.css`, `pb_hooks/gesundheit.pb.js`, `pb_hooks/pinn-gesundheit.js`, `pb_hooks/pinn-schema.js`, `js/familie.js`, `js/serverzugriff.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, tüm README’ler. Sunucu kısmı var (yeni “gesundheit” koleksiyonu). 1.148.2’yi içerir.
+
 ## 1.148.2 sürümündeki yenilikler
 
 **Pano cihazında başka bir aile**
@@ -172,15 +182,6 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 - **Kilitli pano yeni sürümleri kendisi yükler.** Kilitli aile panosu (veya giriş ekranı) açık bir iPad, kimse yazmıyorsa bir güncellemeden yaklaşık bir dakika sonra yeniden yüklenir. O saatte bir yedekleme çalışıyorsa uygulama „bekliyor” gösterir.
 - Değiştirildi: `js/winterzeit.js`, `css/winterzeit.css`, `js/versionspruefung.js`, `js/sicherungen.js`, `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`, `i18n/`, `src/`, `index.html`, tüm README dosyaları. Sunucu kısmı: hook'ları kopyalayın, PocketBase yeniden başlar.
 
-## 1.145.0 sürümündeki yenilikler
-
-**Kış ve Noel görünümü**
-
-- **1 Aralık – 6 Ocak arası kış görünümü.** pinn. logosunda, başlıklarda ve kenar çubuğunun altında kar; uygulamayı açınca kısa bir kar yağışı. Daha fazla kar için logoya dokun.
-- **26 Aralık’a kadar Noel süsleri.** Üst çubuğun altında ışıklı süs, logoda Noel Baba şapkası, başlıklarda ve zilde çobanpüskülü, kenar çubuğunda küçük bir ağaç – arada bir de Noel Baba kızağı ve ren geyikleriyle yukarıdan uçarak geçer.
-- **Varsayılan olarak açık, profil bazında kapatılabilir**: Ayarlar → Görünüm; „Önizleme“ her zaman bir dakikalığına gösterir. Pil dostu ve ayrı bir katman: bekleme modunda hiçbir şey hareket etmez, düzen kaymaz.
-- Değişenler: `js/winterzeit.js` (yeni), `css/winterzeit.css` (yeni), `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`, tüm README’ler. Sunucu kısmı yok.
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -190,7 +191,7 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.148.2` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.149.0` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

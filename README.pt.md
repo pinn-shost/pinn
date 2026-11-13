@@ -133,6 +133,16 @@ Toque em qualquer imagem para abri-la em tamanho real.
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.149.0
+
+**Saúde**
+
+- **Saúde em Família.** O separador «Emergência» chama-se agora «Saúde», tal como o botão do resumo familiar. Cada pessoa tem a sua página de saúde feita de blocos, como em Casa: beber, medicamentos e vitaminas, lavar as mãos, valores, vacinas e consultas médicas.
+- **Beber.** Escolhe um objetivo diário e toca em «Bebi»: a bebida (água, sumo, café, chá, leite, refrigerante) e a quantidade como um copo mais ou menos cheio. O pinn. soma e diz quanto falta e se estás no bom caminho.
+- **Ficha de emergência integrada.** Ativa-se com um visto na página de saúde; uma ficha vazia abre logo o formulário. As fichas existentes mantêm-se e continuam visíveis para toda a família, também offline.
+- **Privado.** Os dados de saúde só são vistos pela própria pessoa e, nas crianças, também pelos adultos. Os lembretes push chegam com a 1.149.1.
+- Alterado: `js/gesundheit.js`, `css/gesundheit.css`, `pb_hooks/gesundheit.pb.js`, `pb_hooks/pinn-gesundheit.js`, `pb_hooks/pinn-schema.js`, `js/familie.js`, `js/serverzugriff.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, todos os README. Com parte de servidor (nova coleção «gesundheit»). Inclui 1.148.2.
+
 ## Novidades da 1.148.2
 
 **Outra família no dispositivo do painel**
@@ -226,14 +236,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Ativado por padrão.** A opção da 1.143.0 estava desligada e mostrava só tarefas; agora os dois números estão ativos em todas as famílias. Um admin pode desligá-los em Conta → “Tarefas e conversas no painel”. Conversas silenciadas não contam; as marcadas como não lidas contam uma – como o número ao lado de “Chat” no menu.
 - Alterado: `js/profilauswahl.js`, `js/dashboardkonto.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (1 texto novo e 4 alterados nas catorze línguas), `src/` (versão, página da conta), `index.html`, todos os README. Servidor (substituir os hooks, o PocketBase reinicia): `pb_hooks/pinn-chat.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`.
 
-## Novidades da 1.143.0
-
-**Painel: tarefas em aberto sob a foto de perfil e chat no iPad**
-
-- **Tarefas em aberto sob a foto.** Na seleção de perfil do painel familiar, o pinn. pode mostrar sob a foto de cada pessoa o número das suas tarefas em aberto e vencidas – como o número no ícone do app no iPhone. Um admin ativa isso em Conta → “Tarefas em aberto no painel”; vale para todos os painéis da família.
-- **Chat no painel.** Quem abriu o seu perfil no painel com o PIN agora também pode usar o chat. Convidados e crianças com “só página infantil” não. Na primeira vez no aparelho, o chat pede o código de recuperação como de costume.
-- Alterado: `pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`, `js/profilauswahl.js`, `js/dashboard.js`, `js/dashboardkonto.js`, `js/konto.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (5 textos novos nas catorze línguas), `src/` (versão, página da conta), `index.html`, todos os README. Servidor (substituir os hooks, o PocketBase reinicia): `pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`.
-
 ## Como funciona
 
 ```mermaid
@@ -262,7 +264,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.148.2` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.149.0` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

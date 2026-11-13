@@ -110,6 +110,16 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski en 🇺🇦 Українська**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.149.0
+
+**Gezondheid**
+
+- **Gezondheid onder Gezin.** Het tabblad „Nood” heet nu „Gezondheid”, net als de knop in het gezinsoverzicht. Iedereen krijgt een eigen gezondheidspagina uit bouwstenen, zoals bij Thuis: drinken, medicijnen & vitamines, handen wassen, waarden, vaccinaties en doktersafspraken.
+- **Drinken.** Kies een dagdoel en tik op „Gedronken”: de drank (water, sap, koffie, thee, melk, frisdrank) en de hoeveelheid als een min of meer vol glas. pinn. telt mee en zegt hoeveel er nog ontbreekt en of je op schema ligt.
+- **Noodpas geïntegreerd.** Met een vinkje op de gezondheidspagina aan te zetten; een lege pas opent meteen het formulier. Bestaande noodpassen blijven behouden en zichtbaar voor het hele gezin, ook offline.
+- **Privé.** Gezondheidsgegevens ziet alleen de persoon zelf, bij kinderen ook de volwassenen. Pushherinneringen volgen in 1.149.1.
+- Gewijzigd: `js/gesundheit.js`, `css/gesundheit.css`, `pb_hooks/gesundheit.pb.js`, `pb_hooks/pinn-gesundheit.js`, `pb_hooks/pinn-schema.js`, `js/familie.js`, `js/serverzugriff.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, alle README's. Met serverdeel (nieuwe verzameling „gesundheit”). Bevat 1.148.2.
+
 ## Nieuw in 1.148.2
 
 **Een andere familie op het dashboardapparaat**
@@ -172,15 +182,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Vergrendeld dashboard laadt nieuwe versies zelf.** Een iPad met vergrendeld gezinsdashboard (of het inlogscherm) laadt ongeveer een minuut na een update opnieuw als niemand aan het typen is. De app toont „wacht” als er op dat moment een back-up loopt.
 - Gewijzigd: `js/winterzeit.js`, `css/winterzeit.css`, `js/versionspruefung.js`, `js/sicherungen.js`, `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`, `i18n/`, `src/`, `index.html`, alle README’s. Serverdeel: hooks kopiëren, PocketBase start opnieuw.
 
-## Nieuw in 1.145.0
-
-**Winter- en kerstlook**
-
-- **Winterlook van 1 december tot 6 januari.** Sneeuw op het pinn.-logo, op de koppen en onderaan de zijbalk, plus een korte sneeuwbui als je de app opent. Tik op het logo voor meer sneeuw.
-- **Kerstextra’s tot 26 december.** Lichtjes onder de kopregel, een kerstmuts op het logo, hulst bij de koppen en de bel, een boompje in de zijbalk – en af en toe vliegt de kerstman met slee en rendieren voorbij.
-- **Standaard aan, per profiel uit te zetten** onder Instellingen → Weergave; „Voorbeeld” toont het altijd een minuut lang. Zuinig met de batterij en een eigen laag: in rustmodus beweegt niets en er verschuift niets in de opmaak.
-- Gewijzigd: `js/winterzeit.js` (nieuw), `css/winterzeit.css` (nieuw), `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`, alle README’s. Geen serverdeel.
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -190,7 +191,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.148.2` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.149.0` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

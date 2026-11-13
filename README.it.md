@@ -133,6 +133,16 @@ Tocca un’immagine per aprirla a dimensione intera.
 
 pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
 
+## Novità della 1.149.0
+
+**Salute**
+
+- **Salute in Famiglia.** La scheda «Emergenza» ora si chiama «Salute», come il pulsante nella panoramica della famiglia. Ogni persona ha una propria pagina della salute a blocchi, come in Casa: bere, farmaci e vitamine, lavarsi le mani, valori, vaccinazioni e visite mediche.
+- **Bere.** Scegli un obiettivo giornaliero e tocca «Ho bevuto»: la bevanda (acqua, succo, caffè, tè, latte, bibita) e la quantità come bicchiere più o meno pieno. pinn. somma e ti dice quanto manca e se sei in linea.
+- **Scheda d’emergenza integrata.** Si attiva con una spunta nella pagina della salute; se è vuota si apre subito il modulo. Le schede esistenti restano e sono visibili a tutta la famiglia, anche offline.
+- **Privato.** I dati sulla salute li vede solo la persona, per i bambini anche gli adulti. I promemoria push arrivano con la 1.149.1.
+- Modificati: `js/gesundheit.js`, `css/gesundheit.css`, `pb_hooks/gesundheit.pb.js`, `pb_hooks/pinn-gesundheit.js`, `pb_hooks/pinn-schema.js`, `js/familie.js`, `js/serverzugriff.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, tutti i README. Con parte server (nuova raccolta «gesundheit»). Include 1.148.2.
+
 ## Novità della 1.148.2
 
 **Un’altra famiglia sul dispositivo della dashboard**
@@ -226,14 +236,6 @@ pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Attivo per impostazione predefinita.** L’impostazione della 1.143.0 era spenta e mostrava solo le attività; ora entrambi i numeri sono attivi per ogni famiglia. Un admin può spegnerli in Account → «Attività e chat sulla dashboard». Le chat silenziate non contano, quelle segnate come non lette contano uno – come il numero accanto a «Chat» nel menu.
 - Modificati: `js/profilauswahl.js`, `js/dashboardkonto.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (1 testo nuovo e 4 modificati in tutte le quattordici lingue), `src/` (versione, pagina dell’account), `index.html`, tutti i README. Server (sostituire gli hook, PocketBase si riavvia): `pb_hooks/pinn-chat.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`.
 
-## Novità della 1.143.0
-
-**Dashboard: attività aperte sotto la foto profilo e chat sull’iPad**
-
-- **Attività aperte sotto la foto.** Nella selezione dei profili della dashboard di famiglia, pinn. può mostrare sotto la foto di ogni persona il numero delle sue attività aperte e in scadenza – come il numero sull’icona dell’app su iPhone. Un admin lo attiva in Account → «Attività aperte sulla dashboard»; vale per tutte le dashboard della famiglia.
-- **Chat sulla dashboard.** Chi ha aperto il proprio profilo sulla dashboard con il PIN può ora usare anche la chat. Gli ospiti e i bambini con «solo pagina dei bambini» no. La prima volta sul dispositivo, la chat chiede come sempre il codice di recupero.
-- Modificati: `pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`, `js/profilauswahl.js`, `js/dashboard.js`, `js/dashboardkonto.js`, `js/konto.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (5 testi nuovi in tutte le quattordici lingue), `src/` (versione, pagina dell’account), `index.html`, tutti i README. Server (sostituire gli hook, PocketBase si riavvia): `pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`.
-
 ## Come funziona
 
 ```mermaid
@@ -262,7 +264,7 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 ## Installazione
 
 1. Scarica lo ZIP dell’[ultima release](https://github.com/pinn-shost/pinn/releases/latest) e decomprimilo.
-2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.148.2` o `pinn-main`) così com’è.
+2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.149.0` o `pinn-main`) così com’è.
 3. Accedi via SSH ed esegui:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

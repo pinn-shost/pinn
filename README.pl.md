@@ -110,6 +110,16 @@ Dotknij obrazu, aby otworzyć go w pełnym rozmiarze.
 
 pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski i 🇺🇦 Українська**; dostosowuje walutę i numery alarmowe do twojego regionu i przełącza się między określeniami **rodzina** i **wspólne mieszkanie**. Jeden serwer może obsługiwać wiele rodzin, każdą z własnymi administratorami.
 
+## Nowości w 1.149.0
+
+**Zdrowie**
+
+- **Zdrowie w Rodzinie.** Karta „Nagły wypadek” nazywa się teraz „Zdrowie”, podobnie przycisk w przeglądzie rodziny. Każda osoba ma własną stronę zdrowia z bloków, jak w Domu: picie, leki i witaminy, mycie rąk, pomiary, szczepienia i wizyty u lekarza.
+- **Picie.** Wybierz cel dzienny i dotknij „Wypiłem/am”: napój (woda, sok, kawa, herbata, mleko, napój gazowany) i ilość jako mniej lub bardziej pełna szklanka. pinn. sumuje i mówi, ile jeszcze brakuje i czy idziesz zgodnie z planem.
+- **Karta ratunkowa w środku.** Włączana zaznaczeniem na stronie zdrowia; pusta karta od razu otwiera formularz. Dotychczasowe karty zostają i są widoczne dla całej rodziny, także offline.
+- **Prywatne.** Dane o zdrowiu widzi tylko sama osoba, a u dzieci także dorośli. Przypomnienia push pojawią się w 1.149.1.
+- Zmienione: `js/gesundheit.js`, `css/gesundheit.css`, `pb_hooks/gesundheit.pb.js`, `pb_hooks/pinn-gesundheit.js`, `pb_hooks/pinn-schema.js`, `js/familie.js`, `js/serverzugriff.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, wszystkie README. Z częścią serwerową (nowa kolekcja „gesundheit”). Zawiera 1.148.2.
+
 ## Nowości w 1.148.2
 
 **Inna rodzina na urządzeniu z panelem**
@@ -172,15 +182,6 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 - **Zablokowany panel sam wczytuje nowe wersje.** iPad z zablokowanym panelem rodzinnym (lub ekran logowania) przeładowuje się mniej więcej minutę po aktualizacji, jeśli nikt akurat nie pisze. Aplikacja pokazuje „czeka”, gdy o tej porze trwa kopia zapasowa.
 - Zmieniono: `js/winterzeit.js`, `css/winterzeit.css`, `js/versionspruefung.js`, `js/sicherungen.js`, `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`, `i18n/`, `src/`, `index.html`, wszystkie pliki README. Część serwerowa: skopiować hooki, PocketBase uruchamia się ponownie.
 
-## Nowości w 1.145.0
-
-**Wygląd zimowy i świąteczny**
-
-- **Wygląd zimowy od 1 grudnia do 6 stycznia.** Śnieg na logo pinn., na nagłówkach i na dole paska bocznego oraz krótki opad śniegu po otwarciu aplikacji. Stuknij logo, aby spadło więcej śniegu.
-- **Dodatki świąteczne do 26 grudnia.** Lampki pod nagłówkiem, czapka Mikołaja na logo, ostrokrzew przy nagłówkach i dzwonku, choinka w pasku bocznym – a od czasu do czasu u góry przelatuje Mikołaj z saniami i reniferami.
-- **Domyślnie włączone, do wyłączenia dla każdego profilu** w Ustawienia → Wygląd; „Podgląd” pokazuje je przez minutę w dowolnym momencie. Oszczędza baterię i działa na osobnej warstwie: w trybie spoczynku nic się nie rusza i nic się nie przesuwa.
-- Zmieniono: `js/winterzeit.js` (nowy), `css/winterzeit.css` (nowy), `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`, wszystkie README. Bez części serwerowej.
-
 ## Wymagania
 
 - NAS lub mini PC z zainstalowanym **Dockerem** i **Docker Compose** (np. Synology, UGREEN, QNAP albo zwykły serwer z Linuksem)
@@ -190,7 +191,7 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 ## Instalacja
 
 1. Pobierz i rozpakuj plik ZIP [najnowszej wersji](https://github.com/pinn-shost/pinn/releases/latest).
-2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.148.2` lub `pinn-main`) bez zmian.
+2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.149.0` lub `pinn-main`) bez zmian.
 3. Połącz się przez SSH i uruchom:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

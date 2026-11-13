@@ -74,6 +74,7 @@ function checks() {
         ["sprache", () => require(`${__hooks}/pinn-sprache.js`).ensureSchema()],
         ["zuhause", () => require(`${__hooks}/pinn-zuhause.js`).ensureSchema()],
         ["chat", () => require(`${__hooks}/pinn-chat.js`).ensureSchema()],
+        ["gesundheit", () => require(`${__hooks}/pinn-gesundheit.js`).ensureSchema()],
     ];
 }
 

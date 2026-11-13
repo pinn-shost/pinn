@@ -133,6 +133,16 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski、🇺🇦 Українська** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.149.0の新機能
+
+**健康**
+
+- **「家族」に健康ページ。** 「緊急」タブは「健康」になり、家族の概要のボタンも同様です。ひとりずつ、「住まい」と同じようにブロックで作る健康ページがあります：水分補給、薬とビタミン、手洗い、測定値、予防接種、通院予定。
+- **水分補給。** 1日の目標を決めて「飲んだ」をタップ：飲み物（水、ジュース、コーヒー、お茶、牛乳、ソーダ）を選び、量をコップの満ち具合で選びます。pinn. が合計し、あとどれくらいか、順調かを教えてくれます。
+- **緊急カードを統合。** 健康ページのチェックで有効にします。空のカードならすぐ入力フォームが開きます。これまでの緊急カードはそのまま残り、家族全員がオフラインでも見られます。
+- **プライベート。** 健康データは本人だけが見られ、子どもの場合は大人も見られます。プッシュ通知は 1.149.1 で追加予定です。
+- 変更：`js/gesundheit.js`, `css/gesundheit.css`, `pb_hooks/gesundheit.pb.js`, `pb_hooks/pinn-gesundheit.js`, `pb_hooks/pinn-schema.js`, `js/familie.js`, `js/serverzugriff.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`、すべてのREADME。サーバー側の変更あり（新しいコレクション「gesundheit」）。1.148.2 を含みます。
+
 ## 1.148.2の新機能
 
 **ダッシュボード端末で別の家族にログイン**
@@ -226,14 +236,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - **初期設定でオン。** 1.143.0 の設定はオフでタスクのみでしたが、今後はすべての家族で両方の数字がオンです。管理者は「アカウント → ダッシュボードのタスクとチャット」でオフにできます。ミュート中のチャットは数えず、未読にしたチャットは 1 と数えます。メニューの「チャット」の数字と同じです。
 - 変更：`js/profilauswahl.js`, `js/dashboardkonto.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/`（14言語すべての新規文言1件と変更文言4件）, `src/`（バージョン、アカウントページ）, `index.html`, すべての README. サーバー（hooks を置き換え、PocketBase が再起動）：`pb_hooks/pinn-chat.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`.
 
-## 1.143.0の新機能
-
-**ダッシュボード：プロフィール写真の下に未完了タスク、iPadでチャット**
-
-- **写真の下の未完了タスク。** ファミリーダッシュボードのプロフィール選択画面で、各人の写真の下に未完了で期限が来ているタスクの数を表示できます。iPhoneのアプリアイコンの数字と同じです。管理者が「アカウント → ダッシュボードの未完了タスク」でオンにします。この家族のすべてのダッシュボードに適用されます。
-- **ダッシュボードでチャット。** ダッシュボードでPINを使ってプロフィールを開いた人は、チャットも使えるようになりました。ゲストと「子どもページのみ」の子どもは使えません。端末で初めて使うときは、いつもどおり回復コードを尋ねます。
-- 変更：`pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`, `js/profilauswahl.js`, `js/dashboard.js`, `js/dashboardkonto.js`, `js/konto.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/`（14言語すべての新規文言5件）, `src/`（バージョン、アカウントページ）, `index.html`, すべての README. サーバー（hooks を置き換え、PocketBase が再起動）：`pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`.
-
 ## しくみ
 
 ```mermaid
@@ -262,7 +264,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.148.2`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.149.0`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

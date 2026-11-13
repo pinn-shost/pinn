@@ -1,0 +1,49 @@
+/* pinn. – Health page per person and drink popup (css/gesundheit.css, since 1.149.0, js/gesundheit.js) */
+.hp-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+.hp-goal { border: 1px solid rgba(37,35,31,0.15); border-radius: 9px; padding: 4px 8px; font-size: 12px; background: #fff; color: inherit; }
+.hp-progress { height: 12px; border-radius: 999px; background: rgba(37,35,31,0.08); overflow: hidden; }
+.hp-progress span { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, #7EC8E3, #3B8DBD); transition: width .4s ease; }
+.hp-big-btn { width: 100%; margin-top: 12px; padding: 11px 14px; border-radius: 14px; background: var(--c-pine); color: #fff; font-size: 15px; font-weight: 600; }
+.hp-big-btn:active { transform: scale(0.98); }
+.hp-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.hp-chip { display: inline-flex; align-items: center; gap: 5px; padding: 3px 4px 3px 6px; border-radius: 999px; background: rgba(37,35,31,0.05); font-size: 12px; }
+.hp-chip .hp-vessel { width: 14px; height: 18px; }
+.hp-x { width: 22px; height: 22px; border-radius: 999px; display: inline-grid; place-items: center; color: rgba(37,35,31,0.45); font-size: 15px; line-height: 1; flex-shrink: 0; }
+.hp-x:hover { color: #c0392b; background: rgba(192,57,43,0.08); }
+.hp-x.big { width: 32px; height: 32px; font-size: 22px; }
+.hp-list { display: flex; flex-direction: column; }
+.hp-row { display: flex; align-items: center; gap: 8px; padding: 7px 0; }
+.hp-row + .hp-row { border-top: 1px solid rgba(37,35,31,0.08); }
+.hp-tick { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; font-size: 14px; cursor: pointer; }
+.hp-tick input { width: 20px; height: 20px; flex-shrink: 0; accent-color: var(--c-pine); }
+.hp-time { flex-shrink: 0; min-width: 3.4em; font-size: 12px; color: rgba(37,35,31,0.55); font-variant-numeric: tabular-nums; }
+.hp-edit { flex-shrink: 0; font-size: 13px; opacity: 0.6; padding: 2px 4px; }
+.hp-count { font-family: var(--font-serif, Georgia, serif); font-size: 28px; line-height: 1; min-width: 2.2em; }
+.hp-lbl { display: block; font-size: 12px; color: rgba(37,35,31,0.6); margin-bottom: 10px; }
+.hp-in { display: block; width: 100%; margin-top: 4px; border: 1px solid rgba(37,35,31,0.15); border-radius: 10px; padding: 8px 10px; font-size: 16px; background: #fff; color: #25231F; }
+.hp-block { padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(37,35,31,0.15); font-size: 13px; background: #fff; }
+.hp-block.on { background: var(--c-pine); border-color: var(--c-pine); color: #fff; }
+
+/* Drink popup: first the drink, then the amount */
+.hp-overlay { position: fixed; inset: 0; z-index: 320; display: grid; place-items: end center; background: rgba(37,35,31,0.35); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); padding: 12px; padding-bottom: max(12px, env(safe-area-inset-bottom)); }
+.hp-overlay.hidden { display: none; }
+@media (min-width: 640px) { .hp-overlay { place-items: center; } }
+.hp-sheet { width: 100%; max-width: 440px; border-radius: 22px; background: #FBFAF7; padding: 16px; box-shadow: 0 12px 40px rgba(0,0,0,0.2); color: #25231F; animation: hp-up .22s ease-out; }
+@keyframes hp-up { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+.hp-pick-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.hp-pick { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px 6px 10px; border-radius: 16px; background: #fff; border: 1px solid rgba(37,35,31,0.1); color: #4A463E; }
+.hp-pick:active { transform: scale(0.96); }
+.hp-pick:hover { border-color: var(--c-pine); }
+.hp-pick .hp-vessel { width: 44px; height: 56px; }
+.hp-pick-t { font-size: 13px; font-weight: 600; color: #25231F; }
+.hp-vessel { color: rgba(37,35,31,0.55); display: block; }
+
+html.dark .hp-goal, html.dark .hp-in, html.dark .hp-block { background: #2E2C28; border-color: rgba(255,255,255,0.15); color: #EDEAE2; }
+html.dark .hp-block.on { background: var(--c-pine); border-color: var(--c-pine); color: #fff; }
+html.dark .hp-progress, html.dark .hp-chip { background: rgba(255,255,255,0.08); }
+html.dark .hp-row + .hp-row { border-top-color: rgba(255,255,255,0.1); }
+html.dark .hp-time, html.dark .hp-lbl { color: rgba(237,234,226,0.6); }
+html.dark .hp-sheet { background: #23211E; color: #EDEAE2; }
+html.dark .hp-pick { background: #2E2C28; border-color: rgba(255,255,255,0.12); color: #EDEAE2; }
+html.dark .hp-pick-t { color: #EDEAE2; }
+html.dark .hp-vessel, html.dark .hp-x { color: rgba(237,234,226,0.6); }

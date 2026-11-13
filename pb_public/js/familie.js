@@ -481,8 +481,9 @@ function renderFamily() {
     skKiCheck();
   } else if (famTab === 'tiere') {
     pane.innerHTML = ptPaneHtml();
-  } else if (famTab === 'notfall') {
-    pane.innerHTML = famNotfallHtml();
+  } else if (famTab === 'gesundheit') {
+    // Health (js/gesundheit.js, since 1.149.0) – replaces the former tab "Emergency"
+    pane.innerHTML = (ghPersonId && memberById(ghPersonId)) ? ghPersonHtml(memberById(ghPersonId)) : ghPaneHtml();
   } else if (famTab === 'ortung') {
     pane.innerHTML = famOrtungHtml();
     famAttachMap();
@@ -2168,13 +2169,15 @@ function famShowPoint(lat, lon, label) {
   setView('familie');
   setTimeout(() => { try { famDrawMap(); famRenderInfo(); } catch (e) { /* map not ready: the next redraw shows it */ } }, 250);
 }
-var famTab = 'uebersicht';      // 'uebersicht' | 'schule' | 'tiere' | 'ortung' | 'notfall'
+var famTab = 'uebersicht';      // 'uebersicht' | 'schule' | 'tiere' | 'ortung' | 'gesundheit' (until 1.148: 'notfall')
 var famDetailMode = 'profil';   // 'profil' | 'pass'
 var famPassFrom = '';           // 'profil' = back to the profile, otherwise to the list
 function famPollWanted() { return !!famDetailId || famTab === 'uebersicht' || famTab === 'ortung' || (famTab === 'tiere' && !!ptDetailId && !!(ptById(ptDetailId) || {}).trackerId); }
 function famSetTab(tab) {
-  famTab = ['uebersicht', 'schule', 'tiere', 'ortung', 'notfall'].includes(tab) ? tab : 'uebersicht';
+  if (tab === 'notfall') tab = 'gesundheit'; // old name of the tab (links, notes)
+  famTab = ['uebersicht', 'schule', 'tiere', 'ortung', 'gesundheit'].includes(tab) ? tab : 'uebersicht';
   famDetailId = null;
+  ghPersonId = null;
   ptDetailId = null;
   if (famTab === 'ortung') famFitted = false;
   renderFamily();
@@ -2205,12 +2208,11 @@ function famHomeHtml() {
 }
 function famQuickCardsHtml() {
   const people = members.filter(m => !famIsPet(m));
-  const filled = members.filter(m => famPassFilled(famPass(m.id))).length;
   const cards = [];
-  cards.push(`<button type="button" class="fam-quick" data-famtabgo="notfall">
+  cards.push(`<button type="button" class="fam-quick" data-famtabgo="gesundheit">
       <span class="fam-quick-ic">🩺</span>
-      <span class="fam-quick-t">${tk('family.emergency')}</span>
-      <span class="fam-quick-s">${filled ? `${tk('family.emergencyCards', { filled, n: members.length })}` : tk('family.noEmergencyCardYet')}</span>
+      <span class="fam-quick-t">${tk('gh.title')}</span>
+      <span class="fam-quick-s">${tk('gh.quickSub')}</span>
     </button>`);
   if (famOrtungAllowed()) {
     const sharing = famDevices().filter(g => g.teilen && g.position).length;
@@ -2244,39 +2246,6 @@ function famOrtungHtml() {
       <div id="famInfo"></div>
       <div id="famNote"></div>
     </div>`;
-}
-function famNotfallHtml() {
-  const n = regionNotruf();
-  const calls = [`<a class="fz-act-btn fam-sos" href="tel:${escapeHtml(n.rettung)}"><span class="fz-ti">🚑</span>${tk('family.call2', { rettung: escapeHtml(n.rettung) })}</a>`];
-  if (n.polizei && n.polizei !== n.rettung) calls.push(`<a class="fz-act-btn" href="tel:${escapeHtml(n.polizei)}"><span class="fz-ti">🚓</span>${tk('family.call3', { polizei: escapeHtml(n.polizei) })}</a>`);
-  const rows = members.map(m => {
-    const p = famPass(m.id) || {};
-    const has = famPassFilled(p);
-    const contacts = (Array.isArray(p.contacts) ? p.contacts : []).filter(x => x && (x.name || x.phone)).length;
-    const meds = (Array.isArray(p.meds) ? p.meds : []).filter(x => x && (x.name || x.dose)).length;
-    const facts = has ? [
-      !famIsPet(m) && p.blood ? '🩸 ' + p.blood : '',
-      p.allergies ? '⚠️ ' + String(p.allergies).split(/[,;\n]/)[0].trim() : '',
-      meds ? `💊 ${meds}` : '',
-      contacts ? `📞 ${contacts}` : '',
-    ].filter(Boolean).join(' · ') : '';
-    return `<button type="button" class="fam-pass-row" data-fampass="${famAttr(m.id)}" style="--fam:${famAttr(famColor(m))}">
-      <span class="fam-ava sm">${famAvatarInner(m)}</span>
-      <span class="min-w-0 flex-1 text-left">
-        <span class="block text-sm font-medium truncate">${escapeHtml(memberLabel(m))}</span>
-        <span class="block text-[11px] ${has ? 'text-ink/55' : 'text-mustard'} truncate">${has ? escapeHtml(facts || tk('family.emergencyCard2')) : tk('family.noEmergencyCardYet')}</span>
-      </span>
-      <span class="text-ink/30 text-lg leading-none">›</span>
-    </button>`;
-  }).join('');
-  return `
-    <div class="fam-card">
-      <div class="fz-h">${tk('family.emergency2')}</div>
-      <div class="flex gap-2">${calls.join('')}</div>
-    </div>
-    ${members.length ? `<div class="fam-card"><div class="fz-h">${tk('family.emergencyCards2')}</div><div class="flex flex-col">${rows}</div></div>` : ''}
-    ${ptNotfallHtml()}
-    <p class="text-[11px] text-ink/40 text-center">${tk('family.emergencyCardsAvailableOffline')}</p>`;
 }
 function famProfileHtml(m) {
   const p = famPass(m.id) || {};

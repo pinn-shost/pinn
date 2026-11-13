@@ -129,6 +129,16 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski et 🇺🇦 Українська**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.149.0
+
+**Santé**
+
+- **Santé dans Famille.** L’onglet « Urgence » s’appelle désormais « Santé », tout comme le bouton de l’aperçu familial. Chaque personne a sa propre page santé faite de blocs, comme Maison : boire, médicaments et vitamines, lavage des mains, mesures, vaccinations et rendez-vous médicaux.
+- **Boire.** Choisis un objectif du jour puis touche « J’ai bu » : la boisson (eau, jus, café, thé, lait, soda) et la quantité sous forme de verre plus ou moins plein. pinn. additionne et indique ce qu’il reste et si tu es dans les temps.
+- **Fiche d’urgence intégrée.** Activée par une case sur la page santé ; une fiche vide ouvre aussitôt le formulaire. Les fiches existantes sont conservées et restent visibles par toute la famille, même hors ligne.
+- **Privé.** Les données de santé ne sont visibles que par la personne, pour les enfants aussi par les adultes. Les rappels push arrivent avec la 1.149.1.
+- Modifié : `js/gesundheit.js`, `css/gesundheit.css`, `pb_hooks/gesundheit.pb.js`, `pb_hooks/pinn-gesundheit.js`, `pb_hooks/pinn-schema.js`, `js/familie.js`, `js/serverzugriff.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, tous les README. Avec partie serveur (nouvelle collection « gesundheit »). Inclut 1.148.2.
+
 ## Nouveautés de la 1.148.2
 
 **Une autre famille sur l'appareil du tableau de bord**
@@ -254,14 +264,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Notification et push comme pour les autres aperçus.** Un message en haut jusqu’au 10 janvier et une notification push que vous pouvez désactiver dans les réglages. Les dépenses ne sont visibles qu’avec l’accès aux finances ; les invités ne reçoivent pas de notification push.
 - Modifié : `js/ausblick.js`, `js/hinweise.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (32 textes nouveaux et modifiés dans les quatorze langues), `src/` (version, réglages), `index.html`, tous les README. Serveur (remplacer les hooks, PocketBase redémarre) : `pb_hooks/pinn-ausblick.js`, `pb_hooks/ausblick.pb.js`.
 
-## Nouveautés de la 1.141.2
-
-**Widgets : doré au lieu de vert, coches, tuiles plus modernes**
-
-- **Doré et coches.** Les widgets utilisent maintenant le doré de l’app au lieu du vert, et les tâches ouvertes affichent une coche au lieu d’un cercle. Les tâches cochées gardent une coche grise et restent sous les tâches ouvertes.
-- **Widget d’accès rapide.** Les tuiles sont un peu plus petites, pour que tout reste dans le widget, et plus modernes : une pastille dorée ronde avec le symbole, un fin contour et un dégradé sombre. Un appui ouvre toujours pinn. dans Safari, car iOS n’ouvre pas l’app installée depuis un lien.
-- Modifié : `js/sprachsteuerung.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (version), `index.html`, tous les README. Pas de partie serveur. Copiez de nouveau les scripts et remplacez-les dans Scriptable.
-
 ## Comment ça marche
 
 ```mermaid
@@ -288,7 +290,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.148.2` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.149.0` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

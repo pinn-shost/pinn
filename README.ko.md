@@ -133,6 +133,16 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.149.0의 새 소식
+
+**건강**
+
+- **가족 메뉴의 건강.** “응급” 탭이 이제 “건강”이 되었고, 가족 개요의 버튼도 마찬가지입니다. 사람마다 “집”처럼 구성 요소로 된 건강 페이지가 있습니다: 수분 섭취, 약과 비타민, 손 씻기, 수치, 예방접종, 진료 예약.
+- **수분 섭취.** 하루 목표를 정하고 “마셨어요”를 누르세요: 음료(물, 주스, 커피, 차, 우유, 탄산음료)와 양을 컵이 찬 정도로 고릅니다. pinn.이 합산해 남은 양과 진행 상황을 알려 줍니다.
+- **응급 카드 통합.** 건강 페이지에서 체크하면 켜집니다. 비어 있으면 바로 입력 양식이 열립니다. 기존 응급 카드는 그대로 유지되며 가족 모두가 오프라인에서도 볼 수 있습니다.
+- **비공개.** 건강 데이터는 본인만 볼 수 있고, 아이의 경우 어른도 볼 수 있습니다. 푸시 알림은 1.149.1에서 제공됩니다.
+- 변경: `js/gesundheit.js`, `css/gesundheit.css`, `pb_hooks/gesundheit.pb.js`, `pb_hooks/pinn-gesundheit.js`, `pb_hooks/pinn-schema.js`, `js/familie.js`, `js/serverzugriff.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, 모든 README. 서버 부분 포함(새 컬렉션 “gesundheit”). 1.148.2 포함.
+
 ## 1.148.2의 새 소식
 
 **대시보드 기기에서 다른 가족으로 로그인**
@@ -226,14 +236,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - **기본으로 켜짐.** 1.143.0의 설정은 꺼져 있었고 할 일만 보였어요. 이제 모든 가족에서 두 숫자가 모두 켜져 있어요. 관리자는 계정 → ‘대시보드의 할 일과 채팅’에서 끌 수 있어요. 알림을 끈 채팅은 세지 않고, 읽지 않음으로 표시한 채팅은 1로 세요. 메뉴의 ‘채팅’ 옆 숫자와 같아요.
 - 변경: `js/profilauswahl.js`, `js/dashboardkonto.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (14개 언어의 새 문구 1개와 바뀐 문구 4개), `src/` (버전, 계정 페이지), `index.html`, 모든 README. 서버(hooks 교체, PocketBase가 다시 시작돼요): `pb_hooks/pinn-chat.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`.
 
-## 1.143.0의 새 소식
-
-**대시보드: 프로필 사진 아래 미완료 할 일, iPad에서 채팅**
-
-- **사진 아래의 미완료 할 일.** 가족 대시보드의 프로필 선택 화면에서 각 사람의 사진 아래에 기한이 된 미완료 할 일의 개수를 보여 줄 수 있어요. iPhone 앱 아이콘의 숫자와 같아요. 관리자가 계정 → “대시보드의 미완료 할 일”에서 켜면 이 가족의 모든 대시보드에 적용돼요.
-- **대시보드에서 채팅.** 대시보드에서 PIN으로 프로필을 연 사람은 이제 채팅도 쓸 수 있어요. 손님과 “아이 페이지만” 쓰는 아이는 쓸 수 없어요. 기기에서 처음 쓸 때는 평소처럼 복구 코드를 물어봐요.
-- 변경: `pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`, `js/profilauswahl.js`, `js/dashboard.js`, `js/dashboardkonto.js`, `js/konto.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (14개 언어의 새 문구 5개), `src/` (버전, 계정 페이지), `index.html`, 모든 README. 서버(hooks 교체, PocketBase가 다시 시작돼요): `pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`.
-
 ## 작동 방식
 
 ```mermaid
@@ -262,7 +264,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.148.2` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.149.0` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
