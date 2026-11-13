@@ -20,6 +20,7 @@ function renderOverviewSettings() {
         <div class="ov-set-text">
           <div class="ov-set-label">${escapeHtml(t.label)}</div>
           <div class="ov-set-hint">${escapeHtml(t.hint)}</div>
+          ${id === 'shortcuts' ? `<button type="button" class="ov-set-kz" data-ov-kz="1">${escapeHtml(tk('shortcut.chooseApps'))} ›</button>` : ''}
         </div>
         <button type="button" class="ov-set-move" data-ov-move="-1" data-ov-id="${id}" aria-label="${escapeHtml(tk('settings.overview.moveUp', { name: t.label }))}" ${i === 0 ? 'disabled' : ''}>▲</button>
         <button type="button" class="ov-set-move" data-ov-move="1" data-ov-id="${id}" aria-label="${escapeHtml(tk('settings.overview.moveDown', { name: t.label }))}" ${i === overviewOrder.length - 1 ? 'disabled' : ''}>▼</button>
@@ -74,6 +75,7 @@ function saveOverviewPrefs() {
   refreshOverviewTiles();
 }
 document.getElementById('overviewTileSettingsList').addEventListener('click', (e) => {
+  if (e.target.closest('[data-ov-kz]')) { kzOpenSettings(); return; }
   const btn = e.target.closest('[data-ov-move]');
   if (!btn || btn.disabled) return;
   const id = btn.dataset.ovId;
@@ -122,7 +124,6 @@ document.getElementById('resetOverviewBtn').addEventListener('click', () => {
   overviewHidden = [];
   overviewBdayDays = 14;
   overviewBdayOnlyUpcoming = true;
-  kzEnabled = [];
   saveOverviewPrefs();
 });
 document.getElementById('refreshBirthdaysBtn').addEventListener('click', async () => {

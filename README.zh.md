@@ -133,6 +133,15 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski和 🇺🇦 Українська**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.150.1 新功能
+
+**快捷方式拥有独立菜单项**
+
+- **独立菜单项。** 现在在“设置 → 快捷方式”中选择应用。此前打开“快捷方式”时，“概览”设置会收起，页面也无法再滚动。
+- **在“概览”中开关。** “快捷方式”卡片像其他卡片一样开启或关闭；“选择应用”直接通往选择页面。
+- **立即可见。** 在您自行选择之前，卡片显示一组默认应用（喝水、购物、任务、日程、今天做饭、便签、支出、清洁计划）。未选择任何应用时，卡片会提供“选择应用”，而不是消失。
+- 已更改: `js/kurzbefehle.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README.
+
 ## 1.150.0 新功能
 
 **按您所在地区的时间 · 概览上的快捷方式 · 快捷方式的快速窗口**
@@ -234,13 +243,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 - **默认开启，可按个人资料关闭**：设置 → 外观；“预览”随时展示一分钟。省电且是独立的一层：待机时不会动，布局也不会移动。
 - 已更改：`js/winterzeit.js` （新）, `css/winterzeit.css` （新）, `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`，所有 README。无服务器部分。
 
-## 1.144.2 新功能
-
-**自动更新：也可安排在今天**
-
-- **当天即可。** 如果所选时间还没到，即使今天已经检查过，pinn. 也会在当天检查。这样新设置可以立即试用。保存时已过去的时间从明天起生效；“下次检查”会正确显示。
-- 已更改：`pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`，所有 README。服务器（替换 hooks，PocketBase 会重启）：`pb_hooks/pinn-system.js`。
-
 ## 工作原理
 
 ```mermaid
@@ -269,7 +271,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.150.0` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.150.1` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

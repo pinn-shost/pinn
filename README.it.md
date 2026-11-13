@@ -133,6 +133,15 @@ Tocca un’immagine per aprirla a dimensione intera.
 
 pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
 
+## Novità della 1.150.1
+
+**Scorciatoie in una voce di menu propria**
+
+- **Voce propria.** La scelta delle app ora si trova in Impostazioni → Scorciatoie. Prima, aprendo «Scorciatoie» l’impostazione Panoramica si chiudeva e la pagina non scorreva più.
+- **Attiva o disattiva in Panoramica.** Il riquadro Scorciatoie si attiva o si disattiva come tutti gli altri; «Scegli le app» porta direttamente alla scelta.
+- **Subito visibile.** Finché non scegli nulla, il riquadro mostra una selezione predefinita (bere, spesa, attività, appuntamento, cucinare oggi, nota, spesa in uscita, piano pulizie). Senza app scelte offre «Scegli le app» invece di sparire.
+- Modificato: `js/kurzbefehle.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README.
+
 ## Novità della 1.150.0
 
 **Orari nella tua regione · Scorciatoie nella panoramica · Finestre rapide per le scorciatoie**
@@ -234,13 +243,6 @@ pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Attivo di default, disattivabile per profilo** in Impostazioni → Aspetto; «Anteprima» lo mostra per un minuto in qualsiasi momento. Risparmia batteria ed è uno strato a sé: a riposo non si muove nulla e il layout non si sposta.
 - Modificato: `js/winterzeit.js` (nuovo), `css/winterzeit.css` (nuovo), `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`, tutti i README. Nessuna parte server.
 
-## Novità della 1.144.2
-
-**Aggiornamenti automatici: anche per oggi**
-
-- **Stesso giorno possibile.** Se l’ora scelta deve ancora arrivare, pinn. controlla lo stesso giorno, anche se ha già controllato oggi. Così una nuova impostazione si può provare subito. Un’ora già passata al salvataggio vale da domani; «Prossimo controllo» lo mostra correttamente.
-- Modificato: `pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, tutti i README. Server (sostituire gli hooks, PocketBase si riavvia): `pb_hooks/pinn-system.js`.
-
 ## Come funziona
 
 ```mermaid
@@ -269,7 +271,7 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 ## Installazione
 
 1. Scarica lo ZIP dell’[ultima release](https://github.com/pinn-shost/pinn/releases/latest) e decomprimilo.
-2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.150.0` o `pinn-main`) così com’è.
+2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.150.1` o `pinn-main`) così com’è.
 3. Accedi via SSH ed esegui:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

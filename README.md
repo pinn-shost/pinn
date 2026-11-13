@@ -129,6 +129,15 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski and 🇺🇦 Українська**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.150.1
+
+**Shortcuts in their own menu item**
+
+- **Own menu item.** Choosing the apps is now under Settings → Shortcuts. Before, opening “Shortcuts” collapsed the Overview settings and the page could no longer be scrolled.
+- **On or off under Overview.** The Shortcuts tile is switched on or off like every other tile; “Choose apps” leads straight to the selection.
+- **Visible right away.** Until you choose yourself, the tile shows a default set (drinking, shopping, task, event, cook today, note, expense, cleaning plan). With no app chosen it offers “Choose apps” instead of disappearing.
+- Changed: `js/kurzbefehle.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README.
+
 ## What's new in 1.150.0
 
 **Times in your region · Shortcuts on the overview · Quick windows for the shortcuts**
@@ -261,14 +270,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Chat on the dashboard.** Whoever has opened their profile on the dashboard with the PIN can now use the chat too. Guests and kids with “kids’ page only” cannot. The first time on the device, the chat asks for the recovery code as usual.
 - Changed: `pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`, `js/profilauswahl.js`, `js/dashboard.js`, `js/dashboardkonto.js`, `js/konto.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (5 new texts in all fourteen languages), `src/` (version, account page), `index.html`, all READMEs. Server (replace the hooks, PocketBase restarts): `pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`.
 
-## What's new in 1.142.2
-
-**Year in review: income, appointments, tasks, birthdays and trip photos**
-
-- **More in the year in review.** Under expenses you now also see income and the balance. New cards show appointments (with the busiest month), completed tasks (with the household share) and birthdays celebrated (with special ones such as 18, 30, 40 …). Each trip shows the pinboard photos posted while it was on.
-- **Completed tasks are counted by the server,** because they are deleted after one or two days. For this year the count starts on the day of the update.
-- Changed: `js/ausblick.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (14 new texts and one changed text in all fourteen languages), `src/` (version), `index.html`, all READMEs. Server (replace the hooks, PocketBase restarts): `pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-aufgaben.js`, `pb_hooks/ausblick.pb.js`.
-
 ## How it works
 
 ```mermaid
@@ -295,7 +296,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.150.0` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.150.1` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

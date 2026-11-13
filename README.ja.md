@@ -133,6 +133,15 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski、🇺🇦 Українська** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.150.1の新機能
+
+**ショートカットが独立したメニュー項目に**
+
+- **独立した項目。** アプリの選択は「設定 → ショートカット」に移りました。以前は「ショートカット」を開くと「概要」の設定が閉じ、ページをスクロールできなくなっていました。
+- **「概要」でオン/オフ。** ショートカットのタイルは他のタイルと同じようにオン/オフできます。「アプリを選ぶ」から直接選択画面へ移動します。
+- **すぐに表示。** 自分で選ぶまでは、タイルに標準のセット（水分補給、買い物、タスク、予定、今日の料理、メモ、支出、掃除プラン）が表示されます。アプリが一つも選ばれていないときは、消える代わりに「アプリを選ぶ」を表示します。
+- 変更: `js/kurzbefehle.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README.
+
 ## 1.150.0の新機能
 
 **お住まいの地域の時刻で · 概要にショートカットを追加 · ショートカットのクイックウィンドウ**
@@ -234,13 +243,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - **初期設定はオン、プロフィールごとにオフ可能**：設定 → 表示。「プレビュー」でいつでも1分間表示できます。省電力で独立したレイヤー：スリープ中は動かず、レイアウトもずれません。
 - 変更：`js/winterzeit.js` （新規）, `css/winterzeit.css` （新規）, `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`、すべての README。サーバー部分なし。
 
-## 1.144.2の新機能
-
-**自動アップデート：当日にも設定可能に**
-
-- **当日も可能。** 設定した時刻がまだ来ていなければ、今日すでに確認済みでも、pinn.は当日中に確認します。新しい設定をすぐに試せます。保存時にすでに過ぎている時刻は翌日から有効で、「次回の確認」にも正しく表示されます。
-- 変更：`pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, すべての README. サーバー（hooks を置き換え、PocketBase が再起動）：`pb_hooks/pinn-system.js`.
-
 ## しくみ
 
 ```mermaid
@@ -269,7 +271,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.150.0`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.150.1`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

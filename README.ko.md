@@ -133,6 +133,15 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.150.1의 새 소식
+
+**바로가기가 별도 메뉴 항목으로**
+
+- **별도 항목.** 앱 선택은 이제 설정 → 바로가기에 있습니다. 이전에는 „바로가기”를 열면 개요 설정이 접히고 페이지를 더 이상 스크롤할 수 없었습니다.
+- **개요에서 켜기/끄기.** 바로가기 타일은 다른 타일처럼 켜고 끌 수 있으며, „앱 선택”을 누르면 바로 선택 화면으로 이동합니다.
+- **바로 표시.** 직접 고르기 전까지 타일에는 기본 앱(물 마시기, 장보기, 할 일, 일정, 오늘 요리, 메모, 지출, 청소 계획)이 표시됩니다. 선택한 앱이 없으면 사라지는 대신 „앱 선택”을 보여 줍니다.
+- 변경: `js/kurzbefehle.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README.
+
 ## 1.150.0의 새 소식
 
 **내 지역의 시각으로 · 개요의 바로가기 · 바로가기 빠른 창**
@@ -234,13 +243,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - **기본으로 켜져 있고 프로필별로 끌 수 있습니다**: 설정 → 화면 표시. '미리 보기'로 언제든 1분간 볼 수 있습니다. 배터리를 아끼는 별도 레이어로, 대기 모드에서는 움직이지 않고 레이아웃도 밀리지 않습니다.
 - 변경: `js/winterzeit.js` (신규), `css/winterzeit.css` (신규), `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`, 모든 README. 서버 부분 없음.
 
-## 1.144.2의 새 소식
-
-**자동 업데이트: 오늘로도 예약 가능**
-
-- **같은 날도 가능.** 선택한 시간이 아직 오지 않았다면, 오늘 이미 확인했더라도 pinn.이 같은 날 확인해요. 새 설정을 바로 시험해 볼 수 있어요. 저장할 때 이미 지난 시간은 내일부터 적용되고, „다음 확인“에도 올바르게 표시돼요.
-- 변경: `pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, 모든 README. 서버(hooks 교체, PocketBase 재시작): `pb_hooks/pinn-system.js`.
-
 ## 작동 방식
 
 ```mermaid
@@ -269,7 +271,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.150.0` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.150.1` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

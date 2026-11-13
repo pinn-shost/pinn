@@ -129,6 +129,15 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski et 🇺🇦 Українська**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.150.1
+
+**Raccourcis dans leur propre rubrique**
+
+- **Rubrique à part.** Le choix des applis se trouve désormais sous Réglages → Raccourcis. Avant, ouvrir « Raccourcis » refermait le réglage Aperçu et la page ne défilait plus.
+- **Activer ou masquer sous Aperçu.** La tuile Raccourcis s’active ou se masque comme toutes les autres ; « Choisir les applis » mène directement au choix.
+- **Visible tout de suite.** Tant que vous n’avez rien choisi, la tuile affiche une sélection par défaut (boire, courses, tâche, rendez-vous, cuisiner aujourd’hui, note, dépense, plan de ménage). Sans appli choisie, elle propose « Choisir les applis » au lieu de disparaître.
+- Modifié: `js/kurzbefehle.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README.
+
 ## Nouveautés de la 1.150.0
 
 **Les heures dans votre région · Raccourcis sur l’aperçu · Fenêtres rapides pour les raccourcis**
@@ -261,14 +270,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Chat sur le tableau de bord.** Celui qui a ouvert son profil avec son code PIN peut désormais aussi utiliser le chat. Pas les invités ni les enfants avec « page enfant uniquement ». La première fois sur l’appareil, le chat demande comme d’habitude le code de récupération.
 - Modifié : `pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`, `js/profilauswahl.js`, `js/dashboard.js`, `js/dashboardkonto.js`, `js/konto.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (5 textes nouveaux dans les quatorze langues), `src/` (version, page du compte), `index.html`, tous les README. Serveur (remplacer les hooks, PocketBase redémarre) : `pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`.
 
-## Nouveautés de la 1.142.2
-
-**Bilan de l’année : revenus, rendez-vous, tâches, anniversaires et photos de voyage**
-
-- **Plus dans le bilan de l’année.** Sous les dépenses, tu vois maintenant aussi les revenus et le solde. De nouvelles cartes montrent les rendez-vous (avec le mois le plus chargé), les tâches terminées (avec la part du ménage) et les anniversaires fêtés (dont les spéciaux, comme 18, 30, 40 …). Chaque voyage affiche les photos du panneau publiées pendant le voyage.
-- **Le serveur compte les tâches terminées,** car elles sont supprimées après un ou deux jours. Pour cette année, le décompte commence le jour de la mise à jour.
-- Modifié : `js/ausblick.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (14 textes nouveaux et un texte modifié dans les quatorze langues), `src/` (version), `index.html`, tous les README. Serveur (remplacer les hooks, PocketBase redémarre) : `pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-aufgaben.js`, `pb_hooks/ausblick.pb.js`.
-
 ## Comment ça marche
 
 ```mermaid
@@ -295,7 +296,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.150.0` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.150.1` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

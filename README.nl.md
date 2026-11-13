@@ -110,6 +110,15 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski en 🇺🇦 Українська**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.150.1
+
+**Snelkoppelingen in een eigen menu-onderdeel**
+
+- **Eigen onderdeel.** Apps kies je nu onder Instellingen → Snelkoppelingen. Eerder klapte bij het openen van „Snelkoppelingen” de instelling Overzicht dicht en kon de pagina niet meer scrollen.
+- **Aan of uit onder Overzicht.** De tegel Snelkoppelingen zet je aan of uit zoals elke andere tegel; „Apps kiezen” brengt je direct naar de keuze.
+- **Meteen zichtbaar.** Zolang je zelf niets kiest, toont de tegel een standaardkeuze (drinken, boodschappen, taak, afspraak, vandaag koken, notitie, uitgave, schoonmaakplan). Zonder gekozen app biedt hij „Apps kiezen” aan in plaats van te verdwijnen.
+- Gewijzigd: `js/kurzbefehle.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README.
+
 ## Nieuw in 1.150.0
 
 **Tijden in jouw regio · Snelkoppelingen op het overzicht · Snelle vensters voor de snelkoppelingen**
@@ -175,15 +184,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Spraakbesturing & widgets.** De persoonlijke link staat nu direct in de velden „Siri-opdracht“ en „Android“ (met kopieerknop) in plaats van in het algemene overzicht.
 - Gewijzigd: `js/geraete.js`, `js/sprachsteuerung.js`, `js/sprachen.js`, `pb_hooks/pinn-sitzungen.js`, `src/`, `index.html`, `i18n/`, alle README's. Servergedeelte: hooks installeren, PocketBase start opnieuw.
 
-## Nieuw in 1.147.0
-
-**Face ID & vingerafdruk, apparaten goed herkend, widget met huis & tuin**
-
-- **Face ID, Touch ID, vingerafdruk.** Onder Account kun je pinn. per apparaat vergrendelen: bij het openen en na een pauze vraagt het apparaat om je gezicht of vinger. Het apparaat controleert zelf, er wordt niets verstuurd.
-- **Aangemelde apparaten.** Juiste naam en soort (geen „Browser” met laptop-icoon meer op de telefoon), korte ID, eigen naam met ✏️; apparaten die alleen meldingen krijgen staan nu in de lijst.
-- **Widget.** Lege cirkel voor open taken, vinkje voor afgeronde, nieuwe groep „Huis & tuin”. Kopieer het script één keer opnieuw.
-- **Seizoenen.** Onder Weergave → Seizoenen kies je voor Winter en Kerstmis de periode en elk onderdeel (sneeuw, sneeuwval, lichtjes, Kerstman …); „Spraakbesturing & widgets” met dichtgeklapte handleidingen. Serverdeel: hooks installeren.
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -193,7 +193,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.150.0` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.150.1` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -110,6 +110,15 @@ Dotknij obrazu, aby otworzyć go w pełnym rozmiarze.
 
 pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski i 🇺🇦 Українська**; dostosowuje walutę i numery alarmowe do twojego regionu i przełącza się między określeniami **rodzina** i **wspólne mieszkanie**. Jeden serwer może obsługiwać wiele rodzin, każdą z własnymi administratorami.
 
+## Nowości w 1.150.1
+
+**Skróty we własnym punkcie menu**
+
+- **Własny punkt.** Wybór aplikacji jest teraz w Ustawienia → Skróty. Wcześniej otwarcie „Skróty” zwijało ustawienie Przegląd i strony nie dało się już przewijać.
+- **Włącz lub wyłącz w Przeglądzie.** Kafelek Skróty włączasz lub wyłączasz jak każdy inny; „Wybierz aplikacje” prowadzi prosto do wyboru.
+- **Od razu widoczne.** Dopóki nic nie wybierzesz, kafelek pokazuje zestaw domyślny (picie, zakupy, zadanie, termin, gotowanie dziś, notatka, wydatek, plan sprzątania). Bez wybranej aplikacji proponuje „Wybierz aplikacje” zamiast znikać.
+- Zmieniono: `js/kurzbefehle.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README.
+
 ## Nowości w 1.150.0
 
 **Godziny w Twoim regionie · Skróty na przeglądzie · Szybkie okna dla skrótów**
@@ -175,15 +184,6 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 - **Sterowanie głosowe i widżety.** Link osobisty znajduje się teraz w polach „Skrót Siri” i „Android” (z przyciskiem kopiowania), a nie w ogólnym przeglądzie.
 - Zmieniono: `js/geraete.js`, `js/sprachsteuerung.js`, `js/sprachen.js`, `pb_hooks/pinn-sitzungen.js`, `src/`, `index.html`, `i18n/`, wszystkie README. Część serwerowa: zainstalować hooki, PocketBase uruchomi się ponownie.
 
-## Nowości w 1.147.0
-
-**Face ID i odcisk palca, poprawnie rozpoznane urządzenia, widżet z domem i ogrodem**
-
-- **Face ID, Touch ID, odcisk palca.** W sekcji Konto możesz zablokować pinn. na każdym urządzeniu: przy otwarciu i po przerwie urządzenie prosi o twarz lub palec. Sprawdza samo urządzenie, nic nie jest wysyłane.
-- **Zalogowane urządzenia.** Poprawna nazwa i rodzaj (koniec z „Przeglądarką” z ikoną laptopa na telefonie), krótki identyfikator, własna nazwa przez ✏️; urządzenia otrzymujące tylko powiadomienia są teraz na liście.
-- **Widżet.** Puste kółko dla otwartych zadań, ptaszek dla wykonanych, nowa grupa „Dom i ogród”. Skopiuj skrypt jeszcze raz.
-- **Pory roku.** W Wygląd → Pory roku wybierasz dla zimy i Bożego Narodzenia okres i każdy element (śnieg, opady, lampki, Mikołaj …); „Sterowanie głosowe i widżety” ze zwiniętymi instrukcjami. Część serwerowa: zainstaluj hooki.
-
 ## Wymagania
 
 - NAS lub mini PC z zainstalowanym **Dockerem** i **Docker Compose** (np. Synology, UGREEN, QNAP albo zwykły serwer z Linuksem)
@@ -193,7 +193,7 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 ## Instalacja
 
 1. Pobierz i rozpakuj plik ZIP [najnowszej wersji](https://github.com/pinn-shost/pinn/releases/latest).
-2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.150.0` lub `pinn-main`) bez zmian.
+2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.150.1` lub `pinn-main`) bez zmian.
 3. Połącz się przez SSH i uruchom:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

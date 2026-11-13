@@ -133,6 +133,15 @@ Toque em qualquer imagem para abri-la em tamanho real.
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.150.1
+
+**Atalhos em um item de menu próprio**
+
+- **Item próprio.** A escolha dos apps agora fica em Configurações → Atalhos. Antes, ao abrir «Atalhos» a configuração da Visão geral se fechava e a página não rolava mais.
+- **Ligar ou desligar em Visão geral.** O bloco Atalhos é ligado ou desligado como qualquer outro; «Escolher apps» leva direto à seleção.
+- **Visível na hora.** Enquanto você não escolher nada, o bloco mostra uma seleção padrão (beber, compras, tarefa, compromisso, cozinhar hoje, nota, despesa, plano de limpeza). Sem nenhum app escolhido, ele oferece «Escolher apps» em vez de sumir.
+- Alterado: `js/kurzbefehle.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README.
+
 ## Novidades da 1.150.0
 
 **Horários na sua região · Atalhos na visão geral · Janelas rápidas para os atalhos**
@@ -234,13 +243,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Ligado por defeito, desligável por perfil** em Definições → Aparência; «Pré-visualizar» mostra-o durante um minuto a qualquer altura. Poupa bateria e é uma camada própria: em repouso nada se move e nada muda de lugar.
 - Alterado: `js/winterzeit.js` (novo), `css/winterzeit.css` (novo), `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`, todos os README. Sem parte de servidor.
 
-## Novidades da 1.144.2
-
-**Atualizações automáticas: também para hoje**
-
-- **Mesmo dia possível.** Se a hora escolhida ainda não chegou, o pinn. verifica no mesmo dia – mesmo que já tenha verificado hoje. Assim uma nova definição pode ser testada logo. Uma hora já passada ao guardar vale a partir de amanhã; «Próxima verificação» mostra-o corretamente.
-- Alterado: `pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, todos os README. Servidor (substituir os hooks, o PocketBase reinicia): `pb_hooks/pinn-system.js`.
-
 ## Como funciona
 
 ```mermaid
@@ -269,7 +271,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.150.0` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.150.1` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

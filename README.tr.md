@@ -110,6 +110,15 @@ Tam boyutta açmak için bir resme dokun.
 
 pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski ve 🇺🇦 Українська**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
 
+## 1.150.1 sürümündeki yenilikler
+
+**Kısayollar kendi menü öğesinde**
+
+- **Kendi menü öğesi.** Uygulamalar artık Ayarlar → Kısayollar altında seçiliyor. Önceden „Kısayollar” açılınca Genel bakış ayarı kapanıyor ve sayfa artık kaydırılamıyordu.
+- **Genel bakış altında aç/kapat.** Kısayollar kutucuğu diğerleri gibi açılıp kapatılır; „Uygulama seç” doğrudan seçime götürür.
+- **Hemen görünür.** Siz bir şey seçene kadar kutucuk varsayılan bir seçim gösterir (su içme, alışveriş, görev, randevu, bugün yemek, not, gider, temizlik planı). Hiç uygulama seçilmemişse kaybolmak yerine „Uygulama seç” sunar.
+- Değişenler: `js/kurzbefehle.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README.
+
 ## 1.150.0 sürümündeki yenilikler
 
 **Bölgenizin saatiyle · Genel bakışta kısayollar · Kısayollar için hızlı pencereler**
@@ -175,15 +184,6 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 - **Sesli kontrol ve widget'lar.** Kişisel bağlantı artık genel özet yerine “Siri kısayolu” ve “Android” alanlarının içinde (kopyalama düğmesiyle) yer alır.
 - Değişenler: `js/geraete.js`, `js/sprachsteuerung.js`, `js/sprachen.js`, `pb_hooks/pinn-sitzungen.js`, `src/`, `index.html`, `i18n/`, tüm README dosyaları. Sunucu kısmı: hook'ları kurun, PocketBase yeniden başlar.
 
-## 1.147.0 sürümündeki yenilikler
-
-**Face ID ve parmak izi, cihazlar doğru tanınıyor, widget'ta ev ve bahçe**
-
-- **Face ID, Touch ID, parmak izi.** Hesap bölümünde pinn. her cihazda kilitlenebilir: açılışta ve bir aradan sonra cihaz yüzünü veya parmağını ister. Kontrolü cihazın kendisi yapar, hiçbir şey gönderilmez.
-- **Oturum açık cihazlar.** Doğru ad ve tür (telefonda dizüstü simgeli “Tarayıcı” artık yok), kısa kimlik, ✏️ ile özel ad; yalnızca bildirim alan cihazlar da listede.
-- **Widget.** Açık görevler boş daire, bitenler onay işaretiyle, yeni grup “Ev ve bahçe”. Betiği bir kez yeniden kopyala.
-- **Mevsimler.** Görünüm → Mevsimler altında Kış ve Noel için dönemi ve her parçayı (kar, kar yağışı, ışık zinciri, Noel Baba …) seçebilirsin; “Sesli komut ve widget'lar” kılavuzları kapalı açılır. Sunucu kısmı: hook'ları yükle.
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -193,7 +193,7 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.150.0` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.150.1` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

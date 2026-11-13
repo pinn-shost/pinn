@@ -133,6 +133,15 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski und 🇺🇦 Українська**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.150.1
+
+**Shortcuts im eigenen Menüpunkt**
+
+- **Eigener Menüpunkt.** Die Auswahl der Apps steht jetzt unter Einstellungen → Shortcuts. Vorher klappte beim Öffnen von „Shortcuts“ die Übersicht-Einstellung zu, und die Seite ließ sich nicht mehr scrollen.
+- **Ein/Aus unter Übersicht.** Die Kachel „Shortcuts“ schaltest du wie jede andere Kachel ein oder aus; „Apps wählen“ führt direkt zur Auswahl.
+- **Sofort sichtbar.** Solange du nichts selbst gewählt hast, zeigt die Kachel eine Standardauswahl (Trinken, Einkauf, Aufgabe, Termin, Heute kochen, Zettel, Ausgabe, Putzplan). Ist keine App gewählt, bietet sie „Apps wählen“ an, statt zu verschwinden.
+- Geändert: `js/kurzbefehle.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README.
+
 ## Neu in 1.150.0
 
 **Zeiten in deiner Region · Shortcuts auf der Übersicht · Schnellfenster für die Shortcuts**
@@ -242,13 +251,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Gleicher Tag möglich.** Liegt die gewählte Uhrzeit noch in der Zukunft, prüft pinn. noch am selben Tag – auch wenn heute schon geprüft wurde. So lässt sich eine neue Einstellung gleich ausprobieren. Eine Uhrzeit, die beim Speichern schon vorbei ist, gilt erst ab morgen; „Nächste Prüfung“ zeigt das richtig an.
 - Geändert: `pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, alle READMEs. Server (Hooks ersetzen, PocketBase startet neu): `pb_hooks/pinn-system.js`.
 
-## Neu in 1.144.1
-
-**Fehlerbehebung: automatische Updates zur richtigen Uhrzeit**
-
-- **Automatische Updates** liefen nicht zur eingestellten Uhrzeit: Der Server rechnete in UTC statt in deutscher Zeit und lag ein bis zwei Stunden daneben; auch „Nächste Prüfung“ zeigte eine falsche Uhrzeit. Jetzt gilt die Uhrzeit wie bei allen anderen Erinnerungen (Sommer- und Winterzeit inklusive).
-- Geändert: `pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, alle READMEs. Server (Hooks ersetzen, PocketBase startet neu): `pb_hooks/pinn-system.js`.
-
 ## So funktioniert’s
 
 ```mermaid
@@ -277,7 +279,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.150.0` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.150.1` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -3,14 +3,20 @@
    one global scope with the other files in js/ (prefix kz…, CSS classes kz-…).
 
    A tile on the overview with app-like icons that open a function directly (drink, wash hands, enter an
-   expense …). The apps are chosen per profile under Settings → Overview → Shortcuts (kzEnabled, stored with the
-   personal design as ovShortcuts). The tile only appears while at least one app is chosen and available.
+   expense …). The apps are chosen per profile under Settings → Shortcuts (own section since 1.150.1; kzEnabled, stored
+   with the personal design as ovShortcuts, ovShortcutsSet = the profile has chosen once). Until then a default set
+   is shown (KZ_DEFAULT). The tile itself is shown or hidden like every other tile under Settings → Overview.
+   Without a chosen app the tile shows a button that leads to the selection.
    Long press on an app opens its quick window (js/kurzfenster.js, since 1.150.0).
    Every app: id, group, colours (two shades for the icon background), glyph (SVG paths, stroke style), label key,
    which view it belongs to (for rights: guests, child lock), optional badge text and the action (run).
    New app: one row in KZ_APPS + the label key shortcut.app.<id> in all i18n files. */
 
-var kzEnabled = [];
+// Default selection for profiles that have not chosen yet (since 1.150.1)
+var KZ_DEFAULT = ['trinken', 'einkauf', 'aufgabe', 'termin', 'kochen', 'zettel', 'ausgabe', 'putzplan'];
+var kzEnabled = KZ_DEFAULT.slice();
+// true once the profile has chosen apps itself (before that KZ_DEFAULT applies)
+var kzChosen = false;
 var KZ_LONG_PRESS_MS = 450;
 
 // Glyphs: 24 x 24, white strokes (css/kurzbefehle.css)
@@ -55,9 +61,14 @@ var KZ_APPS = [
 var KZ_GROUPS = ['health', 'everyday', 'home', 'finance', 'safety'];
 
 function kzApp(id) { return KZ_APPS.find(a => a.id === id); }
-function kzApplyPrefs(list) {
-  kzEnabled = Array.isArray(list) ? list.filter((id, i, a) => kzApp(id) && a.indexOf(id) === i) : [];
+function kzApplyPrefs(list, chosen) {
+  const clean = Array.isArray(list) ? list.filter((id, i, a) => kzApp(id) && a.indexOf(id) === i) : [];
+  // 1.150.0 saved an empty list with every design change - only a list with apps counts as chosen there
+  kzChosen = !!chosen || clean.length > 0;
+  kzEnabled = kzChosen ? clean : KZ_DEFAULT.slice();
 }
+// Tile may appear: apps are usable, or nothing is chosen (then it offers the selection)
+function kzTileAvailable() { return kzEnabled.length === 0 || kzActiveApps().length > 0; }
 // Can this app be used by the signed-in profile right now? (guests, child lock, finances not loaded …)
 function kzAvailable(a) {
   try {
@@ -105,13 +116,17 @@ function renderShortcutsTile() {
   const body = document.getElementById('shortcutsTileBody');
   if (!body) return;
   const apps = kzActiveApps();
+  if (!apps.length) {
+    body.innerHTML = `<div class="kz-tile-empty"><p>${escapeHtml(tk('settings.shortcuts.none'))}</p><button type="button" class="kz-btn" data-kz-choose="1">${escapeHtml(tk('shortcut.chooseApps'))}</button></div>`;
+    return;
+  }
   body.innerHTML = `<div class="kz-grid">${apps.map(a => {
     const sub = kzBadge(a);
     return `<button type="button" class="kz-app" data-kz="${a.id}" aria-label="${escapeHtml(kzLabel(a))}">${kzIconHtml(a, false)}<span class="kz-name">${escapeHtml(kzLabel(a))}</span><span class="kz-sub">${sub ? escapeHtml(sub) : '&nbsp;'}</span></button>`;
   }).join('')}</div>`;
 }
 
-/* ---------- Settings → Overview → Shortcuts ---------- */
+/* ---------- Settings → Shortcuts ---------- */
 function kzRenderSettings() {
   const box = document.getElementById('kzSettingsList');
   if (!box) return;
@@ -129,6 +144,15 @@ function kzRenderSettings() {
   }).join('');
   const hint = document.getElementById('kzSettingsNone');
   if (hint) hint.classList.toggle('hidden', kzEnabled.length > 0);
+}
+// Opens Settings → Shortcuts (from the tile and from the overview settings)
+function kzOpenSettings() {
+  const acc = document.getElementById('settingsShortcutsAccordion');
+  if (!acc) return;
+  if (currentView !== 'einstellungen') setView('einstellungen');
+  kzRenderSettings();
+  if (acc.open) acc.scrollIntoView({ block: 'start', behavior: 'smooth' });
+  else acc.open = true;
 }
 
 /* ---------- Actions ---------- */
@@ -212,6 +236,7 @@ function kzRun(id) {
       kzSheetOpen(b.dataset.kz);
     });
     tile.addEventListener('click', (e) => {
+      if (e.target.closest('[data-kz-choose]')) { kzOpenSettings(); return; }
       const b = e.target.closest('[data-kz]');
       if (!b) return;
       if (longDone) { longDone = false; return; }
@@ -224,8 +249,11 @@ function kzRun(id) {
     if (!box) return;
     const id = box.dataset.kzToggle;
     kzEnabled = box.checked ? KZ_APPS.map(a => a.id).filter(x => x === id || kzEnabled.includes(x)) : kzEnabled.filter(x => x !== id);
+    kzChosen = true;
     saveOverviewPrefs();
   });
+  const acc = document.getElementById('settingsShortcutsAccordion');
+  if (acc) acc.addEventListener('toggle', () => { if (acc.open) kzRenderSettings(); });
 })();
 
 // Marks this file as loaded – the start check in index.html reports missing app files

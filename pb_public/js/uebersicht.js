@@ -20,7 +20,7 @@ const OVERVIEW_TILES = [
   { id: 'wetter', icon: '🌤️', get label() { return tk('overview.tile.weather'); }, get hint() { return tk('overview.tileHint.weather'); }, big: false },
   { id: 'geburtstage', icon: '🎂', get label() { return tk('overview.tile.birthdays'); }, get hint() { return tk('overview.tileHint.birthdays'); }, big: false },
   { id: 'familie', get icon() { return PINN_I18N.famIcon(); }, get label() { return tk('overview.tile.members'); }, get hint() { return tk('overview.tileHint.members'); }, big: false },
-  { id: 'shortcuts', icon: '🧩', get label() { return tk('overview.tile.shortcuts'); }, get hint() { return tk('overview.tileHint.shortcuts'); }, big: false },
+  { id: 'shortcuts', icon: '⚡', get label() { return tk('overview.tile.shortcuts'); }, get hint() { return tk('overview.tileHint.shortcuts'); }, big: false },
   { id: 'vertraege', icon: '📄', get label() { return tk('overview.tile.contracts'); }, get hint() { return tk('overview.tileHint.contracts'); }, big: false },
   { id: 'pinnwand', icon: '📌', get label() { return tk('overview.tile.board'); }, get hint() { return tk('overview.tileHint.board'); }, big: false },
   { id: 'kalender', icon: '📅', get label() { return tk('overview.tile.calendar'); }, get hint() { return tk('overview.tileHint.calendar'); }, big: true },
@@ -64,7 +64,7 @@ function applyOverviewPrefs(w) {
   overviewBdayHidden = bdayUnpackHidden(w.ovBdayHidden);
   overviewVtHidden = bdayUnpackHidden(w.ovVtHidden);
   // Apps of the shortcuts tile (js/kurzbefehle.js, since 1.150.0)
-  try { kzApplyPrefs(w.ovShortcuts); } catch (e) { /* file not loaded yet */ }
+  try { kzApplyPrefs(w.ovShortcuts, w.ovShortcutsSet === true); } catch (e) { /* file not loaded yet */ }
 }
 
 // Can the tile appear at all right now (regardless of the setting)?
@@ -79,8 +79,8 @@ function overviewTileAvailable(id) {
     try { return !isCurrentUserGuest() && isViewAllowed('finanzen') && !!finance && vtTileList().length > 0; } catch (e) { return false; }
   }
   if (id === 'familie') return !isCurrentUserGuest() && members.length > 0;
-  // Only if at least one app is chosen under Settings → Overview → Shortcuts
-  if (id === 'shortcuts') { try { return kzActiveApps().length > 0; } catch (e) { return false; } }
+  // Apps chosen under Settings → Shortcuts are usable, or none chosen yet (then the tile offers the selection)
+  if (id === 'shortcuts') { try { return kzTileAvailable(); } catch (e) { return false; } }
   if (id === 'pinnwand') {
     // Only if something is pinned (and the pinboard is not hidden for guests)
     try { return isViewAllowed('pinnwand') && pwTileNotes().length > 0; } catch (e) { return false; }

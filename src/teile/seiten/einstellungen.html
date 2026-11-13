@@ -175,17 +175,22 @@
         <div id="overviewTileSettingsList" class="flex flex-col gap-2 mb-2"></div>
         <p data-tk="settings.overview.layoutHint" class="text-xs text-ink/40 mb-6">On phones and on the iPad in portrait mode, the tiles are stacked in this order. In landscape mode the calendar is on the left (or on the right if another large tile comes before it), all other tiles next to it, stacked.</p>
 
-        <details class="settings-accordion kz-set-details mb-6">
-          <summary class="cursor-pointer text-sm font-medium py-2"><span data-tk="settings.shortcuts.title">Shortcuts</span></summary>
-          <p data-tk="settings.shortcuts.hint" class="text-xs text-ink/50 mt-1 mb-2">Choose which apps appear as shortcuts on the overview. Applies only to your profile.</p>
-          <p id="kzSettingsNone" data-tk="settings.shortcuts.none" class="text-xs text-ink/40 mb-2">No app chosen – the Shortcuts tile stays hidden.</p>
-          <div id="kzSettingsList"></div>
-        </details>
-
         <div class="flex items-center flex-wrap gap-3">
           <button data-tk="settings.overview.noContractsHidden" id="resetHiddenContractsBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">No contract deadlines hidden</button>
           <button data-tk="settings.overview.reset" id="resetOverviewBtn" type="button" class="text-xs text-ink/40 hover:text-pine transition">Reset overview</button>
         </div>
+      </div>
+    </details>
+    <details class="settings-accordion set-card" id="settingsShortcutsAccordion">
+      <summary class="set-sum">
+        <span class="set-ico">⚡</span>
+        <span class="set-head"><span data-tk="settings.shortcuts.title" class="sa-title">Shortcuts</span><small data-tk="settings.shortcuts.subtitle">Apps on the Shortcuts tile</small></span>
+        <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
+      </summary>
+      <div class="set-body">
+        <p data-tk="settings.shortcuts.hint" class="text-xs text-ink/50 mb-2">Choose which apps appear on the Shortcuts tile – a tap opens the function, a long press opens a quick window. You show or hide the tile itself under Overview. Applies only to your profile.</p>
+        <p id="kzSettingsNone" data-tk="settings.shortcuts.none" class="text-xs text-ink/40 mb-2">No app chosen yet.</p>
+        <div id="kzSettingsList"></div>
       </div>
     </details>
     <details class="settings-accordion set-card" id="settingsAusblickAccordion">

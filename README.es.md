@@ -129,6 +129,15 @@ Pulsa cualquier imagen para verla en tamaño completo.
 
 pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski y 🇺🇦 Українська**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades de la 1.150.1
+
+**Accesos directos en su propio apartado**
+
+- **Apartado propio.** Las apps se eligen ahora en Ajustes → Accesos directos. Antes, al abrir «Accesos directos» se plegaba el ajuste del Resumen y la página ya no se podía desplazar.
+- **Activar o desactivar en Resumen.** El mosaico Accesos directos se activa o desactiva como cualquier otro; «Elegir apps» lleva directamente a la selección.
+- **Visible de inmediato.** Mientras no elijas nada, el mosaico muestra una selección estándar (beber, compra, tarea, cita, cocinar hoy, nota, gasto, plan de limpieza). Sin ninguna app elegida ofrece «Elegir apps» en lugar de desaparecer.
+- Modificado: `js/kurzbefehle.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README.
+
 ## Novedades de la 1.150.0
 
 **Horas en tu región · Accesos directos en el resumen · Ventanas rápidas para los accesos directos**
@@ -261,14 +270,6 @@ pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Chat en el panel.** Quien haya abierto su perfil en el panel con el PIN ya puede usar también el chat. Los invitados y los niños con «solo página infantil» no. La primera vez en el dispositivo, el chat pide el código de recuperación como siempre.
 - Cambiado: `pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`, `js/profilauswahl.js`, `js/dashboard.js`, `js/dashboardkonto.js`, `js/konto.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (5 textos nuevos en los catorce idiomas), `src/` (versión, página de la cuenta), `index.html`, todos los README. Servidor (sustituir los hooks, PocketBase se reinicia): `pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`.
 
-## Novedades de la 1.142.2
-
-**Resumen del año: ingresos, citas, tareas, cumpleaños y fotos de viajes**
-
-- **Más en el resumen del año.** Bajo los gastos ahora también ves los ingresos y el saldo. Nuevas tarjetas muestran las citas (con el mes más ocupado), las tareas completadas (con la parte del hogar) y los cumpleaños celebrados (con los especiales, como 18, 30, 40 …). Cada viaje muestra las fotos del tablón publicadas durante el viaje.
-- **El servidor cuenta las tareas completadas,** porque se borran al cabo de uno o dos días. Este año la cuenta empieza el día de la actualización.
-- Cambiado: `js/ausblick.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (14 textos nuevos y uno cambiado en los catorce idiomas), `src/` (versión), `index.html`, todos los README. Servidor (sustituir los hooks, PocketBase se reinicia): `pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-aufgaben.js`, `pb_hooks/ausblick.pb.js`.
-
 ## Cómo funciona
 
 ```mermaid
@@ -295,7 +296,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.150.0` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.150.1` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
