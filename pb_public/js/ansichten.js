@@ -172,8 +172,9 @@ function setView(view) {
     sec.style.gridRow = '';
     sec.classList.remove('shrink-0', 'border-t', 'border-l');
   });
-  // Overview tiles (weather, birthdays, cancellation deadlines) only exist there
-  ['weatherTileSection', 'birthdayTileSection', 'contractTileSection', 'boardTileSection', 'familyTileSection'].forEach(id => {
+  // Overview tiles (weather, birthdays, cancellation deadlines, shortcuts …) only exist there.
+  // Taken from OVERVIEW_SECTION_IDS, so a new small tile can never stay visible on other pages (fixed in 1.150.2).
+  OVERVIEW_DEFAULT_ORDER.filter(id => !['kalender', 'essen', 'aufgaben'].includes(id)).map(id => OVERVIEW_SECTION_IDS[id]).forEach(id => {
     const sec = document.getElementById(id);
     sec.classList.add('hidden');
     sec.style.order = '';

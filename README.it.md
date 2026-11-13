@@ -133,6 +133,16 @@ Tocca un’immagine per aprirla a dimensione intera.
 
 pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
 
+## Novità della 1.150.2
+
+**Le scorciatoie restano nella panoramica**
+
+- **Finestra invece del salto.** Un tocco su bere, medicinali, spesa, cucinare oggi, piano pulizie, animali, dispensa, SOS o in giro apre la finestra in basso; lì si procede passo passo e un breve avviso dice cosa è successo.
+- **Finestre e link.** Attività, appuntamento, nota, uscita ed entrata aprono la solita finestra, lavarsi le mani conta +1. Chat, finanze e piante sono semplici link; «Apri ›» nella finestra porta alla pagina completa.
+- **Corretto.** Passando a un’altra pagina (ad es. ricette o spesa) il riquadro Scorciatoie non resta più in basso.
+- **Una o più righe.** In Impostazioni → Scorciatoie scegli separatamente per il telefono e per tablet e computer: una riga (scorri di lato per vedere le altre) o più righe (tutte le scorciatoie verso il basso).
+- Modificato: `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/design.js`, `js/ansichten.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.1).
+
 ## Novità della 1.150.1
 
 **Scorciatoie in una voce di menu propria**
@@ -234,15 +244,6 @@ pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **La dashboard bloccata carica da sola le nuove versioni.** Un iPad con la dashboard di famiglia bloccata (o la schermata di accesso) si ricarica circa un minuto dopo un aggiornamento se nessuno sta scrivendo. L’app mostra «in attesa» se all’orario previsto è in corso un backup.
 - Modificato: `js/winterzeit.js`, `css/winterzeit.css`, `js/versionspruefung.js`, `js/sicherungen.js`, `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`, `i18n/`, `src/`, `index.html`, tutti i README. Parte server: copiare gli hook, PocketBase si riavvia.
 
-## Novità della 1.145.0
-
-**Tema inverno e Natale**
-
-- **Tema invernale dal 1° dicembre al 6 gennaio.** Neve sul logo di pinn., sui titoli e in fondo alla barra laterale, più una breve nevicata all’apertura dell’app. Tocca il logo per altra neve.
-- **Extra natalizi fino al 26 dicembre.** Luci sotto l’intestazione, cappello di Babbo Natale sul logo, agrifoglio su titoli e campanella, un alberello nella barra laterale – e ogni tanto passa in volo Babbo Natale con slitta e renne.
-- **Attivo di default, disattivabile per profilo** in Impostazioni → Aspetto; «Anteprima» lo mostra per un minuto in qualsiasi momento. Risparmia batteria ed è uno strato a sé: a riposo non si muove nulla e il layout non si sposta.
-- Modificato: `js/winterzeit.js` (nuovo), `css/winterzeit.css` (nuovo), `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`, tutti i README. Nessuna parte server.
-
 ## Come funziona
 
 ```mermaid
@@ -271,7 +272,7 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 ## Installazione
 
 1. Scarica lo ZIP dell’[ultima release](https://github.com/pinn-shost/pinn/releases/latest) e decomprimilo.
-2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.150.1` o `pinn-main`) così com’è.
+2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.150.2` o `pinn-main`) così com’è.
 3. Accedi via SSH ed esegui:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

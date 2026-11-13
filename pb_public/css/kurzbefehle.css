@@ -7,13 +7,21 @@
 .kz-ico svg { width: 30px; height: 30px; fill: none; stroke: #fff; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .kz-ico.sm { width: 36px; height: 36px; border-radius: 10px; }
 .kz-ico.sm svg { width: 21px; height: 21px; }
-.kz-name { font-size: 12px; line-height: 1.15; text-align: center; max-width: 100%; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; word-break: break-word; }
+.kz-name { font-size: 12px; line-height: 1.15; text-align: center; max-width: 100%; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; word-break: break-word; -webkit-hyphens: auto; hyphens: auto; }
 .kz-sub { font-size: 10.5px; line-height: 1.1; opacity: .5; text-align: center; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .kz-set-group { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; opacity: .45; margin: 14px 0 6px; }
 .kz-set-row { display: flex; align-items: center; gap: 12px; padding: 6px 4px; cursor: pointer; }
 .kz-set-row.is-off .kz-ico { filter: grayscale(.6); opacity: .65; }
 .kz-set-label { flex: 1 1 auto; font-size: 14px; min-width: 0; }
 .kz-set-row .ov-set-switch { position: relative; flex: 0 0 auto; }
+.kz-grid.one-row { display: flex; gap: 8px; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain; scrollbar-width: none; padding-bottom: 2px; margin: 0 -4px; padding-left: 4px; padding-right: 4px; }
+.kz-grid.one-row::-webkit-scrollbar { display: none; }
+.kz-grid.one-row .kz-app { flex: 0 0 76px; scroll-snap-align: start; touch-action: pan-x; }
+.kz-lay-row { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; padding: 4px 0; }
+.kz-lay-label { font-size: 14px; }
+.kz-lay-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+.kz-lay-btns .kz-chip { padding: 6px 12px; }
 .kz-tile-empty { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; font-size: 13px; }
 .kz-tile-empty p { opacity: .6; margin: 0; }
 .ov-set-kz { font-size: 12px; color: var(--c-pine); padding: 2px 0; margin-top: 2px; background: none; border: 0; cursor: pointer; }

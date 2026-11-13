@@ -636,7 +636,8 @@ function openRecipeDetailPage(recipeId, publicEntry = null) {
   // width. Undone again in closeRecipeDetailPage() when going back.
   recipeDetailOpenedFromUebersicht = currentView === 'uebersicht';
   if (recipeDetailOpenedFromUebersicht) {
-    ['calendarSection', 'taskSection', 'weatherTileSection', 'birthdayTileSection', 'contractTileSection', 'familyTileSection'].forEach(id => document.getElementById(id).classList.add('hidden'));
+    // every overview section except the recipes (since 1.150.2 taken from OVERVIEW_SECTION_IDS: shortcuts and pin board too)
+    Object.keys(OVERVIEW_SECTION_IDS).filter(k => k !== 'essen').forEach(k => { const el = document.getElementById(OVERVIEW_SECTION_IDS[k]); if (el) el.classList.add('hidden'); });
     const mainGrid = document.getElementById('mainGrid');
     const recipeSection = document.getElementById('recipeSection');
     mainGrid.classList.remove('grid-cols-[1.3fr_1fr]', 'grid-cols-[1.3fr_minmax(0,1fr)]');

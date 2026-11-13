@@ -64,7 +64,7 @@ function applyOverviewPrefs(w) {
   overviewBdayHidden = bdayUnpackHidden(w.ovBdayHidden);
   overviewVtHidden = bdayUnpackHidden(w.ovVtHidden);
   // Apps of the shortcuts tile (js/kurzbefehle.js, since 1.150.0)
-  try { kzApplyPrefs(w.ovShortcuts, w.ovShortcutsSet === true); } catch (e) { /* file not loaded yet */ }
+  try { kzApplyPrefs(w.ovShortcuts, w.ovShortcutsSet === true); kzApplyLayout(w.ovShortcutsRows); } catch (e) { /* file not loaded yet */ }
 }
 
 // Can the tile appear at all right now (regardless of the setting)?

@@ -2,10 +2,11 @@
    Part of the pinn. web app (pb_public/index.html). Classic script, no build step: all top-level names share
    one global scope with the other files in js/ (prefix kz…, CSS classes kz-… and the hp-… sheet of the health page).
 
-   Long press (or right click) on an app of the shortcuts tile opens a small window for exactly this function with
-   its most important actions – e.g. drinking: pick a drink and an amount, undo the last entry; hand washing: plus and
+   A tap (most apps, since 1.150.2) or a long press (or right click) on an app of the shortcuts tile opens a small
+   window at the bottom for exactly this function with its most important actions – e.g. drinking: pick a drink and an amount, undo the last entry; hand washing: plus and
    minus; shopping: add an item and tick items off. The window stays open after an action, so several things can
-   be done in a row. The button "Open" at the bottom does the same as a short tap (js/kurzbefehle.js → kzRun).
+   be done in a row; every action shows a short notice at the bottom (since 1.150.2). The button "Open" at the bottom
+   closes the window and goes to the page of the function (js/kurzbefehle.js → kzOpenPage).
    Every window is built by one function in KZ_SHEETS (returns the HTML of the body); actions are in kzSheetAct.
    Undo of drinking: the last entry of the day can be taken back for 10 minutes; once it has been taken back the
    button stays greyed out until the 10 minutes are over, then it disappears. */
@@ -123,10 +124,13 @@ function kzHandsStep(step) {
   const h = kzHealthData();
   if (!h) return;
   const day = kzToday();
+  let count = 0;
   ghChange(h.id, (d) => {
     d.blocks.hands = true;
     d.hands.log[day] = Math.max(0, (Number(d.hands.log[day]) || 0) + step);
+    count = d.hands.log[day];
   });
+  finShowToast(tk('shortcut.handsDone', { n: ghNum(count) }));
 }
 function kzMedsSheet() {
   return kzHealthBody((h) => {
@@ -142,6 +146,10 @@ function kzMedToggle(key) {
   const h = kzHealthData();
   if (!h || !key) return;
   const day = kzToday();
+  const slot = ghMedSlots(h.d).find(x => x.key === key);
+  const name = slot ? slot.med.name : '';
+  const wasTaken = (h.d.meds.taken[day] || []).includes(key);
+  if (name) finShowToast(kzT(wasTaken ? 'medOpen' : 'medTaken', { name }));
   ghChange(h.id, (d) => {
     const was = (d.meds.taken[day] || []).includes(key);
     const list = (d.meds.taken[day] || []).filter(k => k !== key);
@@ -182,6 +190,7 @@ function kzShopTick(id) {
   const it = shoppingItems.find(x => x.id === id);
   if (!it) return;
   shoppingItems = shoppingItems.map(x => x.id === id ? { ...x, done: !x.done } : x);
+  if (!it.done) finShowToast(kzT('shopTicked', { name: it.name }));
   if (!it.done && it.pantryId && typeof removePantrySiblings === 'function') removePantrySiblings([it]);
   persistState();
   try { renderShoppingList(); } catch (e) { /* page not built */ }
@@ -201,7 +210,9 @@ function kzTaskSheet(household) {
 }
 function kzTaskTick(id) {
   const t = deriveTasks().find(x => x.id === id);
-  if (t) toggleTaskDone(t);
+  if (!t) return;
+  toggleTaskDone(t);
+  finShowToast(kzT('taskDone', { name: t.title }));
 }
 function kzEventSheet() {
   const today = kzToday();
@@ -377,7 +388,7 @@ function kzSheetAct(act, el) {
   // Pop-ups of other pages are only called from inside this function (child lock)
   switch (act) {
     case 'close': kzSheetClose(); return;
-    case 'open': kzSheetClose(); kzRun(a.id); return;
+    case 'open': kzSheetClose(); kzOpenPage(a.id); return;
     case 'drink': kzSheetState.drink = v; break;
     case 'drinkback': kzSheetState.drink = null; break;
     case 'ml': kzLogDrink(kzSheetState.drink, Number(v)); break;
@@ -392,11 +403,11 @@ function kzSheetAct(act, el) {
     case 'newevent': kzSheetClose(); openAddEventModal(); return;
     case 'planmeal': kzSheetClose(); openMealModal(kzToday(), 'abend'); return;
     case 'recipe': kzSheetClose(); openRecipeDetailPage(el.dataset.id); return;
-    case 'cooked': markMealCooked(el.dataset.id, null); break;
+    case 'cooked': kzMealCooked(el.dataset.id); break;
     case 'notepin': kzNotePin(); return;
     case 'hsopen': kzSheetClose(); hsOpen(el.dataset.tab); return;
     case 'petnext': ptFeedNext(el.dataset.pet); break;
-    case 'pettoggle': ptToggleFeed(el.dataset.pet, el.dataset.slot); break;
+    case 'pettoggle': kzPetToggle(el.dataset.pet, el.dataset.slot); break;
     case 'expcat': kzSheetState.cat = kzSheetState.cat === el.dataset.id ? '' : el.dataset.id; kzSheetKeepInputs(); return;
     case 'expsave': kzExpenseSave(kzSheetApp === 'einnahme' || el.dataset.income === '1'); return;
     case 'newexp': kzSheetClose(); openExpenseModal(); return;
@@ -407,6 +418,19 @@ function kzSheetAct(act, el) {
     case 'sendloc': kzSendLocation(el); return;
   }
   kzSheetRender();
+}
+function kzMealCooked(planId) {
+  const p = mealPlan.find(x => x.id === planId);
+  markMealCooked(planId, null);
+  if (!p) return;
+  const recipe = p.recipeId ? recipes.find(r => r.id === p.recipeId) : null;
+  finShowToast(kzT('mealCooked', { name: recipe ? recipe.title : (p.title || tk('common.untitled')) }));
+}
+function kzPetToggle(petId, slot) {
+  const p = ptById(petId);
+  const was = p ? !!ptFedSlot(p, slot) : true;
+  ptToggleFeed(petId, slot);
+  if (p && !was && ptFedSlot(p, slot)) finShowToast(tk('pet.fed2', { name: p.name, slot }));
 }
 // Re-draw but keep what was typed into the fields
 function kzSheetKeepInputs() {

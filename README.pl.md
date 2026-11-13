@@ -110,6 +110,16 @@ Dotknij obrazu, aby otworzyć go w pełnym rozmiarze.
 
 pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski i 🇺🇦 Українська**; dostosowuje walutę i numery alarmowe do twojego regionu i przełącza się między określeniami **rodzina** i **wspólne mieszkanie**. Jeden serwer może obsługiwać wiele rodzin, każdą z własnymi administratorami.
 
+## Nowości w 1.150.2
+
+**Skróty zostają na przeglądzie**
+
+- **Okno zamiast przeskoku.** Stuknięcie w picie, leki, zakupy, gotowanie dziś, plan sprzątania, zwierzęta, zapasy, SOS lub w drodze otwiera okno na dole; tam przechodzisz dalej, a krótki komunikat mówi, co się stało.
+- **Okna i linki.** Zadanie, termin, notatka, wydatek i przychód otwierają swoje zwykłe okno, mycie rąk liczy +1. Czat, finanse i rośliny to zwykłe linki; „Otwórz ›” w oknie prowadzi do całej strony.
+- **Naprawiono.** Po przejściu na inną stronę (np. przepisy lub zakupy) kafelek Skróty nie zostaje już na dole.
+- **Jeden lub kilka rzędów.** W Ustawienia → Skróty wybierasz osobno dla telefonu oraz dla tabletu i komputera: jeden rząd (przesuń w bok, by zobaczyć resztę) lub kilka rzędów (wszystkie skróty wypełniane w dół).
+- Zmieniono: `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/design.js`, `js/ansichten.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.1).
+
 ## Nowości w 1.150.1
 
 **Skróty we własnym punkcie menu**
@@ -175,15 +185,6 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 - **Jak długo.** Dopóki aplikacja pozostaje otwarta (także w tle), najwyżej 12 godzin. Po zamknięciu aplikacji, po „Wyloguj” na własnym urządzeniu lub po wejściu z linku w powiadomieniu zaczynasz jak zwykle. Na własnym urządzeniu strona zostaje zachowana także wtedy, gdy aplikacja wczytuje się ponownie, np. po aktualizacji.
 - Zmieniono: `js/fortsetzen.js` (nowy), `js/appstart.js`, `js/dashboard.js`, `js/anmeldung.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`, `pinn-setup.sh`, wszystkie README. Bez części serwerowej.
 
-## Nowości w 1.147.1
-
-**Urządzenia raz na liście, link w instrukcjach**
-
-- **Zalogowane urządzenia.** Urządzenie, które zalogowało się dwa razy w tej samej chwili (np. panel rodzinny na Macu), pojawiało się dwa razy z tym samym ID. Teraz jest na liście raz, liczy się raz, a „Wyloguj” usuwa je całkowicie.
-- **Koniec z „Tylko powiadomienia”.** Pozostały adres powiadomień urządzenia, które jest już zalogowane, jest usuwany automatycznie, aby nic nie przychodziło podwójnie.
-- **Sterowanie głosowe i widżety.** Link osobisty znajduje się teraz w polach „Skrót Siri” i „Android” (z przyciskiem kopiowania), a nie w ogólnym przeglądzie.
-- Zmieniono: `js/geraete.js`, `js/sprachsteuerung.js`, `js/sprachen.js`, `pb_hooks/pinn-sitzungen.js`, `src/`, `index.html`, `i18n/`, wszystkie README. Część serwerowa: zainstalować hooki, PocketBase uruchomi się ponownie.
-
 ## Wymagania
 
 - NAS lub mini PC z zainstalowanym **Dockerem** i **Docker Compose** (np. Synology, UGREEN, QNAP albo zwykły serwer z Linuksem)
@@ -193,7 +194,7 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 ## Instalacja
 
 1. Pobierz i rozpakuj plik ZIP [najnowszej wersji](https://github.com/pinn-shost/pinn/releases/latest).
-2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.150.1` lub `pinn-main`) bez zmian.
+2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.150.2` lub `pinn-main`) bez zmian.
 3. Połącz się przez SSH i uruchom:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -133,6 +133,16 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski und 🇺🇦 Українська**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.150.2
+
+**Shortcuts bleiben auf der Übersicht**
+
+- **Fenster statt Sprung.** Ein Tipp auf Trinken, Medikamente, Einkauf, Heute kochen, Putzplan, Haustiere, Vorrat, SOS oder Unterwegs öffnet das Fenster unten; dort klickst du dich durch, und ein kurzer Hinweis sagt, was passiert ist.
+- **Fenster und Links.** Aufgabe, Termin, Zettel, Ausgabe und Einnahme öffnen ihr gewohntes Fenster, Hände waschen zählt +1. Chat, Finanzen und Pflanzen sind einfache Links; „Öffnen ›“ im Fenster führt zur ganzen Seite.
+- **Behoben.** Nach dem Wechsel auf eine andere Seite (z. B. Rezepte oder Einkauf) steht unten nicht mehr die Kachel „Shortcuts“.
+- **Eine oder mehrere Reihen.** Unter Einstellungen → Shortcuts wählst du getrennt für das Handy und für Tablet & Computer: eine Reihe (zur Seite wischen für die übrigen) oder mehrere Reihen (alle Shortcuts nach unten aufgefüllt).
+- Geändert: `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/design.js`, `js/ansichten.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.1).
+
 ## Neu in 1.150.1
 
 **Shortcuts im eigenen Menüpunkt**
@@ -244,13 +254,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Standardmäßig an, pro Profil abschaltbar** unter Einstellungen → Darstellung; „Vorschau“ zeigt es jederzeit eine Minute lang. Akkuschonend und eine eigene Schicht: Im Ruhemodus bewegt sich nichts, und am Aufbau der App verschiebt sich nichts.
 - Geändert: `js/winterzeit.js` (neu), `css/winterzeit.css` (neu), `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`, alle READMEs. Kein Server-Teil.
 
-## Neu in 1.144.2
-
-**Automatische Updates: auch für heute einplanbar**
-
-- **Gleicher Tag möglich.** Liegt die gewählte Uhrzeit noch in der Zukunft, prüft pinn. noch am selben Tag – auch wenn heute schon geprüft wurde. So lässt sich eine neue Einstellung gleich ausprobieren. Eine Uhrzeit, die beim Speichern schon vorbei ist, gilt erst ab morgen; „Nächste Prüfung“ zeigt das richtig an.
-- Geändert: `pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, alle READMEs. Server (Hooks ersetzen, PocketBase startet neu): `pb_hooks/pinn-system.js`.
-
 ## So funktioniert’s
 
 ```mermaid
@@ -279,7 +282,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.150.1` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.150.2` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

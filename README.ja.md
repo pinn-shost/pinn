@@ -133,6 +133,16 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski、🇺🇦 Українська** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.150.2の新機能
+
+**ショートカットは概要にとどまります**
+
+- **移動せずにウィンドウ。** 水分補給、薬、買い物、今日の料理、掃除プラン、ペット、ストック、SOS、外出中をタップすると下にウィンドウが開き、そこで操作を進められます。何が行われたかは短い通知でわかります。
+- **ウィンドウとリンク。** タスク、予定、メモ、支出、収入はいつものウィンドウを開き、手洗いは +1 します。チャット、家計、植物は通常のリンクです。ウィンドウの「開く ›」でページ全体へ移動します。
+- **修正。** 別のページ（レシピや買い物など）に移動したとき、ショートカットのタイルが下に残らなくなりました。
+- **1行または複数行。** 「設定 → ショートカット」で、スマートフォンとタブレット・パソコンそれぞれに選べます：1行（横にスワイプして残りを表示）または複数行（すべてのショートカットを下へ並べる）。
+- 変更: `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/design.js`, `js/ansichten.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.1).
+
 ## 1.150.1の新機能
 
 **ショートカットが独立したメニュー項目に**
@@ -234,15 +244,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - **ロック中のダッシュボードが新しいバージョンを自動で読み込みます。** 家族ダッシュボードがロックされた iPad（またはログイン画面）は、誰も入力していなければ更新の約1分後に再読み込みします。更新時刻にバックアップ中の場合、アプリは「待機中」と表示します。
 - 変更：`js/winterzeit.js`, `css/winterzeit.css`, `js/versionspruefung.js`, `js/sicherungen.js`, `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`, `i18n/`, `src/`, `index.html`、すべての README。サーバー側：フックをコピーすると PocketBase が再起動します。
 
-## 1.145.0の新機能
-
-**冬とクリスマスのデザイン**
-
-- **12月1日から1月6日までの冬デザイン。** pinn. のロゴ、見出し、サイドバーの下に雪が積もり、アプリを開くと少し雪が降ります。ロゴをタップするともっと雪が降ります。
-- **12月26日までのクリスマス演出。** ヘッダーの下のイルミネーション、ロゴのサンタ帽、見出しとベルのヒイラギ、サイドバーの小さなツリー――ときどきサンタがそりとトナカイで上空を飛んでいきます。
-- **初期設定はオン、プロフィールごとにオフ可能**：設定 → 表示。「プレビュー」でいつでも1分間表示できます。省電力で独立したレイヤー：スリープ中は動かず、レイアウトもずれません。
-- 変更：`js/winterzeit.js` （新規）, `css/winterzeit.css` （新規）, `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`、すべての README。サーバー部分なし。
-
 ## しくみ
 
 ```mermaid
@@ -271,7 +272,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.150.1`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.150.2`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

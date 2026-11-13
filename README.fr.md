@@ -129,6 +129,16 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski et 🇺🇦 Українська**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.150.2
+
+**Les raccourcis restent sur l’aperçu**
+
+- **Fenêtre au lieu d’un saut.** Un appui sur boire, médicaments, courses, cuisiner aujourd’hui, plan de ménage, animaux, provisions, SOS ou en route ouvre la fenêtre en bas ; on y avance étape par étape et un court message indique ce qui s’est passé.
+- **Fenêtres et liens.** Tâche, rendez-vous, note, dépense et revenu ouvrent leur fenêtre habituelle, se laver les mains compte +1. Chat, finances et plantes sont de simples liens ; « Ouvrir › » dans la fenêtre mène à la page complète.
+- **Corrigé.** Après le passage à une autre page (p. ex. recettes ou courses), la tuile Raccourcis ne reste plus en bas.
+- **Une ou plusieurs rangées.** Sous Réglages → Raccourcis, vous choisissez séparément pour le téléphone et pour tablette et ordinateur : une rangée (balayer sur le côté pour voir le reste) ou plusieurs rangées (tous les raccourcis remplis vers le bas).
+- Modifié: `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/design.js`, `js/ansichten.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.1).
+
 ## Nouveautés de la 1.150.1
 
 **Raccourcis dans leur propre rubrique**
@@ -262,14 +272,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Activé par défaut.** Le réglage de la 1.143.0 était désactivé et ne montrait que les tâches ; désormais les deux nombres sont actifs pour chaque famille. Un administrateur peut les désactiver sous Compte → « Tâches et discussions sur le tableau de bord ». Les discussions en sourdine ne comptent pas, celles marquées comme non lues comptent pour une – comme le nombre à côté de « Chat » dans le menu.
 - Modifié : `js/profilauswahl.js`, `js/dashboardkonto.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (1 texte nouveau et 4 modifiés dans les quatorze langues), `src/` (version, page du compte), `index.html`, tous les README. Serveur (remplacer les hooks, PocketBase redémarre) : `pb_hooks/pinn-chat.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`.
 
-## Nouveautés de la 1.143.0
-
-**Tableau de bord : tâches ouvertes sous la photo de profil et chat sur l’iPad**
-
-- **Tâches ouvertes sous la photo.** Dans la sélection des profils du tableau de bord familial, pinn. peut afficher sous la photo de chaque personne le nombre de ses tâches ouvertes et échues – comme le chiffre sur l’icône de l’app sur l’iPhone. Un admin l’active sous Compte → « Tâches ouvertes sur le tableau de bord » ; cela vaut pour tous les tableaux de bord de la famille.
-- **Chat sur le tableau de bord.** Celui qui a ouvert son profil avec son code PIN peut désormais aussi utiliser le chat. Pas les invités ni les enfants avec « page enfant uniquement ». La première fois sur l’appareil, le chat demande comme d’habitude le code de récupération.
-- Modifié : `pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`, `js/profilauswahl.js`, `js/dashboard.js`, `js/dashboardkonto.js`, `js/konto.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (5 textes nouveaux dans les quatorze langues), `src/` (version, page du compte), `index.html`, tous les README. Serveur (remplacer les hooks, PocketBase redémarre) : `pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`.
-
 ## Comment ça marche
 
 ```mermaid
@@ -296,7 +298,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.150.1` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.150.2` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

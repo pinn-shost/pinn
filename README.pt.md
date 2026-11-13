@@ -133,6 +133,16 @@ Toque em qualquer imagem para abri-la em tamanho real.
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.150.2
+
+**Os atalhos ficam na visão geral**
+
+- **Janela em vez de salto.** Um toque em beber, medicamentos, compras, cozinhar hoje, plano de limpeza, animais, despensa, SOS ou a caminho abre a janela embaixo; ali você avança passo a passo e um aviso curto diz o que aconteceu.
+- **Janelas e links.** Tarefa, compromisso, nota, despesa e receita abrem a janela de sempre, lavar as mãos conta +1. Chat, finanças e plantas são links simples; «Abrir ›» na janela leva à página completa.
+- **Corrigido.** Ao mudar para outra página (p. ex. receitas ou compras) o bloco Atalhos não fica mais embaixo.
+- **Uma ou várias linhas.** Em Configurações → Atalhos você escolhe separadamente para o celular e para tablet e computador: uma linha (deslize para o lado para ver o resto) ou várias linhas (todos os atalhos preenchidos para baixo).
+- Alterado: `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/design.js`, `js/ansichten.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.1).
+
 ## Novidades da 1.150.1
 
 **Atalhos em um item de menu próprio**
@@ -234,15 +244,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **O painel bloqueado carrega sozinho as novas versões.** Um iPad com o painel da família bloqueado (ou o ecrã de início de sessão) recarrega cerca de um minuto após uma atualização se ninguém estiver a escrever. A app mostra «a aguardar» se a essa hora estiver a decorrer uma cópia de segurança.
 - Alterado: `js/winterzeit.js`, `css/winterzeit.css`, `js/versionspruefung.js`, `js/sicherungen.js`, `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`, `i18n/`, `src/`, `index.html`, todos os README. Parte do servidor: copiar os hooks, o PocketBase reinicia.
 
-## Novidades da 1.145.0
-
-**Visual de inverno e Natal**
-
-- **Visual de inverno de 1 de dezembro a 6 de janeiro.** Neve no logótipo do pinn., nos títulos e no fundo da barra lateral, e um breve nevão ao abrir a app. Toca no logótipo para mais neve.
-- **Extras de Natal até 26 de dezembro.** Luzes por baixo do cabeçalho, gorro do Pai Natal no logótipo, azevinho nos títulos e no sino, uma pequena árvore na barra lateral – e de vez em quando o Pai Natal passa a voar com o trenó e as renas.
-- **Ligado por defeito, desligável por perfil** em Definições → Aparência; «Pré-visualizar» mostra-o durante um minuto a qualquer altura. Poupa bateria e é uma camada própria: em repouso nada se move e nada muda de lugar.
-- Alterado: `js/winterzeit.js` (novo), `css/winterzeit.css` (novo), `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`, todos os README. Sem parte de servidor.
-
 ## Como funciona
 
 ```mermaid
@@ -271,7 +272,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.150.1` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.150.2` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

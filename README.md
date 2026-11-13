@@ -129,6 +129,16 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski and 🇺🇦 Українська**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.150.2
+
+**Shortcuts stay on the overview**
+
+- **Window instead of jumping.** A tap on drinking, medication, shopping, cook today, cleaning plan, pets, pantry, SOS or on my way opens the window at the bottom; you click through it there and a short notice says what happened.
+- **Pop-ups and links.** Task, event, note, expense and income open their usual pop-up, hand washing counts +1. Chat, finances and plants are plain links; “Open ›” in the window leads to the full page.
+- **Fixed.** After switching to another page (e.g. recipes or shopping) the Shortcuts tile no longer stays at the bottom.
+- **One or several rows.** Under Settings → Shortcuts you choose separately for the phone and for tablet & computer: one row (swipe sideways to see the rest) or several rows (all shortcuts filled downwards).
+- Changed: `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/design.js`, `js/ansichten.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.1).
+
 ## What's new in 1.150.1
 
 **Shortcuts in their own menu item**
@@ -262,14 +272,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **On by default.** The 1.143.0 setting was off and showed only tasks; now both numbers are on for every family. An admin can switch them off under Account → “Tasks and chats on the dashboard”. Muted chats are not counted, chats marked as unread count as one – just like the number behind “Chat” in the menu.
 - Changed: `js/profilauswahl.js`, `js/dashboardkonto.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (1 new and 4 changed texts in all fourteen languages), `src/` (version, account page), `index.html`, all READMEs. Server (replace the hooks, PocketBase restarts): `pb_hooks/pinn-chat.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`.
 
-## What's new in 1.143.0
-
-**Dashboard: open tasks under the profile picture, and chat on the iPad**
-
-- **Open tasks under the picture.** On the profile selection of the family dashboard, pinn. can show each person’s number of open, due tasks under their picture – like the number on the app icon on the iPhone. An admin switches it on under Account → “Open tasks on the dashboard”; it applies to all dashboards of the family.
-- **Chat on the dashboard.** Whoever has opened their profile on the dashboard with the PIN can now use the chat too. Guests and kids with “kids’ page only” cannot. The first time on the device, the chat asks for the recovery code as usual.
-- Changed: `pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`, `js/profilauswahl.js`, `js/dashboard.js`, `js/dashboardkonto.js`, `js/konto.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (5 new texts in all fourteen languages), `src/` (version, account page), `index.html`, all READMEs. Server (replace the hooks, PocketBase restarts): `pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`.
-
 ## How it works
 
 ```mermaid
@@ -296,7 +298,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.150.1` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.150.2` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

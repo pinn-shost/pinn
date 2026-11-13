@@ -7,7 +7,12 @@
    with the personal design as ovShortcuts, ovShortcutsSet = the profile has chosen once). Until then a default set
    is shown (KZ_DEFAULT). The tile itself is shown or hidden like every other tile under Settings → Overview.
    Without a chosen app the tile shows a button that leads to the selection.
-   Long press on an app opens its quick window (js/kurzfenster.js, since 1.150.0).
+   Layout per device kind (since 1.150.2, kzRows, stored as ovShortcutsRows { phone, tablet }): 'one' = a single row that
+   is swiped sideways, 'multi' = several rows filled downwards with all chosen apps. Phone = isMobile(), everything
+   else (tablet, computer) uses the tablet setting.
+   A tap stays on the overview where possible (since 1.150.2): most apps open their quick window at the bottom
+   (js/kurzfenster.js), some open their usual pop-up (new task, event, note, expense, income), hand washing counts +1
+   with a short notice. Only chat, finances and plants are plain links to their page. Long press = quick window.
    Every app: id, group, colours (two shades for the icon background), glyph (SVG paths, stroke style), label key,
    which view it belongs to (for rights: guests, child lock), optional badge text and the action (run).
    New app: one row in KZ_APPS + the label key shortcut.app.<id> in all i18n files. */
@@ -18,6 +23,9 @@ var kzEnabled = KZ_DEFAULT.slice();
 // true once the profile has chosen apps itself (before that KZ_DEFAULT applies)
 var kzChosen = false;
 var KZ_LONG_PRESS_MS = 450;
+// Layout of the tile per device kind: 'one' (single row, swipe) | 'multi' (several rows)
+var kzRows = { phone: 'multi', tablet: 'multi' };
+var kzRowsShown = '';
 
 // Glyphs: 24 x 24, white strokes (css/kurzbefehle.css)
 var KZ_APPS = [
@@ -67,6 +75,12 @@ function kzApplyPrefs(list, chosen) {
   kzChosen = !!chosen || clean.length > 0;
   kzEnabled = kzChosen ? clean : KZ_DEFAULT.slice();
 }
+function kzApplyLayout(v) {
+  const ok = (x) => x === 'one' || x === 'multi';
+  kzRows = { phone: v && ok(v.phone) ? v.phone : 'multi', tablet: v && ok(v.tablet) ? v.tablet : 'multi' };
+}
+function kzDeviceKind() { try { return isMobile() ? 'phone' : 'tablet'; } catch (e) { return 'tablet'; } }
+function kzRowMode() { return kzRows[kzDeviceKind()] || 'multi'; }
 // Tile may appear: apps are usable, or nothing is chosen (then it offers the selection)
 function kzTileAvailable() { return kzEnabled.length === 0 || kzActiveApps().length > 0; }
 // Can this app be used by the signed-in profile right now? (guests, child lock, finances not loaded …)
@@ -120,10 +134,15 @@ function renderShortcutsTile() {
     body.innerHTML = `<div class="kz-tile-empty"><p>${escapeHtml(tk('settings.shortcuts.none'))}</p><button type="button" class="kz-btn" data-kz-choose="1">${escapeHtml(tk('shortcut.chooseApps'))}</button></div>`;
     return;
   }
-  body.innerHTML = `<div class="kz-grid">${apps.map(a => {
+  // A redraw (new numbers, health data loaded) keeps the swipe position of the single row
+  const old = body.querySelector('.kz-grid.one-row');
+  const keepLeft = old ? old.scrollLeft : 0;
+  kzRowsShown = kzRowMode();
+  body.innerHTML = `<div class="kz-grid${kzRowsShown === 'one' ? ' one-row' : ''}">${apps.map(a => {
     const sub = kzBadge(a);
     return `<button type="button" class="kz-app" data-kz="${a.id}" aria-label="${escapeHtml(kzLabel(a))}">${kzIconHtml(a, false)}<span class="kz-name">${escapeHtml(kzLabel(a))}</span><span class="kz-sub">${sub ? escapeHtml(sub) : '&nbsp;'}</span></button>`;
   }).join('')}</div>`;
+  if (keepLeft && kzRowsShown === 'one') { const g = body.querySelector('.kz-grid'); if (g) g.scrollLeft = keepLeft; }
 }
 
 /* ---------- Settings → Shortcuts ---------- */
@@ -144,6 +163,13 @@ function kzRenderSettings() {
   }).join('');
   const hint = document.getElementById('kzSettingsNone');
   if (hint) hint.classList.toggle('hidden', kzEnabled.length > 0);
+  const lay = document.getElementById('kzLayoutBox');
+  if (lay) {
+    lay.innerHTML = ['phone', 'tablet'].map(kind => `<div class="kz-lay-row">
+      <span class="kz-lay-label">${escapeHtml(tk('settings.shortcuts.' + kind))}</span>
+      <span class="kz-lay-btns">${['one', 'multi'].map(m => `<button type="button" class="kz-chip${kzRows[kind] === m ? ' on' : ''}" data-kz-rows="${kind}:${m}" aria-pressed="${kzRows[kind] === m}">${escapeHtml(tk(m === 'one' ? 'settings.shortcuts.oneRow' : 'settings.shortcuts.multiRow'))}</button>`).join('')}</span>
+    </div>`).join('');
+  }
 }
 // Opens Settings → Shortcuts (from the tile and from the overview settings)
 function kzOpenSettings() {
@@ -178,27 +204,40 @@ async function kzCountHands() {
   finShowToast(tk('shortcut.handsDone', { n: ghNum(count) }));
   renderShortcutsTile();
 }
+// Apps whose tap opens the quick window at the bottom instead of leaving the overview (since 1.150.2)
+var KZ_TAP_SHEET = ['trinken', 'medikamente', 'einkauf', 'kochen', 'putzplan', 'haustier', 'vorrat', 'sos', 'unterwegs'];
 function kzRun(id) {
   const a = kzApp(id);
   if (!a || !kzAvailable(a)) return;
+  if (KZ_TAP_SHEET.includes(id)) { kzSheetOpen(id); return; }
   // The calls to the pop-ups stay inside this function (child lock: never hand them out directly)
   switch (id) {
-    case 'trinken': ghOpenFromLink('trinken', ''); break;
-    case 'medikamente': ghOpenFromLink('medikamente', ''); break;
     case 'haende': kzCountHands(); break;
-    case 'einkauf': kzGo('einkauf'); break;
     case 'aufgabe': openTaskModal(); break;
     case 'termin': openAddEventModal(); break;
-    case 'kochen': kzGo('rezepte'); break;
     case 'zettel': openPinboardEditor(null, 'note'); break;
+    case 'ausgabe': openExpenseModal(); break;
+    case 'einnahme': openExpenseModal({ preset: { amountText: '-' } }); break;
+    default: kzOpenPage(id);
+  }
+}
+// The page of an app (button "Open" in the quick window, and the plain links chat, finances, plants)
+function kzOpenPage(id) {
+  const a = kzApp(id);
+  if (!a || !kzAvailable(a)) return;
+  switch (id) {
+    case 'trinken': case 'medikamente': case 'haende': ghOpenFromLink('', ''); break;
+    case 'einkauf': kzGo('einkauf'); break;
+    case 'aufgabe': kzGo('aufgaben'); break;
+    case 'termin': kzGo('termine'); break;
+    case 'kochen': kzGo('rezepte'); break;
+    case 'zettel': kzGo('pinnwand'); break;
     case 'chat': kzGo('chat'); break;
     case 'putzplan': kzGo('haushalt'); break;
     case 'pflanzen': hsOpen('garten'); break;
     case 'haustier': kzGo('familie', () => famSetTab('tiere')); break;
     case 'vorrat': kzGo('vorrat'); break;
-    case 'ausgabe': openExpenseModal(); break;
-    case 'einnahme': openExpenseModal({ preset: { amountText: '-' } }); break;
-    case 'finanzen': kzGo('finanzen'); break;
+    case 'ausgabe': case 'einnahme': case 'finanzen': kzGo('finanzen'); break;
     case 'sos': case 'unterwegs': kzGo('familie', () => famSetTab('ortung')); break;
   }
 }
@@ -254,6 +293,21 @@ function kzRun(id) {
   });
   const acc = document.getElementById('settingsShortcutsAccordion');
   if (acc) acc.addEventListener('toggle', () => { if (acc.open) kzRenderSettings(); });
+  const lay = document.getElementById('kzLayoutBox');
+  if (lay) lay.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-kz-rows]');
+    if (!b) return;
+    const [kind, mode] = b.dataset.kzRows.split(':');
+    if (kzRows[kind] === mode) return;
+    kzRows = { ...kzRows, [kind]: mode };
+    saveOverviewPrefs();
+  });
+  // Turning the device or resizing the window can switch between the phone and the tablet layout
+  let resizeTimer = 0;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => { if (kzRowsShown && kzRowMode() !== kzRowsShown) renderShortcutsTile(); }, 200);
+  });
 })();
 
 // Marks this file as loaded – the start check in index.html reports missing app files

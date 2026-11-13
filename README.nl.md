@@ -110,6 +110,16 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski en 🇺🇦 Українська**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.150.2
+
+**Snelkoppelingen blijven op het overzicht**
+
+- **Venster in plaats van springen.** Tikken op drinken, medicijnen, boodschappen, vandaag koken, schoonmaakplan, huisdieren, voorraad, SOS of onderweg opent het venster onderaan; daar klik je verder en een korte melding zegt wat er gebeurd is.
+- **Vensters en links.** Taak, afspraak, notitie, uitgave en inkomsten openen hun vertrouwde venster, handen wassen telt +1. Chat, financiën en planten zijn gewone links; „Openen ›” in het venster gaat naar de hele pagina.
+- **Opgelost.** Na het wisselen naar een andere pagina (bv. recepten of boodschappen) staat de tegel Snelkoppelingen niet meer onderaan.
+- **Eén of meerdere rijen.** Onder Instellingen → Snelkoppelingen kies je apart voor de telefoon en voor tablet & computer: één rij (opzij vegen voor de rest) of meerdere rijen (alle snelkoppelingen naar beneden aangevuld).
+- Gewijzigd: `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/design.js`, `js/ansichten.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.1).
+
 ## Nieuw in 1.150.1
 
 **Snelkoppelingen in een eigen menu-onderdeel**
@@ -175,15 +185,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Hoe lang.** Zolang de app open blijft (ook op de achtergrond), hooguit 12 uur. Na het sluiten van de app, na „Afmelden“ op je eigen apparaat of via een link uit een melding start je zoals gewoonlijk. Ook op je eigen apparaat blijft de pagina behouden als de app opnieuw laadt, bijv. na een update.
 - Gewijzigd: `js/fortsetzen.js` (nieuw), `js/appstart.js`, `js/dashboard.js`, `js/anmeldung.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`, `pinn-setup.sh`, alle README's. Geen serverdeel.
 
-## Nieuw in 1.147.1
-
-**Apparaten één keer in de lijst, link in de handleidingen**
-
-- **Aangemelde apparaten.** Een apparaat dat zich twee keer tegelijk had aangemeld (bijv. het familiedashboard op een Mac) stond twee keer met hetzelfde ID in de lijst. Nu staat het er één keer, telt het één keer mee en „Afmelden“ verwijdert het helemaal.
-- **Geen „Alleen meldingen“ meer.** Een overgebleven meldingsadres van een apparaat dat al is aangemeld wordt automatisch verwijderd, zodat niets dubbel aankomt.
-- **Spraakbesturing & widgets.** De persoonlijke link staat nu direct in de velden „Siri-opdracht“ en „Android“ (met kopieerknop) in plaats van in het algemene overzicht.
-- Gewijzigd: `js/geraete.js`, `js/sprachsteuerung.js`, `js/sprachen.js`, `pb_hooks/pinn-sitzungen.js`, `src/`, `index.html`, `i18n/`, alle README's. Servergedeelte: hooks installeren, PocketBase start opnieuw.
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -193,7 +194,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.150.1` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.150.2` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

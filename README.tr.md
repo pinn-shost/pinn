@@ -110,6 +110,16 @@ Tam boyutta açmak için bir resme dokun.
 
 pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski ve 🇺🇦 Українська**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
 
+## 1.150.2 sürümündeki yenilikler
+
+**Kısayollar genel bakışta kalır**
+
+- **Atlamak yerine pencere.** Su içme, ilaçlar, alışveriş, bugün yemek, temizlik planı, evcil hayvanlar, kiler, SOS veya yoldayım'a dokunmak alttaki pencereyi açar; orada adım adım ilerlersiniz ve kısa bir bildirim ne olduğunu söyler.
+- **Pencereler ve bağlantılar.** Görev, randevu, not, gider ve gelir alışılmış pencerelerini açar, el yıkama +1 sayar. Sohbet, finans ve bitkiler basit bağlantılardır; penceredeki „Aç ›” tam sayfaya götürür.
+- **Düzeltildi.** Başka bir sayfaya geçince (ör. tarifler veya alışveriş) Kısayollar kutucuğu artık altta kalmıyor.
+- **Tek veya birden çok sıra.** Ayarlar → Kısayollar altında telefon ve tablet/bilgisayar için ayrı ayrı seçersiniz: tek sıra (geri kalanlar için yana kaydırın) veya birden çok sıra (tüm kısayollar aşağıya doğru).
+- Değişenler: `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/design.js`, `js/ansichten.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.1).
+
 ## 1.150.1 sürümündeki yenilikler
 
 **Kısayollar kendi menü öğesinde**
@@ -175,15 +185,6 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 - **Ne kadar süre.** Uygulama açık kaldığı sürece (arka planda da), en fazla 12 saat. Uygulamayı kapattıktan, kendi cihazında “Çıkış yap” dedikten sonra veya bir bildirimdeki bağlantıyla geldiğinde her zamanki gibi başlarsın. Kendi cihazında da uygulama yeniden yüklendiğinde (ör. bir güncellemeden sonra) sayfa korunur.
 - Değişenler: `js/fortsetzen.js` (yeni), `js/appstart.js`, `js/dashboard.js`, `js/anmeldung.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`, `pinn-setup.sh`, tüm README dosyaları. Sunucu kısmı yok.
 
-## 1.147.1 sürümündeki yenilikler
-
-**Cihazlar tek kez listelenir, bağlantı kılavuzların içinde**
-
-- **Oturum açık cihazlar.** Aynı anda iki kez oturum açan bir cihaz (ör. Mac'teki aile panosu) aynı kimlikle iki kez görünüyordu. Artık listede bir kez görünür, bir kez sayılır ve “Oturumu kapat” onu tamamen kaldırır.
-- **“Yalnızca bildirimler” kaldırıldı.** Zaten oturum açmış bir cihazdan kalan bildirim adresi otomatik silinir; böylece hiçbir şey iki kez gelmez.
-- **Sesli kontrol ve widget'lar.** Kişisel bağlantı artık genel özet yerine “Siri kısayolu” ve “Android” alanlarının içinde (kopyalama düğmesiyle) yer alır.
-- Değişenler: `js/geraete.js`, `js/sprachsteuerung.js`, `js/sprachen.js`, `pb_hooks/pinn-sitzungen.js`, `src/`, `index.html`, `i18n/`, tüm README dosyaları. Sunucu kısmı: hook'ları kurun, PocketBase yeniden başlar.
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -193,7 +194,7 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.150.1` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.150.2` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
