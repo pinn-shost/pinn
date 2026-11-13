@@ -7,6 +7,18 @@
 //        saves the health data of one member; with "expected" (updated of the last read) a changed record
 //        answers 409 { conflict, updated, daten } so the app can merge and send again.
 // Guests get nothing.
+//
+// Schedule (since 1.149.1): every 5 minutes - push reminders (medication, drinking, hand washing) to the profile
+// of the person themself, as set in their health data. The logic lives in pinn-gesundheit.js#runCron.
+
+cronAdd("pinnGesundheit", "*/5 * * * *", () => {
+    try {
+        require(`${__hooks}/pinn-gesundheit.js`).runCron();
+    } catch (err) {
+        console.log("[Gesundheit] Schedule error: " + err.message);
+        try { require(`${__hooks}/pinn-protokoll.js`).fehler("push", "Gesundheit: " + err.message); } catch (e2) { /* ignore */ }
+    }
+});
 
 routerAdd("GET", "/api/pinn/gesundheit", (e) => {
     e.response.header().set("Cache-Control", "no-store");

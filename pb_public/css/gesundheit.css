@@ -24,6 +24,12 @@
 .hp-block { padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(37,35,31,0.15); font-size: 13px; background: #fff; }
 .hp-block.on { background: var(--c-pine); border-color: var(--c-pine); color: #fff; }
 
+/* Reminder settings (push) */
+.hp-remind { margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(37,35,31,0.08); }
+.hp-remind-opts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 8px 0 2px 0; }
+.hp-remind-f { display: block; font-size: 11px; color: rgba(37,35,31,0.55); min-width: 0; }
+.hp-remind-f .hp-in { margin-top: 2px; padding: 6px 8px; font-size: 15px; }
+
 /* Drink popup: first the drink, then the amount */
 .hp-overlay { position: fixed; inset: 0; z-index: 320; display: grid; place-items: end center; background: rgba(37,35,31,0.35); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); padding: 12px; padding-bottom: max(12px, env(safe-area-inset-bottom)); }
 .hp-overlay.hidden { display: none; }
@@ -42,6 +48,8 @@ html.dark .hp-goal, html.dark .hp-in, html.dark .hp-block { background: #2E2C28;
 html.dark .hp-block.on { background: var(--c-pine); border-color: var(--c-pine); color: #fff; }
 html.dark .hp-progress, html.dark .hp-chip { background: rgba(255,255,255,0.08); }
 html.dark .hp-row + .hp-row { border-top-color: rgba(255,255,255,0.1); }
+html.dark .hp-remind { border-top-color: rgba(255,255,255,0.1); }
+html.dark .hp-remind-f { color: rgba(237,234,226,0.55); }
 html.dark .hp-time, html.dark .hp-lbl { color: rgba(237,234,226,0.6); }
 html.dark .hp-sheet { background: #23211E; color: #EDEAE2; }
 html.dark .hp-pick { background: #2E2C28; border-color: rgba(255,255,255,0.12); color: #EDEAE2; }

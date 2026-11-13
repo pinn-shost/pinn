@@ -133,6 +133,14 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.149.1의 새 소식
+
+**푸시 알림**
+
+- **건강 알림.** 건강 페이지에서 구성 요소별로 푸시 알림을 켤 수 있습니다: 약과 비타민은 정해 둔 시간에, 수분 섭취는 하루 중 두 시각 사이 일정한 간격으로(남은 양 포함), 손 씻기는 정해진 시간에 알려 줍니다.
+- **본인에게만.** 알림은 그 사람의 기기로만 가고, 다른 가족에게는 아무것도 보내지 않습니다. 알림을 누르면 건강 페이지가 열리고, 수분 섭취는 바로 음료 화면이 열립니다.
+- 변경: `pb_hooks/pinn-gesundheit.js`, `pb_hooks/gesundheit.pb.js`, `js/gesundheit.js`, `css/gesundheit.css`, `js/hinweise.js`, `js/fortsetzen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, 모든 README. 1.149.0 포함.
+
 ## 1.149.0의 새 소식
 
 **건강**
@@ -228,14 +236,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - **자동 업데이트**가 설정한 시간에 실행되지 않았어요. 서버가 Europe/Berlin 시간이 아닌 UTC로 계산해서 한두 시간 어긋났고, „다음 확인“ 시간도 잘못 표시됐어요. 이제 다른 모든 알림처럼 설정한 시간에 맞게 작동해요(서머타임 포함).
 - 변경: `pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, 모든 README. 서버(hooks 교체, PocketBase 재시작): `pb_hooks/pinn-system.js`.
 
-## 1.144.0의 새 소식
-
-**대시보드: 각 사람 아래에 읽지 않은 채팅과 미완료 할 일**
-
-- **각 사람 아래에 숫자 두 개.** 가족 대시보드(iPad)의 프로필 선택 화면에서 말풍선은 읽지 않은 채팅 메시지 수를, 체크는 기한이 된 미완료 할 일 수를 보여 줘요. 로그인하지 않아도 보여요. 0이면 사라지고 9를 넘으면 9⁺로 표시돼요. 숫자는 1분마다 새로 고쳐져요.
-- **기본으로 켜짐.** 1.143.0의 설정은 꺼져 있었고 할 일만 보였어요. 이제 모든 가족에서 두 숫자가 모두 켜져 있어요. 관리자는 계정 → ‘대시보드의 할 일과 채팅’에서 끌 수 있어요. 알림을 끈 채팅은 세지 않고, 읽지 않음으로 표시한 채팅은 1로 세요. 메뉴의 ‘채팅’ 옆 숫자와 같아요.
-- 변경: `js/profilauswahl.js`, `js/dashboardkonto.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (14개 언어의 새 문구 1개와 바뀐 문구 4개), `src/` (버전, 계정 페이지), `index.html`, 모든 README. 서버(hooks 교체, PocketBase가 다시 시작돼요): `pb_hooks/pinn-chat.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`.
-
 ## 작동 방식
 
 ```mermaid
@@ -264,7 +264,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.149.0` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.149.1` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

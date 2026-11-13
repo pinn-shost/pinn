@@ -12,6 +12,12 @@
 //   - for a child: every adult of the family (profiles that are not children, admins included)
 //   Guests never. A child is a member with child lock, an active kids' page or younger than 18
 //   (birthday of the member or of the emergency pass).
+//
+// Push reminders (since 1.149.1, runCron every 5 minutes from gesundheit.pb.js): the settings live in the
+// health data of the member (drink.remind, meds.remind, hands.remind). A reminder goes ONLY to the profile(s)
+// linked to that member - never to other family members. Texts come from the key files (push.health.*) in the
+// language of the receiving profile. Markers against double sending: pb_data/pinn_gesundheit_push.json
+// (one day, then discarded). Tapping the message opens /?gesundheit=<trinken|medikamente|haende>&person=<member ID>.
 
 const COL = "gesundheit";
 const DATA_MAX = 400 * 1024;
@@ -149,4 +155,180 @@ function save(e, body) {
     return result;
 }
 
-module.exports = { COL, ensureSchema, isChild, visibleMembers, list, save };
+// ---------------------------------------------------------------------------------------------
+// Push reminders
+// ---------------------------------------------------------------------------------------------
+const STATUS_FILE = "/pb_data/pinn_gesundheit_push.json";
+const GRACE_MIN = 12;          // a due reminder is still sent up to 12 minutes late (the schedule runs every 5 minutes)
+const MED_WINDOW_MIN = 90;     // medication: made up for up to 90 minutes after the planned time (e.g. after a restart)
+const DRINK_EVERY = [30, 45, 60, 90, 120, 150, 180, 240];
+
+function pad2(n) { return (n < 10 ? "0" : "") + n; }
+function lastSundayUtc(year, month) {
+    const last = new Date(Date.UTC(year, month + 1, 0));
+    return Date.UTC(year, month, last.getUTCDate() - last.getUTCDay(), 1, 0, 0);
+}
+function tzOffsetMs(utcMs) {
+    const y = new Date(utcMs).getUTCFullYear();
+    return (utcMs >= lastSundayUtc(y, 2) && utcMs < lastSundayUtc(y, 9)) ? 7200000 : 3600000;
+}
+// Europe/Berlin wall clock
+function wallNow() {
+    const now = Date.now();
+    const d = new Date(now + tzOffsetMs(now));
+    const y = d.getUTCFullYear(), m = d.getUTCMonth() + 1, day = d.getUTCDate();
+    return { min: d.getUTCHours() * 60 + d.getUTCMinutes(), iso: y + "-" + pad2(m) + "-" + pad2(day) };
+}
+function toMin(hhmm) {
+    const m = /^(\d{1,2}):(\d{2})$/.exec(String(hhmm || ""));
+    if (!m) return null;
+    const v = Number(m[1]) * 60 + Number(m[2]);
+    return Number(m[1]) < 24 && Number(m[2]) < 60 ? v : null;
+}
+function hhmm(min) { return pad2(Math.floor(min / 60)) + ":" + pad2(min % 60); }
+
+// Reminder settings with defaults (same defaults as js/gesundheit.js)
+function remindSettings(daten) {
+    const d = daten && typeof daten === "object" ? daten : {};
+    const dr = Object.assign({ on: false, every: 120, from: "08:00", to: "20:00" }, (d.drink && d.drink.remind) || {});
+    const every = Number(dr.every);
+    const out = {
+        drink: { on: dr.on === true, every: DRINK_EVERY.indexOf(every) >= 0 ? every : 120, from: toMin(dr.from) !== null ? toMin(dr.from) : 480, to: toMin(dr.to) !== null ? toMin(dr.to) : 1200 },
+        meds: { on: !!(d.meds && d.meds.remind && d.meds.remind.on === true) },
+        hands: { on: false, times: [] },
+    };
+    const hr = (d.hands && d.hands.remind) || {};
+    out.hands.on = hr.on === true;
+    const times = Array.isArray(hr.times) ? hr.times : ["10:00", "14:00", "18:00"];
+    out.hands.times = times.map(toMin).filter(v => v !== null).filter((v, i, a) => a.indexOf(v) === i).sort((a, b) => a - b).slice(0, 6);
+    return out;
+}
+
+function readStatus(today) {
+    let o = null;
+    try {
+        const calendarSync = require(`${__hooks}/calendar-sync.js`);
+        o = JSON.parse(calendarSync.bytesToText($os.readFile(STATUS_FILE)));
+    } catch (e) { o = null; }
+    if (!o || typeof o !== "object" || o.datum !== today) o = { datum: today, gesendet: {} };
+    if (!o.gesendet || typeof o.gesendet !== "object") o.gesendet = {};
+    return o;
+}
+function writeStatus(s) {
+    try { $os.writeFile(STATUS_FILE, JSON.stringify(s), 420); } catch (e) { console.log("[Gesundheit] " + STATUS_FILE + " not writable: " + e.message); }
+}
+
+// Texts in the language of the receiving profile (key files, "push.health.*")
+function text(lang, key, vals) {
+    let t = null;
+    try { t = require(`${__hooks}/pinn-pushtext.js`).tk(lang, key, vals || {}, false); } catch (e) { t = null; }
+    return t || "";
+}
+
+// Due reminders of one member: [{ key, kind, titel, text, url, tag }] - nothing is sent here
+function dueReminders(rec, daten, rs, w, lang) {
+    const out = [];
+    const memberId = rec.getString("mitglied");
+    const person = encodeURIComponent(memberId);
+    const today = w.iso;
+
+    if (rs.drink.on && rs.drink.to > rs.drink.from) {
+        const log = (daten.drink && daten.drink.log && Array.isArray(daten.drink.log[today])) ? daten.drink.log[today] : [];
+        const total = log.reduce((s, x) => s + (Number(x && x.ml) || 0), 0);
+        const goal = Number(daten.drink && daten.drink.goal) || 2000;
+        let slot = null;
+        for (let t = rs.drink.from; t <= rs.drink.to; t += rs.drink.every) { if (t <= w.min) slot = t; }
+        if (slot !== null && w.min - slot < GRACE_MIN) {
+            // Already reached the goal, or drank something shortly before: no message for this time
+            let lastDrink = -1;
+            log.forEach(x => { const m = toMin(x && x.t); if (m !== null && m > lastDrink) lastDrink = m; });
+            const recent = lastDrink >= 0 && w.min - lastDrink < Math.min(rs.drink.every / 2, 60);
+            const rest = goal - total;
+            out.push({
+                key: "d|" + rec.id + "|" + slot, kind: "drink", skip: rest <= 0 || recent,
+                titel: text(lang, "push.health.drinkTitle"),
+                text: text(lang, "push.health.drinkText", { ml: String(total), goal: String(goal), rest: String(Math.max(0, rest)) }),
+                url: "/?gesundheit=trinken&person=" + person, tag: "gesundheit-trinken-" + today,
+            });
+        }
+    }
+
+    if (rs.meds.on && daten.meds && Array.isArray(daten.meds.list)) {
+        const taken = (daten.meds.taken && Array.isArray(daten.meds.taken[today])) ? daten.meds.taken[today] : [];
+        const byTime = {};
+        daten.meds.list.forEach(med => {
+            if (!med || !med.id || !Array.isArray(med.times)) return;
+            med.times.forEach(tm => {
+                const m = toMin(tm);
+                if (m === null || w.min < m || w.min >= m + MED_WINDOW_MIN) return;
+                if (taken.indexOf(med.id + "@" + tm) >= 0) return;
+                const label = String(med.name || "").slice(0, 80) + (med.dose ? " (" + String(med.dose).slice(0, 40) + ")" : "");
+                (byTime[m] = byTime[m] || []).push(label);
+            });
+        });
+        Object.keys(byTime).forEach(m => {
+            out.push({
+                key: "m|" + rec.id + "|" + m, kind: "meds", skip: false,
+                titel: text(lang, "push.health.medsTitle", { time: hhmm(Number(m)) }),
+                text: byTime[m].join(", "),
+                url: "/?gesundheit=medikamente&person=" + person, tag: "gesundheit-med-" + today + "-" + hhmm(Number(m)).replace(":", ""),
+            });
+        });
+    }
+
+    if (rs.hands.on) {
+        const n = Number(daten.hands && daten.hands.log && daten.hands.log[today]) || 0;
+        rs.hands.times.forEach(t => {
+            if (w.min < t || w.min - t >= GRACE_MIN) return;
+            out.push({
+                key: "h|" + rec.id + "|" + t, kind: "hands", skip: false,
+                titel: text(lang, "push.health.handsTitle"),
+                text: text(lang, "push.health.handsText", { count: String(n) }),
+                url: "/?gesundheit=haende&person=" + person, tag: "gesundheit-haende-" + today,
+            });
+        });
+    }
+    return out;
+}
+
+// Called every 5 minutes: sends the reminders that are due. Returns { gesendet }.
+function runCron() {
+    if (!findCol(COL)) return { skipped: "no collection" };
+    const w = wallNow();
+    let recs = [];
+    try { recs = $app.findRecordsByFilter(COL, "mitglied != ''", "", 0, 0); } catch (e) { return { skipped: e.message }; }
+    if (!recs.length) return { gesendet: 0 };
+    const status = readStatus(w.iso);
+    let dirty = false, sent = 0, push = null;
+    recs.forEach(rec => {
+        const daten = parse(rec.get("daten"));
+        const rs = remindSettings(daten);
+        if (!rs.drink.on && !rs.meds.on && !rs.hands.on) return;
+        let users = [];
+        try { users = $app.findRecordsByFilter("benutzer", "familie = {:f} && mitglied = {:m}", "", 5, 0, { f: rec.getString("familie"), m: rec.getString("mitglied") }); } catch (e) { users = []; }
+        users = users.filter(u => u.getString("rolle") !== "gast");
+        if (!users.length) return;
+        users.forEach(u => {
+            const lang = require(`${__hooks}/pinn-pushtext.js`).langOfUser(u);
+            dueReminders(rec, daten, rs, w, lang).forEach(r => {
+                const key = u.id + "|" + r.key;
+                if (status.gesendet[key]) return;
+                // remember first: even on an error along the way, a message never comes twice
+                status.gesendet[key] = Date.now();
+                dirty = true;
+                if (r.skip || !r.titel) return;
+                if (!push) push = require(`${__hooks}/pinn-push.js`);
+                try {
+                    sent += push.notifyUser(u.id, { titel: r.titel, text: r.text, url: r.url, tag: r.tag, urgency: "normal", roh: true }) || 0;
+                } catch (e) {
+                    console.log("[Gesundheit] Push: " + e.message);
+                }
+            });
+        });
+    });
+    if (dirty) writeStatus(status);
+    if (sent) console.log("[Gesundheit] " + sent + " reminder(s) sent.");
+    return { gesendet: sent };
+}
+
+module.exports = { COL, ensureSchema, isChild, visibleMembers, list, save, runCron, remindSettings, dueReminders };

@@ -110,6 +110,14 @@ Dotknij obrazu, aby otworzyć go w pełnym rozmiarze.
 
 pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski i 🇺🇦 Українська**; dostosowuje walutę i numery alarmowe do twojego regionu i przełącza się między określeniami **rodzina** i **wspólne mieszkanie**. Jeden serwer może obsługiwać wiele rodzin, każdą z własnymi administratorami.
 
+## Nowości w 1.149.1
+
+**Przypomnienia push**
+
+- **Przypomnienia o zdrowiu.** Na stronie zdrowia można włączyć przypomnienie push dla każdego bloku: leki i witaminy o swoich godzinach, picie w odstępach między dwiema godzinami dnia (z brakującą ilością) i mycie rąk o stałych porach.
+- **Tylko dla samej osoby.** Przypomnienia trafiają na urządzenia tej osoby; do innych członków rodziny nic nie jest wysyłane. Dotknięcie powiadomienia otwiera stronę zdrowia – przy piciu od razu okno napoju.
+- Zmienione: `pb_hooks/pinn-gesundheit.js`, `pb_hooks/gesundheit.pb.js`, `js/gesundheit.js`, `css/gesundheit.css`, `js/hinweise.js`, `js/fortsetzen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, wszystkie README. Zawiera 1.149.0.
+
 ## Nowości w 1.149.0
 
 **Zdrowie**
@@ -173,15 +181,6 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 - **Mikołaj** przelatuje o połowę rzadziej (co 10–18 minut, w Wigilię co 4–6).
 - Zmieniono: `js/winterzeit.js`, `css/winterzeit.css`, `src/`, `index.html`, wszystkie pliki README. Bez części serwerowej.
 
-## Nowości w 1.146.0
-
-**Śnieg dopasowany do każdego nagłówka, godzina aktualizacji według regionu**
-
-- **Śnieg na miarę.** pinn. mierzy każdą literę nagłówka w prawdziwej czcionce i kładzie śnieg dokładnie na niej – wyżej na wysokich literach, niżej na małych, z grudkami i tu i ówdzie kroplą. Odstępy między słowami zostają wolne, emoji nie dostają śniegu, nic nie jest rozciągane, a całość działa w każdym języku i piśmie.
-- **Automatyczne aktualizacje według regionu.** Wybrana godzina obowiązuje teraz w strefie czasowej urządzenia, na którym została zapisana (z czasem letnim i zimowym), a nie zawsze według czasu niemieckiego. Ustawienia pokazują, która strefa czasowa obowiązuje.
-- **Zablokowany panel sam wczytuje nowe wersje.** iPad z zablokowanym panelem rodzinnym (lub ekran logowania) przeładowuje się mniej więcej minutę po aktualizacji, jeśli nikt akurat nie pisze. Aplikacja pokazuje „czeka”, gdy o tej porze trwa kopia zapasowa.
-- Zmieniono: `js/winterzeit.js`, `css/winterzeit.css`, `js/versionspruefung.js`, `js/sicherungen.js`, `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`, `i18n/`, `src/`, `index.html`, wszystkie pliki README. Część serwerowa: skopiować hooki, PocketBase uruchamia się ponownie.
-
 ## Wymagania
 
 - NAS lub mini PC z zainstalowanym **Dockerem** i **Docker Compose** (np. Synology, UGREEN, QNAP albo zwykły serwer z Linuksem)
@@ -191,7 +190,7 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 ## Instalacja
 
 1. Pobierz i rozpakuj plik ZIP [najnowszej wersji](https://github.com/pinn-shost/pinn/releases/latest).
-2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.149.0` lub `pinn-main`) bez zmian.
+2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.149.1` lub `pinn-main`) bez zmian.
 3. Połącz się przez SSH i uruchom:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

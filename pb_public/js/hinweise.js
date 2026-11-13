@@ -1409,7 +1409,7 @@ function ntActQuote(t) {
 var NT_PUSH_ICONS = {
   termin: '⏰', tagesuebersicht: '☀️', zuweisung: '📌', kind: '⭐', alle: '🎉', dokument: '📄',
   vertrag: '📝', kasse: '💶', ausgleich: '💸', pinnwand: '🧷', laden: '🛒', einkauf: '🛒',
-  ortung: '📍', sos: '🆘', aufgabe: '✅', geburtstag: '🎂', muell: '🗑️', fahrzeug: '🚗', update: '🆕',
+  ortung: '📍', sos: '🆘', aufgabe: '✅', geburtstag: '🎂', gesundheit: '💧', muell: '🗑️', fahrzeug: '🚗', update: '🆕',
 };
 function ntEuro(v) { return typeof fmtEur === 'function' ? fmtEur(v) : (Math.round((v || 0) * 100) / 100).toFixed(2).replace('.', ',') + ' €'; }
 function ntKasseName(a) {
@@ -1694,6 +1694,10 @@ function ntOpenLink(url) {
       if (!isCurrentUserGuest()) setTimeout(() => wbOpen(g('wobistdu')), 150);
       return true;
     }
+    if (g('gesundheit')) {
+      if (!isCurrentUserGuest()) ghOpenFromLink(g('gesundheit'), g('person'));
+      return true;
+    }
     if (g('geburtstag')) {
       setView('uebersicht');
       if (memberById(g('geburtstag'))) setTimeout(() => ofsOpen(g('geburtstag')), 120);
@@ -1818,7 +1822,7 @@ function ntOpenLink(url) {
 }
 // The bell opens these addresses itself on start (the others - ?sos, ?heimweg, ?kasse, ?vertrag,
 // ?dokument, ?pinnwand, ?familie - are already handled by their own sections during start-up)
-var NT_START_LINKS = ['packliste', 'wobistdu', 'geburtstag', 'haustier', 'urlaub', 'wetter', 'ausblick', 'ausgabe', 'fahrzeug', 'mitglied', 'aufgabe', 'termin', 'rezept', 'essen', 'vorrat', 'listen', 'einkauf', 'konto'];
+var NT_START_LINKS = ['packliste', 'wobistdu', 'gesundheit', 'geburtstag', 'haustier', 'urlaub', 'wetter', 'ausblick', 'ausgabe', 'fahrzeug', 'mitglied', 'aufgabe', 'termin', 'rezept', 'essen', 'vorrat', 'listen', 'einkauf', 'konto'];
 
 // Number on the bell: open expenses, running trips home, unread news and new family notices
 function ntUpdateBadge() {
@@ -2323,7 +2327,7 @@ function ntStart() {
     const target = '/?' + ntUrlParams.toString();
     try {
       const q = new URLSearchParams(location.search);
-      NT_START_LINKS.concat(['kasse', 'titel', 'von', 'bis', 'ort', 'art', 'schluessel']).forEach(k => q.delete(k));
+      NT_START_LINKS.concat(['kasse', 'titel', 'von', 'bis', 'ort', 'art', 'schluessel', 'person']).forEach(k => q.delete(k));
       const rest = q.toString();
       history.replaceState(null, '', location.pathname + (rest ? '?' + rest : '') + location.hash);
     } catch (e) { /* ignore */ }

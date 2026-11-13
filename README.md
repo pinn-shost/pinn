@@ -129,6 +129,14 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski and 🇺🇦 Українська**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.149.1
+
+**Push reminders**
+
+- **Reminders for health.** On the health page you can switch on a push reminder per block: medication & vitamins at their times, drinking at an interval between two times of day (with the amount still missing), hand washing at fixed times.
+- **Only for the person themself.** Reminders go to the devices of that person; nothing is sent to other family members. Tapping the message opens the health page – for drinking, directly the drink popup.
+- Changed: `pb_hooks/pinn-gesundheit.js`, `pb_hooks/gesundheit.pb.js`, `js/gesundheit.js`, `css/gesundheit.css`, `js/hinweise.js`, `js/fortsetzen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, all READMEs. Includes 1.149.0.
+
 ## What's new in 1.149.0
 
 **Health**
@@ -256,14 +264,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Note when deleting.** If you delete a packing list with destination and dates, pinn. now warns you that the trip also disappears from the calendar and from the year in review.
 - Changed: `js/listen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (one new text in all fourteen languages), `src/` (version), `index.html`, all READMEs. No server part.
 
-## What's new in 1.142.0
-
-**Year in review: expenses, meals cooked and trips**
-
-- **Year in review.** On 28 December from 6 pm (and at any time under Settings → Outlook) pinn. shows your year at a glance: expenses with monthly bars, categories and the biggest single expense, meals cooked with your favourites, and all trips with the days away. The arrows at the top page back to earlier years.
-- **Notice and push like the other outlooks.** A notice at the top until 10 January and a push message that you can switch off in the settings. Expenses are only shown with access to finances; guests get no push message.
-- Changed: `js/ausblick.js`, `js/hinweise.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (32 new and changed texts in all fourteen languages), `src/` (version, settings), `index.html`, all READMEs. Server (replace the hooks, PocketBase restarts): `pb_hooks/pinn-ausblick.js`, `pb_hooks/ausblick.pb.js`.
-
 ## How it works
 
 ```mermaid
@@ -290,7 +290,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.149.0` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.149.1` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

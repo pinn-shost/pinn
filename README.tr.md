@@ -110,6 +110,14 @@ Tam boyutta açmak için bir resme dokun.
 
 pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski ve 🇺🇦 Українська**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
 
+## 1.149.1 sürümündeki yenilikler
+
+**Push hatırlatmaları**
+
+- **Sağlık için hatırlatmalar.** Sağlık sayfasında her blok için push hatırlatması açılabilir: ilaçlar ve vitaminler kendi saatlerinde, su içme günün iki saati arasında belirli aralıklarla (eksik miktarla birlikte) ve el yıkama sabit saatlerde.
+- **Yalnızca kişinin kendisi için.** Hatırlatmalar o kişinin cihazlarına gider; diğer aile üyelerine hiçbir şey gönderilmez. Bildirime dokunmak sağlık sayfasını açar; su içmede doğrudan içecek penceresini.
+- Değişenler: `pb_hooks/pinn-gesundheit.js`, `pb_hooks/gesundheit.pb.js`, `js/gesundheit.js`, `css/gesundheit.css`, `js/hinweise.js`, `js/fortsetzen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, tüm README’ler. 1.149.0’ı içerir.
+
 ## 1.149.0 sürümündeki yenilikler
 
 **Sağlık**
@@ -173,15 +181,6 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 - **Noel Baba** artık yarı sıklıkta uçar (10–18 dakikada bir, Noel arifesinde 4–6 dakikada bir).
 - Değiştirildi: `js/winterzeit.js`, `css/winterzeit.css`, `src/`, `index.html`, tüm README dosyaları. Sunucu kısmı yok.
 
-## 1.146.0 sürümündeki yenilikler
-
-**Her başlığa uyan kar, bölgeye göre güncelleme saati**
-
-- **Ölçüye göre kar.** pinn. bir başlığın her harfini gerçek yazı tipiyle ölçer ve karı tam üstüne koyar – uzun harflerde daha yukarıda, küçüklerde daha aşağıda, topaklar ve arada bir damla ile. Kelimeler arasındaki boşluklar boş kalır, emojilere kar yağmaz, hiçbir şey uzatılmaz ve her dilde ve yazıda çalışır.
-- **Bölgeye göre otomatik güncellemeler.** Seçilen saat artık her zaman Almanya saatine göre değil, kaydedildiği cihazın saat dilimine göre geçerlidir (yaz ve kış saati dahil). Ayarlar hangi saat diliminin geçerli olduğunu gösterir.
-- **Kilitli pano yeni sürümleri kendisi yükler.** Kilitli aile panosu (veya giriş ekranı) açık bir iPad, kimse yazmıyorsa bir güncellemeden yaklaşık bir dakika sonra yeniden yüklenir. O saatte bir yedekleme çalışıyorsa uygulama „bekliyor” gösterir.
-- Değiştirildi: `js/winterzeit.js`, `css/winterzeit.css`, `js/versionspruefung.js`, `js/sicherungen.js`, `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`, `i18n/`, `src/`, `index.html`, tüm README dosyaları. Sunucu kısmı: hook'ları kopyalayın, PocketBase yeniden başlar.
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -191,7 +190,7 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.149.0` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.149.1` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

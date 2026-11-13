@@ -19,7 +19,7 @@ const RESUME_SCROLL_DELAY_MS = 700;            // after scrollRecipeDetailToTop(
 // Address parameters that open a place themselves (push messages, widgets, notices, returns from a login).
 // Only these stop the restore – other leftovers in the address do not.
 const RESUME_URL_TARGETS = ['seite', 'chat', 'sos', 'heimweg', 'hinweise', 'liste', 'kasse', 'vertrag', 'dokument',
-  'pinnwand', 'familie', 'system', 'sterne', 'google', 'packliste', 'wobistdu', 'geburtstag', 'haustier', 'urlaub',
+  'pinnwand', 'familie', 'system', 'sterne', 'google', 'packliste', 'wobistdu', 'gesundheit', 'geburtstag', 'haustier', 'urlaub',
   'wetter', 'ausblick', 'ausgabe', 'fahrzeug', 'mitglied', 'aufgabe', 'termin', 'rezept', 'essen', 'vorrat', 'listen',
   'einkauf', 'konto'];
 

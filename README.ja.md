@@ -133,6 +133,14 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski、🇺🇦 Українська** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.149.1の新機能
+
+**プッシュ通知のリマインダー**
+
+- **健康のリマインダー。** 健康ページで、ブロックごとにプッシュ通知を有効にできます：薬とビタミンは設定した時刻に、水分補給は2つの時刻の間を一定の間隔で（不足している量つき）、手洗いは決めた時刻に届きます。
+- **本人だけに届きます。** リマインダーはその人の端末に届き、他の家族には何も送られません。通知をタップすると健康ページが開き、水分補給ではすぐに飲み物の画面が開きます。
+- 変更： `pb_hooks/pinn-gesundheit.js`, `pb_hooks/gesundheit.pb.js`, `js/gesundheit.js`, `css/gesundheit.css`, `js/hinweise.js`, `js/fortsetzen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`、すべてのREADME。1.149.0 を含みます。
+
 ## 1.149.0の新機能
 
 **健康**
@@ -228,14 +236,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - **自動アップデート**が設定した時刻に実行されていませんでした。サーバーがEurope/Berlin の時刻ではなくUTCで計算していたため、1〜2時間ずれており、「次回の確認」の時刻も誤っていました。今後は他のすべてのリマインダーと同じく、設定した時刻どおりに動作します（夏時間・冬時間にも対応）。
 - 変更：`pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, すべての README. サーバー（hooks を置き換え、PocketBase が再起動）：`pb_hooks/pinn-system.js`.
 
-## 1.144.0の新機能
-
-**ダッシュボード：各メンバーの下に未読チャットと未完了タスク**
-
-- **各メンバーの下に2つの数字。** ファミリーダッシュボード（iPad）のプロフィール選択画面で、吹き出しが未読チャットメッセージの数を、チェックが期限の来た未完了タスクの数を表示します。ログインせずに見られます。0 のときは表示されず、9 を超えると 9⁺ になります。数字は毎分更新されます。
-- **初期設定でオン。** 1.143.0 の設定はオフでタスクのみでしたが、今後はすべての家族で両方の数字がオンです。管理者は「アカウント → ダッシュボードのタスクとチャット」でオフにできます。ミュート中のチャットは数えず、未読にしたチャットは 1 と数えます。メニューの「チャット」の数字と同じです。
-- 変更：`js/profilauswahl.js`, `js/dashboardkonto.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/`（14言語すべての新規文言1件と変更文言4件）, `src/`（バージョン、アカウントページ）, `index.html`, すべての README. サーバー（hooks を置き換え、PocketBase が再起動）：`pb_hooks/pinn-chat.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`.
-
 ## しくみ
 
 ```mermaid
@@ -264,7 +264,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.149.0`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.149.1`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

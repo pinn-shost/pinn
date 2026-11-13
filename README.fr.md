@@ -129,6 +129,14 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski et 🇺🇦 Українська**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.149.1
+
+**Rappels push**
+
+- **Rappels pour la santé.** Sur la page santé, on peut activer un rappel push par bloc : médicaments et vitamines à leurs heures, boire à intervalles entre deux heures de la journée (avec la quantité qu’il reste) et lavage des mains à heures fixes.
+- **Uniquement pour la personne elle-même.** Les rappels vont sur les appareils de cette personne ; rien n’est envoyé aux autres membres de la famille. Toucher la notification ouvre la page santé – pour boire, directement la fenêtre de boisson.
+- Modifié : `pb_hooks/pinn-gesundheit.js`, `pb_hooks/gesundheit.pb.js`, `js/gesundheit.js`, `css/gesundheit.css`, `js/hinweise.js`, `js/fortsetzen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, tous les README. Inclut 1.149.0.
+
 ## Nouveautés de la 1.149.0
 
 **Santé**
@@ -256,14 +264,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Avertissement à la suppression.** Si vous supprimez une liste de bagages avec destination et dates, pinn. prévient désormais que le voyage disparaît aussi du calendrier et du bilan de l’année.
 - Modifié : `js/listen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (un nouveau texte dans les quatorze langues), `src/` (version), `index.html`, tous les README. Pas de partie serveur.
 
-## Nouveautés de la 1.142.0
-
-**Bilan de l’année : dépenses, repas cuisinés et voyages**
-
-- **Bilan de l’année.** Le 28 décembre à partir de 18 h (et à tout moment sous Réglages → Perspectives) pinn. montre votre année en un coup d’œil : dépenses avec barres mensuelles, catégories et plus grosse dépense, repas cuisinés avec vos favoris, et tous les voyages avec les jours passés ailleurs. Les flèches en haut permettent de remonter aux années précédentes.
-- **Notification et push comme pour les autres aperçus.** Un message en haut jusqu’au 10 janvier et une notification push que vous pouvez désactiver dans les réglages. Les dépenses ne sont visibles qu’avec l’accès aux finances ; les invités ne reçoivent pas de notification push.
-- Modifié : `js/ausblick.js`, `js/hinweise.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (32 textes nouveaux et modifiés dans les quatorze langues), `src/` (version, réglages), `index.html`, tous les README. Serveur (remplacer les hooks, PocketBase redémarre) : `pb_hooks/pinn-ausblick.js`, `pb_hooks/ausblick.pb.js`.
-
 ## Comment ça marche
 
 ```mermaid
@@ -290,7 +290,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.149.0` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.149.1` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -27,7 +27,12 @@
        values: [{ id, date, weight, sys, dia, pulse }],
        vaccines: [{ id, name, date, next }],
        appointments: [{ id, date, time, who, note }] }
-   Day logs older than GH_KEEP_DAYS are dropped when saving. Push reminders follow in 1.149.1. */
+   Day logs older than GH_KEEP_DAYS are dropped when saving.
+
+   Push reminders (since 1.149.1, server: pinn-gesundheit.js#runCron): switched on per block in the health data
+     drink.remind { on, every (minutes), from, to }   meds.remind { on }   hands.remind { on, times: ['10:00', …] }
+   They go to the profile of the person themself. Tapping a message opens /?gesundheit=<trinken|medikamente|haende>
+   &person=<member ID> (ghOpenFromLink): the health page of that person, for "trinken" also the drink popup. */
 
 var GH_KEEP_DAYS = 120;
 var GH_STALE_MS = 60 * 1000;
@@ -42,6 +47,7 @@ var GH_DRINKS = [
   { id: 'limo', key: 'gh.drink.soda', color: '#E5D74B', cup: false },
 ];
 var GH_AMOUNTS = [150, 200, 250, 330, 500];
+var GH_EVERY = [30, 45, 60, 90, 120, 150, 180, 240]; // drink reminder: minutes between two messages
 var GH_GOALS = [1000, 1250, 1500, 1750, 2000, 2250, 2500, 2750, 3000, 3500];
 var GH_BLOCKS = [
   { id: 'drink', icon: '💧', key: 'gh.block.drink' },
@@ -77,11 +83,15 @@ function ghNorm(raw, child) {
   d.blocks = Object.assign({ drink: true, meds: true, hands: false, values: false, vaccines: false, appointments: false }, d.blocks || {});
   d.drink = Object.assign({ goal: child ? 1250 : 2000, log: {} }, d.drink || {});
   if (!d.drink.log || typeof d.drink.log !== 'object') d.drink.log = {};
+  d.drink.remind = Object.assign({ on: false, every: 120, from: '08:00', to: '20:00' }, d.drink.remind || {});
   d.meds = Object.assign({ list: [], taken: {} }, d.meds || {});
   if (!Array.isArray(d.meds.list)) d.meds.list = [];
   if (!d.meds.taken || typeof d.meds.taken !== 'object') d.meds.taken = {};
+  d.meds.remind = Object.assign({ on: false }, d.meds.remind || {});
   d.hands = Object.assign({ log: {} }, d.hands || {});
   if (!d.hands.log || typeof d.hands.log !== 'object') d.hands.log = {};
+  d.hands.remind = Object.assign({ on: false, times: ['10:00', '14:00', '18:00'] }, d.hands.remind || {});
+  if (!Array.isArray(d.hands.remind.times)) d.hands.remind.times = [];
   ['values', 'vaccines', 'appointments'].forEach(k => { if (!Array.isArray(d[k])) d[k] = []; });
   return d;
 }
@@ -281,6 +291,32 @@ function ghBlockHtml(id, m, d, edit) {
   return '';
 }
 
+/* ---------- Reminder settings (push, since 1.149.1) ---------- */
+function ghRemindHtml(kind, m, r, edit) {
+  if (!edit) return '';
+  const mem = `data-member="${famAttr(m.id)}" data-kind="${kind}"`;
+  const label = tk(kind === 'drink' ? 'gh.remind.drinkOn' : (kind === 'meds' ? 'gh.remind.medsOn' : 'gh.remind.handsOn'));
+  let opts = '';
+  if (r.on && kind === 'drink') {
+    const every = GH_EVERY.includes(Number(r.every)) ? Number(r.every) : 120;
+    opts = `<div class="hp-remind-opts">
+      <label class="hp-remind-f">${tk('gh.remind.every')}<select class="hp-in" data-ghchange="rem-every" ${mem}>${GH_EVERY.map(n => `<option value="${n}"${n === every ? ' selected' : ''}>${tk('gh.remind.everyOpt', { min: n })}</option>`).join('')}</select></label>
+      <label class="hp-remind-f">${tk('gh.remind.from')}<input type="time" class="hp-in" data-ghchange="rem-from" ${mem} value="${ghAttr(r.from)}" /></label>
+      <label class="hp-remind-f">${tk('gh.remind.to')}<input type="time" class="hp-in" data-ghchange="rem-to" ${mem} value="${ghAttr(r.to)}" /></label>
+    </div>`;
+  } else if (r.on && kind === 'hands') {
+    const times = (r.times || []).concat(['', '', '']).slice(0, 3);
+    opts = `<div class="hp-remind-opts">
+      ${times.map((t, i) => `<label class="hp-remind-f">${i === 0 ? tk('gh.remind.times') : '&nbsp;'}<input type="time" class="hp-in hp-hand-time" data-ghchange="rem-time" ${mem} data-i="${i}" value="${ghAttr(t)}" /></label>`).join('')}
+    </div>`;
+  }
+  return `<div class="hp-remind">
+    <label class="fz-check"><input type="checkbox" data-ghchange="rem-on" ${mem}${r.on ? ' checked' : ''} /><span>🔔 ${label}</span></label>
+    ${opts}
+    ${r.on ? `<p class="text-[11px] text-ink/45 mt-1">${tk('gh.remind.hint')}</p>` : ''}
+  </div>`;
+}
+
 /* ---------- Block: drink ---------- */
 function ghDrinkHint(total, goal) {
   const rest = goal - total;
@@ -317,7 +353,8 @@ function ghDrinkHtml(m, d, edit) {
     </div>
     <p class="text-xs text-ink/60 mt-1">${escapeHtml(ghDrinkHint(total, goal))}</p>
     ${edit ? `<button type="button" class="hp-big-btn" data-ghact="drink-add" data-member="${famAttr(m.id)}">💧 ${tk('gh.drink.add')}</button>` : ''}
-    ${chips ? `<div class="hp-chips">${chips}</div>` : ''}`;
+    ${chips ? `<div class="hp-chips">${chips}</div>` : ''}
+    ${ghRemindHtml('drink', m, d.drink.remind, edit)}`;
   return ghCard('💧', tk('gh.block.drink'), body, goalSel);
 }
 function ghOpenDrinkPopup(memberId) {
@@ -396,8 +433,9 @@ function ghMedsHtml(m, d, edit) {
   const body = rows
     ? `<div class="hp-list">${rows}</div>`
     : `<p class="text-sm text-ink/50">${tk('gh.meds.empty')}</p>`;
+  const rem = ghRemindHtml('meds', m, d.meds.remind, edit);
   const add = edit ? `<button type="button" class="fz-mini-btn" data-ghact="med-new" data-member="${famAttr(m.id)}">+ ${tk('gh.add')}</button>` : '';
-  return ghCard('💊', tk('gh.block.meds'), body, add);
+  return ghCard('💊', tk('gh.block.meds'), body + rem, add);
 }
 function ghMedForm(memberId, medId) {
   const d = ghData(memberId);
@@ -440,7 +478,8 @@ function ghHandsHtml(m, d, edit) {
       ${edit ? `<button type="button" class="fz-mini-btn" data-ghact="hands-minus" data-member="${famAttr(m.id)}"${n ? '' : ' disabled'} aria-label="−1">−</button>
       <button type="button" class="fz-mini-btn primary" data-ghact="hands-plus" data-member="${famAttr(m.id)}">+1</button>` : ''}
     </div>
-    <p class="text-[11px] text-ink/45 mt-2">${tk('gh.hands.tip')}</p>`;
+    <p class="text-[11px] text-ink/45 mt-2">${tk('gh.hands.tip')}</p>
+    ${ghRemindHtml('hands', m, d.hands.remind, edit)}`;
   return ghCard('🧼', tk('gh.block.hands'), body);
 }
 
@@ -587,6 +626,20 @@ function ghModalButtons(withDelete) {
   </div>`;
 }
 
+/* ---------- Link from a push message ---------- */
+// ?gesundheit=<trinken|medikamente|haende>&person=<member ID>: opens the health page of that person;
+// "trinken" opens the drink popup on top of it.
+async function ghOpenFromLink(kind, memberId) {
+  if (isCurrentUserGuest()) return;
+  const idle = async () => { for (let i = 0; i < 40 && ghState.loading; i++) await new Promise(r => setTimeout(r, 150)); };
+  await idle();
+  if (!ghState.loaded || Date.now() - ghState.at > GH_STALE_MS) { await ghLoad(); await idle(); }
+  const id = (memberId && memberById(memberId)) ? memberId : (ghState.me && memberById(ghState.me) ? ghState.me : '');
+  if (!id) { setView('familie'); famSetTab('gesundheit'); return; }
+  ghOpenPerson(id);
+  if (kind === 'trinken' && ghCanEdit(id)) ghOpenDrinkPopup(id);
+}
+
 /* ---------- Wiring ---------- */
 (function wireHealth() {
   document.addEventListener('click', (e) => {
@@ -667,6 +720,22 @@ function ghModalButtons(withDelete) {
         if (on) list.push(key);
         d.meds.taken[day] = list;
       });
+    } else if (el.dataset.ghchange.indexOf('rem-') === 0) {
+      const kind = el.dataset.kind;
+      const what = el.dataset.ghchange;
+      const box = kind === 'drink' ? 'drink' : (kind === 'meds' ? 'meds' : 'hands');
+      let apply = null;
+      if (what === 'rem-on') { const on = el.checked; apply = (r) => { r.on = on; }; }
+      else if (what === 'rem-every') { const v = Number(el.value) || 120; apply = (r) => { r.every = v; }; }
+      else if (what === 'rem-from' || what === 'rem-to') {
+        const v = /^\d{2}:\d{2}$/.test(el.value) ? el.value : '';
+        if (v) apply = (r) => { r[what === 'rem-from' ? 'from' : 'to'] = v; };
+      } else if (what === 'rem-time') {
+        const all = Array.from(document.querySelectorAll('.hp-hand-time')).map(i => i.value).filter(v => /^\d{2}:\d{2}$/.test(v));
+        const times = Array.from(new Set(all)).sort();
+        apply = (r) => { r.times = times; };
+      }
+      if (apply && ghCanEdit(mid)) ghChange(mid, (d) => { apply(d[box].remind); });
     } else if (el.dataset.ghchange === 'pass') {
       const on = el.checked;
       ghChange(mid, (d) => { d.pass = on; });

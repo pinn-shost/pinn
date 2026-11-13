@@ -133,6 +133,14 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski und 🇺🇦 Українська**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.149.1
+
+**Push-Erinnerungen**
+
+- **Erinnerungen für Gesundheit.** Auf der Gesundheitsseite lässt sich je Baustein eine Push-Erinnerung einschalten: Medikamente & Vitamine zu ihren Uhrzeiten, Trinken im Abstand zwischen zwei Uhrzeiten (mit der noch fehlenden Menge), Hände waschen zu festen Uhrzeiten.
+- **Nur für die Person selbst.** Die Erinnerungen gehen an die Geräte dieser Person; an andere Familienmitglieder wird nichts geschickt. Tippen auf die Meldung öffnet die Gesundheitsseite – beim Trinken gleich das Trink-Popup.
+- Geändert: `pb_hooks/pinn-gesundheit.js`, `pb_hooks/gesundheit.pb.js`, `js/gesundheit.js`, `css/gesundheit.css`, `js/hinweise.js`, `js/fortsetzen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, alle READMEs. Enthält 1.149.0.
+
 ## Neu in 1.149.0
 
 **Gesundheit**
@@ -237,14 +245,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Standardmäßig an.** Die Einstellung aus 1.143.0 war aus und zeigte nur Aufgaben; jetzt sind beide Zahlen für jede Familie an. Ein Admin kann sie unter Konto → „Aufgaben und Chats auf dem Dashboard“ ausschalten. Stummgeschaltete Chats zählen nicht, als ungelesen markierte Chats zählen eins – genau wie die Zahl hinter „Chat“ im Menü.
 - Geändert: `js/profilauswahl.js`, `js/dashboardkonto.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (1 neuer und 4 geänderte Texte in allen vierzehn Sprachen), `src/` (Version, Konto-Seite), `index.html`, alle READMEs. Server (Hooks austauschen, PocketBase startet neu): `pb_hooks/pinn-chat.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`.
 
-## Neu in 1.143.0
-
-**Dashboard: offene Aufgaben unter dem Profilbild und Chat am iPad**
-
-- **Offene Aufgaben unter dem Bild.** Auf der Profilauswahl des Familien-Dashboards kann pinn. unter dem Bild jeder Person die Zahl ihrer offenen, fälligen Aufgaben zeigen – wie die Zahl am App-Symbol auf dem iPhone. Ein Admin schaltet das unter Konto → „Offene Aufgaben auf dem Dashboard“ ein; es gilt für alle Dashboards der Familie.
-- **Chat auf dem Dashboard.** Wer sein Profil auf dem Dashboard mit der PIN geöffnet hat, kann jetzt auch den Chat nutzen. Gäste und Kinder mit „nur Kinderseite“ nicht. Beim ersten Mal auf dem Gerät fragt der Chat wie gewohnt nach dem Wiederherstellungscode.
-- Geändert: `pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`, `js/profilauswahl.js`, `js/dashboard.js`, `js/dashboardkonto.js`, `js/konto.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (5 neue Texte in allen vierzehn Sprachen), `src/` (Version, Konto-Seite), `index.html`, alle READMEs. Server (Hooks austauschen, PocketBase startet neu): `pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`.
-
 ## So funktioniert’s
 
 ```mermaid
@@ -273,7 +273,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.149.0` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.149.1` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

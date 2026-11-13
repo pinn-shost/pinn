@@ -133,6 +133,14 @@ Toque em qualquer imagem para abri-la em tamanho real.
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.149.1
+
+**Lembretes push**
+
+- **Lembretes de saúde.** Na página de saúde pode ativar-se um lembrete push por bloco: medicamentos e vitaminas às suas horas, beber a intervalos entre duas horas do dia (com a quantidade que falta) e lavar as mãos a horas fixas.
+- **Só para a própria pessoa.** Os lembretes vão para os dispositivos dessa pessoa; nada é enviado a outros membros da família. Ao tocar na mensagem abre-se a página de saúde; ao beber, diretamente a janela da bebida.
+- Alterado: `pb_hooks/pinn-gesundheit.js`, `pb_hooks/gesundheit.pb.js`, `js/gesundheit.js`, `css/gesundheit.css`, `js/hinweise.js`, `js/fortsetzen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, todos os README. Inclui 1.149.0.
+
 ## Novidades da 1.149.0
 
 **Saúde**
@@ -228,14 +236,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **As atualizações automáticas** não corriam à hora escolhida: o servidor calculava em UTC em vez da hora de Europe/Berlin e falhava uma a duas horas; «Próxima verificação» também mostrava uma hora errada. Agora a hora funciona como em todos os outros lembretes (horário de verão e de inverno incluídos).
 - Alterado: `pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, todos os README. Servidor (substituir os hooks, o PocketBase reinicia): `pb_hooks/pinn-system.js`.
 
-## Novidades da 1.144.0
-
-**Painel: conversas não lidas e tarefas em aberto sob cada pessoa**
-
-- **Dois números sob cada pessoa.** Na seleção de perfis do painel da família (iPad), um balão mostra as mensagens de chat não lidas e um visto as tarefas em aberto e vencidas – visíveis sem iniciar sessão. Com 0 desaparece, acima de 9 mostra 9⁺. Os números são atualizados a cada minuto.
-- **Ativado por padrão.** A opção da 1.143.0 estava desligada e mostrava só tarefas; agora os dois números estão ativos em todas as famílias. Um admin pode desligá-los em Conta → “Tarefas e conversas no painel”. Conversas silenciadas não contam; as marcadas como não lidas contam uma – como o número ao lado de “Chat” no menu.
-- Alterado: `js/profilauswahl.js`, `js/dashboardkonto.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (1 texto novo e 4 alterados nas catorze línguas), `src/` (versão, página da conta), `index.html`, todos os README. Servidor (substituir os hooks, o PocketBase reinicia): `pb_hooks/pinn-chat.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`.
-
 ## Como funciona
 
 ```mermaid
@@ -264,7 +264,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.149.0` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.149.1` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
