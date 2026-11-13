@@ -110,6 +110,18 @@ Tam boyutta açmak için bir resme dokun.
 
 pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski ve 🇺🇦 Українська**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
 
+## 1.150.0 sürümündeki yenilikler
+
+**Bölgenizin saatiyle · Genel bakışta kısayollar · Kısayollar için hızlı pencereler**
+
+- **Hatırlatmalar doğru saatte.** pinn. hatırlatmaları artık cihazınızın saat dilimine göre, bölgenizin yaz ve kış saatiyle hesaplar. Ayar yapmanız gerekmez: cihaz saat dilimini sunucuya sessizce bildirir; taşınma veya seyahat sonrasında da.
+- **Önce sağlık hatırlatmaları.** İlaç, su içme ve el yıkama hatırlatmaları zaten herkesin kendi saatine göre çalışır; gelecekteki tüm hatırlatmalar aynı saati kullanır. Eski hatırlatmalar (doğum günleri, evcil hayvanlar, bavul listesi, kiler, sözleşmeler, belgeler, haftalık önizleme) hâlâ Orta Avrupa saatini kullanır, sonra güncellenecek.
+- **Kısayollar kutucuğu.** Genel bakıştaki yeni kutucuk, bir işlevi doğrudan açan uygulama benzeri simgeler gösterir: su içme, el yıkama (her dokunuşta +1), ilaçlar, alışveriş, yeni görev, yeni etkinlik, not, sohbet, temizlik, bitkiler, evcil hayvanlar, kiler, gider girme, gelir girme, finans, SOS ve yoldayım.
+- **Sizin seçiminiz.** Ayarlar → Genel bakış → Kısayollar: istediğiniz uygulamaları açın. Profil başına geçerlidir; uygulama seçilmezse kutucuk gizli kalır. Misafirler sağlık, SOS ve finans uygulamalarını görmez.
+- **Uzun basma.** Bir kısayola uzun basmak (bilgisayarda sağ tık) o işlev için küçük bir pencere açar: su içme (içecek, miktar, 10 dakika geri alma), el yıkama (+/−), ilaçlar, alışveriş, görevler, temizlik, etkinlikler, yemek, notlar, evcil hayvanlar, kiler, gider ve gelir, SOS ve yoldayım. Kısa dokunuş eskisi gibi çalışır.
+- **Açık kalır.** Pencere bir işlemden sonra açık kalır, böylece art arda birkaç şey yapılabilir; “Aç” tam işleve götürür.
+- Değişenler: `pb_hooks/pinn-zeit.js`, `pb_hooks/zeit.pb.js`, `js/zeit.js`, `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `pb_hooks/pinn-gesundheit.js`, `js/appstart.js`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/ansichten.js`, `js/design.js`, `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, README (+ 1.149.1).
+
 ## 1.149.1 sürümündeki yenilikler
 
 **Push hatırlatmaları**
@@ -172,15 +184,6 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 - **Widget.** Açık görevler boş daire, bitenler onay işaretiyle, yeni grup “Ev ve bahçe”. Betiği bir kez yeniden kopyala.
 - **Mevsimler.** Görünüm → Mevsimler altında Kış ve Noel için dönemi ve her parçayı (kar, kar yağışı, ışık zinciri, Noel Baba …) seçebilirsin; “Sesli komut ve widget'lar” kılavuzları kapalı açılır. Sunucu kısmı: hook'ları yükle.
 
-## 1.146.1 sürümündeki yenilikler
-
-**Her harfte kar, panoda kış**
-
-- **Gerçek kar gibi.** Kar artık her harfin üstüne ayrı ayrı ve yalnızca en tepeye yağar: düz kenarlarda bir katman (B veya L'nin üst çizgisi, K'nin iki üst ucu), yuvarlakların ortasında bir topak (O); dik yanlarda, L'nin ayağında ve boşluklarda kar yok. Emojiler boş kalır. Üst çubuktaki aile adı da kar alır ve ad değişince uyum sağlar.
-- **Aile panosunda kış.** Aile adında, saatte ve sıcaklıkta kar, her kutucukta bir kar şapkası (her biri biraz farklı) ve altta küçük bir kış manzarası.
-- **Noel Baba** artık yarı sıklıkta uçar (10–18 dakikada bir, Noel arifesinde 4–6 dakikada bir).
-- Değiştirildi: `js/winterzeit.js`, `css/winterzeit.css`, `src/`, `index.html`, tüm README dosyaları. Sunucu kısmı yok.
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -190,7 +193,7 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.149.1` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.150.0` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -133,6 +133,18 @@ Toque em qualquer imagem para abri-la em tamanho real.
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.150.0
+
+**Horários na sua região · Atalhos na visão geral · Janelas rápidas para os atalhos**
+
+- **Lembretes na hora certa.** O pinn. agora calcula os lembretes no fuso horário do seu dispositivo, com o horário de verão e de inverno da sua região. Não há nada a configurar: o dispositivo informa o fuso horário ao servidor, também após uma mudança ou em viagem.
+- **Primeiro os lembretes de saúde.** Medicamentos, beber água e lavar as mãos já seguem o relógio de cada pessoa; todos os lembretes futuros usarão o mesmo relógio. Os lembretes mais antigos (aniversários, animais, lista de bagagem, despensa, contratos, documentos, prévia semanal) ainda usam a hora da Europa Central e virão depois.
+- **Bloco Atalhos.** Um novo bloco da visão geral mostra ícones de apps que abrem uma função diretamente: beber, lavar as mãos (+1 por toque), remédios, compras, nova tarefa, novo evento, nota, chat, limpeza, plantas, pets, despensa, registrar despesa, registrar receita, finanças, SOS e a caminho.
+- **Sua escolha.** Configurações → Visão geral → Atalhos: ative os apps desejados. Vale por perfil; sem app escolhido o bloco fica oculto. Convidados não veem apps de saúde, SOS nem finanças.
+- **Toque longo.** Um toque longo em um atalho (clique direito no computador) abre uma pequena janela para essa função: beber (bebida, quantidade, desfazer por 10 minutos), lavar as mãos (+/−), remédios, compras, tarefas, limpeza, eventos, cozinhar, notas, pets, despensa, despesa e receita, SOS e a caminho. Um toque curto funciona como antes.
+- **Continua aberta.** A janela continua aberta após uma ação, então dá para fazer várias coisas seguidas; “Abrir” leva à função completa.
+- Alterado: `pb_hooks/pinn-zeit.js`, `pb_hooks/zeit.pb.js`, `js/zeit.js`, `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `pb_hooks/pinn-gesundheit.js`, `js/appstart.js`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/ansichten.js`, `js/design.js`, `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, README (+ 1.149.1).
+
 ## Novidades da 1.149.1
 
 **Lembretes push**
@@ -229,13 +241,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Mesmo dia possível.** Se a hora escolhida ainda não chegou, o pinn. verifica no mesmo dia – mesmo que já tenha verificado hoje. Assim uma nova definição pode ser testada logo. Uma hora já passada ao guardar vale a partir de amanhã; «Próxima verificação» mostra-o corretamente.
 - Alterado: `pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, todos os README. Servidor (substituir os hooks, o PocketBase reinicia): `pb_hooks/pinn-system.js`.
 
-## Novidades da 1.144.1
-
-**Correção: atualizações automáticas na hora certa**
-
-- **As atualizações automáticas** não corriam à hora escolhida: o servidor calculava em UTC em vez da hora de Europe/Berlin e falhava uma a duas horas; «Próxima verificação» também mostrava uma hora errada. Agora a hora funciona como em todos os outros lembretes (horário de verão e de inverno incluídos).
-- Alterado: `pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, todos os README. Servidor (substituir os hooks, o PocketBase reinicia): `pb_hooks/pinn-system.js`.
-
 ## Como funciona
 
 ```mermaid
@@ -264,7 +269,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.149.1` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.150.0` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

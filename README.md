@@ -129,6 +129,18 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski and 🇺🇦 Українська**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.150.0
+
+**Times in your region · Shortcuts on the overview · Quick windows for the shortcuts**
+
+- **Reminders at the right time.** pinn. now calculates reminders in the time zone of your device, including the summer and winter time of your region. Nothing to set up – the device quietly tells the server its time zone, also after a move or while travelling.
+- **Health reminders first.** Medication, drinking and hand washing reminders already follow each person's own clock; all future reminders use the same clock. Older reminders (birthdays, pets, packing list, pantry, contracts, documents, weekly preview) still use Central European time and follow later.
+- **Shortcuts tile.** A new tile on the overview shows app-like icons that open a function directly: drinking, hand washing (+1 per tap), medication, shopping, new task, new event, note, chat, cleaning plan, plants, pets, pantry, enter expense, enter income, finances, SOS and on my way.
+- **Your choice.** Settings → Overview → Shortcuts: switch on the apps you want. Applies per profile; without a chosen app the tile stays hidden. Guests do not see health, SOS or finance apps.
+- **Long press.** A long press on a shortcut (right click on a computer) opens a small window for exactly this function: drinking (drink, amount, undo for 10 minutes), hand washing (+/−), medication, shopping, tasks, cleaning plan, events, cooking, notes, pets, pantry, expense and income, SOS and on my way. A short tap works as before.
+- **Stays open.** The window stays open after an action, so several things can be done in a row; “Open” leads to the full function.
+- Changed: `pb_hooks/pinn-zeit.js`, `pb_hooks/zeit.pb.js`, `js/zeit.js`, `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `pb_hooks/pinn-gesundheit.js`, `js/appstart.js`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/ansichten.js`, `js/design.js`, `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, README (+ 1.149.1).
+
 ## What's new in 1.149.1
 
 **Push reminders**
@@ -257,13 +269,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Completed tasks are counted by the server,** because they are deleted after one or two days. For this year the count starts on the day of the update.
 - Changed: `js/ausblick.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (14 new texts and one changed text in all fourteen languages), `src/` (version), `index.html`, all READMEs. Server (replace the hooks, PocketBase restarts): `pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-aufgaben.js`, `pb_hooks/ausblick.pb.js`.
 
-## What's new in 1.142.1
-
-**Note when deleting a trip’s packing list**
-
-- **Note when deleting.** If you delete a packing list with destination and dates, pinn. now warns you that the trip also disappears from the calendar and from the year in review.
-- Changed: `js/listen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (one new text in all fourteen languages), `src/` (version), `index.html`, all READMEs. No server part.
-
 ## How it works
 
 ```mermaid
@@ -290,7 +295,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.149.1` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.150.0` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

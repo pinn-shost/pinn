@@ -119,6 +119,7 @@ function currentDesignValues() {
     // Overview (tiles)
     ovOrder: overviewOrder.slice(), ovHidden: overviewHidden.slice(),
     ovBdayDays: overviewBdayDays, ovBdayOnlyUpcoming: overviewBdayOnlyUpcoming, ovBdayHidden: bdayPackHidden(), ovVtHidden: bdayPackHidden(overviewVtHidden),
+    ovShortcuts: typeof kzEnabled !== 'undefined' ? kzEnabled.slice() : [],
     // Savings: depots hidden from the total overview
     finDepotsOut: finDepotsOut.slice(0, 30),
     // Language of the app (pinnLangCode: stored on the device or currently active)

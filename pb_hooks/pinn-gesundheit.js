@@ -14,10 +14,11 @@
 //   (birthday of the member or of the emergency pass).
 //
 // Push reminders (since 1.149.1, runCron every 5 minutes from gesundheit.pb.js): the settings live in the
-// health data of the member (drink.remind, meds.remind, hands.remind). A reminder goes ONLY to the profile(s)
+// health data of the member (drink.remind, meds.remind, hands.remind). Times follow the time zone of the receiving
+// profile (since 1.150.0, pinn-zeit.js; Europe/Berlin without a stored zone). A reminder goes ONLY to the profile(s)
 // linked to that member - never to other family members. Texts come from the key files (push.health.*) in the
 // language of the receiving profile. Markers against double sending: pb_data/pinn_gesundheit_push.json
-// (one day, then discarded). Tapping the message opens /?gesundheit=<trinken|medikamente|haende>&person=<member ID>.
+// (entries older than two days are discarded). Tapping the message opens /?gesundheit=<trinken|medikamente|haende>&person=<member ID>.
 
 const COL = "gesundheit";
 const DATA_MAX = 400 * 1024;
@@ -164,21 +165,6 @@ const MED_WINDOW_MIN = 90;     // medication: made up for up to 90 minutes after
 const DRINK_EVERY = [30, 45, 60, 90, 120, 150, 180, 240];
 
 function pad2(n) { return (n < 10 ? "0" : "") + n; }
-function lastSundayUtc(year, month) {
-    const last = new Date(Date.UTC(year, month + 1, 0));
-    return Date.UTC(year, month, last.getUTCDate() - last.getUTCDay(), 1, 0, 0);
-}
-function tzOffsetMs(utcMs) {
-    const y = new Date(utcMs).getUTCFullYear();
-    return (utcMs >= lastSundayUtc(y, 2) && utcMs < lastSundayUtc(y, 9)) ? 7200000 : 3600000;
-}
-// Europe/Berlin wall clock
-function wallNow() {
-    const now = Date.now();
-    const d = new Date(now + tzOffsetMs(now));
-    const y = d.getUTCFullYear(), m = d.getUTCMonth() + 1, day = d.getUTCDate();
-    return { min: d.getUTCHours() * 60 + d.getUTCMinutes(), iso: y + "-" + pad2(m) + "-" + pad2(day) };
-}
 function toMin(hhmm) {
     const m = /^(\d{1,2}):(\d{2})$/.exec(String(hhmm || ""));
     if (!m) return null;
@@ -204,15 +190,19 @@ function remindSettings(daten) {
     return out;
 }
 
-function readStatus(today) {
+// Markers against double sending: key -> time sent (ms). The keys contain the local date of the receiving profile,
+// so profiles in different time zones never block each other. Entries older than two days are dropped.
+function readStatus() {
     let o = null;
     try {
         const calendarSync = require(`${__hooks}/calendar-sync.js`);
         o = JSON.parse(calendarSync.bytesToText($os.readFile(STATUS_FILE)));
     } catch (e) { o = null; }
-    if (!o || typeof o !== "object" || o.datum !== today) o = { datum: today, gesendet: {} };
+    if (!o || typeof o !== "object") o = {};
     if (!o.gesendet || typeof o.gesendet !== "object") o.gesendet = {};
-    return o;
+    const limit = Date.now() - 2 * 86400000;
+    Object.keys(o.gesendet).forEach(k => { if (!(Number(o.gesendet[k]) > limit)) delete o.gesendet[k]; });
+    return { gesendet: o.gesendet };
 }
 function writeStatus(s) {
     try { $os.writeFile(STATUS_FILE, JSON.stringify(s), 420); } catch (e) { console.log("[Gesundheit] " + STATUS_FILE + " not writable: " + e.message); }
@@ -294,11 +284,11 @@ function dueReminders(rec, daten, rs, w, lang) {
 // Called every 5 minutes: sends the reminders that are due. Returns { gesendet }.
 function runCron() {
     if (!findCol(COL)) return { skipped: "no collection" };
-    const w = wallNow();
+    const Z = require(`${__hooks}/pinn-zeit.js`);
     let recs = [];
     try { recs = $app.findRecordsByFilter(COL, "mitglied != ''", "", 0, 0); } catch (e) { return { skipped: e.message }; }
     if (!recs.length) return { gesendet: 0 };
-    const status = readStatus(w.iso);
+    const status = readStatus();
     let dirty = false, sent = 0, push = null;
     recs.forEach(rec => {
         const daten = parse(rec.get("daten"));
@@ -310,8 +300,10 @@ function runCron() {
         if (!users.length) return;
         users.forEach(u => {
             const lang = require(`${__hooks}/pinn-pushtext.js`).langOfUser(u);
+            // wall clock of the receiving profile (its own time zone)
+            const w = Z.clockOfUser(u.id, rec.getString("familie")).wall();
             dueReminders(rec, daten, rs, w, lang).forEach(r => {
-                const key = u.id + "|" + r.key;
+                const key = w.iso + "|" + u.id + "|" + r.key;
                 if (status.gesendet[key]) return;
                 // remember first: even on an error along the way, a message never comes twice
                 status.gesendet[key] = Date.now();

@@ -1,0 +1,78 @@
+/* pinn. – Shortcuts tile and settings (css/kurzbefehle.css, since 1.150.0) */
+.kz-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); gap: 14px 8px; }
+.kz-app { display: flex; flex-direction: column; align-items: center; gap: 4px; background: none; border: 0; padding: 2px; cursor: pointer; min-width: 0; -webkit-tap-highlight-color: transparent; }
+.kz-app:active .kz-ico { transform: scale(.93); }
+.kz-ico { width: 56px; height: 56px; border-radius: 14px; display: grid; place-items: center; flex: 0 0 auto;
+  background: linear-gradient(160deg, var(--kz-a), var(--kz-b)); box-shadow: 0 2px 6px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.35); transition: transform .12s ease; }
+.kz-ico svg { width: 30px; height: 30px; fill: none; stroke: #fff; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.kz-ico.sm { width: 36px; height: 36px; border-radius: 10px; }
+.kz-ico.sm svg { width: 21px; height: 21px; }
+.kz-name { font-size: 12px; line-height: 1.15; text-align: center; max-width: 100%; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; word-break: break-word; }
+.kz-sub { font-size: 10.5px; line-height: 1.1; opacity: .5; text-align: center; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.kz-set-group { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; opacity: .45; margin: 14px 0 6px; }
+.kz-set-row { display: flex; align-items: center; gap: 12px; padding: 6px 4px; cursor: pointer; }
+.kz-set-row.is-off .kz-ico { filter: grayscale(.6); opacity: .65; }
+.kz-set-label { flex: 1 1 auto; font-size: 14px; min-width: 0; }
+.kz-set-row .ov-set-switch { position: relative; flex: 0 0 auto; }
+
+/* Long press on an icon: no text selection, no system menu */
+.kz-app { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; touch-action: manipulation; }
+
+/* Quick window (js/kurzfenster.js, since 1.150.0) – built on the sheet of the health page (.hp-overlay / .hp-sheet) */
+.kz-overlay { z-index: 330; }
+.kz-sheet { max-height: min(86vh, 640px); display: flex; flex-direction: column; }
+.kz-sheet-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.kz-sheet-title { flex: 1 1 auto; font-family: var(--font-serif, serif); font-size: 18px; min-width: 0; }
+.kz-sheet-body { overflow-y: auto; min-height: 0; flex: 1 1 auto; padding-bottom: 2px; }
+.kz-sheet-foot { margin-top: 12px; display: flex; justify-content: center; }
+.kz-open { font-size: 13px; color: var(--c-pine); padding: 6px 12px; }
+.kz-big { font-size: 22px; font-weight: 700; text-align: center; }
+.kz-bar { height: 8px; border-radius: 99px; background: rgba(37,35,31,.1); overflow: hidden; margin: 8px 0; }
+.kz-bar i { display: block; height: 100%; background: #3AA7E0; border-radius: 99px; transition: width .25s ease; }
+.kz-hint { font-size: 12px; opacity: .6; margin: 4px 0 8px; }
+.kz-empty { font-size: 14px; opacity: .6; text-align: center; padding: 14px 0; }
+.kz-step { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 14px; font-weight: 600; margin: 8px 0; position: relative; }
+.kz-back { position: absolute; left: 0; font-size: 13px; font-weight: 400; opacity: .6; }
+.kz-undo { width: 100%; margin-top: 12px; padding: 10px; border-radius: 12px; border: 1px solid rgba(37,35,31,.15); font-size: 14px; font-weight: 600; }
+.kz-undo:disabled { opacity: .4; }
+.kz-count { display: flex; align-items: center; justify-content: center; gap: 22px; padding: 8px 0; }
+.kz-count-n { font-size: 44px; font-weight: 700; text-align: center; line-height: 1; }
+.kz-count-n small { display: block; font-size: 12px; font-weight: 400; opacity: .6; margin-top: 6px; }
+.kz-round { width: 64px; height: 64px; border-radius: 50%; font-size: 32px; line-height: 1; border: 1px solid rgba(37,35,31,.18); background: #fff; color: inherit; }
+.kz-round.plus { background: var(--c-pine); color: #fff; border-color: transparent; }
+.kz-round:disabled { opacity: .35; }
+.kz-round:active { transform: scale(.94); }
+.kz-btn { padding: 10px 14px; border-radius: 12px; border: 1px solid rgba(37,35,31,.15); font-size: 14px; font-weight: 600; background: #fff; color: inherit; }
+.kz-btn.primary { background: var(--c-pine); color: #fff; border-color: transparent; }
+.kz-btn.wide { width: 100%; margin-top: 10px; }
+.kz-btn:disabled { opacity: .5; }
+.kz-add { display: flex; gap: 8px; margin: 8px 0; }
+.kz-input { flex: 1 1 auto; min-width: 0; padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(37,35,31,.18); background: #fff; font-size: 16px; color: inherit; }
+.kz-area { width: 100%; resize: none; }
+.kz-amount { font-size: 22px; font-weight: 600; }
+.kz-select { width: 100%; padding: 8px 10px; border-radius: 10px; border: 1px solid rgba(37,35,31,.18); background: #fff; font-size: 14px; color: inherit; margin-bottom: 4px; }
+.kz-row { display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 4px; border-bottom: 1px solid rgba(37,35,31,.08); text-align: left; font-size: 14px; background: none; color: inherit; }
+.kz-row.static { cursor: default; }
+.kz-row-text { flex: 1 1 auto; min-width: 0; }
+.kz-row.is-on .kz-row-text { text-decoration: line-through; opacity: .55; }
+.kz-row-sub { font-size: 12px; opacity: .55; flex: 0 0 auto; }
+.kz-row-sub.first { min-width: 74px; }
+.kz-check { width: 22px; height: 22px; border-radius: 7px; border: 2px solid rgba(37,35,31,.3); display: grid; place-items: center; font-size: 14px; flex: 0 0 auto; color: #fff; }
+.kz-row.is-on .kz-check { background: var(--c-pine); border-color: var(--c-pine); }
+.kz-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; }
+.kz-chip { padding: 8px 12px; border-radius: 999px; border: 1px solid rgba(37,35,31,.18); background: #fff; font-size: 13px; color: inherit; }
+.kz-chip.on { background: var(--c-pine); color: #fff; border-color: transparent; }
+.kz-group { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; opacity: .45; margin: 12px 0 4px; }
+.kz-meal { padding: 10px 0; border-bottom: 1px solid rgba(37,35,31,.08); }
+.kz-meal-t { display: flex; align-items: baseline; gap: 8px; font-size: 14px; }
+.kz-meal-t small { opacity: .55; margin-left: auto; }
+.kz-meal-b { display: flex; gap: 8px; margin-top: 8px; }
+.kz-meal-b .kz-btn { padding: 6px 12px; font-size: 13px; }
+.kz-done { font-size: 13px; color: var(--c-pine); padding: 6px 0; }
+.kz-pet { padding: 8px 0; border-bottom: 1px solid rgba(37,35,31,.08); }
+.kz-pet-h { display: flex; justify-content: space-between; align-items: baseline; font-size: 14px; }
+.kz-pet-h small { opacity: .55; }
+html.dark .kz-round, html.dark .kz-btn, html.dark .kz-input, html.dark .kz-select, html.dark .kz-chip { background: #2E2C28; border-color: rgba(255,255,255,.14); }
+html.dark .kz-btn.primary, html.dark .kz-chip.on, html.dark .kz-round.plus { background: var(--c-pine); }
+html.dark .kz-row, html.dark .kz-meal, html.dark .kz-pet { border-color: rgba(255,255,255,.1); }
+html.dark .kz-bar { background: rgba(255,255,255,.12); }

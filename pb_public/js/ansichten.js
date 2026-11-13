@@ -354,6 +354,7 @@ function setView(view) {
     renderFamilyTile();
     renderContractTile();
     renderBoardTile();
+    renderShortcutsTile();
   }
 
   // Switch tasks | household (not in the overview)

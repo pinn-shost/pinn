@@ -110,6 +110,18 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski en 🇺🇦 Українська**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.150.0
+
+**Tijden in jouw regio · Snelkoppelingen op het overzicht · Snelle vensters voor de snelkoppelingen**
+
+- **Herinneringen op het juiste tijdstip.** pinn. rekent herinneringen nu in de tijdzone van je apparaat, met de zomer- en wintertijd van je regio. Er is niets in te stellen: het apparaat geeft de tijdzone stilletjes door aan de server, ook na een verhuizing of onderweg.
+- **Eerst de gezondheidsherinneringen.** Medicijnen, drinken en handen wassen volgen al de eigen klok van iedereen; alle toekomstige herinneringen gebruiken dezelfde klok. Oudere herinneringen (verjaardagen, huisdieren, paklijst, voorraad, contracten, documenten, weekoverzicht) gebruiken nog Midden-Europese tijd en volgen later.
+- **Tegel Snelkoppelingen.** Een nieuwe tegel op het overzicht toont app-achtige pictogrammen die direct een functie openen: drinken, handen wassen (+1 per tik), medicijnen, boodschappen, nieuwe taak, nieuwe afspraak, notitie, chat, schoonmaak, planten, huisdieren, voorraad, uitgave invoeren, inkomsten invoeren, financiën, SOS en onderweg.
+- **Jouw keuze.** Instellingen → Overzicht → Snelkoppelingen: zet de gewenste apps aan. Geldt per profiel; zonder gekozen app blijft de tegel verborgen. Gasten zien geen gezondheids-, SOS- en financiën-apps.
+- **Lang indrukken.** Een snelkoppeling lang indrukken (rechtsklik op een computer) opent een klein venster voor precies die functie: drinken (drank, hoeveelheid, 10 minuten ongedaan maken), handen wassen (+/−), medicijnen, boodschappen, taken, schoonmaak, afspraken, koken, notities, huisdieren, voorraad, uitgave en inkomsten, SOS en onderweg. Kort tikken werkt als voorheen.
+- **Blijft open.** Het venster blijft na een actie open, dus je kunt meerdere dingen achter elkaar doen; “Openen” leidt naar de volledige functie.
+- Gewijzigd: `pb_hooks/pinn-zeit.js`, `pb_hooks/zeit.pb.js`, `js/zeit.js`, `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `pb_hooks/pinn-gesundheit.js`, `js/appstart.js`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/ansichten.js`, `js/design.js`, `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, README (+ 1.149.1).
+
 ## Nieuw in 1.149.1
 
 **Pushherinneringen**
@@ -172,15 +184,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Widget.** Lege cirkel voor open taken, vinkje voor afgeronde, nieuwe groep „Huis & tuin”. Kopieer het script één keer opnieuw.
 - **Seizoenen.** Onder Weergave → Seizoenen kies je voor Winter en Kerstmis de periode en elk onderdeel (sneeuw, sneeuwval, lichtjes, Kerstman …); „Spraakbesturing & widgets” met dichtgeklapte handleidingen. Serverdeel: hooks installeren.
 
-## Nieuw in 1.146.1
-
-**Sneeuw op elke letter, winter op het dashboard**
-
-- **Sneeuw zoals echte sneeuw.** De sneeuw ligt nu op elke letter afzonderlijk, alleen helemaal bovenop: een laagje op vlakke randen (bovenste balk van B of L, beide bovenste uiteinden van de K), een klodder in het midden van rondingen (O), niets op steile zijkanten, op de voet van de L of in de tussenruimtes. Emoji blijven vrij. Ook de familienaam in de kopregel krijgt sneeuw, die zich aanpast als de naam verandert.
-- **Winter op het gezinsdashboard.** Sneeuw op de familienaam, de klok en de temperatuur, een sneeuwkapje op elke tegel (elk een beetje anders) en onderaan een klein winterlandschap.
-- **De Kerstman** vliegt nog maar half zo vaak (elke 10–18 minuten, op kerstavond elke 4–6).
-- Gewijzigd: `js/winterzeit.js`, `css/winterzeit.css`, `src/`, `index.html`, alle README’s. Geen serverdeel.
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -190,7 +193,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.149.1` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.150.0` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

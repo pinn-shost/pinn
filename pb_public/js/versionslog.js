@@ -22,6 +22,21 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.150', datum: '13.11.2026', titel: 'Zeiten in deiner Region, Shortcuts mit Schnellfenstern',
+    punkte: [
+      ['neu', 'Erinnerungen zur richtigen Uhrzeit: pinn. rechnet die Erinnerungen jetzt in der Zeitzone deines Geräts – mit der Sommer- und Winterzeit deiner Region. Du musst nichts einstellen: Dein Gerät meldet dem Server still seine Zeitzone, auch nach einem Umzug oder auf Reisen. Gilt jetzt für die Erinnerungen der Gesundheitsseite (Medikamente & Vitamine, Trinken, Hände waschen): Jede Person bekommt sie nach ihrer eigenen Uhr. Alle künftigen Erinnerungen nutzen dieselbe Uhr.'],
+      ['info', 'Noch nach mitteleuropäischer Zeit: die älteren Erinnerungen (Geburtstage, Haustiere, Packliste, Vorrat, Verträge, Dokumente, Wochenvorschau u. a.) – sie folgen in einer der nächsten Versionen.'],
+      ['neu', 'Shortcuts: Eine neue Kachel auf der Übersicht zeigt App-Symbole, die direkt zur Funktion führen – Trinken (mit „750 / 2000 ml“), Hände waschen (ein Tipp zählt +1), Medikamente, Einkauf, neue Aufgabe, neuer Termin, Zettel, Chat, Heute kochen, Putzplan, Pflanzen, Haustiere, Vorrat, Ausgabe erfassen, Einnahme erfassen, Finanzen, SOS und Unterwegs. Jede App hat ein eigenes Symbol im gleichen App-Stil.'],
+      ['info', 'Einstellen: Unter Einstellungen → Übersicht gibt es „Shortcuts“ zum Aufklappen. Dort schaltest du die Apps ein, die auf der Übersicht erscheinen sollen. Die Auswahl gilt nur für dein Profil, auf allen deinen Geräten. Ohne gewählte App bleibt die Kachel ausgeblendet; Reihenfolge und Ein/Aus der Kachel stellst du wie bei den anderen Kacheln ein.'],
+      ['neu', 'Schnellfenster: Langes Drücken auf einen Shortcut (am Computer: Rechtsklick) öffnet ein kleines Fenster für genau diese Funktion mit den wichtigsten Aktionen. Ein kurzer Tipp öffnet die Funktion wie bisher. Das Fenster bleibt nach einer Aktion offen – mehrere Dinge nacheinander sind möglich.'],
+      ['neu', 'Trinken: Getränk und Menge wählen wie auf der Gesundheitsseite, dazu Fortschritt und Hinweis. „Rückgängig“ nimmt den letzten Eintrag zurück – 10 Minuten lang; danach ist der Knopf ausgegraut und verschwindet nach Ablauf der 10 Minuten ganz. Hände waschen: Plus und Minus mit der Zahl von heute. Medikamente: heutige Einnahmen abhaken.'],
+      ['neu', 'Einkauf: Liste wählen, Artikel eintippen und hinzufügen, offene Artikel abhaken. Aufgabe und Putzplan: heutige Aufgaben abhaken, neue Aufgabe anlegen. Termin: Termine von heute, neuer Termin. Heute kochen: Gerichte von heute als gekocht markieren, Rezept öffnen, Essen planen. Zettel: Text eintippen und anpinnen.'],
+      ['neu', 'Haustiere: Fütterungen abhaken oder „Gefüttert“. Vorrat: was fast leer ist oder bald abläuft. Pflanzen: Schnellwahl der Seiten in Zuhause. Ausgabe und Einnahme: Betrag, Zweck und Kategorie eintippen und speichern – über den normalen Speicherweg (Kassen, Budget-Hinweis). Finanzen, Chat: Schnellwahl. SOS mit Countdown zum Abbrechen (schließt du das Fenster, wird abgebrochen); Unterwegs ein- und ausschalten und den Standort einmal senden.'],
+      ['info', 'Wer was sieht: Gesundheits-Apps, SOS und Unterwegs nicht für Gäste; Finanz-Apps nur mit Zugriff auf Finanzen; bei Kindersperre gelten die gewohnten Sperren.'],
+      ['info', 'Geändert: pb_hooks/pinn-zeit.js, pb_hooks/zeit.pb.js, js/zeit.js, js/kurzbefehle.js, js/kurzfenster.js, css/kurzbefehle.css (alle neu), pb_hooks/pinn-gesundheit.js, js/appstart.js, js/uebersicht.js, js/uebersichteinstellungen.js, js/ansichten.js, js/design.js, js/gesundheit.js, js/sprachen.js, js/versionslog.js, i18n/ (alle Sprachen), i18n/versionslog.en.js, src/ (Version, rahmen.html, teile/seiten/kacheln.html, einstellungen.html), index.html, pinn-setup.sh, alle READMEs. Enthält 1.149.1.'],
+    ],
+  },
+  {
     v: '1.149', datum: '13.11.2026', titel: 'Gesundheit – Trinken, Medikamente und Notfallpass',
     punkte: [
       ['neu', 'Gesundheit unter Familie: Der Reiter „Notfall“ heißt jetzt „Gesundheit“, ebenso der Knopf in der Familien-Übersicht. Jede Person hat eine eigene Gesundheitsseite aus Bausteinen (wie bei Zuhause): Trinken, Medikamente & Vitamine, Hände waschen, Werte (Gewicht, Blutdruck, Puls), Impfungen und Arzttermine – jeder schaltet ein, was er braucht.'],

@@ -49,6 +49,7 @@ function renderOverviewSettings() {
     resetVt.textContent = n ? tk('settings.overview.showHiddenContracts', { n }) : tk('settings.overview.noContractsHidden');
   }
   renderBirthdaySettingsStatus();
+  kzRenderSettings();
 }
 function renderBirthdaySettingsStatus() {
   const el = document.getElementById('birthdaySyncStatus');
@@ -121,6 +122,7 @@ document.getElementById('resetOverviewBtn').addEventListener('click', () => {
   overviewHidden = [];
   overviewBdayDays = 14;
   overviewBdayOnlyUpcoming = true;
+  kzEnabled = [];
   saveOverviewPrefs();
 });
 document.getElementById('refreshBirthdaysBtn').addEventListener('click', async () => {

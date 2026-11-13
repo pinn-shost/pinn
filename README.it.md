@@ -133,6 +133,18 @@ Tocca un’immagine per aprirla a dimensione intera.
 
 pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
 
+## Novità della 1.150.0
+
+**Orari nella tua regione · Scorciatoie nella panoramica · Finestre rapide per le scorciatoie**
+
+- **Promemoria all’ora giusta.** pinn. ora calcola i promemoria nel fuso orario del tuo dispositivo, con l’ora legale e solare della tua regione. Non c’è nulla da impostare: il dispositivo comunica al server il proprio fuso orario, anche dopo un trasloco o in viaggio.
+- **Prima i promemoria della salute.** Farmaci, bere e lavarsi le mani seguono già l’orologio di ciascuna persona; tutti i promemoria futuri useranno lo stesso orologio. I promemoria più vecchi (compleanni, animali, lista valigia, scorte, contratti, documenti, anteprima settimanale) usano ancora l’ora dell’Europa centrale e seguiranno più avanti.
+- **Riquadro Scorciatoie.** Un nuovo riquadro della panoramica mostra icone di app che aprono direttamente una funzione: bere, lavarsi le mani (+1 a ogni tocco), farmaci, spesa, nuova attività, nuovo evento, nota, chat, pulizie, piante, animali, scorte, registrare un’uscita, registrare un’entrata, finanze, SOS e in viaggio.
+- **La tua scelta.** Impostazioni → Panoramica → Scorciatoie: attiva le app che vuoi. Vale per profilo; senza app scelte il riquadro resta nascosto. Gli ospiti non vedono app di salute, SOS e finanze.
+- **Pressione lunga.** Una pressione lunga su una scorciatoia (clic destro sul computer) apre una piccola finestra per quella funzione: bere (bevanda, quantità, annulla per 10 minuti), lavarsi le mani (+/−), farmaci, spesa, attività, pulizie, eventi, cucinare, note, animali, scorte, uscita ed entrata, SOS e in viaggio. Un tocco breve funziona come prima.
+- **Resta aperta.** La finestra resta aperta dopo un’azione, così si possono fare più cose di seguito; «Apri» porta alla funzione completa.
+- Modificato: `pb_hooks/pinn-zeit.js`, `pb_hooks/zeit.pb.js`, `js/zeit.js`, `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `pb_hooks/pinn-gesundheit.js`, `js/appstart.js`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/ansichten.js`, `js/design.js`, `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, README (+ 1.149.1).
+
 ## Novità della 1.149.1
 
 **Promemoria push**
@@ -229,13 +241,6 @@ pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Stesso giorno possibile.** Se l’ora scelta deve ancora arrivare, pinn. controlla lo stesso giorno, anche se ha già controllato oggi. Così una nuova impostazione si può provare subito. Un’ora già passata al salvataggio vale da domani; «Prossimo controllo» lo mostra correttamente.
 - Modificato: `pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, tutti i README. Server (sostituire gli hooks, PocketBase si riavvia): `pb_hooks/pinn-system.js`.
 
-## Novità della 1.144.1
-
-**Correzione: aggiornamenti automatici all’ora giusta**
-
-- **Gli aggiornamenti automatici** non partivano all’ora scelta: il server calcolava in UTC invece che nell’ora di Europe/Berlin e sbagliava di una o due ore; anche «Prossimo controllo» mostrava un’ora errata. Ora l’ora funziona come per tutti gli altri promemoria (ora legale e solare comprese).
-- Modificato: `pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, tutti i README. Server (sostituire gli hooks, PocketBase si riavvia): `pb_hooks/pinn-system.js`.
-
 ## Come funziona
 
 ```mermaid
@@ -264,7 +269,7 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 ## Installazione
 
 1. Scarica lo ZIP dell’[ultima release](https://github.com/pinn-shost/pinn/releases/latest) e decomprimilo.
-2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.149.1` o `pinn-main`) così com’è.
+2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.150.0` o `pinn-main`) così com’è.
 3. Accedi via SSH ed esegui:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -133,6 +133,18 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski和 🇺🇦 Українська**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.150.0 新功能
+
+**按您所在地区的时间 · 概览上的快捷方式 · 快捷方式的快速窗口**
+
+- **提醒准时送达。** pinn. 现在按设备所在时区计算提醒，包含当地的夏令时和冬令时。无需任何设置——设备会悄悄把时区告知服务器，搬家或旅行后也一样。
+- **先从健康提醒开始。** 用药、喝水和洗手提醒已按每个人自己的时间运行；今后所有提醒都使用同一时钟。较早的提醒（生日、宠物、行李清单、库存、合同、文档、每周预览）仍按中欧时间，之后会跟进。
+- **“快捷方式”卡片。** 概览上的新卡片显示类似应用的图标，可直接打开某项功能：喝水、洗手（每点一次 +1）、用药、购物、新任务、新日程、便签、聊天、清洁、植物、宠物、库存、记支出、记收入、财务、SOS 和在路上。
+- **由您选择。** 设置 → 概览 → 快捷方式：打开需要的应用。按个人资料生效；未选择任何应用时卡片保持隐藏。访客看不到健康、SOS 和财务应用。
+- **长按。** 长按某个快捷方式（电脑上右键）会打开该功能的小窗口：喝水（饮品、用量、10 分钟内可撤销）、洗手（+/−）、用药、购物、任务、清洁、日程、做饭、便签、宠物、库存、支出与收入、SOS 和在路上。短按和以前一样。
+- **保持打开。** 操作后窗口保持打开，可以连续做多件事；“打开”进入完整功能。
+- 已更改: `pb_hooks/pinn-zeit.js`, `pb_hooks/zeit.pb.js`, `js/zeit.js`, `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `pb_hooks/pinn-gesundheit.js`, `js/appstart.js`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/ansichten.js`, `js/design.js`, `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, README (+ 1.149.1).
+
 ## 1.149.1 新功能
 
 **推送提醒**
@@ -229,13 +241,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 - **当天即可。** 如果所选时间还没到，即使今天已经检查过，pinn. 也会在当天检查。这样新设置可以立即试用。保存时已过去的时间从明天起生效；“下次检查”会正确显示。
 - 已更改：`pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`，所有 README。服务器（替换 hooks，PocketBase 会重启）：`pb_hooks/pinn-system.js`。
 
-## 1.144.1 新功能
-
-**问题修复：自动更新按设定时间运行**
-
-- **自动更新**未在设定的时间运行：服务器按 UTC 而不是 Europe/Berlin 时间计算，相差一到两小时；“下次检查”显示的时间也不对。现在时间与其他所有提醒一样准确（含夏令时和冬令时）。
-- 已更改：`pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`，所有 README。服务器（替换 hooks，PocketBase 会重启）：`pb_hooks/pinn-system.js`。
-
 ## 工作原理
 
 ```mermaid
@@ -264,7 +269,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.149.1` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.150.0` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

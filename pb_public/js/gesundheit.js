@@ -141,6 +141,7 @@ async function ghLoad() {
     ghState.at = Date.now();
   }
   if (currentView === 'familie' && famTab === 'gesundheit' && !famDetailId) renderFamily();
+  try { if (currentView === 'uebersicht') renderShortcutsTile(); } catch (e) { /* shortcuts not loaded */ }
 }
 function ghEnsureLoaded() {
   if (ghState.loading) return;
@@ -182,6 +183,7 @@ function ghChange(memberId, mutate) {
     .then(() => ghRefresh());
 }
 function ghRefresh() {
+  try { if (currentView === 'uebersicht') renderShortcutsTile(); } catch (e) { /* shortcuts not loaded */ }
   if (currentView === 'familie' && famTab === 'gesundheit' && !famDetailId) renderFamily();
 }
 

@@ -110,6 +110,18 @@ Dotknij obrazu, aby otworzyć go w pełnym rozmiarze.
 
 pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski i 🇺🇦 Українська**; dostosowuje walutę i numery alarmowe do twojego regionu i przełącza się między określeniami **rodzina** i **wspólne mieszkanie**. Jeden serwer może obsługiwać wiele rodzin, każdą z własnymi administratorami.
 
+## Nowości w 1.150.0
+
+**Godziny w Twoim regionie · Skróty na przeglądzie · Szybkie okna dla skrótów**
+
+- **Przypomnienia o właściwej porze.** pinn. oblicza teraz przypomnienia w strefie czasowej Twojego urządzenia, z czasem letnim i zimowym Twojego regionu. Nie trzeba nic ustawiać: urządzenie po cichu przekazuje serwerowi swoją strefę, także po przeprowadzce lub w podróży.
+- **Najpierw przypomnienia zdrowotne.** Leki, picie i mycie rąk już działają według zegara każdej osoby; wszystkie przyszłe przypomnienia użyją tego samego zegara. Starsze przypomnienia (urodziny, zwierzęta, lista pakowania, spiżarnia, umowy, dokumenty, przegląd tygodnia) nadal używają czasu środkowoeuropejskiego i zostaną zmienione później.
+- **Kafelek Skróty.** Nowy kafelek na przeglądzie pokazuje ikony jak z aplikacji, które od razu otwierają funkcję: picie, mycie rąk (+1 na dotknięcie), leki, zakupy, nowe zadanie, nowe wydarzenie, notatka, czat, sprzątanie, rośliny, zwierzęta, spiżarnia, dodanie wydatku, dodanie przychodu, finanse, SOS i w drodze.
+- **Twój wybór.** Ustawienia → Przegląd → Skróty: włącz potrzebne aplikacje. Obowiązuje dla profilu; bez wybranej aplikacji kafelek pozostaje ukryty. Goście nie widzą aplikacji zdrowia, SOS i finansów.
+- **Długie naciśnięcie.** Długie naciśnięcie skrótu (kliknięcie prawym na komputerze) otwiera małe okno dla tej funkcji: picie (napój, ilość, cofnięcie przez 10 minut), mycie rąk (+/−), leki, zakupy, zadania, sprzątanie, wydarzenia, gotowanie, notatki, zwierzęta, spiżarnia, wydatek i przychód, SOS i w drodze. Krótkie dotknięcie działa jak dotąd.
+- **Zostaje otwarte.** Okno pozostaje otwarte po akcji, więc można zrobić kilka rzeczy z rzędu; „Otwórz” prowadzi do pełnej funkcji.
+- Zmieniono: `pb_hooks/pinn-zeit.js`, `pb_hooks/zeit.pb.js`, `js/zeit.js`, `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `pb_hooks/pinn-gesundheit.js`, `js/appstart.js`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/ansichten.js`, `js/design.js`, `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, README (+ 1.149.1).
+
 ## Nowości w 1.149.1
 
 **Przypomnienia push**
@@ -172,15 +184,6 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 - **Widżet.** Puste kółko dla otwartych zadań, ptaszek dla wykonanych, nowa grupa „Dom i ogród”. Skopiuj skrypt jeszcze raz.
 - **Pory roku.** W Wygląd → Pory roku wybierasz dla zimy i Bożego Narodzenia okres i każdy element (śnieg, opady, lampki, Mikołaj …); „Sterowanie głosowe i widżety” ze zwiniętymi instrukcjami. Część serwerowa: zainstaluj hooki.
 
-## Nowości w 1.146.1
-
-**Śnieg na każdej literze, zima na panelu**
-
-- **Śnieg jak prawdziwy.** Śnieg leży teraz na każdej literze osobno i tylko na samej górze: warstwa na płaskich krawędziach (górna belka B lub L, oba górne końce K), czapa na środku zaokrągleń (O), nic na stromych bokach, na stopce L ani w przerwach. Emoji zostają wolne. Nazwisko rodziny w nagłówku też dostaje śnieg, który dopasowuje się po zmianie.
-- **Zima na panelu rodzinnym.** Śnieg na nazwisku, zegarze i temperaturze, śniegowa czapa na każdym kafelku (każda trochę inna) i na dole mały zimowy krajobraz.
-- **Mikołaj** przelatuje o połowę rzadziej (co 10–18 minut, w Wigilię co 4–6).
-- Zmieniono: `js/winterzeit.js`, `css/winterzeit.css`, `src/`, `index.html`, wszystkie pliki README. Bez części serwerowej.
-
 ## Wymagania
 
 - NAS lub mini PC z zainstalowanym **Dockerem** i **Docker Compose** (np. Synology, UGREEN, QNAP albo zwykły serwer z Linuksem)
@@ -190,7 +193,7 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 ## Instalacja
 
 1. Pobierz i rozpakuj plik ZIP [najnowszej wersji](https://github.com/pinn-shost/pinn/releases/latest).
-2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.149.1` lub `pinn-main`) bez zmian.
+2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.150.0` lub `pinn-main`) bez zmian.
 3. Połącz się przez SSH i uruchom:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -133,6 +133,18 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski und 🇺🇦 Українська**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.150.0
+
+**Zeiten in deiner Region · Shortcuts auf der Übersicht · Schnellfenster für die Shortcuts**
+
+- **Erinnerungen zur richtigen Uhrzeit.** pinn. rechnet Erinnerungen jetzt in der Zeitzone deines Geräts, mit Sommer- und Winterzeit deiner Region. Du musst nichts einstellen – das Gerät meldet dem Server still seine Zeitzone, auch nach einem Umzug oder auf Reisen.
+- **Zuerst die Gesundheits-Erinnerungen.** Medikamente, Trinken und Hände waschen folgen schon der eigenen Uhr jeder Person; alle künftigen Erinnerungen nutzen dieselbe Uhr. Ältere Erinnerungen (Geburtstage, Haustiere, Packliste, Vorrat, Verträge, Dokumente, Wochenvorschau) laufen noch nach mitteleuropäischer Zeit und folgen später.
+- **Kachel „Shortcuts“.** Eine neue Kachel auf der Übersicht zeigt App-Symbole, die direkt eine Funktion öffnen: Trinken, Hände waschen (+1 pro Tipp), Medikamente, Einkauf, neue Aufgabe, neuer Termin, Zettel, Chat, Putzplan, Pflanzen, Haustiere, Vorrat, Ausgabe erfassen, Einnahme erfassen, Finanzen, SOS und Unterwegs.
+- **Deine Auswahl.** Einstellungen → Übersicht → Shortcuts: die gewünschten Apps einschalten. Gilt pro Profil; ohne gewählte App bleibt die Kachel ausgeblendet. Gäste sehen keine Gesundheits-, SOS- und Finanz-Apps.
+- **Langes Drücken.** Ein langes Drücken auf einen Shortcut (am Computer Rechtsklick) öffnet ein kleines Fenster für genau diese Funktion: Trinken (Getränk, Menge, Rückgängig 10 Minuten lang), Hände waschen (+/−), Medikamente, Einkauf, Aufgaben, Putzplan, Termine, Kochen, Zettel, Haustiere, Vorrat, Ausgabe und Einnahme, SOS und Unterwegs. Ein kurzer Tipp wirkt wie bisher.
+- **Bleibt offen.** Das Fenster bleibt nach einer Aktion offen, mehrere Dinge nacheinander sind möglich; „Öffnen“ führt zur vollständigen Funktion.
+- Geändert: `pb_hooks/pinn-zeit.js`, `pb_hooks/zeit.pb.js`, `js/zeit.js`, `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `pb_hooks/pinn-gesundheit.js`, `js/appstart.js`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/ansichten.js`, `js/design.js`, `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, README (+ 1.149.1).
+
 ## Neu in 1.149.1
 
 **Push-Erinnerungen**
@@ -237,14 +249,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Automatische Updates** liefen nicht zur eingestellten Uhrzeit: Der Server rechnete in UTC statt in deutscher Zeit und lag ein bis zwei Stunden daneben; auch „Nächste Prüfung“ zeigte eine falsche Uhrzeit. Jetzt gilt die Uhrzeit wie bei allen anderen Erinnerungen (Sommer- und Winterzeit inklusive).
 - Geändert: `pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, alle READMEs. Server (Hooks ersetzen, PocketBase startet neu): `pb_hooks/pinn-system.js`.
 
-## Neu in 1.144.0
-
-**Dashboard: ungelesene Chats und offene Aufgaben unter jeder Person**
-
-- **Zwei Zahlen unter jeder Person.** Auf der Profilauswahl des Familien-Dashboards (iPad) zeigt eine Sprechblase die ungelesenen Chat-Nachrichten und ein Haken die offenen, fälligen Aufgaben – sichtbar ohne Anmeldung. Bei 0 verschwindet das Feld, über 9 steht 9⁺. Die Zahlen werden jede Minute aufgefrischt.
-- **Standardmäßig an.** Die Einstellung aus 1.143.0 war aus und zeigte nur Aufgaben; jetzt sind beide Zahlen für jede Familie an. Ein Admin kann sie unter Konto → „Aufgaben und Chats auf dem Dashboard“ ausschalten. Stummgeschaltete Chats zählen nicht, als ungelesen markierte Chats zählen eins – genau wie die Zahl hinter „Chat“ im Menü.
-- Geändert: `js/profilauswahl.js`, `js/dashboardkonto.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (1 neuer und 4 geänderte Texte in allen vierzehn Sprachen), `src/` (Version, Konto-Seite), `index.html`, alle READMEs. Server (Hooks austauschen, PocketBase startet neu): `pb_hooks/pinn-chat.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`.
-
 ## So funktioniert’s
 
 ```mermaid
@@ -273,7 +277,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.149.1` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.150.0` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

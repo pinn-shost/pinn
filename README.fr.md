@@ -129,6 +129,18 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski et 🇺🇦 Українська**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.150.0
+
+**Les heures dans votre région · Raccourcis sur l’aperçu · Fenêtres rapides pour les raccourcis**
+
+- **Des rappels à la bonne heure.** pinn. calcule désormais les rappels dans le fuseau horaire de votre appareil, avec l’heure d’été et d’hiver de votre région. Rien à régler : l’appareil indique discrètement son fuseau au serveur, aussi après un déménagement ou en voyage.
+- **D’abord les rappels santé.** Médicaments, boisson et lavage des mains suivent déjà l’horloge de chaque personne ; tous les futurs rappels utiliseront la même horloge. Les anciens rappels (anniversaires, animaux, liste de bagages, réserves, contrats, documents, aperçu de la semaine) utilisent encore l’heure d’Europe centrale et suivront plus tard.
+- **Tuile Raccourcis.** Une nouvelle tuile de l’aperçu affiche des icônes d’applis qui ouvrent directement une fonction : boire, se laver les mains (+1 par appui), médicaments, courses, nouvelle tâche, nouvel événement, note, chat, ménage, plantes, animaux, réserves, saisir une dépense, saisir un revenu, finances, SOS et en route.
+- **Votre choix.** Réglages → Aperçu → Raccourcis : activez les applis souhaitées. Valable par profil ; sans appli choisie, la tuile reste masquée. Les invités ne voient ni santé, ni SOS, ni finances.
+- **Appui long.** Un appui long sur un raccourci (clic droit sur ordinateur) ouvre une petite fenêtre pour cette fonction : boire (boisson, quantité, annuler pendant 10 minutes), lavage des mains (+/−), médicaments, courses, tâches, ménage, événements, cuisine, notes, animaux, réserves, dépense et revenu, SOS et en route. Un appui court fonctionne comme avant.
+- **Reste ouverte.** La fenêtre reste ouverte après une action, on peut donc enchaîner plusieurs choses ; « Ouvrir » mène à la fonction complète.
+- Modifié: `pb_hooks/pinn-zeit.js`, `pb_hooks/zeit.pb.js`, `js/zeit.js`, `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `pb_hooks/pinn-gesundheit.js`, `js/appstart.js`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/ansichten.js`, `js/design.js`, `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, README (+ 1.149.1).
+
 ## Nouveautés de la 1.149.1
 
 **Rappels push**
@@ -257,13 +269,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Le serveur compte les tâches terminées,** car elles sont supprimées après un ou deux jours. Pour cette année, le décompte commence le jour de la mise à jour.
 - Modifié : `js/ausblick.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (14 textes nouveaux et un texte modifié dans les quatorze langues), `src/` (version), `index.html`, tous les README. Serveur (remplacer les hooks, PocketBase redémarre) : `pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-aufgaben.js`, `pb_hooks/ausblick.pb.js`.
 
-## Nouveautés de la 1.142.1
-
-**Avertissement en supprimant la liste de bagages d’un voyage**
-
-- **Avertissement à la suppression.** Si vous supprimez une liste de bagages avec destination et dates, pinn. prévient désormais que le voyage disparaît aussi du calendrier et du bilan de l’année.
-- Modifié : `js/listen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (un nouveau texte dans les quatorze langues), `src/` (version), `index.html`, tous les README. Pas de partie serveur.
-
 ## Comment ça marche
 
 ```mermaid
@@ -290,7 +295,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.149.1` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.150.0` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

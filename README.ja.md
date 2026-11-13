@@ -133,6 +133,18 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski、🇺🇦 Українська** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.150.0の新機能
+
+**お住まいの地域の時刻で · 概要にショートカットを追加 · ショートカットのクイックウィンドウ**
+
+- **正しい時刻にリマインダー。** pinn. はリマインダーを端末のタイムゾーンで計算するようになりました（地域の夏時間・冬時間を含む）。設定は不要です。端末が自動でサーバーにタイムゾーンを伝え、引っ越しや旅行の後も対応します。
+- **まずは健康のリマインダーから。** 服薬・水分補給・手洗いのリマインダーは、各自の時計に従います。今後のリマインダーもすべて同じ時計を使います。以前のリマインダー（誕生日、ペット、持ち物リスト、買い置き、契約、書類、週間プレビュー）はまだ中央ヨーロッパ時間で、順次対応します。
+- **ショートカットのタイル。** 概要に新しいタイルが加わり、アプリのようなアイコンから機能を直接開けます：水分補給、手洗い（タップごとに+1）、服薬、買い物、新規タスク、新規予定、メモ、チャット、掃除、植物、ペット、買い置き、支出の記録、収入の記録、家計、SOS、移動中。
+- **お好みで選択。** 設定 → 概要 → ショートカット：使いたいアプリをオンにします。プロフィールごとに有効で、アプリを選ばないとタイルは非表示です。ゲストには健康・SOS・家計のアプリは表示されません。
+- **長押し。** ショートカットを長押し（パソコンでは右クリック）すると、その機能用の小さなウィンドウが開きます：水分補給（飲み物・量・10分間の取り消し）、手洗い（＋/−）、服薬、買い物、タスク、掃除、予定、料理、メモ、ペット、買い置き、支出と収入、SOS、移動中。短いタップは従来どおりです。
+- **開いたまま。** 操作後もウィンドウは開いたままなので続けて操作できます。「開く」で完全な機能に進みます。
+- 変更: `pb_hooks/pinn-zeit.js`, `pb_hooks/zeit.pb.js`, `js/zeit.js`, `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `pb_hooks/pinn-gesundheit.js`, `js/appstart.js`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/ansichten.js`, `js/design.js`, `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, README (+ 1.149.1).
+
 ## 1.149.1の新機能
 
 **プッシュ通知のリマインダー**
@@ -229,13 +241,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - **当日も可能。** 設定した時刻がまだ来ていなければ、今日すでに確認済みでも、pinn.は当日中に確認します。新しい設定をすぐに試せます。保存時にすでに過ぎている時刻は翌日から有効で、「次回の確認」にも正しく表示されます。
 - 変更：`pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, すべての README. サーバー（hooks を置き換え、PocketBase が再起動）：`pb_hooks/pinn-system.js`.
 
-## 1.144.1の新機能
-
-**不具合修正：自動アップデートが設定した時刻に実行されるように**
-
-- **自動アップデート**が設定した時刻に実行されていませんでした。サーバーがEurope/Berlin の時刻ではなくUTCで計算していたため、1〜2時間ずれており、「次回の確認」の時刻も誤っていました。今後は他のすべてのリマインダーと同じく、設定した時刻どおりに動作します（夏時間・冬時間にも対応）。
-- 変更：`pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, すべての README. サーバー（hooks を置き換え、PocketBase が再起動）：`pb_hooks/pinn-system.js`.
-
 ## しくみ
 
 ```mermaid
@@ -264,7 +269,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.149.1`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.150.0`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

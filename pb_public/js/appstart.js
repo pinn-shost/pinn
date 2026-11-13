@@ -55,6 +55,8 @@ async function bootApp() {
   pushAutoSyncEnabled = !dashSession && !isDashboardDevice() && !guest;
   if (pushAutoSyncEnabled) {
     syncPushSubscription().then(() => { if (!pushConfig) loadPushConfig().catch(() => { /* settings later */ }); });
+    // The server calculates the reminders of this profile in the time zone of this device (js/zeit.js)
+    zeitSync().catch(() => { /* tried again at the next start */ });
   }
   applyRoleRestrictions();
   applyDashboardChrome();
