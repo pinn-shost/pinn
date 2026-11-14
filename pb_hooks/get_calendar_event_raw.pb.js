@@ -22,6 +22,15 @@ routerAdd("POST", "/api/get-calendar-event-raw", (e) => {
             return e.json(200, { ics: require(`${__hooks}/pinn-kalender.js`).rawEvent(e, href) });
         }
         const calendarSync = require(`${__hooks}/calendar-sync.js`);
+        // Validate href to prevent SSRF
+        const url = new URL(href);
+        if (!['http:', 'https:'].includes(url.protocol)) {
+            throw new Error("Ungültiges Protokoll für href.");
+        }
+        // Add more specific host validation if needed, e.g., only allow specific calendar providers
+        // if (!['calendar.google.com', 'pXX-calendarws.icloud.com'].some(host => url.hostname.endsWith(host))) {
+        //     throw new Error("Ungültiger Host für href.");
+        // }
         const ics = calendarSync.fetchRawEventForFamily(lib.familyOf(e), href);
         return e.json(200, { ics: ics });
     } catch (err) {
