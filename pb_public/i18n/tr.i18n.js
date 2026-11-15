@@ -2504,6 +2504,7 @@ window.PINN_I18N && window.PINN_I18N.keys("tr", {
   "gh.remind.handsOn": "El yıkamayı hatırlat",
   "gh.remind.hint": "Hatırlatma, kişinin kendi cihazlarına push bildirimi olarak gelir. Orada bildirimlerin açık olması gerekir. Saatler, cihazların saat dilimine göre geçerlidir (yaz ve kış saati dahil).",
   "gh.remind.medsOn": "Alım için hatırlat",
+  "gh.remind.parents": "Ebeveynlere de hatırlat (çocuğun adıyla)",
   "gh.remind.times": "Saatler",
   "gh.remind.to": "Bitiş",
   "gh.time": "Saat",

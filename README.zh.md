@@ -133,6 +133,15 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski和 🇺🇦 Українська**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.150.3 新功能
+
+**所有提醒按你的时间 · 家长一同提醒**
+
+- **所有提醒按你的时间。** 生日、宠物、行李清单、储物柜、合同、文件、每周预览、月度展望与年度回顾、日程提醒、每日概览、任务和垃圾提醒、留言板、语音控制、智能家居和位置消息现在都按你设备的时区计算，包括夏令时和冬令时。无需设置。
+- **家长一同提醒。** 对于孩子，家长也会收到喝水、服药和洗手提醒，并在前面标注孩子的名字。每个孩子可单独开关“同时提醒家长”（默认开启）。
+- **Shortcuts 不再有标题。** 概览中的卡片只显示应用，用分隔线隔开。
+- 已更改: `pb_hooks/` 中所有提醒模块（`pinn-zeit.js` 等共 14 个）、`js/gesundheit.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/`、`src/`、`index.html`、README（含 1.150.2）。
+
 ## 1.150.2 新功能
 
 **快捷方式留在概览中**
@@ -235,15 +244,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 - **圣诞老人**飞过的频率减半（每 10–18 分钟一次，平安夜每 4–6 分钟一次）。
 - 更改：`js/winterzeit.js`, `css/winterzeit.css`, `src/`, `index.html`，所有 README。无服务器部分。
 
-## 1.146.0 新功能
-
-**雪花贴合每个标题，更新时间按地区**
-
-- **量身定制的雪。** pinn. 用真实字体测量标题的每个字符，把雪正好铺在上面——高的字母上更高，矮的字母上更低，还有小雪团和偶尔的雪滴。词与词之间留空，表情符号上没有雪，不做拉伸，适用于所有语言和文字。
-- **按地区的自动更新。** 所选时间现在按保存它的设备所在时区计算（含夏令时和冬令时），不再固定为德国时间。设置中会显示所用时区。
-- **锁定的仪表板会自行加载新版本。** 锁定家庭仪表板（或登录界面）的 iPad 在更新后约一分钟、无人输入时自动重新加载。若更新时间正在进行备份，应用会显示“等待中”。
-- 更改：`js/winterzeit.js`, `css/winterzeit.css`, `js/versionspruefung.js`, `js/sicherungen.js`, `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`, `i18n/`, `src/`, `index.html`，所有 README。服务器部分：复制 hooks，PocketBase 会重启。
-
 ## 工作原理
 
 ```mermaid
@@ -272,7 +272,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.150.2` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.150.3` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

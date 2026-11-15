@@ -2504,6 +2504,7 @@ window.PINN_I18N && window.PINN_I18N.keys("en", {
   "gh.remind.handsOn": "Remind me to wash my hands",
   "gh.remind.hint": "The reminder arrives as a push message on the person’s own devices. Notifications must be turned on there. The times apply in the time zone of the devices (summer and winter time included).",
   "gh.remind.medsOn": "Remind me to take them",
+  "gh.remind.parents": "Also remind the parents (with the child's name)",
   "gh.remind.times": "Times",
   "gh.remind.to": "Until",
   "gh.time": "Time",

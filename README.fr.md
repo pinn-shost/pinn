@@ -129,6 +129,15 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski et 🇺🇦 Українська**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.150.3
+
+**Tous les rappels à votre heure · les parents aussi**
+
+- **Tous les rappels à votre heure.** Anniversaires, animaux, liste de bagages, garde-manger, contrats, documents, aperçu de la semaine, perspectives du mois et bilan de l'année, rappels de rendez-vous, aperçu du jour, rappels de tâches et de poubelles, tableau d'affichage, commande vocale, maison connectée et messages de localisation suivent désormais le fuseau horaire de votre appareil, heure d'été et d'hiver comprises. Rien à régler.
+- **Les parents aussi.** Pour les enfants, les parents reçoivent aussi les rappels pour boire, les médicaments et le lavage des mains, avec le prénom de l'enfant devant. Interrupteur « Rappeler aussi les parents » par enfant (par défaut : activé).
+- **Shortcuts sans titre.** La tuile de l'aperçu n'affiche plus que les applis, séparées par la ligne.
+- Modifié: tous les modules de rappels dans `pb_hooks/` (`pinn-zeit.js` et 13 autres), `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.2).
+
 ## Nouveautés de la 1.150.2
 
 **Les raccourcis restent sur l’aperçu**
@@ -264,14 +273,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Les mises à jour automatiques** ne se lançaient pas à l’heure choisie : le serveur calculait en UTC au lieu de l’heure d’Europe/Berlin et se décalait d’une à deux heures ; « Prochaine vérification » affichait aussi une mauvaise heure. Désormais, l’heure fonctionne comme pour tous les autres rappels (heure d’été et d’hiver comprises).
 - Modifié : `pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, tous les README. Serveur (remplacer les hooks, PocketBase redémarre) : `pb_hooks/pinn-system.js`.
 
-## Nouveautés de la 1.144.0
-
-**Tableau de bord : discussions non lues et tâches ouvertes sous chaque personne**
-
-- **Deux nombres sous chaque personne.** Sur la sélection des profils du tableau de bord familial (iPad), une bulle indique les messages non lus et une coche les tâches ouvertes et échues – visibles sans connexion. À 0 la pastille disparaît, au-delà de 9 elle affiche 9⁺. Les nombres sont actualisés chaque minute.
-- **Activé par défaut.** Le réglage de la 1.143.0 était désactivé et ne montrait que les tâches ; désormais les deux nombres sont actifs pour chaque famille. Un administrateur peut les désactiver sous Compte → « Tâches et discussions sur le tableau de bord ». Les discussions en sourdine ne comptent pas, celles marquées comme non lues comptent pour une – comme le nombre à côté de « Chat » dans le menu.
-- Modifié : `js/profilauswahl.js`, `js/dashboardkonto.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (1 texte nouveau et 4 modifiés dans les quatorze langues), `src/` (version, page du compte), `index.html`, tous les README. Serveur (remplacer les hooks, PocketBase redémarre) : `pb_hooks/pinn-chat.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`.
-
 ## Comment ça marche
 
 ```mermaid
@@ -298,7 +299,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.150.2` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.150.3` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

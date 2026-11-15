@@ -110,6 +110,15 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski en 🇺🇦 Українська**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.150.3
+
+**Alle herinneringen op jouw tijd · ouders herinneren mee**
+
+- **Alle herinneringen op jouw tijd.** Verjaardagen, huisdieren, paklijst, voorraad, contracten, documenten, weekoverzicht, maandvooruitblik en jaaroverzicht, afspraakherinneringen, dagoverzicht, taak- en afvalherinneringen, prikbord, spraakbesturing, smarthome en locatiemeldingen volgen nu de tijdzone van je apparaat, inclusief zomer- en wintertijd. Niets in te stellen.
+- **Ouders herinneren mee.** Bij kinderen krijgen ook de ouders de herinneringen voor drinken, medicijnen en handen wassen, met de naam van het kind ervoor. Schakelaar “Ook de ouders herinneren” per kind (standaard: aan).
+- **Shortcuts zonder kop.** De tegel op het overzicht toont alleen de apps, gescheiden door de lijn.
+- Gewijzigd: alle herinneringsmodules in `pb_hooks/` (`pinn-zeit.js` en 13 andere), `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.2).
+
 ## Nieuw in 1.150.2
 
 **Snelkoppelingen blijven op het overzicht**
@@ -176,15 +185,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **De iPad draaien** houdt een geopend recept open, met aantal personen en leesplek.
 - Gewijzigd: `js/fortsetzen.js`, `js/ansichten.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`, alle README's. Geen serverdeel.
 
-## Nieuw in 1.148.0
-
-**Verder waar je gebleven was**
-
-- **Familiedashboard.** Open je je profiel na een pauze opnieuw met de pincode, dan kom je uit waar je gebleven was en niet meer op het overzicht. Een geopend recept is weer open, met het gekozen aantal personen en op de plek tot waar je gelezen had.
-- **Niet alleen recepten.** Ook de pagina (bijv. Lijsten, Taken, Financiën), de geopende lijst, het tabblad in Thuis en bij Voertuigen en op de telefoon het tabblad van het overzicht worden onthouden. Elk profiel heeft zijn eigen plek.
-- **Hoe lang.** Zolang de app open blijft (ook op de achtergrond), hooguit 12 uur. Na het sluiten van de app, na „Afmelden“ op je eigen apparaat of via een link uit een melding start je zoals gewoonlijk. Ook op je eigen apparaat blijft de pagina behouden als de app opnieuw laadt, bijv. na een update.
-- Gewijzigd: `js/fortsetzen.js` (nieuw), `js/appstart.js`, `js/dashboard.js`, `js/anmeldung.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`, `pinn-setup.sh`, alle README's. Geen serverdeel.
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -194,7 +194,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.150.2` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.150.3` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

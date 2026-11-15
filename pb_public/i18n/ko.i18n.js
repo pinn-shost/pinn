@@ -2504,6 +2504,7 @@ window.PINN_I18N && window.PINN_I18N.keys("ko", {
   "gh.remind.handsOn": "손 씻기 알림",
   "gh.remind.hint": "알림은 해당 사람의 기기로 푸시 메시지로 전달됩니다. 그 기기에서 알림이 켜져 있어야 합니다. 시각은 기기의 시간대를 따릅니다(서머타임 포함).",
   "gh.remind.medsOn": "복용 시간 알림",
+  "gh.remind.parents": "부모에게도 알림 (아이 이름 포함)",
   "gh.remind.times": "시간",
   "gh.remind.to": "종료",
   "gh.time": "시간",

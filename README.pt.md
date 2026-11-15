@@ -133,6 +133,15 @@ Toque em qualquer imagem para abri-la em tamanho real.
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.150.3
+
+**Todos os lembretes na sua hora · os pais também**
+
+- **Todos os lembretes na sua hora.** Aniversários, animais, lista de bagagem, despensa, contratos, documentos, pré-visualização semanal, previsão mensal e balanço do ano, lembretes de compromissos, resumo do dia, lembretes de tarefas e lixo, mural, controlo por voz, casa inteligente e avisos de localização seguem agora o fuso horário do seu dispositivo, com horário de verão e de inverno. Nada a configurar.
+- **Os pais também.** No caso das crianças, os pais também recebem os lembretes de beber, medicação e lavar as mãos, com o nome da criança à frente. Interruptor «Lembrar também os pais» por criança (predefinição: ligado).
+- **Shortcuts sem título.** O mosaico da visão geral mostra apenas as apps, separadas pela linha.
+- Alterado: todos os módulos de lembretes em `pb_hooks/` (`pinn-zeit.js` e mais 13), `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.2).
+
 ## Novidades da 1.150.2
 
 **Os atalhos ficam na visão geral**
@@ -235,15 +244,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **O Pai Natal** passa só metade das vezes (a cada 10–18 minutos, a cada 4–6 na véspera de Natal).
 - Alterado: `js/winterzeit.js`, `css/winterzeit.css`, `src/`, `index.html`, todos os README. Sem parte do servidor.
 
-## Novidades da 1.146.0
-
-**Neve à medida de cada título, hora das atualizações conforme a região**
-
-- **Neve à medida.** O pinn. mede cada letra de um título com a fonte real e coloca a neve mesmo por cima – mais alta nas letras altas, mais baixa nas pequenas, com montinhos e uma ou outra gota. Os espaços entre palavras ficam livres, os emoji não têm neve, nada é esticado e funciona em todas as línguas e escritas.
-- **Atualizações automáticas conforme a região.** A hora escolhida aplica-se agora no fuso horário do dispositivo onde é guardada (horário de verão e inverno incluídos), e já não sempre na hora alemã. As definições mostram que fuso horário se aplica.
-- **O painel bloqueado carrega sozinho as novas versões.** Um iPad com o painel da família bloqueado (ou o ecrã de início de sessão) recarrega cerca de um minuto após uma atualização se ninguém estiver a escrever. A app mostra «a aguardar» se a essa hora estiver a decorrer uma cópia de segurança.
-- Alterado: `js/winterzeit.js`, `css/winterzeit.css`, `js/versionspruefung.js`, `js/sicherungen.js`, `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`, `i18n/`, `src/`, `index.html`, todos os README. Parte do servidor: copiar os hooks, o PocketBase reinicia.
-
 ## Como funciona
 
 ```mermaid
@@ -272,7 +272,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.150.2` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.150.3` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

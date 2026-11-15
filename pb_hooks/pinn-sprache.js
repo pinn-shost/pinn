@@ -329,16 +329,15 @@ function joinList(arr, L) {
 function capL(s, L) { return L.lc ? s : cap(s, L.tr); }
 
 // ---------------------------------------------------------------------------------------------
-// Date (Europe/Berlin, like the other reminders)
+// Date (clock of the profile that speaks, pinn-zeit.js; Europe/Berlin without a stored time zone)
 // ---------------------------------------------------------------------------------------------
 function pad2(n) { return (n < 10 ? "0" : "") + n; }
-function lastSundayUtc(year, month) {
-    const last = new Date(Date.UTC(year, month + 1, 0));
-    return Date.UTC(year, month, last.getUTCDate() - last.getUTCDay(), 1, 0, 0);
-}
+// Profile whose clock is used; set at the start of befehl() and widgetAccess() (null = Europe/Berlin)
+let clockUser = null;
+function useClockOf(user) { clockUser = user ? { id: user.id, fam: user.getString("familie") } : null; }
 function tzOffsetMs(utcMs) {
-    const y = new Date(utcMs).getUTCFullYear();
-    return (utcMs >= lastSundayUtc(y, 2) && utcMs < lastSundayUtc(y, 9)) ? 7200000 : 3600000;
+    const Z = require(`${__hooks}/pinn-zeit.js`);
+    return (clockUser ? Z.clockOfUser(clockUser.id, clockUser.fam) : Z.berlinClock()).offsetMs(utcMs);
 }
 function wallIso(ms) { const d = new Date(ms + tzOffsetMs(ms)); return d.getUTCFullYear() + "-" + pad2(d.getUTCMonth() + 1) + "-" + pad2(d.getUTCDate()); }
 function todayIso() { return wallIso(Date.now()); }
@@ -1222,6 +1221,7 @@ function widgetAccess(token) {
         $app.store().set(k, n);
         if (n > LIMIT_PER_MIN) return { fail: { ok: false, status: 429, error: "429" } };
     } catch (e) { /* ignore */ }
+    useClockOf(user);
     return { rec: rec, user: user, familyId: user.getString("familie"), lang: lang, L: L, W: W };
 }
 function plainTitle(t) {
@@ -1414,6 +1414,7 @@ function befehl(token, text) {
         return { ok: false, status: 403, antwort: "Dieses Profil hat keine Sprachsteuerung." };
     }
     const familyId = user.getString("familie");
+    useClockOf(user);
     const lang = langOf(user);
     const L = T[lang] || T.en;
     // Protection against flooding: 30 commands per minute and link

@@ -33,21 +33,13 @@ const MHD_DAYS = [1, 2, 3, 5, 7, 14];
 const UA = "pinn/1.30.1 (self-hosted family organizer; https://github.com/pinn-shost/pinn)";
 
 // ---------------------------------------------------------------------------------------------
-// Time (Central Europe, fixed EU daylight saving rule - like pinn-push.js / pinn-vertraege.js)
+// Time (clock of the family, pinn-zeit.js: time zone of a family admin; Europe/Berlin without a stored zone)
 // ---------------------------------------------------------------------------------------------
 function pad2(n) { return (n < 10 ? "0" : "") + n; }
-function lastSundayUtc(year, month) {
-    const last = new Date(Date.UTC(year, month + 1, 0));
-    return Date.UTC(year, month, last.getUTCDate() - last.getUTCDay(), 1, 0, 0);
-}
-function tzOffsetMs(utcMs) {
-    const y = new Date(utcMs).getUTCFullYear();
-    return (utcMs >= lastSundayUtc(y, 2) && utcMs < lastSundayUtc(y, 9)) ? 7200000 : 3600000;
-}
-function wallNow() {
-    const now = Date.now();
-    const d = new Date(now + tzOffsetMs(now));
-    return { iso: d.getUTCFullYear() + "-" + pad2(d.getUTCMonth() + 1) + "-" + pad2(d.getUTCDate()), hour: d.getUTCHours() };
+function wallNow(familyId) {
+    const Z = require(`${__hooks}/pinn-zeit.js`);
+    const w = Z.wallOf(familyId ? Z.clockOfFamily(familyId) : Z.berlinClock());
+    return { iso: w.iso, hour: w.hour };
 }
 function isIso(s) { return /^\d{4}-\d{2}-\d{2}$/.test(String(s || "")); }
 function isoToUtc(iso) { const p = iso.split("-"); return Date.UTC(+p[0], +p[1] - 1, +p[2]); }
@@ -73,7 +65,7 @@ function writeJson(path, obj) {
 function readStatus() {
     const o = readJson(STATUS_FILE) || {};
     if (!o.sent || typeof o.sent !== "object") o.sent = {};
-    if (typeof o.lastDaily !== "string") o.lastDaily = "";
+    if (!o.daily || typeof o.daily !== "object") o.daily = {};   // family id -> local day of the last daily run
     return o;
 }
 function pruneStatus(s, today) {
@@ -181,23 +173,25 @@ function remindFamily(familyId, today, status) {
 // opts: { familyId: only this family (immediate check after saving) }
 function runReminders(opts) {
     const o = opts || {};
-    const now = wallNow();
-    if (now.hour < SEND_FROM_HOUR) return { skipped: "zu früh" };
     const status = readStatus();
-    pruneStatus(status, now.iso);
+    pruneStatus(status, new Date().toISOString().slice(0, 10));
     let sent = 0;
     if (o.familyId) {
+        const fam = String(o.familyId);
+        const now = wallNow(fam);
+        if (now.hour < SEND_FROM_HOUR) return { skipped: "zu früh" };
         if (now.hour >= SEND_UNTIL_HOUR) return { skipped: "zu spät" };
-        sent = remindFamily(String(o.familyId), now.iso, status);
+        sent = remindFamily(fam, now.iso, status);
         writeJson(STATUS_FILE, status);
         return { sent: sent };
     }
-    if (status.lastDaily === now.iso) return { skipped: "heute schon erledigt" };
     const lib = require(`${__hooks}/pinn-benutzer.js`);
     lib.allFamilies().forEach(f => {
+        const now = wallNow(f.id);   // each family on its own clock
+        if (now.hour < SEND_FROM_HOUR || status.daily[f.id] === now.iso) return;
         try { sent += remindFamily(f.id, now.iso, status); } catch (e) { console.log("[Vorrat] Familie " + f.id + ": " + e.message); }
+        status.daily[f.id] = now.iso;
     });
-    status.lastDaily = now.iso;
     writeJson(STATUS_FILE, status);
     if (sent) console.log("[Vorrat] " + sent + " MHD-Erinnerung(en) verschickt.");
     return { sent: sent };

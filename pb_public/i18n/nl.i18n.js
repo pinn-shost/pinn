@@ -2504,6 +2504,7 @@ window.PINN_I18N && window.PINN_I18N.keys("nl", {
   "gh.remind.handsOn": "Herinner aan handen wassen",
   "gh.remind.hint": "De herinnering komt als pushbericht op de eigen apparaten van de persoon. Meldingen moeten daar aan staan. De tijden gelden in de tijdzone van de apparaten (zomer- en wintertijd inbegrepen).",
   "gh.remind.medsOn": "Herinner aan inname",
+  "gh.remind.parents": "Ook de ouders herinneren (met de naam van het kind)",
   "gh.remind.times": "Tijden",
   "gh.remind.to": "Tot",
   "gh.time": "Tijd",

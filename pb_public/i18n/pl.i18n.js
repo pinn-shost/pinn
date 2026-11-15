@@ -2504,6 +2504,7 @@ window.PINN_I18N && window.PINN_I18N.keys("pl", {
   "gh.remind.handsOn": "Przypominaj o myciu rąk",
   "gh.remind.hint": "Przypomnienie przychodzi jako powiadomienie push na urządzenia samej osoby. Powiadomienia muszą być tam włączone. Godziny obowiązują w strefie czasowej urządzeń (z czasem letnim i zimowym).",
   "gh.remind.medsOn": "Przypominaj o zażyciu",
+  "gh.remind.parents": "Przypominaj też rodzicom (z imieniem dziecka)",
   "gh.remind.times": "Godziny",
   "gh.remind.to": "Do",
   "gh.time": "Godzina",

@@ -12,6 +12,7 @@
 // pb_data/pinn_packliste.json – sent events are kept 60 days, so nothing comes twice.
 // Recipients: all profiles of the family except guests, the main admin and children with parental
 // controls; appointments of a private calendar only reach their owner.
+// Time: since 1.150.3 the day and the hour follow the clock of the family (pinn-zeit.js: time zone of a family admin).
 
 const STATUS_FILE = "/pb_data/pinn_packliste.json";
 const LEAD_DAYS = 14;
@@ -20,22 +21,9 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 module.exports = { runCron, travelKind };
 
 // ---------------------------------------------------------------------------------------------
-// Time (Europe/Berlin)
+// Time (clock of the family, pinn-zeit.js)
 // ---------------------------------------------------------------------------------------------
-function pad2(n) { return (n < 10 ? "0" : "") + n; }
-function lastSundayUtc(year, month) {
-    const last = new Date(Date.UTC(year, month + 1, 0));
-    return Date.UTC(year, month, last.getUTCDate() - last.getUTCDay(), 1, 0, 0);
-}
-function tzOffsetMs(utcMs) {
-    const y = new Date(utcMs).getUTCFullYear();
-    return (utcMs >= lastSundayUtc(y, 2) && utcMs < lastSundayUtc(y, 9)) ? 7200000 : 3600000;
-}
-function wallNow() {
-    const now = Date.now();
-    const d = new Date(now + tzOffsetMs(now));
-    return { hour: d.getUTCHours(), iso: d.getUTCFullYear() + "-" + pad2(d.getUTCMonth() + 1) + "-" + pad2(d.getUTCDate()) };
-}
+function wallNow(clock) { return require(`${__hooks}/pinn-zeit.js`).wallOf(clock); }
 function utcOf(iso) { const p = iso.split("-").map(Number); return Date.UTC(p[0], p[1] - 1, p[2]); }
 function addDays(iso, n) { return new Date(utcOf(iso) + n * DAY_MS).toISOString().slice(0, 10); }
 function diffDays(a, b) { return Math.round((utcOf(b) - utcOf(a)) / DAY_MS); }
@@ -159,8 +147,7 @@ function hasPackingList(data, ev, key) {
 }
 
 function runCron() {
-    const w = wallNow();
-    if (w.hour < 9 || w.hour >= 20) return { skipped: "Uhrzeit" };
+    const Z = require(`${__hooks}/pinn-zeit.js`);
     const status = readStatus();
     let users = [];
     try { users = $app.findRecordsByFilter("benutzer", "familie != ''", "", 0, 0); } catch (e) { users = []; }
@@ -172,6 +159,8 @@ function runCron() {
     });
     let sent = 0, dirty = false;
     Object.keys(byFamily).forEach(familyId => {
+        const w = wallNow(Z.clockOfFamily(familyId));
+        if (w.hour < 9 || w.hour >= 20) return;
         if (status.familien[familyId] === w.iso) return;
         status.familien[familyId] = w.iso;
         dirty = true;

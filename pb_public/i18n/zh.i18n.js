@@ -2497,6 +2497,7 @@ window.PINN_I18N && window.PINN_I18N.keys("zh", {
   "gh.remind.handsOn": "提醒洗手",
   "gh.remind.hint": "提醒会以推送消息发送到本人的设备上，需要在该设备上开启通知。时间按设备所在时区计算（含夏令时和冬令时）。",
   "gh.remind.medsOn": "提醒按时服用",
+  "gh.remind.parents": "同时提醒家长（附孩子的名字）",
   "gh.remind.times": "时间",
   "gh.remind.to": "到",
   "gh.time": "时间",

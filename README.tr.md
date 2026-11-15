@@ -110,6 +110,15 @@ Tam boyutta açmak için bir resme dokun.
 
 pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski ve 🇺🇦 Українська**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
 
+## 1.150.3 sürümündeki yenilikler
+
+**Tüm hatırlatmalar senin saatinle · ebeveynler de**
+
+- **Tüm hatırlatmalar senin saatinle.** Doğum günleri, evcil hayvanlar, bavul listesi, kiler, sözleşmeler, belgeler, haftalık önizleme, aylık görünüm ve yıllık özet, randevu hatırlatmaları, günlük özet, görev ve çöp hatırlatmaları, pano, sesli komut, akıllı ev ve konum mesajları artık yaz ve kış saati dahil cihazının saat dilimine göre çalışır. Ayarlanacak bir şey yok.
+- **Ebeveynler de.** Çocuklar için su içme, ilaç ve el yıkama hatırlatmaları ebeveynlere de gelir; başlığın önünde çocuğun adı olur. Çocuk başına “Ebeveynlere de hatırlat” anahtarı vardır (varsayılan: açık).
+- **Başlıksız Shortcuts.** Genel bakıştaki kutu yalnızca uygulamaları gösterir, çizgiyle ayrılmış olarak.
+- Değişenler: `pb_hooks/` içindeki tüm hatırlatma modülleri (`pinn-zeit.js` ve 13 tane daha), `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.2).
+
 ## 1.150.2 sürümündeki yenilikler
 
 **Kısayollar genel bakışta kalır**
@@ -176,15 +185,6 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 - **iPad’i döndürmek** açık tarifi kapatmaz; porsiyon ve okuma yeri korunur.
 - Değişenler: `js/fortsetzen.js`, `js/ansichten.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`, tüm README’ler. Sunucu kısmı yok.
 
-## 1.148.0 sürümündeki yenilikler
-
-**Kaldığın yerden devam et**
-
-- **Aile panosu.** Bir aradan sonra profilini PIN ile yeniden açtığında artık genel bakışa değil, kaldığın yere gelirsin. Açık olan tarif yine açıktır – seçtiğin kişi sayısıyla ve okuduğun yerde.
-- **Yalnızca tarifler değil.** Sayfa (ör. Listeler, Görevler, Finans), açık liste, Ev ve Araçlar bölümündeki sekme ve telefonda genel bakışın sekmesi de hatırlanır. Her profilin kendi yeri vardır.
-- **Ne kadar süre.** Uygulama açık kaldığı sürece (arka planda da), en fazla 12 saat. Uygulamayı kapattıktan, kendi cihazında “Çıkış yap” dedikten sonra veya bir bildirimdeki bağlantıyla geldiğinde her zamanki gibi başlarsın. Kendi cihazında da uygulama yeniden yüklendiğinde (ör. bir güncellemeden sonra) sayfa korunur.
-- Değişenler: `js/fortsetzen.js` (yeni), `js/appstart.js`, `js/dashboard.js`, `js/anmeldung.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`, `pinn-setup.sh`, tüm README dosyaları. Sunucu kısmı yok.
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -194,7 +194,7 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.150.2` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.150.3` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

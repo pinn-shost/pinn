@@ -2501,6 +2501,7 @@ window.PINN_I18N && window.PINN_I18N.keys("fr", {
   "gh.remind.handsOn": "Rappeler de se laver les mains",
   "gh.remind.hint": "Le rappel arrive sous forme de notification push sur les appareils de la personne. Les notifications doivent y être activées. Les heures s’appliquent selon le fuseau horaire des appareils (heure d’été et d’hiver comprises).",
   "gh.remind.medsOn": "Rappeler la prise",
+  "gh.remind.parents": "Rappeler aussi les parents (avec le nom de l'enfant)",
   "gh.remind.times": "Heures",
   "gh.remind.to": "Jusqu’à",
   "gh.time": "Heure",

@@ -8,7 +8,8 @@
 //
 // Gentle like the other reminders: the schedule reads the (large) family data at most once
 // a day per family – and again only if it changed since. Markers in
-// pb_data/pinn_haustiere.json, older days are dropped. No message after 21:00.
+// pb_data/pinn_haustiere.json, entries older than two days are dropped. No message after 21:00.
+// Time: since 1.150.3 the day and the hour follow the time zone of the receiving profile (pinn-zeit.js).
 
 const STATUS_FILE = "/pb_data/pinn_haustiere.json";
 const SEND_UNTIL_HOUR = 21;
@@ -18,23 +19,9 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 module.exports = { runCron, runFeederCron, duesFromData };
 
 // ---------------------------------------------------------------------------------------------
-// Time of day (Europe/Berlin)
+// Time of day (clock of the receiving profile, pinn-zeit.js)
 // ---------------------------------------------------------------------------------------------
-function pad2(n) { return (n < 10 ? "0" : "") + n; }
-function lastSundayUtc(year, month) {
-    const last = new Date(Date.UTC(year, month + 1, 0));
-    return Date.UTC(year, month, last.getUTCDate() - last.getUTCDay(), 1, 0, 0);
-}
-function tzOffsetMs(utcMs) {
-    const y = new Date(utcMs).getUTCFullYear();
-    return (utcMs >= lastSundayUtc(y, 2) && utcMs < lastSundayUtc(y, 9)) ? 7200000 : 3600000;
-}
-function wallNow() {
-    const now = Date.now();
-    const d = new Date(now + tzOffsetMs(now));
-    const y = d.getUTCFullYear(), m = d.getUTCMonth() + 1, day = d.getUTCDate();
-    return { y: y, m: m, d: day, hour: d.getUTCHours(), min: d.getUTCMinutes(), iso: y + "-" + pad2(m) + "-" + pad2(day) };
-}
+function wallNow(clock) { return require(`${__hooks}/pinn-zeit.js`).wallOf(clock); }
 function toMin(hhmm) {
     const m = /^(\d{1,2}):(\d{2})$/.exec(String(hhmm || ""));
     return m ? Number(m[1]) * 60 + Number(m[2]) : null;
@@ -48,15 +35,19 @@ function isLeap(y) { return (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0; }
 // ---------------------------------------------------------------------------------------------
 // Markers in pb_data
 // ---------------------------------------------------------------------------------------------
-function readStatus(today) {
+function readStatus() {
     let o = null;
     try {
         const calendarSync = require(`${__hooks}/calendar-sync.js`);
         o = JSON.parse(calendarSync.bytesToText($os.readFile(STATUS_FILE)));
     } catch (e) { o = null; }
-    if (!o || typeof o !== "object" || o.datum !== today) o = { datum: today, familien: {}, gesendet: {} };
+    if (!o || typeof o !== "object") o = { familien: {}, gesendet: {} };
     if (!o.familien || typeof o.familien !== "object") o.familien = {};
     if (!o.gesendet || typeof o.gesendet !== "object") o.gesendet = {};
+    // entries older than two days are dropped (keys contain the local date)
+    const limit = Date.now() - 2 * 86400000;
+    Object.keys(o.gesendet).forEach(k => { if (!(Number(o.gesendet[k]) > limit)) delete o.gesendet[k]; });
+    Object.keys(o.familien).forEach(k => { if (!(Number(o.familien[k] && o.familien[k].at) > limit)) delete o.familien[k]; });
     return o;
 }
 function writeStatus(s) {
@@ -109,14 +100,15 @@ function duesFromData(data, w) {
 function duesToday(familyId, status, w) {
     const lib = require(`${__hooks}/pinn-benutzer.js`);
     const stamp = lib.familyDataStamp(familyId);
-    const c = status.familien[familyId];
+    const ck = familyId + "|" + w.iso;   // the list depends on the local date
+    const c = status.familien[ck];
     if (c && c.stamp === stamp && Array.isArray(c.liste)) return c;
     let data = {};
     try { data = lib.loadFamilyDataFor(familyId) || {}; } catch (e) { data = {}; }
     const members = Array.isArray(data.members) ? data.members : [];
     const kinder = members.filter(m => m && m.childLock).map(m => String(m.id));
-    const out = { stamp: stamp, liste: duesFromData(data, w), kinder: kinder };
-    status.familien[familyId] = out;
+    const out = { stamp: stamp, liste: duesFromData(data, w), kinder: kinder, at: Date.now() };
+    status.familien[ck] = out;
     status.dirty = true;
     return out;
 }
@@ -216,48 +208,46 @@ function sendTime(push, u) {
 }
 
 function runCron() {
-    const w = wallNow();
-    if (w.hour >= SEND_UNTIL_HOUR) return { skipped: "Uhrzeit" };
-    const nowMin = w.hour * 60 + w.min;
-    if (nowMin < 4 * 60) return { skipped: "zu früh" };
-    const status = readStatus(w.iso);
+    const Z = require(`${__hooks}/pinn-zeit.js`);
+    const status = readStatus();
     const users = allUsers().filter(u => {
         const r = u.getString("rolle");
         return r !== "hauptadmin" && r !== "gast";
     });
-    const byFamily = {};
-    users.forEach(u => {
-        const f = u.getString("familie");
-        if (f) (byFamily[f] = byFamily[f] || []).push(u);
-    });
     let push = null;
     let sent = 0;
-    Object.keys(byFamily).forEach(familyId => {
+    users.forEach(u => {
+        const familyId = u.getString("familie");
+        if (!familyId) return;
+        // wall clock of the receiving profile (its own time zone)
+        const w = wallNow(Z.clockOfUser(u.id, familyId));
+        if (w.hour >= SEND_UNTIL_HOUR) return;
+        const nowMin = w.hour * 60 + w.min;
+        if (nowMin < 4 * 60) return;
+        const key = w.iso + "|" + u.id;
+        if (status.gesendet[key]) return;
         const info = duesToday(familyId, status, w);
         if (!info.liste.length) return;
-        byFamily[familyId].forEach(u => {
-            if (status.gesendet[u.id]) return;
-            const me = u.getString("mitglied");
-            const mine = info.liste.filter(x => {
-                if (x.owners.length) return x.owners.indexOf(me) >= 0;
-                return info.kinder.indexOf(me) < 0; // without caregivers: no children with parental controls
-            });
-            if (!mine.length) return;
-            if (!push) push = require(`${__hooks}/pinn-push.js`);
-            if (nowMin < sendTime(push, u)) return;
-            status.gesendet[u.id] = Date.now();
-            status.dirty = true;
-            const msg = message(langOf(u), mine);
-            try {
-                sent += push.notifyUser(u.id, {
-                    titel: msg.titel, text: msg.text,
-                    url: "/?haustier=" + encodeURIComponent(mine[0].pet),
-                    tag: "haustiere-" + w.iso, urgency: "normal",
-                }) || 0;
-            } catch (e) {
-                console.log("[Haustiere] Push: " + e.message);
-            }
+        const me = u.getString("mitglied");
+        const mine = info.liste.filter(x => {
+            if (x.owners.length) return x.owners.indexOf(me) >= 0;
+            return info.kinder.indexOf(me) < 0; // without caregivers: no children with parental controls
         });
+        if (!mine.length) return;
+        if (!push) push = require(`${__hooks}/pinn-push.js`);
+        if (nowMin < sendTime(push, u)) return;
+        status.gesendet[key] = Date.now();
+        status.dirty = true;
+        const msg = message(langOf(u), mine);
+        try {
+            sent += push.notifyUser(u.id, {
+                titel: msg.titel, text: msg.text,
+                url: "/?haustier=" + encodeURIComponent(mine[0].pet),
+                tag: "haustiere-" + w.iso, urgency: "normal",
+            }) || 0;
+        } catch (e) {
+            console.log("[Haustiere] Push: " + e.message);
+        }
     });
     if (status.dirty) { delete status.dirty; writeStatus(status); }
     if (sent) console.log("[Haustiere] " + sent + " Erinnerung(en) verschickt.");
@@ -307,15 +297,17 @@ function runFeederCron() {
     let recs = [];
     try { recs = $app.findRecordsByFilter("smarthome_zugaenge", "ha != ''", "", 0, 0); } catch (e) { return { skipped: "kein Home Assistant" }; }
     if (!recs.length) return { skipped: "kein Home Assistant" };
-    const w = wallNow();
-    const nowMin = w.hour * 60 + w.min;
-    const daytime = nowMin >= 7 * 60 && nowMin <= 21 * 60 + 30;
+    const Z = require(`${__hooks}/pinn-zeit.js`);
     const status = readFeederStatus();
     const smart = require(`${__hooks}/pinn-smarthome.js`);
     let push = null, sent = 0;
     const seen = {};
     recs.forEach(rec => {
         const familyId = rec.getString("familie");
+        // "daytime" follows the clock of the family (admin's time zone, see pinn-zeit.js)
+        const wf = wallNow(Z.clockOfFamily(familyId));
+        const nowMin = wf.hour * 60 + wf.min;
+        const daytime = nowMin >= 7 * 60 && nowMin <= 21 * 60 + 30;
         const info = feedersOf(familyId, status);
         info.liste.forEach(f => {
             seen[f.pet] = true;

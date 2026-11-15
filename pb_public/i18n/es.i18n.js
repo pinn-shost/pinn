@@ -2502,6 +2502,7 @@ window.PINN_I18N && window.PINN_I18N.keys("es", {
   "gh.remind.handsOn": "Recordar lavarse las manos",
   "gh.remind.hint": "El recordatorio llega como notificación push a los dispositivos de la propia persona. Allí deben estar activadas las notificaciones. Las horas se aplican en la zona horaria de los dispositivos (incluido el horario de verano e invierno).",
   "gh.remind.medsOn": "Recordar la toma",
+  "gh.remind.parents": "Recordar también a los padres (con el nombre del niño)",
   "gh.remind.times": "Horas",
   "gh.remind.to": "Hasta",
   "gh.time": "Hora",

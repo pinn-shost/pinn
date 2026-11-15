@@ -2504,6 +2504,7 @@ window.PINN_I18N && window.PINN_I18N.keys("de", {
   "gh.remind.handsOn": "Ans Händewaschen erinnern",
   "gh.remind.hint": "Die Erinnerung kommt als Push auf die Geräte der Person selbst. Dafür müssen Benachrichtigungen dort eingeschaltet sein. Die Uhrzeiten gelten in der Zeitzone der Geräte (Sommer- und Winterzeit inklusive).",
   "gh.remind.medsOn": "An die Einnahme erinnern",
+  "gh.remind.parents": "Eltern auch erinnern (mit dem Namen des Kindes)",
   "gh.remind.times": "Uhrzeiten",
   "gh.remind.to": "Bis",
   "gh.time": "Uhrzeit",

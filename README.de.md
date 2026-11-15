@@ -133,6 +133,15 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski und 🇺🇦 Українська**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.150.3
+
+**Alle Erinnerungen nach deiner Uhr · Eltern erinnern mit**
+
+- **Alle Erinnerungen nach deiner Uhr.** Geburtstage, Haustiere, Packliste, Vorrat, Verträge, Dokumente, Wochenvorschau, Monatsausblick und Jahresrückblick, Termin-Erinnerungen, Tagesübersicht, Aufgaben- und Müll-Erinnerung, Pinnwand, Sprachsteuerung, Smarthome und Ortungs-Meldungen richten sich jetzt nach der Zeitzone deines Geräts, mit Sommer- und Winterzeit. Nichts einzustellen.
+- **Eltern erinnern mit.** Bei Kindern bekommen auch die Eltern die Erinnerungen zum Trinken, zu Medikamenten und zum Händewaschen – mit dem Namen des Kindes davor. Schalter „Eltern auch erinnern“ pro Kind (Standard: an).
+- **Shortcuts ohne Überschrift.** Die Kachel auf der Übersicht zeigt nur noch die Apps, getrennt durch die Linie.
+- Geändert: alle Erinnerungs-Module in `pb_hooks/` (`pinn-zeit.js` und 13 weitere), `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.2).
+
 ## Neu in 1.150.2
 
 **Shortcuts bleiben auf der Übersicht**
@@ -245,15 +254,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Gesperrtes Dashboard lädt neue Versionen selbst.** Ein iPad mit gesperrtem Familien-Dashboard (oder die Anmeldung) lädt etwa eine Minute nach einem Update neu, wenn gerade niemand tippt. Läuft zur Update-Zeit eine Sicherung, zeigt die App „wartet“.
 - Geändert: `js/winterzeit.js`, `css/winterzeit.css`, `js/versionspruefung.js`, `js/sicherungen.js`, `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`, `i18n/`, `src/`, `index.html`, alle READMEs. Server-Teil: Hooks einspielen, PocketBase startet neu.
 
-## Neu in 1.145.0
-
-**Winter- und Weihnachtsdesign**
-
-- **Winterdesign vom 1. Dezember bis 6. Januar.** Schnee auf dem pinn.-Logo, auf den Überschriften und unten in der Seitenleiste, dazu ein kurzer Schneeschauer beim Öffnen der App. Tippe aufs Logo für mehr Schnee.
-- **Weihnachtsextras bis zum 26. Dezember.** Lichterkette unter der Kopfzeile, Weihnachtsmütze auf dem Logo, Stechpalme an Überschriften und Glocke, ein kleiner Tannenbaum in der Seitenleiste – und ab und zu fliegt der Weihnachtsmann mit Schlitten und Rentieren oben durchs Bild.
-- **Standardmäßig an, pro Profil abschaltbar** unter Einstellungen → Darstellung; „Vorschau“ zeigt es jederzeit eine Minute lang. Akkuschonend und eine eigene Schicht: Im Ruhemodus bewegt sich nichts, und am Aufbau der App verschiebt sich nichts.
-- Geändert: `js/winterzeit.js` (neu), `css/winterzeit.css` (neu), `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`, alle READMEs. Kein Server-Teil.
-
 ## So funktioniert’s
 
 ```mermaid
@@ -282,7 +282,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.150.2` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.150.3` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

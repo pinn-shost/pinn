@@ -15,8 +15,12 @@
 //
 // Push reminders (since 1.149.1, runCron every 5 minutes from gesundheit.pb.js): the settings live in the
 // health data of the member (drink.remind, meds.remind, hands.remind). Times follow the time zone of the receiving
-// profile (since 1.150.0, pinn-zeit.js; Europe/Berlin without a stored zone). A reminder goes ONLY to the profile(s)
-// linked to that member - never to other family members. Texts come from the key files (push.health.*) in the
+// profile (since 1.150.0, pinn-zeit.js; Europe/Berlin without a stored zone). A reminder goes to the profile(s)
+// linked to that member. For a CHILD it goes to the parents too (since 1.150.3; every adult profile of the family
+// except guests and the main admin; switch "remindParents" in the health data of the child, default on) - with the
+// name of the child in front of the title. A child without an own profile only reaches the parents. The times are
+// those of the child's clock (own profile, otherwise the family clock), so the parents get the message at the same moment.
+// Never to other family members. Texts come from the key files (push.health.*) in the
 // language of the receiving profile. Markers against double sending: pb_data/pinn_gesundheit_push.json
 // (entries older than two days are discarded). Tapping the message opens /?gesundheit=<trinken|medikamente|haende>&person=<member ID>.
 
@@ -281,6 +285,19 @@ function dueReminders(rec, daten, rs, w, lang) {
     return out;
 }
 
+// Adult profiles of a family (parents): not guests, not the main admin, not children
+function parentsOf(familyId, ctx) {
+    let users = [];
+    try { users = $app.findRecordsByFilter("benutzer", "familie = {:f}", "", 0, 0, { f: familyId }); } catch (e) { users = []; }
+    return users.filter(u => {
+        const r = u.getString("rolle");
+        if (r === "gast" || r === "hauptadmin") return false;
+        const mid = u.getString("mitglied");
+        const m = mid ? ctx.members.find(x => x.id === mid) : null;
+        return m ? !isChild(m, ctx.passes) : r === "admin";
+    });
+}
+
 // Called every 5 minutes: sends the reminders that are due. Returns { gesendet }.
 function runCron() {
     if (!findCol(COL)) return { skipped: "no collection" };
@@ -289,19 +306,38 @@ function runCron() {
     try { recs = $app.findRecordsByFilter(COL, "mitglied != ''", "", 0, 0); } catch (e) { return { skipped: e.message }; }
     if (!recs.length) return { gesendet: 0 };
     const status = readStatus();
+    const ctxCache = {};   // family -> { members, passes, parents } (only loaded when a child has a reminder switched on)
     let dirty = false, sent = 0, push = null;
     recs.forEach(rec => {
         const daten = parse(rec.get("daten"));
         const rs = remindSettings(daten);
         if (!rs.drink.on && !rs.meds.on && !rs.hands.on) return;
-        let users = [];
-        try { users = $app.findRecordsByFilter("benutzer", "familie = {:f} && mitglied = {:m}", "", 5, 0, { f: rec.getString("familie"), m: rec.getString("mitglied") }); } catch (e) { users = []; }
-        users = users.filter(u => u.getString("rolle") !== "gast");
-        if (!users.length) return;
-        users.forEach(u => {
+        const familyId = rec.getString("familie");
+        let own = [];
+        try { own = $app.findRecordsByFilter("benutzer", "familie = {:f} && mitglied = {:m}", "", 5, 0, { f: familyId, m: rec.getString("mitglied") }); } catch (e) { own = []; }
+        own = own.filter(u => u.getString("rolle") !== "gast");
+        // recipients: the person themself, for a child also the parents (title with the name of the child)
+        let recipients = own.map(u => ({ u: u, prefix: "" }));
+        if (daten.remindParents !== false) {
+            if (!ctxCache[familyId]) { const c = familyContext(familyId); c.parents = null; ctxCache[familyId] = c; }
+            const ctx = ctxCache[familyId];
+            const member = ctx.members.find(m => m.id === rec.getString("mitglied"));
+            if (member && isChild(member, ctx.passes)) {
+                if (!ctx.parents) ctx.parents = parentsOf(familyId, ctx);
+                const label = String(member.name || member.role || "").slice(0, 40);
+                ctx.parents.forEach(u => {
+                    if (own.some(o => o.id === u.id)) return;
+                    recipients.push({ u: u, prefix: label ? label + ": " : "" });
+                });
+            }
+        }
+        if (!recipients.length) return;
+        // clock for the due times: the child's own profile, otherwise the family
+        const refClock = own.length ? Z.clockOfUser(own[0].id, familyId) : Z.clockOfFamily(familyId);
+        const w = refClock.wall();
+        recipients.forEach(rcp => {
+            const u = rcp.u;
             const lang = require(`${__hooks}/pinn-pushtext.js`).langOfUser(u);
-            // wall clock of the receiving profile (its own time zone)
-            const w = Z.clockOfUser(u.id, rec.getString("familie")).wall();
             dueReminders(rec, daten, rs, w, lang).forEach(r => {
                 const key = w.iso + "|" + u.id + "|" + r.key;
                 if (status.gesendet[key]) return;
@@ -311,7 +347,7 @@ function runCron() {
                 if (r.skip || !r.titel) return;
                 if (!push) push = require(`${__hooks}/pinn-push.js`);
                 try {
-                    sent += push.notifyUser(u.id, { titel: r.titel, text: r.text, url: r.url, tag: r.tag, urgency: "normal", roh: true }) || 0;
+                    sent += push.notifyUser(u.id, { titel: rcp.prefix + r.titel, text: r.text, url: r.url, tag: r.tag + (rcp.prefix ? "-" + rec.getString("mitglied") : ""), urgency: "normal", roh: true }) || 0;
                 } catch (e) {
                     console.log("[Gesundheit] Push: " + e.message);
                 }

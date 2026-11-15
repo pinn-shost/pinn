@@ -837,6 +837,7 @@ function bisText(bis, endeZuhause) {
 function shareStart(e, body) {
     const lib = require(`${__hooks}/pinn-benutzer.js`);
     const familyId = lib.familyOf(e);
+    useClockOf(familyId);
     const me = memberOf(e);
     if (!familyId || !me) throw new Error("Dein Profil ist mit keinem Familienmitglied verknüpft.");
     const now = Date.now();
@@ -889,6 +890,7 @@ const EINMAL_MS = 60 * 60 * 1000;
 function shareOnce(e, body) {
     const lib = require(`${__hooks}/pinn-benutzer.js`);
     const familyId = lib.familyOf(e);
+    useClockOf(familyId);
     const me = memberOf(e);
     if (!familyId || !me) throw new Error("Dein Profil ist mit keinem Familienmitglied verknüpft.");
     const pos = bodyPos(body);
@@ -1708,6 +1710,7 @@ function hhmm(ms) {
 //  - "anzahl" (the app shows the popup again) only increases if it was really pressed again
 //    and therefore a new push message goes out as well.
 function triggerSos(familyId, geraetId, pos, quelle) {
+    useClockOf(familyId);
     const now = Date.now();
     // Timestamp of the report (not for the SOS button in pinn. - there the last Traccar position
     // can be the same for two distress calls in a row)
@@ -2005,6 +2008,7 @@ function osmandLog(e) {
 function sosTest(e, body) {
     const lib = require(`${__hooks}/pinn-benutzer.js`);
     const familyId = lib.familyOf(e);
+    useClockOf(familyId);
     if (!familyId || !lib.isAdmin(e)) throw new Error("Nur Admins der Familie.");
     const cfg = loadCfg(familyId);
     const g = cfg.geraete.find(x => x.id === cleanId(body.geraet)) || cfg.geraete[0];
@@ -2030,6 +2034,7 @@ function sosTest(e, body) {
 function sosEnde(e, body) {
     const lib = require(`${__hooks}/pinn-benutzer.js`);
     const familyId = lib.familyOf(e);
+    useClockOf(familyId);
     if (!familyId) throw new Error("Keine Familie.");
     let wer = e.auth.getString("username");
     const me = memberOf(e);
@@ -2211,6 +2216,7 @@ function runCronInner() {
 
     fams.forEach(f => {
         const familyId = f.familyId, cfg = f.cfg;
+        useClockOf(familyId);
         let cfgChanged = false;
         const planIdsVorher = cfg.plaene.map(p => p.aufgabe);
         const beendet = []; // { k: device ID, seit } - ways home ended by the schedule
@@ -2384,12 +2390,14 @@ function runCronInner() {
     }
 }
 
-// Central European Time (CET/CEST) for the time in the message
+// Offset for the time in the message: clock of the family set by useClockOf (since 1.150.3, pinn-zeit.js: time zone of a
+// family admin; Europe/Berlin without a stored zone). The entry points (shareStart, shareOnce, sosTest, sosEnde,
+// triggerSos, runCronInner per family) set the family first.
+let clockFamily = "";
+function useClockOf(familyId) { clockFamily = String(familyId || ""); }
 function tzOffset(utcMs) {
-    const d = new Date(utcMs);
-    const y = d.getUTCFullYear();
-    const lastSun = (m) => { const t = new Date(Date.UTC(y, m + 1, 0)); return Date.UTC(y, m, t.getUTCDate() - t.getUTCDay(), 1); };
-    return (utcMs >= lastSun(2) && utcMs < lastSun(9)) ? 2 * 3600 * 1000 : 3600 * 1000;
+    const Z = require(`${__hooks}/pinn-zeit.js`);
+    return (clockFamily ? Z.clockOfFamily(clockFamily) : Z.berlinClock()).offsetMs(utcMs);
 }
 
 module.exports = {

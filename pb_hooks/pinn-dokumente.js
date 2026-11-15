@@ -193,19 +193,11 @@ function diffDays(a, b) {
 function fmtDe(iso) { return isIso(iso) ? iso.slice(8, 10) + "." + iso.slice(5, 7) + "." + iso.slice(0, 4) : ""; }
 function inDays(n) { return n <= 0 ? "heute" : n === 1 ? "morgen" : "in " + n + " Tagen"; }
 
-// Central European Time (fixed EU daylight saving rule - like pinn-push.js)
-function lastSundayUtc(year, month) {
-    const last = new Date(Date.UTC(year, month + 1, 0));
-    return Date.UTC(year, month, last.getUTCDate() - last.getUTCDay(), 1, 0, 0);
-}
-function tzOffsetMs(utcMs) {
-    const y = new Date(utcMs).getUTCFullYear();
-    return (utcMs >= lastSundayUtc(y, 2) && utcMs < lastSundayUtc(y, 9)) ? 7200000 : 3600000;
-}
-function wallNow() {
-    const now = Date.now();
-    const d = new Date(now + tzOffsetMs(now));
-    return { iso: isoOf(d.getUTCFullYear(), d.getUTCMonth() + 1, d.getUTCDate()), hour: d.getUTCHours() };
+// Time (clock of the family, pinn-zeit.js: time zone of a family admin; Europe/Berlin without a stored zone)
+function wallNow(familyId) {
+    const Z = require(`${__hooks}/pinn-zeit.js`);
+    const w = Z.wallOf(familyId ? Z.clockOfFamily(familyId) : Z.berlinClock());
+    return { iso: w.iso, hour: w.hour };
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -217,10 +209,11 @@ function readStatus() {
         const o = JSON.parse(calendarSync.bytesToText($os.readFile(STATUS_FILE)));
         if (o && typeof o === "object") {
             if (!o.sent || typeof o.sent !== "object") o.sent = {};
+            if (!o.daily || typeof o.daily !== "object") o.daily = {};
             return o;
         }
     } catch (e) { /* no file yet */ }
-    return { lastDaily: "", sent: {} };
+    return { daily: {}, sent: {} };
 }
 function writeStatus(s) {
     try { $os.writeFile(STATUS_FILE, JSON.stringify(s), 420); } catch (e) { console.log("[Dokumente] " + STATUS_FILE + " nicht speicherbar: " + e.message); }
@@ -337,23 +330,31 @@ function remindDocs(docs, today, status) {
 // opts: { familyId: only this family (immediate check after saving) }
 function runReminders(opts) {
     const o = opts || {};
-    const now = wallNow();
-    if (now.hour < SEND_FROM_HOUR) return { skipped: "zu früh" };
     if (!findCol(DOKS)) return { skipped: "Sammlung fehlt" };
     const status = readStatus();
-    pruneStatus(status, now.iso);
-    let docs = [];
+    pruneStatus(status, new Date().toISOString().slice(0, 10));
     if (o.familyId) {
+        const fam = String(o.familyId);
+        const now = wallNow(fam);
+        if (now.hour < SEND_FROM_HOUR) return { skipped: "zu früh" };
         if (now.hour >= SEND_UNTIL_HOUR) return { skipped: "zu spät" };
-        try { docs = $app.findRecordsByFilter(DOKS, "erinnern > 0 && familie = {:f}", "", 0, 0, { f: String(o.familyId) }); } catch (e) { docs = []; }
+        let docs = [];
+        try { docs = $app.findRecordsByFilter(DOKS, "erinnern > 0 && familie = {:f}", "", 0, 0, { f: fam }); } catch (e) { docs = []; }
         const sent = remindDocs(docs, now.iso, status);
         writeStatus(status);
         return { sent: sent };
     }
-    if (status.lastDaily === now.iso) return { skipped: "heute schon erledigt" };
+    let docs = [];
     try { docs = $app.findRecordsByFilter(DOKS, "erinnern > 0 && familie != ''", "", 0, 0); } catch (e) { docs = []; }
-    const sent = remindDocs(docs, now.iso, status);
-    status.lastDaily = now.iso;
+    const byFamily = {};
+    docs.forEach(d => { const f = d.getString("familie"); if (f) (byFamily[f] = byFamily[f] || []).push(d); });
+    let sent = 0;
+    Object.keys(byFamily).forEach(f => {
+        const now = wallNow(f);   // each family on its own clock
+        if (now.hour < SEND_FROM_HOUR || status.daily[f] === now.iso) return;
+        sent += remindDocs(byFamily[f], now.iso, status);
+        status.daily[f] = now.iso;
+    });
     writeStatus(status);
     if (sent) console.log("[Dokumente] " + sent + " Erinnerung(en) verschickt.");
     return { sent: sent };

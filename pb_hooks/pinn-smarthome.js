@@ -35,7 +35,8 @@
 //   ha    = { url, token, version, ort }  (access to Home Assistant – never in the family data, never in the browser)
 //   daten = { log: { "<task>:auto|done": ISO }, abruf, abrufAnzahl, belegt: { "<device>": { bis, aktion, status, pending, ok } },
 //             schlange: [{ taskId, plantId, actionId, at, versuche }], pflanzen: { "<plant>": "YYYY-MM-DD" }, vac, sensor, aus, haLauf, haFehler }
-// The server calculates times itself in German time (Europe/Berlin).
+// The server calculates times itself on the clock of the family (since 1.150.3, pinn-zeit.js: time zone of a family admin;
+// Europe/Berlin without a stored zone). The family is set at the start of each entry point (clockFamily).
 
 const COL = "smarthome_zugaenge";
 const LOG_TAGE = 3;
@@ -66,21 +67,13 @@ function hasField(col, name) {
     try { return !!col.fields.getByName(name); } catch (e) { return false; }
 }
 function pad(n) { return (n < 10 ? "0" : "") + n; }
-// German time (CET/CEST) from a point in time, without relying on the time zone of the container
+// Family whose clock berlin() uses; set at the start of processFamily / automatik / haAusfuehren ("" = Europe/Berlin)
+let clockFamily = "";
+// Local date and time of the family from a point in time (name kept from the time before 1.150.3), without relying on the time zone of the container
 function berlin(ms) {
-    const d = new Date(ms);
-    const y = d.getUTCFullYear();
-    const lastSunday = (m) => {
-        const x = new Date(Date.UTC(y, m + 1, 0, 1, 0, 0)); // last day of the month, 01:00 UTC
-        x.setUTCDate(x.getUTCDate() - x.getUTCDay());
-        return x.getTime();
-    };
-    const summer = ms >= lastSunday(2) && ms < lastSunday(9);
-    const b = new Date(ms + (summer ? 2 : 1) * 3600000);
-    return {
-        iso: b.getUTCFullYear() + "-" + pad(b.getUTCMonth() + 1) + "-" + pad(b.getUTCDate()),
-        hm: pad(b.getUTCHours()) + ":" + pad(b.getUTCMinutes()),
-    };
+    const Z = require(`${__hooks}/pinn-zeit.js`);
+    const w = Z.wallOf(clockFamily ? Z.clockOfFamily(clockFamily) : Z.berlinClock(), ms);
+    return { iso: w.iso, hm: pad(w.hour) + ":" + pad(w.min) };
 }
 function cleanTime(v) {
     const m = /^(\d{1,2}):(\d{2})$/.exec(String(v || "").trim());
@@ -827,6 +820,7 @@ function plantDue(p, store, wx, today) {
 // system: "shortcut" -> only collect (the Apple shortcut starts them), "ha" -> run here
 // ---------------------------------------------------------------------------------------------
 function processFamily(familyId, rec, store, system, ha) {
+    clockFamily = String(familyId || "");
     const now = Date.now();
     const jetzt = berlin(now);
     const data = familyData(familyId);
@@ -962,6 +956,7 @@ function automatik(token) {
     const rec = loadRecByToken(token);
     if (!rec) throw new Error("Unbekannter oder ausgeschalteter Automatik-Link.");
     const familyId = rec.getString("familie");
+    clockFamily = String(familyId || "");
     const store = readData(rec);
     pruneLog(store);
     const out = processFamily(familyId, rec, store, "shortcut", null);
@@ -1131,6 +1126,7 @@ function haTest(familyId, body) {
 }
 // Button at a task or plant, or ticking off in the app: run the Home Assistant action or queue it
 function haAusfuehren(familyId, body) {
+    clockFamily = String(familyId || "");
     const ha = haOf(familyId);
     const art = body.art === "done" ? "done" : "start";
     const taskId = String(body.taskId || "").trim().slice(0, 60);

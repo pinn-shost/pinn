@@ -17,31 +17,19 @@
 // Since 1.142.2 the server also keeps a small counter of completed tasks per family and year (completed tasks are
 // deleted after a few days, so they cannot be counted afterwards): zaehler[familyId][YYYY] = { a: all, h: household }.
 //
-// Time: like the other reminders in Europe/Berlin (summer/winter time is calculated itself).
+// Time: since 1.150.3 every profile is on its own clock (pinn-zeit.js: time zone of the device; Europe/Berlin without a stored zone).
+// "Already sent" is remembered per profile (versendet.woche / .monat / .jahr: profile ID -> key).
 
 const STATUS_FILE = "/pb_data/pinn_ausblick.json";
 const SEND_FROM_HOUR = 18;
 const SEND_UNTIL_HOUR = 22; // after 10 p.m. (e.g. server was off) no more push - the banner still comes
 
 // ---------------------------------------------------------------------------------------------
-// Time of day (Europe/Berlin)
+// Time of day (clock of the profile, pinn-zeit.js)
 // ---------------------------------------------------------------------------------------------
 function pad2(n) { return (n < 10 ? "0" : "") + n; }
-function lastSundayUtc(year, month) {
-    const last = new Date(Date.UTC(year, month + 1, 0));
-    return Date.UTC(year, month, last.getUTCDate() - last.getUTCDay(), 1, 0, 0);
-}
-function tzOffsetMs(utcMs) {
-    const y = new Date(utcMs).getUTCFullYear();
-    return (utcMs >= lastSundayUtc(y, 2) && utcMs < lastSundayUtc(y, 9)) ? 7200000 : 3600000;
-}
-// Wall clock: { y, m (1-12), d, wd (0 = Sunday), hour, iso }
-function wallNow() {
-    const now = Date.now();
-    const d = new Date(now + tzOffsetMs(now));
-    const y = d.getUTCFullYear(), m = d.getUTCMonth() + 1, day = d.getUTCDate();
-    return { y: y, m: m, d: day, wd: d.getUTCDay(), hour: d.getUTCHours(), iso: y + "-" + pad2(m) + "-" + pad2(day) };
-}
+// Wall clock: { y, m (1-12), d, wd (0 = Sunday), hour, iso }; clock = clockOfUser(...) (without one: Europe/Berlin)
+function wallNow(clock) { return require(`${__hooks}/pinn-zeit.js`).wallOf(clock); }
 function isoAddDays(iso, n) {
     const p = iso.split("-").map(Number);
     const d = new Date(Date.UTC(p[0], p[1] - 1, p[2] + n));
@@ -78,10 +66,12 @@ function readStatus() {
             if (!o.gesendet || typeof o.gesendet !== "object") o.gesendet = {};
             if (!o.nutzer || typeof o.nutzer !== "object") o.nutzer = {};
             if (!o.zaehler || typeof o.zaehler !== "object") o.zaehler = {};
+            if (!o.versendet || typeof o.versendet !== "object") o.versendet = {};
+            ["woche", "monat", "jahr"].forEach(k => { if (!o.versendet[k] || typeof o.versendet[k] !== "object") o.versendet[k] = {}; });
             return o;
         }
     } catch (e) { /* no file yet */ }
-    return { gesendet: { woche: "", monat: "", jahr: "" }, nutzer: {}, zaehler: {} };
+    return { gesendet: { woche: "", monat: "", jahr: "" }, versendet: { woche: {}, monat: {}, jahr: {} }, nutzer: {}, zaehler: {} };
 }
 function writeStatus(s) {
     try { $os.writeFile(STATUS_FILE, JSON.stringify(s), 420); } catch (e) { console.log("[Ausblick] " + STATUS_FILE + " nicht speicherbar: " + e.message); }
@@ -258,87 +248,55 @@ function yearMessage(lang, year) {
 function allUsers() {
     try { return $app.findRecordsByFilter("benutzer", "familie != ''", "", 0, 0); } catch (e) { return []; }
 }
-function sendWeek(key, status) {
-    const push = require(`${__hooks}/pinn-push.js`);
-    let n = 0;
+function runCron() {
+    const Z = require(`${__hooks}/pinn-zeit.js`);
+    const status = readStatus();
+    const membersByFamily = {};
+    const out = {};
+    let push = null, dirty = false;
     allUsers().forEach(u => {
         if (role(u) === "hauptadmin") return;
+        const guest = role(u) === "gast";
+        // wall clock of this profile (its own time zone)
+        const w = wallNow(Z.clockOfUser(u.id, u.getString("familie")));
+        if (w.hour < SEND_FROM_HOUR || w.hour >= SEND_UNTIL_HOUR) return;
+        const isSunday = w.wd === 0;
+        const isMonthEnd = w.d === daysInMonth(w.y, w.m);
+        const isYearDay = w.m === 12 && w.d === 28;
+        if (!isSunday && !isMonthEnd && !isYearDay) return;
         const st = userState(status, u.id);
-        if (!st.pushWoche || st.woche === key) return;
-        const msg = weekMessage(langOf(u), key);
-        try {
-            n += push.notifyUser(u.id, { titel: msg.titel, text: msg.text, url: "/?ausblick=woche", tag: "ausblick-woche-" + key, urgency: "normal" }) || 0;
-        } catch (e) { console.log("[Ausblick] Push Wochenvorschau: " + e.message); }
-    });
-    return n;
-}
-function sendMonth(key, status) {
-    const push = require(`${__hooks}/pinn-push.js`);
-    const membersByFamily = {};
-    let n = 0;
-    allUsers().forEach(u => {
-        if (role(u) === "hauptadmin" || role(u) === "gast") return;
-        const st = userState(status, u.id);
-        if (!st.pushMonat || st.monat === key) return;
-        if (isChildLocked(u, membersByFamily) || !hasFinances(u)) return;
-        const msg = monthMessage(langOf(u), key);
-        try {
-            n += push.notifyUser(u.id, { titel: msg.titel, text: msg.text, url: "/?ausblick=monat", tag: "ausblick-monat-" + key, urgency: "normal" }) || 0;
-        } catch (e) { console.log("[Ausblick] Push Monatsausblick: " + e.message); }
-    });
-    return n;
-}
-function sendYear(key, status) {
-    const push = require(`${__hooks}/pinn-push.js`);
-    let n = 0;
-    allUsers().forEach(u => {
-        if (role(u) === "hauptadmin" || role(u) === "gast") return;
-        const st = userState(status, u.id);
-        if (!st.pushJahr || st.jahr === key) return;
-        const msg = yearMessage(langOf(u), key);
-        try {
-            n += push.notifyUser(u.id, { titel: msg.titel, text: msg.text, url: "/?ausblick=jahr", tag: "ausblick-jahr-" + key, urgency: "normal" }) || 0;
-        } catch (e) { console.log("[Ausblick] Push Jahresrückblick: " + e.message); }
-    });
-    return n;
-}
-
-function runCron() {
-    const w = wallNow();
-    if (w.hour < SEND_FROM_HOUR || w.hour >= SEND_UNTIL_HOUR) return { skipped: "Uhrzeit" };
-    const isSunday = w.wd === 0;
-    const isMonthEnd = w.d === daysInMonth(w.y, w.m);
-    const isYearDay = w.m === 12 && w.d === 28;
-    if (!isSunday && !isMonthEnd && !isYearDay) return { skipped: "kein Ausblick-Tag" };
-    const status = readStatus();
-    const out = {};
-    if (isSunday) {
-        const key = weekKey(w);
-        if (status.gesendet.woche !== key) {
-            // remember first: even on an error along the way, the message never comes twice
-            status.gesendet.woche = key;
-            writeStatus(status);
-            out.woche = sendWeek(key, status);
-            console.log("[Ausblick] Wochenvorschau " + key + ": " + out.woche + " Push-Nachricht(en).");
+        const lang = langOf(u);
+        // remember first: even on an error along the way, the message never comes twice
+        function send(art, key, msg, url, tag, label) {
+            status.versendet[art][u.id] = key;
+            dirty = true;
+            if (!push) push = require(`${__hooks}/pinn-push.js`);
+            try {
+                out[art] = (out[art] || 0) + (push.notifyUser(u.id, { titel: msg.titel, text: msg.text, url: url, tag: tag + key, urgency: "normal" }) || 0);
+            } catch (e) { console.log("[Ausblick] Push " + label + ": " + e.message); }
         }
-    }
-    if (isMonthEnd) {
-        const key = monthKey(w);
-        if (status.gesendet.monat !== key) {
-            status.gesendet.monat = key;
-            writeStatus(status);
-            out.monat = sendMonth(key, status);
-            console.log("[Ausblick] Monatsausblick " + key + ": " + out.monat + " Push-Nachricht(en).");
+        if (isSunday) {
+            const key = weekKey(w);
+            if (st.pushWoche && st.woche !== key && status.versendet.woche[u.id] !== key) {
+                send("woche", key, weekMessage(lang, key), "/?ausblick=woche", "ausblick-woche-", "Wochenvorschau");
+            }
         }
-    }
-    if (isYearDay) {
-        const key = String(w.y);
-        if (status.gesendet.jahr !== key) {
-            status.gesendet.jahr = key;
-            writeStatus(status);
-            out.jahr = sendYear(key, status);
-            console.log("[Ausblick] Jahresrückblick " + key + ": " + out.jahr + " Push-Nachricht(en).");
+        if (isMonthEnd && !guest) {
+            const key = monthKey(w);
+            if (st.pushMonat && st.monat !== key && status.versendet.monat[u.id] !== key && !isChildLocked(u, membersByFamily) && hasFinances(u)) {
+                send("monat", key, monthMessage(lang, key), "/?ausblick=monat", "ausblick-monat-", "Monatsausblick");
+            }
         }
+        if (isYearDay && !guest) {
+            const key = String(w.y);
+            if (st.pushJahr && st.jahr !== key && status.versendet.jahr[u.id] !== key) {
+                send("jahr", key, yearMessage(lang, key), "/?ausblick=jahr", "ausblick-jahr-", "Jahresrückblick");
+            }
+        }
+    });
+    if (dirty) {
+        writeStatus(status);
+        console.log("[Ausblick] Push-Nachrichten: " + JSON.stringify(out));
     }
     return out;
 }
@@ -377,7 +335,7 @@ function countsFor(s, familyId) {
 // For the app
 // ---------------------------------------------------------------------------------------------
 function stateFor(user) {
-    const w = wallNow();
+    const w = wallNow(require(`${__hooks}/pinn-zeit.js`).clockOfUser(user.id, user.getString("familie")));
     const status = readStatus();
     const st = userState(status, user.id);
     return {
@@ -423,6 +381,12 @@ function pruneUsers() {
     const ids = Object.keys(s.nutzer);
     ids.forEach(id => {
         try { $app.findRecordById("benutzer", id); } catch (e) { delete s.nutzer[id]; changed = true; }
+    });
+    // markers of "already sent": only the current key per profile is needed, deleted profiles go
+    ["woche", "monat", "jahr"].forEach(art => {
+        Object.keys(s.versendet[art]).forEach(id => {
+            try { $app.findRecordById("benutzer", id); } catch (e) { delete s.versendet[art][id]; changed = true; }
+        });
     });
     if (changed) writeStatus(s);
 }

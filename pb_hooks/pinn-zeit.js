@@ -26,6 +26,8 @@ const ZONE_RE = /^[A-Za-z][A-Za-z0-9_+\-]*(\/[A-Za-z0-9_+\-]+){0,3}$/;
 const YEAR_S = 31556952;       // average year in seconds (365.2425 days)
 const MAX_ENTRIES = 2000;
 const cache = { at: 0, data: null };
+const famCache = {};           // family id -> { at, table }; the lookup runs often (every cron run), so it is kept for a minute
+const FAM_TTL_MS = 60000;
 
 function pad2(n) { return (n < 10 ? "0" : "") + n; }
 
@@ -132,6 +134,13 @@ function tableOf(userId) {
 function familyTable(familyId) {
     const fam = String(familyId || "");
     if (!fam) return null;
+    const hit = famCache[fam];
+    if (hit && Date.now() - hit.at < FAM_TTL_MS) return hit.table;
+    const table = familyTableLookup(fam);
+    famCache[fam] = { at: Date.now(), table };
+    return table;
+}
+function familyTableLookup(fam) {
     let users = [];
     try { users = $app.findRecordsByFilter("benutzer", "familie = {:f}", "", 0, 0, { f: fam }); } catch (e) { users = []; }
     users.sort((a, b) => (a.getString("rolle") === "admin" ? 0 : 1) - (b.getString("rolle") === "admin" ? 0 : 1));
@@ -150,6 +159,13 @@ function clockOfUser(userId, familyId) {
 }
 function clockOfFamily(familyId) {
     return makeClock(familyTable(familyId));
+}
+
+// Wall clock in the shape the reminder modules use: { y, m (1-12), d, wd (0 = Sunday), hour, min, minutes (of the day), iso }
+// clock = result of clockOfUser / clockOfFamily (without one: Europe/Berlin)
+function wallOf(clock, utcMs) {
+    const w = (clock || berlinClock()).wall(utcMs);
+    return { y: w.y, m: w.m + 1, d: w.d, wd: w.wd, hour: Math.floor(w.min / 60), min: w.min % 60, minutes: w.min, iso: w.iso };
 }
 
 // View for the app: { zone, bis, standard }
@@ -180,7 +196,8 @@ function setForUser(userId, data) {
         return view(id);   // nothing changed
     }
     if (!writeAll(next)) throw new Error("Die Zeitzone konnte nicht gespeichert werden.");
+    Object.keys(famCache).forEach(k => { delete famCache[k]; });
     return view(id);
 }
 
-module.exports = { FILE, cleanTable, makeClock, berlinClock, clockOfUser, clockOfFamily, view, setForUser };
+module.exports = { FILE, cleanTable, makeClock, berlinClock, clockOfUser, clockOfFamily, wallOf, view, setForUser };

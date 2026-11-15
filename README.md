@@ -129,6 +129,15 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski and 🇺🇦 Українська**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.150.3
+
+**All reminders on your clock · parents remind along**
+
+- **All reminders on your clock.** Birthdays, pets, packing list, pantry, contracts, documents, weekly preview, monthly outlook and year in review, event reminders, daily overview, task and waste reminders, pinboard, voice control, smart home and location messages now follow the time zone of your device, summer and winter time included. Nothing to set up.
+- **Parents remind along.** For children the parents also get the reminders for drinking, medication and hand washing – with the child's name in front. Switch “Also remind the parents” per child (default: on).
+- **Shortcuts without a heading.** The tile on the overview shows just the apps, separated by the line.
+- Changed: all reminder modules in `pb_hooks/` (`pinn-zeit.js` and 13 more), `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.2).
+
 ## What's new in 1.150.2
 
 **Shortcuts stay on the overview**
@@ -264,14 +273,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Automatic updates** did not run at the chosen time: the server calculated in UTC instead of Europe/Berlin time and was one to two hours off; “Next check” showed a wrong time as well. Now the chosen time works like all other reminders (summer and winter time included).
 - Changed: `pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, all READMEs. Server (replace the hooks, PocketBase restarts): `pb_hooks/pinn-system.js`.
 
-## What's new in 1.144.0
-
-**Dashboard: unread chats and open tasks under every person**
-
-- **Two numbers under every person.** On the profile selection of the family dashboard (iPad), a speech bubble shows the unread chat messages and a check mark the open, due tasks – visible without signing in. At 0 the chip disappears, above 9 it shows 9⁺. The numbers are refreshed every minute.
-- **On by default.** The 1.143.0 setting was off and showed only tasks; now both numbers are on for every family. An admin can switch them off under Account → “Tasks and chats on the dashboard”. Muted chats are not counted, chats marked as unread count as one – just like the number behind “Chat” in the menu.
-- Changed: `js/profilauswahl.js`, `js/dashboardkonto.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (1 new and 4 changed texts in all fourteen languages), `src/` (version, account page), `index.html`, all READMEs. Server (replace the hooks, PocketBase restarts): `pb_hooks/pinn-chat.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`.
-
 ## How it works
 
 ```mermaid
@@ -298,7 +299,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.150.2` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.150.3` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

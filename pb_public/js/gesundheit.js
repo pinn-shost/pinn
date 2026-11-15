@@ -29,9 +29,9 @@
        appointments: [{ id, date, time, who, note }] }
    Day logs older than GH_KEEP_DAYS are dropped when saving.
 
-   Push reminders (since 1.149.1, server: pinn-gesundheit.js#runCron): switched on per block in the health data
+   Push reminders (since 1.149.1, server: pinn-gesundheit.js#runCron; since 1.150.3 for a child the parents get them too unless remindParents is false): switched on per block in the health data
      drink.remind { on, every (minutes), from, to }   meds.remind { on }   hands.remind { on, times: ['10:00', …] }
-   They go to the profile of the person themself. Tapping a message opens /?gesundheit=<trinken|medikamente|haende>
+   They go to the profile of the person themself (for a child also to the parents). Tapping a message opens /?gesundheit=<trinken|medikamente|haende>
    &person=<member ID> (ghOpenFromLink): the health page of that person, for "trinken" also the drink popup. */
 
 var GH_KEEP_DAYS = 120;
@@ -311,6 +311,12 @@ function ghRemindHtml(kind, m, r, edit) {
     opts = `<div class="hp-remind-opts">
       ${times.map((t, i) => `<label class="hp-remind-f">${i === 0 ? tk('gh.remind.times') : '&nbsp;'}<input type="time" class="hp-in hp-hand-time" data-ghchange="rem-time" ${mem} data-i="${i}" value="${ghAttr(t)}" /></label>`).join('')}
     </div>`;
+  }
+  // For a child the parents can get the same reminder (switch per child, default on; server: pinn-gesundheit.js)
+  const person = ghState.people[m.id];
+  if (r.on && person && person.kind) {
+    const parentsOn = !person.daten || person.daten.remindParents !== false;
+    opts += `<label class="fz-check hp-remind-parents"><input type="checkbox" data-ghchange="rem-parents" ${mem}${parentsOn ? ' checked' : ''} /><span>👪 ${tk('gh.remind.parents')}</span></label>`;
   }
   return `<div class="hp-remind">
     <label class="fz-check"><input type="checkbox" data-ghchange="rem-on" ${mem}${r.on ? ' checked' : ''} /><span>🔔 ${label}</span></label>
@@ -722,6 +728,9 @@ async function ghOpenFromLink(kind, memberId) {
         if (on) list.push(key);
         d.meds.taken[day] = list;
       });
+    } else if (el.dataset.ghchange === 'rem-parents') {
+      const on = el.checked;
+      if (ghCanEdit(mid)) ghChange(mid, (d) => { d.remindParents = on; });
     } else if (el.dataset.ghchange.indexOf('rem-') === 0) {
       const kind = el.dataset.kind;
       const what = el.dataset.ghchange;

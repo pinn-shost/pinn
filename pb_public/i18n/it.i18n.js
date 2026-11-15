@@ -2504,6 +2504,7 @@ window.PINN_I18N && window.PINN_I18N.keys("it", {
   "gh.remind.handsOn": "Ricorda di lavare le mani",
   "gh.remind.hint": "Il promemoria arriva come notifica push sui dispositivi della persona stessa. Lì le notifiche devono essere attivate. Gli orari valgono nel fuso orario dei dispositivi (ora legale e ora solare comprese).",
   "gh.remind.medsOn": "Ricorda l’assunzione",
+  "gh.remind.parents": "Ricorda anche ai genitori (con il nome del bambino)",
   "gh.remind.times": "Orari",
   "gh.remind.to": "Alle",
   "gh.time": "Ora",

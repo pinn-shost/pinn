@@ -134,18 +134,13 @@ function ecdsaSign(hashHex, d, randHex) {
 }
 
 // --- Time & calendar ---
-// --- Time (Central Europe, fixed EU daylight saving rule) ---
+// --- Time (since 1.150.3 on the clock of the person, pinn-zeit.js; Europe/Berlin without a stored time zone) ---
+// "Wall time" = UTC milliseconds shifted by the offset of the zone, so getUTC...() gives the local date and time.
+// clock = clockOfUser(userId, familyId) / clockOfFamily(familyId); without one: Europe/Berlin.
 const MIN_MS = 60000, HOUR_MS = 3600000, DAY_MS = 86400000;
-function lastSundayUtc(year, month) {
-    const last = new Date(Date.UTC(year, month + 1, 0));
-    return Date.UTC(year, month, last.getUTCDate() - last.getUTCDay(), 1, 0, 0);
-}
-function tzOffsetMs(utcMs) {
-    const y = new Date(utcMs).getUTCFullYear();
-    return (utcMs >= lastSundayUtc(y, 2) && utcMs < lastSundayUtc(y, 9)) ? 2 * HOUR_MS : HOUR_MS;
-}
-function utcToWall(utcMs) { return utcMs + tzOffsetMs(utcMs); }
-function wallToUtc(wall) { return wall - tzOffsetMs(wall - 2 * HOUR_MS); }
+function zeitModul() { return require(`${__hooks}/pinn-zeit.js`); }
+function utcToWall(utcMs, clock) { return utcMs + (clock || zeitModul().berlinClock()).offsetMs(utcMs); }
+function wallToUtc(wall, clock) { const c = clock || zeitModul().berlinClock(); return wall - c.offsetMs(wall - c.offsetMs(wall)); }
 function pad2(n) { return (n < 10 ? "0" : "") + n; }
 function wallParts(wall) { const d = new Date(wall); return { y: d.getUTCFullYear(), m: d.getUTCMonth() + 1, d: d.getUTCDate(), h: d.getUTCHours(), mi: d.getUTCMinutes(), wd: d.getUTCDay() }; }
 function wallIsoDate(wall) { const p = wallParts(wall); return p.y + "-" + pad2(p.m) + "-" + pad2(p.d); }
@@ -153,13 +148,14 @@ function wallHHMM(wall) { const p = wallParts(wall); return pad2(p.h) + ":" + pa
 
 // --- ICS ---
 function icsUnescape(s) { return String(s || "").replace(/\\n/gi, "\n").replace(/\\([,;\\])/g, "$1"); }
+let parseClock = null;   // clock of the family whose calendar is being read (set in loadCalendarEvents)
 function parseIcsDate(value, params) {
     const v = String(value || "").trim();
     const m = v.match(/^(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2})(\d{2})?(Z)?)?/);
     if (!m) return null;
     const allDay = !m[4] || /VALUE=DATE(?!-)/i.test(params || "");
     let wall = Date.UTC(+m[1], +m[2] - 1, +m[3], allDay ? 0 : +m[4], allDay ? 0 : +m[5], allDay ? 0 : +(m[6] || 0));
-    if (!allDay && m[7]) wall = utcToWall(wall);
+    if (!allDay && m[7]) wall = utcToWall(wall, parseClock);
     return { wall: wall, allDay: allDay };
 }
 function parseIcsEvents(text) {
@@ -716,7 +712,7 @@ function openTaskCountsForFamily(familyId, members) {
     const list = Array.isArray(members) ? members : [];
     list.forEach(m => { if (m && m.id) out[m.id] = 0; });
     if (!familyId || !list.length) return out;
-    const nowWall = utcToWall(Date.now());
+    const nowWall = utcToWall(Date.now(), zeitModul().clockOfFamily(familyId));
     const today = wallIsoDate(nowWall), hm = wallHHMM(nowWall);
     let recs = [];
     try {
@@ -864,6 +860,8 @@ function loadCalendarEvents(familyId) {
     try { text = readTextFile(path); } catch (e) { text = ""; }
     // The family's own calendars (shared and private - private ones only for their profile, X-PINN-OWNER)
     try { text += "\n" + require(`${__hooks}/pinn-kalender.js`).icsAllForFamily(familyId); } catch (e) { /* does not exist */ }
+    // times with "Z" are converted to the wall clock of the family
+    parseClock = zeitModul().clockOfFamily(familyId);
     const events = parseIcsEvents(text).filter(ev => ev.status !== "CANCELLED");
     // Individually edited events of a series (RECURRENCE-ID) replace the series event
     const overrides = {};
@@ -963,20 +961,22 @@ function runFamilyReminders(ctx, people, events, last, until, now, status) {
     // --- Event reminders ---
     const reminderPeople = people.filter(p => p.settings.termine);
     if (reminderPeople.length && events.length) try {
-        const maxLead = Math.max.apply(null, reminderPeople.map(p => p.settings.vorlauf)) * 60000;
-        const fromWall = utcToWall(last) - HALF_STEP;
-        const toWall = utcToWall(until + maxLead) + HALF_STEP;
-        events.forEach(ev => {
-            if (ev.start.allDay || (taskCal && ev.calName === taskCal)) return;
-            if (ev.title.indexOf(DONE_PREFIX) === 0) return;
-            const assign = assigneesFromText(ev.description, ctx.members);
-            occurrencesInRange(ev, fromWall, toWall).forEach(w => {
-                const startUtc = wallToUtc(w);
-                if (startUtc < now - 60000) return; // The event has already started (during a restart)
-                reminderPeople.forEach(p => {
-                    const fireAt = startUtc - p.settings.vorlauf * 60000;
+        // every person on the own clock: a floating time such as 10:00 means 10:00 where the person is
+        reminderPeople.forEach(p => {
+            const clk = zeitModul().clockOfUser(p.userId, ctx.familyId);
+            const lead = p.settings.vorlauf * 60000;
+            const fromWall = utcToWall(last, clk) - HALF_STEP;
+            const toWall = utcToWall(until + lead, clk) + HALF_STEP;
+            events.forEach(ev => {
+                if (ev.start.allDay || (taskCal && ev.calName === taskCal)) return;
+                if (ev.title.indexOf(DONE_PREFIX) === 0) return;
+                const assign = assigneesFromText(ev.description, ctx.members);
+                if (ev.owner ? ev.owner !== p.userId : !isRelevantFor(p, assign)) return; // private calendars only for their profile
+                occurrencesInRange(ev, fromWall, toWall).forEach(w => {
+                    const startUtc = wallToUtc(w, clk);
+                    if (startUtc < now - 60000) return; // The event has already started (during a restart)
+                    const fireAt = startUtc - lead;
                     if (fireAt <= last || fireAt > until) return;
-                    if (ev.owner ? ev.owner !== p.userId : !isRelevantFor(p, assign)) return; // private calendars only for their profile
                     const others = otherNames(p, assign, ctx.members);
                     const parts = [leadText(p.settings.vorlauf) + (p.settings.vorlauf >= 1440 ? ", " + fmtWallDate(w) : "")];
                     if (ev.location) parts.push(ev.location);
@@ -1003,17 +1003,18 @@ function runFamilyReminders(ctx, people, events, last, until, now, status) {
     // Which day has already been sent is stored in pb_data/pinn_push_status.json.
     let changed = false;
     try {
-        const nowWall = utcToWall(now);
-        const todayIso = wallIsoDate(nowWall);
-        const tp = todayIso.split("-");
-        const dayWall = Date.UTC(+tp[0], +tp[1] - 1, +tp[2]);
         people.filter(p => p.settings.tagesuebersicht).forEach(p => {
+            const clk = zeitModul().clockOfUser(p.userId, ctx.familyId);   // clock of this profile
+            const nowWall = utcToWall(now, clk);
+            const todayIso = wallIsoDate(nowWall);
+            const tp = todayIso.split("-");
+            const dayWall = Date.UTC(+tp[0], +tp[1] - 1, +tp[2]);
             if (status.tagesuebersicht[p.userId] === todayIso) return;
             const hm = p.settings.uhrzeit.split(":");
             const fireWall = dayWall + (+hm[0]) * HOUR_MS + (+hm[1]) * MIN_MS;
             if (nowWall + HALF_STEP < fireWall) return;      // not yet time
             if (nowWall - fireWall > 3 * HOUR_MS) return;     // too long ago -> again tomorrow
-            const msg = buildDigest(p, ctx, events, taskCal, dayWall, +hm[0]);
+            const msg = buildDigest(p, ctx, events, taskCal, dayWall, +hm[0], clk);
             const r = notifyUserDetailed(p.userId, msg);
             if (r.sent > 0 || !r.geraete) {
                 status.tagesuebersicht[p.userId] = todayIso;
@@ -1051,23 +1052,27 @@ function runFamilyReminders(ctx, people, events, last, until, now, status) {
 // made up for up to 3 hours, e.g. after a restart.
 function runTaskReminders(ctx, people, now, status) {
     if (!people.length) return false;
-    const nowWall = utcToWall(now);
-    const todayIso = wallIsoDate(nowWall);
-    const tp = todayIso.split("-");
-    const dayWall = Date.UTC(+tp[0], +tp[1] - 1, +tp[2]);
     const st = status.aufgabenErinnerung = status.aufgabenErinnerung || {};
     let changed = false;
-    Object.keys(st).forEach(k => { if (st[k] !== todayIso) { delete st[k]; changed = true; } });
-    const list = require(`${__hooks}/pinn-aufgaben.js`).remindersDue(ctx.familyId, todayIso);
-    list.forEach(t => {
-        const hm = t.erinnerung.split(":");
-        const fireWall = dayWall + (+hm[0]) * HOUR_MS + (+hm[1]) * MIN_MS;
-        if (nowWall + HALF_STEP < fireWall || nowWall - fireWall > 3 * HOUR_MS) return;
-        const assign = assigneesFromText(t.notizen, ctx.members);
-        const explicit = assign.line && !assign.all;
-        people.forEach(p => {
+    // entries keep the local date of the profile; anything older than three days is dropped
+    const cutoff = new Date(now - 3 * DAY_MS).toISOString().slice(0, 10);
+    Object.keys(st).forEach(k => { if (typeof st[k] !== "string" || st[k] < cutoff) { delete st[k]; changed = true; } });
+    const lists = {};   // local date -> tasks with a reminder due that day (profiles in other time zones have another date)
+    people.forEach(p => {
+        const clk = zeitModul().clockOfUser(p.userId, ctx.familyId);   // clock of this profile
+        const nowWall = utcToWall(now, clk);
+        const todayIso = wallIsoDate(nowWall);
+        const tp = todayIso.split("-");
+        const dayWall = Date.UTC(+tp[0], +tp[1] - 1, +tp[2]);
+        if (!lists[todayIso]) lists[todayIso] = require(`${__hooks}/pinn-aufgaben.js`).remindersDue(ctx.familyId, todayIso);
+        lists[todayIso].forEach(t => {
+            const hm = t.erinnerung.split(":");
+            const fireWall = dayWall + (+hm[0]) * HOUR_MS + (+hm[1]) * MIN_MS;
+            if (nowWall + HALF_STEP < fireWall || nowWall - fireWall > 3 * HOUR_MS) return;
+            const assign = assigneesFromText(t.notizen, ctx.members);
+            const explicit = assign.line && !assign.all;
             const key = t.id + "|" + p.userId;
-            if (st[key]) return;
+            if (st[key] === todayIso) return;
             const member = p.memberId ? ctx.members.find(m => m.id === p.memberId) : null;
             const isChild = !!(member && (isChildMember(member) || member.childLock));
             const mine = explicit && !!p.memberId && assign.memberIds.indexOf(p.memberId) !== -1;
@@ -1077,7 +1082,7 @@ function runTaskReminders(ctx, people, now, status) {
                 text: mine ? "Heute fällig – du bist dran." : "Heute fällig.",
                 url: "/?aufgabe=" + encodeURIComponent(t.id),
                 tag: "aufgabe-erinnerung-" + t.id,
-                bis: wallToUtc(dayWall + DAY_MS),
+                bis: wallToUtc(dayWall + DAY_MS, clk),
             });
             if (r.sent > 0 || !r.geraete) { st[key] = todayIso; changed = true; }
             else plog("warnung", "push", "Aufgaben-Erinnerung für „" + p.name + "“ nicht zugestellt: " + r.fehler.filter((x, i, a) => a.indexOf(x) === i).join(" | "), { benutzer: p.userId });
@@ -1093,11 +1098,14 @@ function runMuellReminder(ctx, people, now, status) {
     const list = people.filter(p => p.settings.muell);
     if (!list.length) return false;
     status.muell = status.muell || {};
-    const nowWall = utcToWall(now);
-    const todayIso = wallIsoDate(nowWall);
-    const tp = todayIso.split("-");
-    const dayWall = Date.UTC(+tp[0], +tp[1] - 1, +tp[2]);
+    const own = {};   // per profile: its clock and local date
     const due = list.filter(p => {
+        const clk = zeitModul().clockOfUser(p.userId, ctx.familyId);
+        const nowWall = utcToWall(now, clk);
+        const todayIso = wallIsoDate(nowWall);
+        const tp = todayIso.split("-");
+        const dayWall = Date.UTC(+tp[0], +tp[1] - 1, +tp[2]);
+        own[p.userId] = { clk: clk, todayIso: todayIso };
         if (status.muell[p.userId] === todayIso) return false;
         const hm = p.settings.muellZeit.split(":");
         const fireWall = dayWall + (+hm[0]) * HOUR_MS + (+hm[1]) * MIN_MS;
@@ -1107,6 +1115,7 @@ function runMuellReminder(ctx, people, now, status) {
     const info = require(`${__hooks}/pinn-aufgaben.js`).muellInfo(ctx.familyId, ctx.data);
     let changed = false;
     due.forEach(p => {
+        const todayIso = own[p.userId].todayIso;
         if (!info.namen.length) { status.muell[p.userId] = todayIso; changed = true; return; }
         const member = p.memberId ? ctx.members.find(m => m.id === p.memberId) : null;
         const isChild = !!(member && (isChildMember(member) || member.childLock));
@@ -1132,7 +1141,7 @@ function runMuellReminder(ctx, people, now, status) {
             text: lines.join("\n"),
             url: mine.length ? "/?aufgabe=" + encodeURIComponent(mine[0].id) : "/?termin=" + info.morgen,
             tag: "muell-" + info.morgen,
-            bis: wallToUtc(morgenWall + 12 * HOUR_MS), // in the bell until the collection
+            bis: wallToUtc(morgenWall + 12 * HOUR_MS, own[p.userId].clk), // in the bell until the collection
         });
         if (r.sent > 0 || !r.geraete) {
             status.muell[p.userId] = todayIso;
@@ -1144,7 +1153,7 @@ function runMuellReminder(ctx, people, now, status) {
     return changed;
 }
 
-function buildDigest(person, ctx, events, taskCal, dayWall, hour) {
+function buildDigest(person, ctx, events, taskCal, dayWall, hour, clk) {
     const dayEnd = dayWall + DAY_MS - 1;
     const iso = wallIsoDate(dayWall);
     const termine = [], aufgaben = [];
@@ -1215,7 +1224,7 @@ function buildDigest(person, ctx, events, taskCal, dayWall, hour) {
         text: lines.join("\n"),
         url: "/?termin=" + iso,
         tag: "tagesuebersicht-" + iso,
-        bis: wallToUtc(dayWall + DAY_MS), // in the bell only until midnight
+        bis: wallToUtc(dayWall + DAY_MS, clk), // in the bell only until midnight
     };
 }
 
@@ -1284,7 +1293,7 @@ function isChildMember(m) {
     if (m.kid && m.kid.enabled) return true;
     return /^(kind|tochter|sohn)$/i.test(String(m.role || "").trim());
 }
-function todayWallIso() { return wallIsoDate(utcToWall(Date.now())); }
+function todayWallIso(familyId) { return wallIsoDate(utcToWall(Date.now(), familyId ? zeitModul().clockOfFamily(familyId) : null)); }
 
 // Profiles of the family with a registered device - lightweight: without loading the large family data,
 // the members are passed along.
@@ -1336,7 +1345,7 @@ function markSent(key) {
 function sendChildProgress(familyId, members, child, info) {
     const result = { sent: 0, empfaenger: 0 };
     if (!engineSupportsPush() || !child) return result;
-    const today = todayWallIso();
+    const today = todayWallIso(familyId);
     const people = subscribedPeople(familyId, members)
         .filter(p => p.memberId !== child.id && (!info.excludeUserId || p.userId !== info.excludeUserId));
     const wantAll = !!info.allDone && !alreadySent(info.allKey);
@@ -1386,7 +1395,7 @@ function notifyTaskDone(ctx) {
     try {
         if (!engineSupportsPush() || !ctx.familyId) return;
         const members = ctx.members || [];
-        const today = todayWallIso();
+        const today = todayWallIso(ctx.familyId);
 
         (ctx.children || []).forEach(c => {
             const child = members.find(m => m.id === c.memberId);
@@ -1437,7 +1446,7 @@ function notifyKidPage(familyId, members, body) {
     if (!child.kid || !child.kid.enabled) return { ok: false, grund: "Kinderseite für " + child.name + " nicht aktiviert" };
     const task = (child.kid.tasks || []).find(t => t && t.id === String(body.taskId || ""));
     if (!task) return { ok: false, grund: "Aufgabe nicht (mehr) auf der Kinderseite" };
-    const today = todayWallIso();
+    const today = todayWallIso(familyId);
     const period = KID_PERIOD_LABELS[body.period] ? body.period : "";
     const r = sendChildProgress(familyId, members, child, {
         title: task.title, emoji: task.emoji, taskKey: task.id, allDone: !!body.allDone,

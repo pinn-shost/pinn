@@ -143,23 +143,13 @@ function writeState(s) {
 // ---------------------------------------------------------------------------------------------
 function str(v, max) { return String(v == null ? "" : v).slice(0, max || 200); }
 function cleanId(v) { return String(v || "").replace(/[^A-Za-z0-9_:\-]/g, "").slice(0, 40); }
-function todayBerlin() {
-    // rough day boundary in Central Europe, but sufficient for "expired?"
-    const d = new Date(Date.now() + berlinOffset(Date.now()));
-    const p = n => (n < 10 ? "0" : "") + n;
-    return d.getUTCFullYear() + "-" + p(d.getUTCMonth() + 1) + "-" + p(d.getUTCDate());
+// Today's date on the clock of the family (pinn-zeit.js: time zone of a family admin; Europe/Berlin without a stored zone).
+// Without a family ID (server-wide upkeep) Europe/Berlin.
+function todayOf(familyId) {
+    const Z = require(`${__hooks}/pinn-zeit.js`);
+    return Z.wallOf(familyId ? Z.clockOfFamily(familyId) : Z.berlinClock()).iso;
 }
-function lastSundayUtc(year, month) {
-    const d = new Date(Date.UTC(year, month + 1, 0));
-    return d.getUTCDate() - d.getUTCDay();
-}
-function berlinOffset(utcMs) {
-    const y = new Date(utcMs).getUTCFullYear();
-    const start = Date.UTC(y, 2, lastSundayUtc(y, 2), 1);
-    const end = Date.UTC(y, 9, lastSundayUtc(y, 9), 1);
-    return (utcMs >= start && utcMs < end) ? 2 * HOUR_MS : HOUR_MS;
-}
-function berlinHour() { return new Date(Date.now() + berlinOffset(Date.now())).getUTCHours(); }
+function berlinHour() { const Z = require(`${__hooks}/pinn-zeit.js`); return Z.wallOf(Z.berlinClock()).hour; }
 
 function isArchived(n, today) {
     if (!n) return true;
@@ -220,7 +210,7 @@ function afterSave(familyId, data, actorUserId) {
     const fam = state.families[familyId] || { seen: {}, reminders: [], sent: {} };
     if (!fam.seen || typeof fam.seen !== "object") fam.seen = {};
     const now = Date.now();
-    const today = todayBerlin();
+    const today = todayOf(familyId);
     // The very first time (switch-over) take over everything existing as known - only freshly
     // created things (last 2 minutes) are still reported.
     const recentLimit = first ? now - 2 * MIN_MS : now - NEW_MAX_AGE;
@@ -407,7 +397,7 @@ function sendForFamily(familyId, due, sentReminders) {
     const notes = Array.isArray(data.pinboard) ? data.pinboard : [];
     const byId = {};
     notes.forEach(n => { if (n && n.id) byId[cleanId(n.id)] = n; });
-    const today = todayBerlin();
+    const today = todayOf(familyId);
     sentReminders[familyId] = sentReminders[familyId] || [];
 
     if (!push.engineSupportsPush()) {
@@ -505,7 +495,7 @@ function sendForFamily(familyId, due, sentReminders) {
 // Once a day: delete photos without a note (older than 1 day, so that offline uploads have time)
 // ---------------------------------------------------------------------------------------------
 function dailyCleanup(state) {
-    const today = todayBerlin();
+    const today = todayOf("");
     if (state.cleanupDay === today || berlinHour() < 3) return;
     const fresh = readState();
     fresh.cleanupDay = today;

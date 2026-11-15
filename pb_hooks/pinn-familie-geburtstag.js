@@ -14,10 +14,12 @@
 // Gentle:
 //   - The schedule runs every 5 minutes. It reads the (large) family data at most once a day per
 //     family - and only anew if the family data has changed since then (change time).
-//   - Marker in pb_data/pinn_familie_geburtstag.json, older days are discarded.
+//   - Marker in pb_data/pinn_familie_geburtstag.json, entries older than two days are discarded.
 //   - After 9 p.m. (e.g. server was off) no more message for the day.
 //
-// Time: like the other reminders in Europe/Berlin (summer/winter time is calculated itself).
+// Time: since 1.150.3 the day, the hour and the send time follow the time zone of the receiving profile
+// (pinn-zeit.js; Europe/Berlin without a stored zone). The markers contain the local date, so profiles of one
+// family in different time zones never block each other.
 
 const STATUS_FILE = "/pb_data/pinn_familie_geburtstag.json";
 const SEND_UNTIL_HOUR = 21;
@@ -26,23 +28,9 @@ const DEFAULT_TIME = "07:00";
 module.exports = { runCron, stateFor, markSeen, birthdaysToday };
 
 // ---------------------------------------------------------------------------------------------
-// Time of day (Europe/Berlin)
+// Time of day (clock of the receiving profile, pinn-zeit.js)
 // ---------------------------------------------------------------------------------------------
-function pad2(n) { return (n < 10 ? "0" : "") + n; }
-function lastSundayUtc(year, month) {
-    const last = new Date(Date.UTC(year, month + 1, 0));
-    return Date.UTC(year, month, last.getUTCDate() - last.getUTCDay(), 1, 0, 0);
-}
-function tzOffsetMs(utcMs) {
-    const y = new Date(utcMs).getUTCFullYear();
-    return (utcMs >= lastSundayUtc(y, 2) && utcMs < lastSundayUtc(y, 9)) ? 7200000 : 3600000;
-}
-function wallNow() {
-    const now = Date.now();
-    const d = new Date(now + tzOffsetMs(now));
-    const y = d.getUTCFullYear(), m = d.getUTCMonth() + 1, day = d.getUTCDate();
-    return { y: y, m: m, d: day, hour: d.getUTCHours(), min: d.getUTCMinutes(), iso: y + "-" + pad2(m) + "-" + pad2(day) };
-}
+function wallNow(clock) { return require(`${__hooks}/pinn-zeit.js`).wallOf(clock); }
 function isLeap(y) { return (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0; }
 function toMin(hhmm) {
     const m = /^(\d{1,2}):(\d{2})$/.exec(String(hhmm || ""));
@@ -52,16 +40,22 @@ function toMin(hhmm) {
 // ---------------------------------------------------------------------------------------------
 // Markers in pb_data
 // ---------------------------------------------------------------------------------------------
-function readStatus(today) {
+function readStatus() {
     let o = null;
     try {
         const calendarSync = require(`${__hooks}/calendar-sync.js`);
         o = JSON.parse(calendarSync.bytesToText($os.readFile(STATUS_FILE)));
     } catch (e) { o = null; }
-    if (!o || typeof o !== "object" || o.datum !== today) o = { datum: today, familien: {}, gesendet: {}, gesehen: {} };
+    if (!o || typeof o !== "object") o = { familien: {}, gesendet: {}, gesehen: {} };
     if (!o.familien || typeof o.familien !== "object") o.familien = {};
     if (!o.gesendet || typeof o.gesendet !== "object") o.gesendet = {};
     if (!o.gesehen || typeof o.gesehen !== "object") o.gesehen = {};
+    // entries older than two days are dropped (keys contain the local date, values the time of writing)
+    const limit = Date.now() - 2 * 86400000;
+    ["gesendet", "gesehen"].forEach(k => {
+        Object.keys(o[k]).forEach(key => { if (!(Number(o[k][key]) > limit)) delete o[k][key]; });
+    });
+    Object.keys(o.familien).forEach(key => { if (!(Number(o.familien[key] && o.familien[key].at) > limit)) delete o.familien[key]; });
     return o;
 }
 function writeStatus(s) {
@@ -98,12 +92,13 @@ function birthdaysFromData(data, w) {
 function birthdaysToday(familyId, status, w) {
     const lib = require(`${__hooks}/pinn-benutzer.js`);
     const stamp = lib.familyDataStamp(familyId);
-    const c = status.familien[familyId];
+    const ck = familyId + "|" + w.iso;   // the list depends on the local date
+    const c = status.familien[ck];
     if (c && c.stamp === stamp && Array.isArray(c.liste)) return c.liste;
     let data = {};
     try { data = lib.loadFamilyDataFor(familyId) || {}; } catch (e) { data = {}; }
     const liste = birthdaysFromData(data, w);
-    status.familien[familyId] = { stamp: stamp, liste: liste };
+    status.familien[ck] = { stamp: stamp, liste: liste, at: Date.now() };
     status.dirty = true;
     return liste;
 }
@@ -191,51 +186,45 @@ function sendTime(push, u) {
 }
 
 function runCron() {
-    const w = wallNow();
-    if (w.hour >= SEND_UNTIL_HOUR) return { skipped: "Uhrzeit" };
-    const nowMin = w.hour * 60 + w.min;
-    if (nowMin < 4 * 60) return { skipped: "zu früh" };
-    const status = readStatus(w.iso);
-    const isNewDay = !status.geprueft;
+    const Z = require(`${__hooks}/pinn-zeit.js`);
+    const status = readStatus();
     const users = allUsers().filter(u => {
         const r = u.getString("rolle");
         return r !== "hauptadmin" && r !== "gast";
     });
-    const byFamily = {};
-    users.forEach(u => {
-        const f = u.getString("familie");
-        if (!f) return;
-        (byFamily[f] = byFamily[f] || []).push(u);
-    });
     let push = null;
     let sent = 0;
-    Object.keys(byFamily).forEach(familyId => {
+    users.forEach(u => {
+        const familyId = u.getString("familie");
+        if (!familyId) return;
+        // wall clock of the receiving profile (its own time zone)
+        const w = wallNow(Z.clockOfUser(u.id, familyId));
+        if (w.hour >= SEND_UNTIL_HOUR) return;
+        const nowMin = w.hour * 60 + w.min;
+        if (nowMin < 4 * 60) return;
         const liste = birthdaysToday(familyId, status, w);
         if (!liste.length) return;
-        byFamily[familyId].forEach(u => {
-            const me = u.getString("mitglied");
-            const others = liste.filter(b => b.id !== me); // the birthday child themselves gets nothing
-            if (!others.length) return;
-            const key = u.id + "|" + others.map(b => b.id).sort().join(",");
-            if (status.gesendet[key]) return;
-            if (!push) push = require(`${__hooks}/pinn-push.js`);
-            if (nowMin < sendTime(push, u)) return;
-            // remember first: even on an error along the way, the message never comes twice
-            status.gesendet[key] = Date.now();
-            status.dirty = true;
-            const msg = message(langOf(u), others);
-            try {
-                sent += push.notifyUser(u.id, {
-                    titel: msg.titel, text: msg.text,
-                    url: "/?geburtstag=" + encodeURIComponent(others[0].id),
-                    tag: "geburtstag-" + w.iso, urgency: "normal",
-                }) || 0;
-            } catch (e) {
-                console.log("[Geburtstag] Push: " + e.message);
-            }
-        });
+        const me = u.getString("mitglied");
+        const others = liste.filter(b => b.id !== me); // the birthday child themselves gets nothing
+        if (!others.length) return;
+        const key = w.iso + "|" + u.id + "|" + others.map(b => b.id).sort().join(",");
+        if (status.gesendet[key]) return;
+        if (!push) push = require(`${__hooks}/pinn-push.js`);
+        if (nowMin < sendTime(push, u)) return;
+        // remember first: even on an error along the way, the message never comes twice
+        status.gesendet[key] = Date.now();
+        status.dirty = true;
+        const msg = message(langOf(u), others);
+        try {
+            sent += push.notifyUser(u.id, {
+                titel: msg.titel, text: msg.text,
+                url: "/?geburtstag=" + encodeURIComponent(others[0].id),
+                tag: "geburtstag-" + w.iso, urgency: "normal",
+            }) || 0;
+        } catch (e) {
+            console.log("[Geburtstag] Push: " + e.message);
+        }
     });
-    if (isNewDay) { status.geprueft = true; status.dirty = true; }
     if (status.dirty) { delete status.dirty; writeStatus(status); }
     if (sent) console.log("[Geburtstag] " + sent + " Push-Nachricht(en) zum Geburtstag verschickt.");
     return { gesendet: sent };
@@ -245,10 +234,11 @@ function runCron() {
 // For the app: birthday animation only once per member and day (on all devices)
 // ---------------------------------------------------------------------------------------------
 function stateFor(user) {
-    const w = wallNow();
-    const s = readStatus(w.iso);
     const fam = user.getString("familie");
-    const gesehen = Object.keys(s.gesehen).filter(k => k.indexOf(fam + "|") === 0).map(k => k.slice(fam.length + 1));
+    const w = wallNow(require(`${__hooks}/pinn-zeit.js`).clockOfUser(user.id, fam));
+    const s = readStatus();
+    const prefix = fam + "|" + w.iso + "|";
+    const gesehen = Object.keys(s.gesehen).filter(k => k.indexOf(prefix) === 0).map(k => k.slice(prefix.length));
     return { heute: w.iso, gesehen: gesehen };
 }
 function markSeen(user, memberId) {
@@ -256,9 +246,9 @@ function markSeen(user, memberId) {
     if (!id || id.length > 100 || id.indexOf("|") >= 0) throw new Error("Ungültiges Mitglied.");
     const fam = user.getString("familie");
     if (!fam) throw new Error("Keine Familie.");
-    const w = wallNow();
-    const s = readStatus(w.iso);
-    s.gesehen[fam + "|" + id] = Date.now();
+    const w = wallNow(require(`${__hooks}/pinn-zeit.js`).clockOfUser(user.id, fam));
+    const s = readStatus();
+    s.gesehen[fam + "|" + w.iso + "|" + id] = Date.now();
     writeStatus(s);
     return stateFor(user);
 }

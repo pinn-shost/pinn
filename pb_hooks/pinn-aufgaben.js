@@ -56,16 +56,15 @@ const FAMILY_CACHE_KEY = "pinnAufgabenFamilie:"; // + family ID
 const LOCK_KEY = "pinnAufgabenLock";
 const VERLAUF = "haushalt_verlauf";
 
-// --- Time (Central Europe, fixed EU daylight saving rule - independent of the container's time zone) ---
-function lastSundayUtc(year, month) {
-    const last = new Date(Date.UTC(year, month + 1, 0));
-    return Date.UTC(year, month, last.getUTCDate() - last.getUTCDay(), 1, 0, 0);
+// --- Time (clock of the family, pinn-zeit.js: time zone of a family admin; Europe/Berlin without a stored zone) ---
+// "Wall time" = UTC milliseconds shifted by the offset of the family's zone, so getUTC...() gives the local date and time.
+// Without a family ID (server-wide upkeep) Europe/Berlin.
+function famClock(familyId) {
+    const Z = require(`${__hooks}/pinn-zeit.js`);
+    return familyId ? Z.clockOfFamily(familyId) : Z.berlinClock();
 }
-function tzOffsetMs(utcMs) {
-    const y = new Date(utcMs).getUTCFullYear();
-    return (utcMs >= lastSundayUtc(y, 2) && utcMs < lastSundayUtc(y, 9)) ? 2 * HOUR_MS : HOUR_MS;
-}
-function wallNow() { const n = Date.now(); return n + tzOffsetMs(n); }
+function tzOffsetMs(utcMs, familyId) { return famClock(familyId).offsetMs(utcMs); }
+function wallNow(familyId) { const n = Date.now(); return n + tzOffsetMs(n, familyId); }
 function pad2(n) { return (n < 10 ? "0" : "") + n; }
 function wallIso(wall) { const d = new Date(wall); return d.getUTCFullYear() + "-" + pad2(d.getUTCMonth() + 1) + "-" + pad2(d.getUTCDate()); }
 function isoToWall(iso) { const p = String(iso).split("-"); return Date.UTC(+p[0], +p[1] - 1, +p[2]); }
@@ -440,7 +439,7 @@ function notifyDoneDelayed(entry) {
 
 // Are all tasks of this person that are due so far completed? (just one database query)
 function allDoneUntilNow(familyId, assigned) {
-    const nowWall = wallNow();
+    const nowWall = wallNow(familyId);
     const todayIso = wallIso(nowWall);
     const d = new Date(nowWall);
     const hm = pad2(d.getUTCHours()) + ":" + pad2(d.getUTCMinutes());
@@ -497,7 +496,7 @@ function deleteTodayHouseholdTask(familyId, baseTitle) {
     const key = String(baseTitle || "");
     if (!key || !familyId) return false;
     let recs = [];
-    try { recs = $app.findRecordsByFilter(AUFGABEN, "familie = {:f} && haushalt = {:k} && faellig = {:d}", "", 0, 0, { f: familyId, k: key, d: wallIso(wallNow()) }); } catch (e) { recs = []; }
+    try { recs = $app.findRecordsByFilter(AUFGABEN, "familie = {:f} && haushalt = {:k} && faellig = {:d}", "", 0, 0, { f: familyId, k: key, d: wallIso(wallNow(familyId)) }); } catch (e) { recs = []; }
     recs.forEach(r => { try { verlaufDropOpen(familyId, r.id); $app.delete(r); } catch (e) { /* ignore */ } });
     return recs.length > 0;
 }
@@ -639,7 +638,7 @@ function lastAssignee(familyId, ruleId) {
 function doneCounts(familyId, days) {
     const out = {};
     if (!verlaufOk()) return out;
-    const from = wallIso(wallNow() - days * DAY_MS);
+    const from = wallIso(wallNow(familyId) - days * DAY_MS);
     let recs = [];
     try { recs = $app.findRecordsByFilter(VERLAUF, "familie = {:f} && status = 'erledigt' && faellig >= {:d}", "", 0, 0, { f: familyId, d: from }); } catch (e) { recs = []; }
     recs.forEach(r => { const id = r.getString("erledigt_von"); if (id) out[id] = (out[id] || 0) + 1; });
@@ -715,7 +714,7 @@ function processRule(byKey, rule, todayIso, nowWall, col, familyId, members) {
 
 function runHousehold(familyId, data) {
     if (!familyId) return 0;
-    const nowWall = wallNow();
+    const nowWall = wallNow(familyId);
     const todayIso = wallIso(nowWall);
     const tomorrowIso = wallIso(nowWall + DAY_MS);
     const weekday = WEEKDAY_IDS[new Date(nowWall).getUTCDay()];
@@ -813,7 +812,7 @@ function closePassedBinTasks(familyId, data, byKey, nowWall, dueKeys) {
 // For the reminder on the day before (pinn-push.js): what is collected tomorrow and which waste tasks are
 // due today? -> { morgen, namen: [..], aufgaben: [{ id, titel, typ, notizen, erledigt }] }
 function muellInfo(familyId, data) {
-    const nowWall = wallNow();
+    const nowWall = wallNow(familyId);
     const todayIso = wallIso(nowWall);
     const morgen = wallIso(nowWall + DAY_MS);
     const p = pickupsFor(morgen, familyId);
@@ -866,20 +865,20 @@ function isoAddMonths(iso, n) {
     return y + "-" + pad2(mo + 1) + "-" + pad2(Math.min(p[2], dim));
 }
 function isoAddDays(iso, n) { return wallIso(isoToWall(iso) + n * DAY_MS); }
-function isoOfStamp(s) {
+function isoOfStamp(s, familyId) {
     const t = Date.parse(String(s || "").replace(" ", "T"));
-    return isFinite(t) ? wallIso(t + tzOffsetMs(t)) : "";
+    return isFinite(t) ? wallIso(t + tzOffsetMs(t, familyId)) : "";
 }
 // Last completion: from the history (completed = day of ticking off, skipped = due date),
 // from still existing completed tasks and from "last", which the app maintains
 function maintLastDone(familyId, item, list) {
     let best = isIsoDate(item.last) ? item.last : "";
     const take = d => { if (isIsoDate(d) && d > best) best = d; };
-    (list || []).forEach(r => { if (r.getBool("erledigt")) take(isoOfStamp(r.getString("erledigt_am")) || r.getString("faellig")); });
+    (list || []).forEach(r => { if (r.getBool("erledigt")) take(isoOfStamp(r.getString("erledigt_am"), familyId) || r.getString("faellig")); });
     if (verlaufOk()) {
         try {
             const recs = $app.findRecordsByFilter(VERLAUF, "familie = {:f} && regel = {:r} && (status = 'erledigt' || status = 'uebersprungen')", "-updated", 3, 0, { f: familyId, r: "w:" + item.id });
-            recs.forEach(v => take(v.getString("status") === "erledigt" ? (isoOfStamp(v.getString("updated")) || v.getString("faellig")) : v.getString("faellig")));
+            recs.forEach(v => take(v.getString("status") === "erledigt" ? (isoOfStamp(v.getString("updated"), familyId) || v.getString("faellig")) : v.getString("faellig")));
         } catch (e) { /* ignore */ }
     }
     return best;
@@ -938,7 +937,7 @@ function processMaintenance(byKey, item, todayIso, col, familyId, members) {
 function cleanupDone(familyId, days) {
     const d = (days === 0 || days === 1 || days === 2) ? days : 2;
     const cutoff = new Date(Date.now() - d * DAY_MS).toISOString();
-    const todayIso = wallIso(wallNow());
+    const todayIso = wallIso(wallNow(familyId));
     let recs = [];
     try { recs = $app.findRecordsByFilter(AUFGABEN, "familie = {:f} && erledigt = true && erledigt_am != '' && erledigt_am <= {:c}", "", 500, 0, { f: familyId, c: cutoff }); } catch (e) { recs = []; }
     let count = 0;
@@ -1014,7 +1013,7 @@ function statistik(familyId, tage) {
     const days = [30, 90, 365].indexOf(Number(tage)) !== -1 ? Number(tage) : 30;
     const out = { tage: days, mitglieder: {}, regeln: [], bereit: verlaufOk() };
     if (!familyId || !out.bereit) return out;
-    const from = wallIso(wallNow() - days * DAY_MS);
+    const from = wallIso(wallNow(familyId) - days * DAY_MS);
     let recs = [];
     try { recs = $app.findRecordsByFilter(VERLAUF, "familie = {:f} && faellig >= {:d}", "", 0, 0, { f: familyId, d: from }); } catch (e) { recs = []; }
     const per = out.mitglieder;

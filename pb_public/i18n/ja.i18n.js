@@ -2495,6 +2495,7 @@ window.PINN_I18N && window.PINN_I18N.keys("ja", {
   "gh.remind.handsOn": "手洗いをお知らせ",
   "gh.remind.hint": "リマインダーは本人の端末にプッシュ通知で届きます。その端末で通知をオンにしておく必要があります。時刻は端末のタイムゾーンで扱われます（夏時間・冬時間を含む）。",
   "gh.remind.medsOn": "服用時刻に通知",
+  "gh.remind.parents": "保護者にも通知する（子どもの名前つき）",
   "gh.remind.times": "時刻",
   "gh.remind.to": "終了",
   "gh.time": "時刻",
