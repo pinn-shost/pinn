@@ -133,6 +133,14 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski und 🇺🇦 Українська**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.150.4
+
+**Benachrichtigungen bleiben nach Updates an**
+
+- **Push übersteht Updates.** Konnte der Server seinen Push-Schlüssel während eines Updates kurz nicht lesen, legte er einen neuen an – und alle Geräte waren von den Benachrichtigungen abgemeldet. Der Schlüssel wird jetzt nie ersetzt, solange er vorhanden ist, sicher gespeichert und zusätzlich als Sicherungskopie aufbewahrt.
+- **Ein Tipp genügt.** Verliert ein Gerät seine Anmeldung trotzdem (z. B. weil iOS sie zurückgesetzt hat), meldet pinn. es von selbst wieder an – oder zeigt unten „Wieder einschalten“, ohne Umweg über die Einstellungen.
+- Geändert: `pb_hooks/pinn-push.js`, `pb_hooks/push.pb.js`, `pb_hooks/pinn-sitzungen.js`, `js/mitteilungen.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
+
 ## Neu in 1.150.3
 
 **Alle Erinnerungen nach deiner Uhr · Eltern erinnern mit**
@@ -245,15 +253,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Der Weihnachtsmann** fliegt nur noch halb so oft (alle 10–18 Minuten, an Heiligabend alle 4–6).
 - Geändert: `js/winterzeit.js`, `css/winterzeit.css`, `src/`, `index.html`, alle READMEs. Kein Server-Teil.
 
-## Neu in 1.146.0
-
-**Schnee passend zu jeder Überschrift, Update-Uhrzeit nach Region**
-
-- **Schnee nach Maß.** pinn. misst jeden Buchstaben einer Überschrift in der echten Schrift und legt den Schnee genau darauf – auf hohen Buchstaben höher, auf kleinen tiefer, mit Klumpen und hier und da einem Tropfen. Lücken zwischen Wörtern bleiben frei, Emoji bekommen keinen Schnee, nichts wird gestreckt, und es klappt in jeder Sprache und Schrift.
-- **Automatische Updates nach Region.** Die eingestellte Uhrzeit gilt jetzt in der Zeitzone des Geräts, auf dem sie gespeichert wird (Sommer- und Winterzeit inklusive), nicht mehr fest in deutscher Zeit. Die Einstellungen zeigen, welche Zeitzone gilt.
-- **Gesperrtes Dashboard lädt neue Versionen selbst.** Ein iPad mit gesperrtem Familien-Dashboard (oder die Anmeldung) lädt etwa eine Minute nach einem Update neu, wenn gerade niemand tippt. Läuft zur Update-Zeit eine Sicherung, zeigt die App „wartet“.
-- Geändert: `js/winterzeit.js`, `css/winterzeit.css`, `js/versionspruefung.js`, `js/sicherungen.js`, `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`, `i18n/`, `src/`, `index.html`, alle READMEs. Server-Teil: Hooks einspielen, PocketBase startet neu.
-
 ## So funktioniert’s
 
 ```mermaid
@@ -282,7 +281,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.150.3` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.150.4` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

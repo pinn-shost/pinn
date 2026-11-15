@@ -456,9 +456,18 @@ function renewSubscription(oldEndpoint, newEndpoint) {
 }
 
 function randHex() { return $security.randomStringWithAlphabet(64, HEX); }
+// Reads a text file. Works without other modules, so that a module being replaced during an update
+// (pinn-setup.sh moves files while PocketBase keeps running) can never make the read fail.
 function readTextFile(path) {
+    const raw = $os.readFile(path);
+    try {
+        if (typeof toString === "function") {
+            const t = toString(raw);
+            if (typeof t === "string" && t.indexOf("[object") !== 0) return t;
+        }
+    } catch (e) { /* continue with the module variant */ }
     const calendarSync = require(`${__hooks}/calendar-sync.js`);
-    return calendarSync.bytesToText($os.readFile(path));
+    return calendarSync.bytesToText(raw);
 }
 
 function engineSupportsPush() {
@@ -467,15 +476,84 @@ function engineSupportsPush() {
 
 // VAPID key pair: generated randomly on first need and stored in pb_data (not in
 // the database, not in the code). Whoever deletes the file has to activate push again on all devices.
-function loadVapid(createIfMissing) {
+//
+// Since 1.150.4 the key is protected, because a new key signs out every device at once (the push
+// services reject the old subscriptions, the app shows "not active" and push has to be switched on
+// again on every phone - this happened after updates):
+//  - a NEW key is only made when neither the key file nor its backup copy exists. If a file exists but
+//    cannot be read right now (e.g. while an update replaces files), nothing is overwritten - the next
+//    attempt reads it again;
+//  - every write goes to a temporary file first and is then renamed (never a half-written file);
+//  - a backup copy (VAPID_BACKUP) is kept next to it and restores a damaged key file;
+//  - the key is kept in memory once it was read and checked;
+//  - a newly made key while devices are registered is reported in the error log.
+const VAPID_BACKUP = "/pb_data/pinn_push_vapid.sicherung.json";
+const VAPID_STORE_KEY = "pinnVapidSchluessel";
+function fileExists(path) {
+    try { $os.stat(path); return true; } catch (e) { return false; }
+}
+function writeFileSafely(path, text) {
+    const tmp = path + ".neu";
+    $os.writeFile(tmp, text, 384);
+    $os.rename(tmp, path);
+}
+// Complete and consistent key: the public key must match the private one
+function vapidValid(v) {
+    if (!v || typeof v !== "object") return false;
+    if (!/^[0-9a-f]{64}$/.test(String(v.privateHex || "")) || !v.publicKey) return false;
+    try { return b64url(publicKeyBytes(big("0x" + v.privateHex))) === v.publicKey; } catch (e) { return false; }
+}
+function readVapidFile(path) {
     let v = null;
-    try { v = JSON.parse(readTextFile(VAPID_FILE)); } catch (e) { v = null; }
-    if (v && v.privateHex && v.publicKey) return v;
+    try { v = JSON.parse(readTextFile(path)); } catch (e) { v = null; }
+    return vapidValid(v) ? { privateHex: v.privateHex, publicKey: v.publicKey, subject: String(v.subject || "") } : null;
+}
+function writeVapid(v) {
+    const text = JSON.stringify(v);
+    writeFileSafely(VAPID_FILE, text);
+    try { writeFileSafely(VAPID_BACKUP, text); } catch (e) { console.log("[Push] Sicherung des Schlüssels nicht speicherbar: " + e.message); }
+    try { $app.store().set(VAPID_STORE_KEY, text); } catch (e) { /* ignore */ }
+}
+function loadVapid(createIfMissing) {
+    // 1. already read and checked since the start
+    try {
+        const t = $app.store().get(VAPID_STORE_KEY);
+        if (t) {
+            const v = JSON.parse(String(t));
+            if (v && v.privateHex && v.publicKey) return v;
+        }
+    } catch (e) { /* read the file */ }
+    // 2. key file (a second attempt in case a write was just going on)
+    let v = readVapidFile(VAPID_FILE) || readVapidFile(VAPID_FILE);
+    if (v) {
+        try { $app.store().set(VAPID_STORE_KEY, JSON.stringify(v)); } catch (e) { /* ignore */ }
+        if (!readVapidFile(VAPID_BACKUP)) {
+            try { writeFileSafely(VAPID_BACKUP, JSON.stringify(v)); } catch (e) { /* next time */ }
+        }
+        return v;
+    }
+    // 3. backup copy: restores a damaged or missing key file
+    v = readVapidFile(VAPID_BACKUP);
+    if (v) {
+        try { writeVapid(v); } catch (e) { try { $app.store().set(VAPID_STORE_KEY, JSON.stringify(v)); } catch (e2) { /* ignore */ } }
+        console.log("[Push] Schlüsseldatei aus der Sicherung wiederhergestellt.");
+        plog("warnung", "push", "Push-Schlüssel war nicht lesbar und wurde aus der Sicherung wiederhergestellt – alle Geräte bleiben angemeldet.");
+        return v;
+    }
+    // 4. a file exists but cannot be read: never replace it (that would sign out every device)
+    if (fileExists(VAPID_FILE) || fileExists(VAPID_BACKUP)) {
+        console.log("[Push] Schlüsseldatei vorhanden, aber gerade nicht lesbar - wird nicht ersetzt.");
+        return null;
+    }
     if (!createIfMissing) return null;
+    // 5. first start: make a new key pair
     const d = randomScalar(randHex());
     v = { privateHex: hex64(d), publicKey: b64url(publicKeyBytes(d)), subject: "" };
-    $os.writeFile(VAPID_FILE, JSON.stringify(v));
+    writeVapid(v);
     console.log("[Push] Neues VAPID-Schlüsselpaar erzeugt.");
+    let abos = 0;
+    try { abos = $app.findAllRecords(PUSH_ABOS).length; } catch (e) { abos = 0; }
+    if (abos) plog("warnung", "push", "Push: Ein neuer Schlüssel wurde erzeugt, obwohl " + abos + " Gerät(e) angemeldet waren – auf diesen Geräten Benachrichtigungen einmal neu einschalten.");
     return v;
 }
 // Apple (web.push.apple.com) rejects the wake-up call with "403 BadJwtToken" if the sender (sub)
@@ -508,9 +586,9 @@ function subjectFromOrigin(origin) {
 function saveVapidSubject(subject) {
     if (!isUsableSubject(subject)) return;
     const v = loadVapid(true);
-    if (v.subject === subject) return;
+    if (!v || v.subject === subject) return;
     v.subject = subject;
-    $os.writeFile(VAPID_FILE, JSON.stringify(v));
+    writeVapid(v);
     console.log("[Push] Absender für Push-Dienste: " + subject);
 }
 // Remembers the public address of pinn. from an app request (Origin or proxy header)
@@ -540,6 +618,7 @@ function selfTest() {
     if (!engineSupportsPush()) return { ok: false, message: "Die JavaScript-Umgebung von PocketBase unterstützt kein BigInt - Push ist mit dieser PocketBase-Version nicht möglich." };
     try {
         const v = loadVapid(true);
+        if (!v) return { ok: false, message: "VAPID-Schlüsseldatei ist gerade nicht lesbar (" + VAPID_FILE + ") – bitte später erneut versuchen." };
         const d = big("0x" + v.privateHex);
         const pubBytes = publicKeyBytes(d);
         if (b64url(pubBytes) !== v.publicKey) return { ok: false, message: "VAPID-Schlüsseldatei ist beschädigt (" + VAPID_FILE + " löschen, dann wird neu erzeugt)." };
@@ -558,6 +637,7 @@ function vapidAuthHeader(endpoint) {
     const aud = m ? m[1] : endpoint;
     const store = $app.store();
     const v = loadVapid(true);
+    if (!v) throw new Error("Push-Schlüssel gerade nicht lesbar");
     const sub = vapidSubject(v);
     const cacheKey = "pinnVapidJwt:" + aud + "|" + sub + "|" + v.publicKey;
     const nowSec = Math.floor(Date.now() / 1000);
@@ -651,6 +731,9 @@ function notifyUserDetailed(userId, msg) {
                 result.fehler.push("Gerät ist beim " + pushServiceName(endpoint) + "-Dienst nicht mehr angemeldet - bitte neu aktivieren");
                 $app.delete(abo);
                 try { $app.delete(rec); } catch (e2) { /* ignore */ }
+                // The device's session no longer points to the dead address (otherwise the nightly clean-up
+                // could take the new address of the same device for a leftover and remove it)
+                try { require(`${__hooks}/pinn-sitzungen.js`).vergissPush(endpoint); } catch (e2) { /* ignore */ }
             } else if (status < 200 || status >= 300) {
                 const text = describeFailure(endpoint, status, r.body);
                 console.log("[Push] Versand fehlgeschlagen: " + text + " | Antwort: " + r.body);

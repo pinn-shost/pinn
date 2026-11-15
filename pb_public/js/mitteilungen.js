@@ -2,7 +2,7 @@
    Part of the app code that used to be a single block in index.html. Classic script, no build step:
    it is loaded right after the inline script of index.html and before the other files in js/
    (the load order is listed at the bottom of index.html and in pinn-setup.sh).
-   Contents: personal push notifications per profile: state and wish on the device (pushWanted, setPushWanted), device checks (pushSupported, isStandaloneApp, isAppleMobile, isAndroidDevice), offering the app install on Android, service worker and subscription (getPushRegistration, currentPushSubscription, sendSubscriptionToServer), enabling/disabling (enablePushOnThisDevice, disablePushOnThisDevice), automatic re-registration (syncPushSubscription, syncPushSubscriptionSoon) and Settings → Notifications (renderPushSettings with test and options). Server side: pb_hooks/pinn-push.js. The file is deliberately not called push.js: browser ad blockers and DNS filters often block that file name. */
+   Contents: personal push notifications per profile: state and wish on the device (pushWanted, setPushWanted), device checks (pushSupported, isStandaloneApp, isAppleMobile, isAndroidDevice), offering the app install on Android, service worker and subscription (getPushRegistration, currentPushSubscription, sendSubscriptionToServer), enabling/disabling (enablePushOnThisDevice, disablePushOnThisDevice), automatic re-registration (syncPushSubscription, syncPushSubscriptionSoon), the one-tap offer when that is not possible (offerPushRestore, hidePushRestore) and Settings → Notifications (renderPushSettings with test and options). Server side: pb_hooks/pinn-push.js. The file is deliberately not called push.js: browser ad blockers and DNS filters often block that file name. */
 
 /* ==========================================================
    Push notifications (personal per profile, see pb_hooks/pinn-push.js)
@@ -203,10 +203,12 @@ async function enablePushOnThisDevice() {
   } catch (e) {
     throw new Error(tk('account.push.err.serverRegister', { error: e.message }));
   }
+  hidePushRestore();
   return sub;
 }
 async function disablePushOnThisDevice() {
   setPushWanted(false);
+  hidePushRestore();
   const sub = await currentPushSubscription();
   if (!sub) return;
   try { await postJson('/api/pinn/push/abo-loeschen', { endpoint: sub.endpoint }); } catch (e) { /* ignore */ }
@@ -215,9 +217,12 @@ async function disablePushOnThisDevice() {
 // On app start and when returning to the app: update the service worker, assign the subscription to the
 // logged-in profile and - if wanted but lost - register again.
 // Result: the current subscription or null.
-function syncPushSubscription() {
+// opts.offer: if the device wants notifications but cannot be registered again by itself (e.g. iOS
+// asks for a tap), show the one-tap offer at the bottom (only at app start, see js/appstart.js).
+function syncPushSubscription(opts) {
   if (!pushSupported() || !window.isSecureContext) return Promise.resolve(null);
   if (pushSyncRunning) return pushSyncRunning;
+  const offer = !!(opts && opts.offer);
   pushSyncRunning = (async () => {
     try {
       const reg = await getPushRegistration();
@@ -226,10 +231,14 @@ function syncPushSubscription() {
       let sub = null;
       try { sub = await reg.pushManager.getSubscription(); } catch (e) { sub = null; }
       if (sub) setPushWanted(true); // remember devices that were already activated
-      if (!pushWanted() || Notification.permission === 'denied') return sub;
+      if (Notification.permission === 'denied') return sub;
 
       let cfg = null;
       try { cfg = await loadPushConfig(); } catch (e) { cfg = null; }
+      // The server remembers per device whether notifications were on (since 1.150.4) - this also
+      // covers a device whose app storage was cleared
+      if (!sub && cfg && cfg.hatte) setPushWanted(true);
+      if (!pushWanted()) return sub;
       const serverKey = cfg && cfg.available && cfg.publicKey ? base64UrlToUint8Array(cfg.publicKey) : null;
       if (sub && serverKey && sub.options && sub.options.applicationServerKey && !sameKey(sub.options.applicationServerKey, serverKey)) {
         // The server has a new key -> register the device again with the new key
@@ -242,13 +251,65 @@ function syncPushSubscription() {
             20000, tk('account.push.err.timeout'));
         } catch (e) { sub = null; }
       }
-      if (sub) await sendSubscriptionToServer(sub);
+      if (sub) { await sendSubscriptionToServer(sub); hidePushRestore(); }
+      else if (offer && cfg && cfg.available) offerPushRestore();
       return sub;
     } catch (e) {
       return null; // next attempt the next time the app opens
     }
   })().finally(() => { pushSyncRunning = null; pushLastAutoSync = Date.now(); });
   return pushSyncRunning;
+}
+
+// One-tap offer at the bottom of the screen (since 1.150.4): the device had notifications on, but its
+// registration is gone (e.g. iOS dropped it after an update) and cannot be renewed without a tap.
+// A tap on "Switch on" registers the device again right here - no detour via the settings.
+// "Later" only hides it until the next start; switching notifications off in the settings ends the wish.
+let pushRestoreOffered = false;
+function hidePushRestore() {
+  const el = document.getElementById('pushRestoreBar');
+  if (el) el.remove();
+}
+function offerPushRestore() {
+  if (pushRestoreOffered || document.getElementById('pushRestoreBar')) return;
+  if (!pushAutoSyncEnabled || !pushWanted() || Notification.permission === 'denied') return;
+  pushRestoreOffered = true;
+  const bar = document.createElement('div');
+  bar.id = 'pushRestoreBar';
+  bar.setAttribute('role', 'status');
+  bar.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:270;padding:0 1rem calc(env(safe-area-inset-bottom, 0px) + 0.75rem);pointer-events:none;';
+  const inner = document.createElement('div');
+  inner.style.cssText = 'max-width:28rem;margin:0 auto;pointer-events:auto;display:flex;flex-wrap:wrap;align-items:center;gap:0.5rem 0.6rem;' +
+    'padding:0.75rem 0.9rem;border-radius:1rem;background:var(--c-pine);color:#fff;font-size:0.875rem;line-height:1.35;box-shadow:0 12px 32px -10px rgba(0,0,0,0.35);';
+  const text = document.createElement('span');
+  text.style.cssText = 'flex:1 1 12rem;min-width:0;';
+  text.textContent = '🔔 ' + tk('account.push.restore.text');
+  const btnOn = document.createElement('button');
+  btnOn.type = 'button';
+  btnOn.textContent = tk('account.push.restore.on');
+  btnOn.style.cssText = 'flex-shrink:0;border:0;border-radius:0.6rem;padding:0.45rem 0.8rem;background:#fff;color:var(--c-pine);font-weight:600;font-size:0.875rem;cursor:pointer;';
+  const btnLater = document.createElement('button');
+  btnLater.type = 'button';
+  btnLater.textContent = tk('account.push.restore.later');
+  btnLater.style.cssText = 'flex-shrink:0;border:1px solid rgba(255,255,255,0.55);border-radius:0.6rem;padding:0.4rem 0.7rem;background:transparent;color:#fff;font-size:0.875rem;cursor:pointer;';
+  btnOn.addEventListener('click', async () => {
+    btnOn.disabled = true;
+    btnLater.disabled = true;
+    text.textContent = tk('account.push.activating');
+    try {
+      await enablePushOnThisDevice();
+      pushLastError = '';
+      hidePushRestore();
+    } catch (e) {
+      text.textContent = (e && e.message) || tk('account.push.activateFailed');
+      btnOn.disabled = false;
+      btnLater.disabled = false;
+    }
+  });
+  btnLater.addEventListener('click', hidePushRestore);
+  inner.append(text, btnOn, btnLater);
+  bar.appendChild(inner);
+  document.body.appendChild(bar);
 }
 // When returning to the app / when the network is back (at most every 10 minutes)
 function syncPushSubscriptionSoon() {

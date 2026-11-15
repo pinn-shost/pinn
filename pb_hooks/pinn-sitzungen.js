@@ -56,6 +56,11 @@
 //    (since 1.147.1). A leftover subscription of a device that already has a session with a push address
 //    (same device name) is removed instead - otherwise that device would get every message twice.
 //
+// Since 1.150.4:
+//  - Merging duplicates and removing leftover subscriptions only trust push addresses that still exist
+//    (a dead address in a session never costs the device its working subscription); after a "410 Gone" the
+//    session forgets the dead address. hatPush(e) tells the app whether its device had notifications on.
+//
 // Since 1.147.1:
 //  - Entries of the same profile with the same device identifier (geraet_id) are one device: the list shows them
 //    once (most recently used entry), they count once, and signing out removes all of them. Two sign-ins at the
@@ -563,13 +568,17 @@ function waisenPushEntfernen(userId) {
     let abos = [];
     try { recs = $app.findRecordsByFilter(COL, "benutzer = {:u}", "", 200, 0, { u: String(userId) }); } catch (err) { return 0; }
     try { abos = $app.findRecordsByFilter("push_abos", "benutzer = {:u}", "", 50, 0, { u: String(userId) }); } catch (err) { return 0; }
+    const live = {};
+    abos.forEach(a => { live[a.getString("endpoint")] = true; });
     const owned = {};
     const withPush = {};
     recs.forEach(r => {
         const ep = r.getString("push");
         if (!ep) return;
         owned[ep] = true;
-        withPush[baseName(r.getString("name") || nameFromAgent(r.getString("agent")))] = true;
+        // Only a session whose push address still exists counts (since 1.150.4): a session that still
+        // remembers a dead address would otherwise make the device's current subscription look like a leftover.
+        if (live[ep]) withPush[baseName(r.getString("name") || nameFromAgent(r.getString("agent")))] = true;
     });
     let n = 0;
     abos.forEach(a => {
@@ -647,6 +656,20 @@ function uebersicht(e, familyId) {
 }
 
 // Remove the push subscriptions of a session (the device then gets no notifications any more)
+// Does a push subscription with this address exist?
+function aboLebt(endpoint) {
+    if (!endpoint) return false;
+    try { $app.findFirstRecordByFilter("push_abos", "endpoint = {:e}", { e: String(endpoint) }); return true; } catch (err) { return false; }
+}
+// Did this device (session of the request) have notifications switched on? The app asks this when its own
+// subscription is gone, e.g. because the device storage was cleared - so it can offer to switch them on again.
+function hatPush(e) {
+    const sid = sidOf(e);
+    if (!sid || !schemaReady()) return false;
+    const sess = findSession(sid);
+    return !!(sess && e.auth && sess.getString("benutzer") === e.auth.id && sess.getString("push"));
+}
+
 function removePushOf(sess) {
     const endpoint = sess.getString("push");
     if (!endpoint) return;
@@ -970,7 +993,9 @@ function doppelteZusammenfuehren() {
             if (!keepSeit || aktivMs(alt) >= keepSeit) continue; // is still being used in parallel
             const altPush = alt.getString("push");
             let pushUebernommen = false;
-            if (altPush && !keep.getString("push")) {
+            // The kept entry takes over the push address if it has none or only a dead one (since 1.150.4:
+            // a working subscription is never removed in favour of an address that no longer exists)
+            if (altPush && (!keep.getString("push") || (!aboLebt(keep.getString("push")) && aboLebt(altPush)))) {
                 keep.set("push", altPush);
                 keepChanged = true;
                 pushUebernommen = true;
@@ -1015,7 +1040,7 @@ module.exports = {
     ensureSchema, pruefe, beimAnmelden, sidOf, clientIp,
     geraetKennung, merkmalOf, agentOhneVersion, msOf, doppelteZusammenfuehren, betterName, kurzId,
     liste, uebersicht, waisenPushEntfernen, abmelden, alleAbmelden, entferneAndere, entsperren, lockStatus, geraetMelden, umbenennen,
-    merkePush, vergissPush, erneuerePush,
+    merkePush, vergissPush, erneuerePush, hatPush, aboLebt,
     ipGesperrt, ipFehlversuch, meldeSperre, waitText,
     aufraeumen,
 };

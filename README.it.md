@@ -133,6 +133,14 @@ Tocca un’immagine per aprirla a dimensione intera.
 
 pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
 
+## Novità della 1.150.4
+
+**Le notifiche restano attive dopo gli aggiornamenti**
+
+- **Il push sopravvive agli aggiornamenti.** Se durante un aggiornamento il server non riusciva per un attimo a leggere la sua chiave push, ne creava una nuova e tutti i dispositivi perdevano le notifiche. Ora la chiave non viene mai sostituita finché esiste, viene salvata in modo sicuro e conservata anche come copia di backup.
+- **Basta un tocco.** Se un dispositivo perde comunque la registrazione (ad es. perché iOS l’ha reimpostata), pinn. lo registra di nuovo da solo, oppure mostra in basso «Riattiva», senza passare dalle impostazioni.
+- Modificato: `pb_hooks/pinn-push.js`, `pb_hooks/push.pb.js`, `pb_hooks/pinn-sitzungen.js`, `js/mitteilungen.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
+
 ## Novità della 1.150.3
 
 **Tutti i promemoria secondo il tuo orario · anche i genitori**
@@ -235,15 +243,6 @@ pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Widget.** Cerchio vuoto per le attività aperte, spunta per quelle fatte, nuovo gruppo «Casa e giardino». Copia di nuovo lo script.
 - **Stagioni.** In Aspetto → Stagioni scegli periodo e singole parti (neve, nevicata, luci, Babbo Natale …) per Inverno e Natale; «Controllo vocale e widget» con le guide chiuse. Parte del server: installare gli hook.
 
-## Novità della 1.146.1
-
-**Neve su ogni lettera, inverno sulla dashboard**
-
-- **Neve come quella vera.** La neve ora si posa su ogni singola lettera, solo in cima: uno strato sui bordi piatti (barra superiore di B o L, le due estremità superiori della K), un mucchietto al centro delle curve (O), niente sui lati ripidi, sul piede della L o negli spazi. Le emoji restano libere. Anche il cognome nell’intestazione riceve la neve, che si adatta quando cambia.
-- **Inverno sulla dashboard di famiglia.** Neve su cognome, ora e temperatura, un cappello di neve su ogni riquadro (ognuno un po’ diverso) e in basso un piccolo paesaggio invernale.
-- **Babbo Natale** passa solo la metà delle volte (ogni 10–18 minuti, ogni 4–6 la vigilia di Natale).
-- Modificato: `js/winterzeit.js`, `css/winterzeit.css`, `src/`, `index.html`, tutti i README. Nessuna parte server.
-
 ## Come funziona
 
 ```mermaid
@@ -272,7 +271,7 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 ## Installazione
 
 1. Scarica lo ZIP dell’[ultima release](https://github.com/pinn-shost/pinn/releases/latest) e decomprimilo.
-2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.150.3` o `pinn-main`) così com’è.
+2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.150.4` o `pinn-main`) così com’è.
 3. Accedi via SSH ed esegui:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

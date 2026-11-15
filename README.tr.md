@@ -110,6 +110,14 @@ Tam boyutta açmak için bir resme dokun.
 
 pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski ve 🇺🇦 Українська**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
 
+## 1.150.4 sürümündeki yenilikler
+
+**Bildirimler güncellemelerden sonra açık kalır**
+
+- **Push güncellemelerden etkilenmez.** Sunucu bir güncelleme sırasında push anahtarını kısa süre okuyamazsa yeni bir anahtar oluşturuyordu – ve tüm cihazların bildirimleri kapanıyordu. Artık anahtar var olduğu sürece asla değiştirilmez, güvenli şekilde kaydedilir ve ayrıca yedek kopyası tutulur.
+- **Tek dokunuş yeter.** Bir cihaz kaydını yine de kaybederse (ör. iOS sıfırladıysa) pinn. onu kendiliğinden yeniden kaydeder – ya da altta „Yeniden aç” gösterir, ayarlara gitmeye gerek kalmaz.
+- Değişenler: `pb_hooks/pinn-push.js`, `pb_hooks/push.pb.js`, `pb_hooks/pinn-sitzungen.js`, `js/mitteilungen.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
+
 ## 1.150.3 sürümündeki yenilikler
 
 **Tüm hatırlatmalar senin saatinle · ebeveynler de**
@@ -176,15 +184,6 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 - **Ayarlarda net bilgi.** Pano bölümü artık bu cihazın başka bir ailenin panosu olduğunu söylüyor – bir cihaz yalnızca tek bir pano olabilir.
 - Değişenler: `js/dashboard.js`, `js/anmeldung.js`, `js/profilauswahl.js`, `js/dashboardkonto.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, tüm README’ler. Sunucu kısmı yok.
 
-## 1.148.1 sürümündeki yenilikler
-
-**Tarif gösterge panelinde açık kalır**
-
-- **Aile gösterge paneli.** „Profil seçimine“ ve PIN’den sonra açık bir tarif artık gerçekten yeniden açık. Başlangıçtan sonraki ilk ekran değişikliği (ör. iPad uygulamayı yeniden gösterdiğinde) sayfayı yeniden kuruyor ve tarifi kapatıyordu – düzeltildi.
-- **iOS uygulamayı kapatsa bile.** Gösterge panelinde not, uygulama profil seçiminde beklerken iOS onu kapatsa bile korunur (en fazla 12 saat). Adreste kalan bir ek artık engel olmaz.
-- **iPad’i döndürmek** açık tarifi kapatmaz; porsiyon ve okuma yeri korunur.
-- Değişenler: `js/fortsetzen.js`, `js/ansichten.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`, tüm README’ler. Sunucu kısmı yok.
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -194,7 +193,7 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.150.3` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.150.4` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -129,6 +129,14 @@ Pulsa cualquier imagen para verla en tamaño completo.
 
 pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski y 🇺🇦 Українська**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades de la 1.150.4
+
+**Las notificaciones siguen activas tras las actualizaciones**
+
+- **Push sobrevive a las actualizaciones.** Si el servidor no podía leer su clave push por un momento durante una actualización, creaba una nueva y todos los dispositivos dejaban de recibir notificaciones. Ahora la clave nunca se sustituye mientras exista, se guarda de forma segura y además como copia de seguridad.
+- **Basta un toque.** Si un dispositivo pierde aun así su registro (p. ej. porque iOS lo restableció), pinn. lo registra de nuevo por sí solo, o muestra abajo «Volver a activar», sin pasar por los ajustes.
+- Cambiado: `pb_hooks/pinn-push.js`, `pb_hooks/push.pb.js`, `pb_hooks/pinn-sitzungen.js`, `js/mitteilungen.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
+
 ## Novedades de la 1.150.3
 
 **Todos los recordatorios con tu hora · los padres también**
@@ -266,13 +274,6 @@ pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Mismo día posible.** Si la hora elegida aún no ha llegado, pinn. comprueba ese mismo día, aunque ya haya comprobado hoy. Así se puede probar enseguida un nuevo ajuste. Una hora ya pasada al guardar vale a partir de mañana; «Próxima comprobación» lo muestra correctamente.
 - Cambiado: `pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, todos los README. Servidor (sustituir los hooks, PocketBase se reinicia): `pb_hooks/pinn-system.js`.
 
-## Novedades de la 1.144.1
-
-**Corrección: actualizaciones automáticas a la hora correcta**
-
-- **Las actualizaciones automáticas** no se ejecutaban a la hora elegida: el servidor calculaba en UTC en lugar de la hora de Europe/Berlin y se desviaba una o dos horas; «Próxima comprobación» también mostraba una hora errónea. Ahora la hora funciona como en los demás recordatorios (horario de verano e invierno incluidos).
-- Cambiado: `pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, todos los README. Servidor (sustituir los hooks, PocketBase se reinicia): `pb_hooks/pinn-system.js`.
-
 ## Cómo funciona
 
 ```mermaid
@@ -299,7 +300,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.150.3` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.150.4` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

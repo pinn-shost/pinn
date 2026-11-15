@@ -54,7 +54,7 @@ async function bootApp() {
   const guest = isCurrentUserGuest();
   pushAutoSyncEnabled = !dashSession && !isDashboardDevice() && !guest;
   if (pushAutoSyncEnabled) {
-    syncPushSubscription().then(() => { if (!pushConfig) loadPushConfig().catch(() => { /* settings later */ }); });
+    syncPushSubscription({ offer: true }).then(() => { if (!pushConfig) loadPushConfig().catch(() => { /* settings later */ }); });
     // The server calculates the reminders of this profile in the time zone of this device (js/zeit.js)
     zeitSync().catch(() => { /* tried again at the next start */ });
   }

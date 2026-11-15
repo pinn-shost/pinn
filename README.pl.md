@@ -110,6 +110,14 @@ Dotknij obrazu, aby otworzyć go w pełnym rozmiarze.
 
 pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski i 🇺🇦 Українська**; dostosowuje walutę i numery alarmowe do twojego regionu i przełącza się między określeniami **rodzina** i **wspólne mieszkanie**. Jeden serwer może obsługiwać wiele rodzin, każdą z własnymi administratorami.
 
+## Nowości w 1.150.4
+
+**Powiadomienia pozostają włączone po aktualizacjach**
+
+- **Push przetrwa aktualizacje.** Jeśli serwer podczas aktualizacji przez chwilę nie mógł odczytać swojego klucza push, tworzył nowy – i wszystkie urządzenia traciły powiadomienia. Teraz klucz nigdy nie jest zastępowany, dopóki istnieje, jest bezpiecznie zapisywany i dodatkowo przechowywany jako kopia zapasowa.
+- **Wystarczy jedno dotknięcie.** Jeśli urządzenie mimo to straci rejestrację (np. zresetował ją iOS), pinn. zarejestruje je ponownie samodzielnie – albo pokaże na dole „Włącz ponownie”, bez wchodzenia w ustawienia.
+- Zmienione: `pb_hooks/pinn-push.js`, `pb_hooks/push.pb.js`, `pb_hooks/pinn-sitzungen.js`, `js/mitteilungen.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
+
 ## Nowości w 1.150.3
 
 **Wszystkie przypomnienia według Twojego czasu · rodzice też**
@@ -176,15 +184,6 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 - **Czytelna informacja w ustawieniach.** Sekcja panelu mówi teraz, że to urządzenie jest panelem innej rodziny – urządzenie może być tylko jednym panelem.
 - Zmienione: `js/dashboard.js`, `js/anmeldung.js`, `js/profilauswahl.js`, `js/dashboardkonto.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, wszystkie README. Bez części serwerowej.
 
-## Nowości w 1.148.1
-
-**Przepis zostaje otwarty na pulpicie**
-
-- **Pulpit rodzinny.** Po „Do wyboru profilu” i PIN-ie otwarty przepis jest teraz naprawdę znowu otwarty. Pierwsza zmiana ekranu po starcie (np. gdy iPad znowu pokazuje aplikację) przebudowywała stronę i zamykała przepis – naprawione.
-- **Także gdy iOS zamknie aplikację.** Na pulpicie notatka zostaje, nawet jeśli iOS zamknie aplikację, gdy czeka ona na wyborze profilu (najwyżej 12 godzin). Pozostały dodatek w adresie już tego nie blokuje.
-- **Obrócenie iPada** nie zamyka przepisu – liczba porcji i miejsce czytania zostają.
-- Zmienione: `js/fortsetzen.js`, `js/ansichten.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`, wszystkie README. Bez części serwerowej.
-
 ## Wymagania
 
 - NAS lub mini PC z zainstalowanym **Dockerem** i **Docker Compose** (np. Synology, UGREEN, QNAP albo zwykły serwer z Linuksem)
@@ -194,7 +193,7 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 ## Instalacja
 
 1. Pobierz i rozpakuj plik ZIP [najnowszej wersji](https://github.com/pinn-shost/pinn/releases/latest).
-2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.150.3` lub `pinn-main`) bez zmian.
+2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.150.4` lub `pinn-main`) bez zmian.
 3. Połącz się przez SSH i uruchom:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

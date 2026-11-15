@@ -2,7 +2,7 @@
 // Routes and schedule for personal push notifications. The logic lives in pinn-push.js.
 //
 // Routes:
-//   GET  /api/pinn/push/config         (signed in) public key, status, own settings
+//   GET  /api/pinn/push/config         (signed in) public key, status, own settings, hatte (this device had push on)
 //   POST /api/pinn/push/abo            (signed in) register this device for the own profile
 //   POST /api/pinn/push/abo-loeschen   (signed in) unregister this device
 //   POST /api/pinn/push/einstellungen  (signed in) save own notification settings
@@ -88,7 +88,11 @@ routerAdd("GET", "/api/pinn/push/config", (e) => {
     let geraete = 0;
     try { geraete = $app.findRecordsByFilter(push.PUSH_ABOS, "benutzer = {:u}", "", 0, 0, { u: e.auth.id }).length; } catch (err) { geraete = 0; }
     const v = test.ok ? push.loadVapid(true) : null;
-    return e.json(200, { available: !!test.ok, message: test.message, publicKey: v ? v.publicKey : "", settings: settings, geraete: geraete });
+    // hatte: this device (its session) had notifications switched on - the app then switches them on again
+    // by itself or offers it with one tap, if its own subscription got lost (since 1.150.4)
+    let hatte = false;
+    try { hatte = require(`${__hooks}/pinn-sitzungen.js`).hatPush(e); } catch (err) { hatte = false; }
+    return e.json(200, { available: !!test.ok, message: test.message, publicKey: v ? v.publicKey : "", settings: settings, geraete: geraete, hatte: hatte });
 }, $apis.requireAuth("benutzer"));
 
 routerAdd("POST", "/api/pinn/push/abo", (e) => {
