@@ -1346,7 +1346,7 @@ function renderDocCategoryEditor() {
   docAll().forEach(d => used.set(d.kategorie, (used.get(d.kategorie) || 0) + 1));
   wrap.innerHTML = docCatDraft.map((c, i) => `
     <div class="doc-cat-row flex items-center gap-2" data-idx="${i}">
-      <input type="text" data-field="icon" value="${escapeHtml(c.icon || '')}" maxlength="4" class="w-11 shrink-0 rounded-lg border border-ink/15 px-1 py-1.5 text-center text-lg" aria-label="${escapeHtml(tk('household.icon'))}" />
+      ${sympInput(c.icon, tk('household.icon'))}
       <input type="text" data-field="label" value="${escapeHtml(i18nT(c.label || ''))}" maxlength="40" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-base" aria-label="${escapeHtml(tk('common.name'))}" />
       <select data-field="fields" class="w-20 shrink-0 rounded-lg border border-ink/15 px-1.5 py-2 text-xs bg-white" aria-label="${escapeHtml(tk('doc.additionalFields'))}">
         <option value=""${c.fields ? '' : ' selected'}>–</option>

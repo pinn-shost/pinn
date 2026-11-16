@@ -212,7 +212,7 @@ function vtNormalizeCategories(list) {
     const idx = cats.findIndex(c => c.id === 'sonstiges');
     if (idx >= 0) cats.splice(idx, 0, { ...ab }); else cats.push({ ...ab });
   }
-  return cats;
+  return catIconUpgrade(cats, CAT_ICON_UPGRADE.vt);
 }
 function vtCategories() { return (finance && Array.isArray(finance.contractCategories) && finance.contractCategories.length) ? finance.contractCategories : VT_DEFAULT_CATEGORIES; }
 function vtCategory(id) {
@@ -1667,7 +1667,7 @@ function renderContractCategoryEditor() {
   wrap.innerHTML = vtCatDraft.map((c, i) => `
     <div class="rounded-xl border border-ink/10 p-2" data-idx="${i}">
       <div class="flex items-center gap-2">
-        <input type="text" data-field="icon" value="${escapeHtml(c.icon || '')}" maxlength="4" class="w-11 shrink-0 rounded-lg border border-ink/15 px-1 py-1.5 text-center text-lg" aria-label="${escapeHtml(tk('household.icon'))}" />
+        ${sympInput(c.icon, tk('household.icon'))}
         <input type="text" data-field="label" value="${escapeHtml(i18nT(c.label || ''))}" maxlength="40" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-base" aria-label="${escapeHtml(tk('common.name'))}" />
         ${c.id === 'sonstiges' ? '<span class="w-8 shrink-0"></span>' : ('<button type="button" data-action="delete" class="shrink-0 w-8 h-8 rounded-lg text-ink/40 hover:text-red-500 hover:bg-red-50 grid place-items-center text-lg leading-none" aria-label="' + escapeHtml(tk('common.delete')) + '">×</button>')}
       </div>

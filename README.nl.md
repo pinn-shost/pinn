@@ -110,6 +110,13 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski en 🇺🇦 Українська**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.150.8
+
+**Pictogrammen overal, te kiezen in de app**
+
+- **Eigen pictogrammen overal.** Ook eten, huishouden, voertuigen, planten, kleding, speelgoed en sport hebben nu eigen lijnpictogrammen (kamers, afvalsoorten, voertuigsoorten, tuin, wekker, kalenderschakelaar, aftelling). De **categoriepictogrammen** in Financiën, Contracten, Documenten en Voorraad kies je uit ongeveer 150 kant-en-klare pictogrammen in plaats van met het emoji-toetsenbord, en dezelfde soort categorie heeft overal hetzelfde pictogram. De scènes van Thuis en Voertuigen tonen nieuwe kleurrijke voertuigen. Kleinigheden: weer “Nu” zonder gestippelde rand, lettertype van de klok op het dashboard, pictogram van de maaltijdplanlijst, pictogrammen op de tekstregel.
+- Gewijzigd: `js/szenen.js`, `js/symbolwahl.js` (new), `js/symbole.js`, `css/wetterlogos.css`, `js/zustand.js`, `js/zuhause.js`, `js/fahrzeuge.js`, `js/gesundheit.js`, `js/finanzen.js`, `js/vertraege.js`, `js/dokumente.js`, `js/vorrat.js`, `js/vorrat2.js`, `js/einkauf.js`, `js/profilauswahl.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
+
 ## Nieuw in 1.150.7
 
 **Eigen weericonen**
@@ -170,18 +177,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Meteen zichtbaar.** Zolang je zelf niets kiest, toont de tegel een standaardkeuze (drinken, boodschappen, taak, afspraak, vandaag koken, notitie, uitgave, schoonmaakplan). Zonder gekozen app biedt hij „Apps kiezen” aan in plaats van te verdwijnen.
 - Gewijzigd: `js/kurzbefehle.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README.
 
-## Nieuw in 1.150.0
-
-**Tijden in jouw regio · Snelkoppelingen op het overzicht · Snelle vensters voor de snelkoppelingen**
-
-- **Herinneringen op het juiste tijdstip.** pinn. rekent herinneringen nu in de tijdzone van je apparaat, met de zomer- en wintertijd van je regio. Er is niets in te stellen: het apparaat geeft de tijdzone stilletjes door aan de server, ook na een verhuizing of onderweg.
-- **Eerst de gezondheidsherinneringen.** Medicijnen, drinken en handen wassen volgen al de eigen klok van iedereen; alle toekomstige herinneringen gebruiken dezelfde klok. Oudere herinneringen (verjaardagen, huisdieren, paklijst, voorraad, contracten, documenten, weekoverzicht) gebruiken nog Midden-Europese tijd en volgen later.
-- **Tegel Snelkoppelingen.** Een nieuwe tegel op het overzicht toont app-achtige pictogrammen die direct een functie openen: drinken, handen wassen (+1 per tik), medicijnen, boodschappen, nieuwe taak, nieuwe afspraak, notitie, chat, schoonmaak, planten, huisdieren, voorraad, uitgave invoeren, inkomsten invoeren, financiën, SOS en onderweg.
-- **Jouw keuze.** Instellingen → Overzicht → Snelkoppelingen: zet de gewenste apps aan. Geldt per profiel; zonder gekozen app blijft de tegel verborgen. Gasten zien geen gezondheids-, SOS- en financiën-apps.
-- **Lang indrukken.** Een snelkoppeling lang indrukken (rechtsklik op een computer) opent een klein venster voor precies die functie: drinken (drank, hoeveelheid, 10 minuten ongedaan maken), handen wassen (+/−), medicijnen, boodschappen, taken, schoonmaak, afspraken, koken, notities, huisdieren, voorraad, uitgave en inkomsten, SOS en onderweg. Kort tikken werkt als voorheen.
-- **Blijft open.** Het venster blijft na een actie open, dus je kunt meerdere dingen achter elkaar doen; “Openen” leidt naar de volledige functie.
-- Gewijzigd: `pb_hooks/pinn-zeit.js`, `pb_hooks/zeit.pb.js`, `js/zeit.js`, `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `pb_hooks/pinn-gesundheit.js`, `js/appstart.js`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/ansichten.js`, `js/design.js`, `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, README (+ 1.149.1).
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -191,7 +186,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.150.7` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.150.8` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

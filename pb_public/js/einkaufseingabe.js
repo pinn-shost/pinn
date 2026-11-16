@@ -139,7 +139,7 @@ function renderShoppingItemCategorySelect() {
   const it = shoppingModalEditId ? shoppingItems.find(x => x.id === shoppingModalEditId) : null;
   const auto = shoppingItemCategory({ name: document.getElementById('shoppingItemNameInput').value, pantryId: it ? it.pantryId : '' });
   const autoCat = shoppingCategoryById(auto);
-  sel.innerHTML = `<option value="">✨ ${escapeHtml(tk('shop.entry.auto'))}${autoCat ? ' · ' + escapeHtml(i18nT(autoCat.label)) : ''}</option>` +
+  sel.innerHTML = `<option value="">${escapeHtml(tk('shop.entry.auto'))}${autoCat ? ' · ' + escapeHtml(i18nT(autoCat.label)) : ''}</option>` +
     shoppingCategoriesOrdered().map(c => `<option value="${escapeHtml(c.id)}">${escapeHtml((c.icon ? c.icon + ' ' : '') + i18nT(c.label))}</option>`).join('');
   sel.value = chosen;
 }

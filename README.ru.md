@@ -110,6 +110,13 @@ pinn. – это одно приложение для всего, что нуж�
 
 pinn. говорит на **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski и 🇺🇦 Українська**, подстраивает валюту и номера экстренных служб под ваш регион и переключается между терминами **«семья»** и **«совместная квартира»**. Один сервер может вести несколько семей, у каждой свои администраторы.
 
+## Что нового в 1.150.8
+
+**Значки повсюду, выбор прямо в приложении**
+
+- **Собственные значки повсюду.** Еда, дом, транспорт, растения, одежда, игрушки и спорт теперь тоже с собственными линейными значками (комнаты, виды отходов, виды транспорта, сад, будильник, переключатель календаря, обратный отсчёт). **Значки категорий** в разделах «Финансы», «Договоры», «Документы» и «Запасы» выбираются из примерно 150 готовых значков вместо клавиатуры эмодзи, а одинаковые категории везде имеют один и тот же значок. В сценах «Дома» и «Транспорта» теперь новые цветные машины. Мелочи: погода «Сейчас» без пунктирной рамки, шрифт часов на панели, значок списка планирования питания, значки на линии текста.
+- Изменено: `js/szenen.js`, `js/symbolwahl.js` (new), `js/symbole.js`, `css/wetterlogos.css`, `js/zustand.js`, `js/zuhause.js`, `js/fahrzeuge.js`, `js/gesundheit.js`, `js/finanzen.js`, `js/vertraege.js`, `js/dokumente.js`, `js/vorrat.js`, `js/vorrat2.js`, `js/einkauf.js`, `js/profilauswahl.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
+
 ## Что нового в 1.150.7
 
 **Собственные значки погоды**
@@ -182,14 +189,6 @@ pinn. говорит на **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Españo
 - **Остаётся открытым.** Окно остаётся открытым после действия, можно сделать несколько дел подряд; «Открыть» ведёт к полной функции.
 - Изменено: `pb_hooks/pinn-zeit.js`, `pb_hooks/zeit.pb.js`, `js/zeit.js`, `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `pb_hooks/pinn-gesundheit.js`, `js/appstart.js`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/ansichten.js`, `js/design.js`, `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, README (+ 1.149.1).
 
-## Что нового в 1.149.1
-
-**Push-напоминания**
-
-- **Напоминания о здоровье.** На странице здоровья для каждого блока можно включить push-напоминание: лекарства и витамины в назначенное время, питьё с интервалом между двумя часами дня (с недостающим количеством) и мытьё рук в заданное время.
-- **Только для самого человека.** Напоминания приходят на устройства этого человека; другим членам семьи ничего не отправляется. Нажатие на уведомление открывает страницу здоровья, при питье – сразу окно напитка.
-- Изменено: `pb_hooks/pinn-gesundheit.js`, `pb_hooks/gesundheit.pb.js`, `js/gesundheit.js`, `css/gesundheit.css`, `js/hinweise.js`, `js/fortsetzen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, все README. Включает 1.149.0.
-
 ## Требования
 
 - NAS или мини-ПК с **Docker** и **Docker Compose** (например, Synology, UGREEN, QNAP или обычный Linux-сервер)
@@ -199,7 +198,7 @@ pinn. говорит на **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Españo
 ## Установка
 
 1. Скачайте ZIP [последнего релиза](https://github.com/pinn-shost/pinn/releases/latest) и распакуйте его.
-2. Создайте на NAS папку, например `/volume1/docker/Pocketbase`, и положите в неё распакованную папку (например, `pinn-1.150.7` или `pinn-main`) как есть.
+2. Создайте на NAS папку, например `/volume1/docker/Pocketbase`, и положите в неё распакованную папку (например, `pinn-1.150.8` или `pinn-main`) как есть.
 3. Подключитесь по SSH и выполните:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

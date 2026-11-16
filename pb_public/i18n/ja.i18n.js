@@ -2136,7 +2136,7 @@ window.PINN_I18N && window.PINN_I18N.keys("ja", {
   "fin.cat.overOf": "{budget}を{amount}超過",
   "fin.cat.own": "カスタム",
   "fin.cat.ownTitle": "カスタムカテゴリ",
-  "fin.cat.symbol": "アイコン（絵文字）",
+  "fin.cat.symbol": "アイコン",
   "fin.confirm.deleteExpense": "この支出を削除しますか？",
   "fin.confirm.deleteIncome": "この収入を削除しますか？",
   "fin.confirm.deleteRec": "これまでの取引も含めて、この定期取引を削除しますか？ヒント：「終了」ならこれまでの取引は残ります。",

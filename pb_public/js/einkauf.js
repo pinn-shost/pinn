@@ -569,13 +569,13 @@ function shoppingListLogoHtml(list, size = 44) {
   const radius = Math.round(size * 0.26);
   const box = `position:relative;overflow:hidden;display:grid;place-items:center;flex-shrink:0;width:${size}px;height:${size}px;border-radius:${radius}px;`;
   if (!list || list.id === SHOPPING_MEAL_LIST_ID) {
-    return `<div style="${box}background:var(--c-pine);"><span style="font-size:${Math.round(size * 0.5)}px;line-height:1;">🍽️</span></div>`;
+    return `<div style="${box}background:var(--c-pine);"><span style="font-size:${Math.round(size * 0.5)}px;line-height:1;color:#fff;">🍽️</span></div>`;
   }
   const store = shoppingStoreByKey(list.store);
   const color = shoppingListColor(list);
   const domain = shoppingDomainFor(list);
   const fallback = (store && store.emoji && !domain)
-    ? `<div style="${box}background:#fff;border:1px solid rgba(37,35,31,0.1);"><span style="font-size:${Math.round(size * 0.5)}px;line-height:1;">${store.emoji}</span>`
+    ? `<div style="${box}background:#fff;border:1px solid rgba(37,35,31,0.1);"><span style="font-size:${Math.round(size * 0.5)}px;line-height:1;color:#00374A;">${store.emoji}</span>`
     : `<div style="${box}background:${color};"><span style="color:#fff;font-weight:700;font-family:Inter,system-ui,sans-serif;font-size:${Math.round(size * 0.36)}px;line-height:1;">${escapeHtml(shoppingListInitials(list.name))}</span>`;
   let img = '';
   const imgStyle = `position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#fff;padding:${Math.round(size * 0.1)}px;box-sizing:border-box;`;

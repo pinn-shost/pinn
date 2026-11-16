@@ -844,8 +844,8 @@ function hsSceneCity(night) {
     <div class="hs-rail"></div>
     <div class="hs-mover hs-train ltr hs-anim"><span></span></div>
     <div class="hs-road"></div>
-    ${hsMover('hs-car', '🚕', 8, 1)}${hsMover('hs-car l2', '🚗', 11, 6)}${hsMover('hs-car', '🚲', 18, 11)}${hsMover('hs-car l2', '🚌', 15, 3)}
-    <div class="hs-mover hs-plane ltr hs-anim"><span>✈️</span></div>`;
+    ${hsMover('hs-car', scFig('taxi'), 8, 1)}${hsMover('hs-car l2', scFig('hatch', 1), 11, 6)}${hsMover('hs-car', scFig('bike', 0), 18, 11)}${hsMover('hs-car l2', scFig('bus', 2), 15, 3)}
+    <div class="hs-mover hs-plane ltr hs-anim"><span>${scFig('plane')}</span></div>`;
 }
 function hsSceneGarage(night) {
   let lines = '';
@@ -860,7 +860,7 @@ function hsSceneGarage(night) {
       <circle cx="141" cy="46" r="2.6" fill="${night ? '#FFD66B' : '#D7D2C8'}"${night ? ' class="hs-lamp hs-anim"' : ''}/>
       <circle cx="190" cy="80" r="7" fill="${night ? '#22392B' : '#4F8A3C'}"/><circle cx="196" cy="83" r="5" fill="${night ? '#2A4635' : '#5E9C47'}"/>
     </svg>
-    ${hsMover('hs-car', '🚗', 9, 2)}${hsMover('hs-car l2', '🛵', 14, 8)}`;
+    ${hsMover('hs-car', scFig('car', 3), 9, 2)}${hsMover('hs-car l2', scFig('vespa', 1), 14, 8)}`;
 }
 function hsSceneHtml(h) {
   const kind = hsSceneKind(h);

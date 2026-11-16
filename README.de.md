@@ -133,6 +133,13 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski und 🇺🇦 Українська**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.150.8
+
+**Symbole überall, Auswahl aus der App**
+
+- **Eigene Symbole überall.** Auch Essen, Haushalt, Fahrzeuge, Pflanzen, Kleidung, Spielzeug und Sport haben jetzt eigene Linien-Symbole (Räume, Müll-Arten, Fahrzeug-Arten, Garten, Wecker, Kalender-Umschalter, Countdown). **Kategorie-Symbole** in Finanzen, Verträgen, Dokumenten und Vorrat wählst du aus rund 150 fertigen Symbolen statt mit der Emoji-Tastatur; gleiche Kategorien haben überall dasselbe Symbol. Die Szenen von Zuhause und Fahrzeuge zeigen neue bunte Fahrzeuge. Kleinigkeiten: Wetter „Jetzt“ ohne gestrichelten Rand, Uhr-Schrift am Dashboard, Symbol der Essensplanungs-Liste, Symbole sitzen auf der Textlinie.
+- Geändert: `js/szenen.js`, `js/symbolwahl.js` (new), `js/symbole.js`, `css/wetterlogos.css`, `js/zustand.js`, `js/zuhause.js`, `js/fahrzeuge.js`, `js/gesundheit.js`, `js/finanzen.js`, `js/vertraege.js`, `js/dokumente.js`, `js/vorrat.js`, `js/vorrat2.js`, `js/einkauf.js`, `js/profilauswahl.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
+
 ## Neu in 1.150.7
 
 **Eigene Wetter-Symbole**
@@ -240,15 +247,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **iPad drehen** lässt ein offenes Rezept offen, mit Personenzahl und Lesestelle.
 - Geändert: `js/fortsetzen.js`, `js/ansichten.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`, alle READMEs. Kein Server-Teil.
 
-## Neu in 1.148.0
-
-**Weiter, wo du aufgehört hast**
-
-- **Familien-Dashboard.** Öffnest du dein Profil nach einer Pause wieder mit der PIN, landest du dort, wo du aufgehört hast – nicht mehr auf der Übersicht. Ein offenes Rezept ist wieder offen, mit der eingestellten Personenzahl und an der Stelle, bis zu der du gelesen hast.
-- **Nicht nur Rezepte.** Gemerkt werden auch die Seite (z. B. Listen, Aufgaben, Finanzen), die geöffnete Liste, der Reiter in Zuhause und bei Fahrzeugen und auf dem Handy der Reiter der Übersicht. Jedes Profil hat seinen eigenen Platz.
-- **Wie lange.** Solange die App geöffnet bleibt (auch im Hintergrund), höchstens 12 Stunden. Nach dem Schließen der App, nach „Abmelden“ auf dem eigenen Gerät oder über einen Link aus einer Benachrichtigung startest du wie gewohnt. Auch auf dem eigenen Gerät bleibt die Seite erhalten, wenn die App neu lädt, z. B. nach einem Update.
-- Geändert: `js/fortsetzen.js` (neu), `js/appstart.js`, `js/dashboard.js`, `js/anmeldung.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`, `pinn-setup.sh`, alle READMEs. Kein Server-Teil.
-
 ## So funktioniert’s
 
 ```mermaid
@@ -277,7 +275,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.150.7` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.150.8` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

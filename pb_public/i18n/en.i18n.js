@@ -2145,7 +2145,7 @@ window.PINN_I18N && window.PINN_I18N.keys("en", {
   "fin.cat.overOf": "{amount} over {budget}",
   "fin.cat.own": "Custom",
   "fin.cat.ownTitle": "Custom category",
-  "fin.cat.symbol": "Icon (emoji)",
+  "fin.cat.symbol": "Icon",
   "fin.confirm.deleteExpense": "Delete this expense?",
   "fin.confirm.deleteIncome": "Delete this income?",
   "fin.confirm.deleteRec": "Delete this recurring transaction including all previous transactions? Tip: “End” keeps the previous transactions.",

@@ -2143,7 +2143,7 @@ window.PINN_I18N && window.PINN_I18N.keys("es", {
   "fin.cat.overOf": "{amount} por encima de {budget}",
   "fin.cat.own": "Personalizado",
   "fin.cat.ownTitle": "Categoría propia",
-  "fin.cat.symbol": "Icono (emoji)",
+  "fin.cat.symbol": "Icono",
   "fin.confirm.deleteExpense": "¿Borrar este gasto?",
   "fin.confirm.deleteIncome": "¿Borrar este ingreso?",
   "fin.confirm.deleteRec": "¿Borrar este movimiento periódico con todos los anteriores? Consejo: «Finalizar» mantiene los movimientos anteriores.",

@@ -2138,7 +2138,7 @@ window.PINN_I18N && window.PINN_I18N.keys("uk", {
   "fin.cat.overOf": "Перевищення на {amount} (бюджет {budget})",
   "fin.cat.own": "Власна",
   "fin.cat.ownTitle": "Власна категорія",
-  "fin.cat.symbol": "Значок (емодзі)",
+  "fin.cat.symbol": "Значок",
   "fin.confirm.deleteExpense": "Видалити цю витрату?",
   "fin.confirm.deleteIncome": "Видалити цей дохід?",
   "fin.confirm.deleteRec": "Видалити цю регулярну операцію разом з усіма попередніми операціями? Підказка: «Завершити» зберігає попередні операції.",

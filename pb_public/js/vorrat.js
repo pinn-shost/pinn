@@ -500,7 +500,7 @@ function renderPantrySettingsEditors() {
     const wrap = document.getElementById(elId);
     wrap.innerHTML = pantrySettingsDraft[key].map((c, i) => `
       <div class="flex items-center gap-2" data-idx="${i}">
-        <input type="text" data-field="icon" value="${escapeHtml(c.icon || '')}" maxlength="4" class="w-11 shrink-0 rounded-lg border border-ink/15 px-1 py-1.5 text-center text-lg" aria-label="${escapeHtml(tk('lists.modal.icon'))}" />
+        ${sympInput(c.icon, tk('lists.modal.icon'))}
         <input type="text" data-field="label" value="${escapeHtml(i18nT(c.label || ''))}" maxlength="40" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-base" aria-label="${escapeHtml(tk('common.name'))}" />
         ${c.id === 'sonstiges' && key === 'categories' ? '<span class="w-8 shrink-0"></span>' : `<button type="button" data-action="delete" class="shrink-0 w-8 h-8 rounded-lg text-ink/40 hover:text-red-500 hover:bg-red-50 grid place-items-center text-lg leading-none" aria-label="${escapeHtml(tk('common.delete'))}">×</button>`}
       </div>`).join('');

@@ -611,7 +611,7 @@ function famRenderChips() {
   }).join('');
   const follow = `<select id="famFollowSel" class="fam-sel" aria-label="${escapeHtml(tk('family.followPerson'))}">
       <option value="">${tk('family.follow')}</option>
-      ${devs.map(g => `<option value="${famAttr(g.id)}"${famFollow === g.id ? ' selected' : ''}>👁 ${escapeHtml(famDeviceName(g))}</option>`).join('')}
+      ${devs.map(g => `<option value="${famAttr(g.id)}"${famFollow === g.id ? ' selected' : ''}>${escapeHtml(famDeviceName(g))}</option>`).join('')}
     </select>`;
   const trail = famFollow ? `<select id="famTrailSel" class="fam-sel" aria-label="${escapeHtml(tk('family.showTrail'))}">
       ${[[0, tk('family.trailOff')], [1, tk('family.trailHours', { n: 1 })], [3, tk('family.trailHours', { n: 3 })], [8, tk('family.trailHours', { n: 8 })], [24, tk('family.trailHours', { n: 24 })]].map(([v, l]) => `<option value="${v}"${famTrailHours === v ? ' selected' : ''}>〰 ${l}</option>`).join('')}

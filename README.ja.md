@@ -133,6 +133,13 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski、🇺🇦 Українська** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.150.8の新機能
+
+**どこでも専用アイコン、アプリ内で選択**
+
+- **あらゆる場所に専用アイコン。** 食べ物、家、乗り物、植物、衣類、おもちゃ、スポーツにも専用の線のアイコンが付きました（部屋、ごみの種類、乗り物の種類、庭、目覚まし、カレンダー切り替え、カウントダウン）。家計、契約、書類、ストックの**カテゴリアイコン**は、絵文字キーボードの代わりに約150個の用意済みアイコンから選びます。同じ種類のカテゴリはどこでも同じアイコンになります。ホームと乗り物のシーンには新しいカラフルな乗り物が登場します。細かな修正：天気「今」の破線の枠を廃止、ダッシュボード時計のフォント、食事プラン一覧のアイコン、アイコンを文字の行に合わせました。
+- 変更：`js/szenen.js`, `js/symbolwahl.js` (new), `js/symbole.js`, `css/wetterlogos.css`, `js/zustand.js`, `js/zuhause.js`, `js/fahrzeuge.js`, `js/gesundheit.js`, `js/finanzen.js`, `js/vertraege.js`, `js/dokumente.js`, `js/vorrat.js`, `js/vorrat2.js`, `js/einkauf.js`, `js/profilauswahl.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
+
 ## 1.150.7の新機能
 
 **天気の専用アイコン**
@@ -231,15 +238,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - **設定にわかりやすい案内。** ダッシュボードの項目に、この端末が別の家族のダッシュボードであることが表示されます（1台の端末で設定できるダッシュボードは1つだけです）。
 - 変更：`js/dashboard.js`, `js/anmeldung.js`, `js/profilauswahl.js`, `js/dashboardkonto.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`、すべてのREADME。サーバー側の変更はありません。
 
-## 1.148.1の新機能
-
-**ダッシュボードでレシピが開いたままに**
-
-- **家族ダッシュボード。** 「プロフィール選択へ」とPINのあと、開いていたレシピが確実に再び開くようになりました。起動後の最初の画面変化（iPadがアプリを再表示したときなど）でページが作り直され、レシピが閉じていた問題を修正しました。
-- **iOSがアプリを終了しても。** ダッシュボードでは、プロフィール選択で待機中にiOSがアプリを終了しても記録が残ります（最長12時間）。アドレスに残った付加情報で再開が妨げられることもなくなりました。
-- **iPadを回転**しても、人数と読んでいた位置を保ったままレシピは開いたままです。
-- 変更：`js/fortsetzen.js`, `js/ansichten.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`、すべてのREADME。サーバー側の変更はありません。
-
 ## しくみ
 
 ```mermaid
@@ -268,7 +266,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.150.7`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.150.8`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

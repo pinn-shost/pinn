@@ -213,8 +213,9 @@ function ghSceneHtml(level, color) {
   const sky = night
     ? [[6, 10], [18, 24], [31, 8], [44, 30], [57, 12], [69, 22], [82, 6], [91, 18]].map(([x, y], i) => `<span class="hs-star${i % 3 === 0 ? ' tw hs-anim' : ''}" style="left:${x}%;top:${y}px;animation-delay:-${i * 0.6}s"></span>`).join('')
     : '<span class="gh-sun hs-anim"></span>';
-  const floats = [['💊', 30, 14, 0], ['🍎', 50, 26, 1.4], ['🧼', 64, 10, 2.6], ['🍃', 41, 36, 3.5]]
-    .map(([e, x, y, d]) => `<span class="gh-float hs-anim" style="left:${x}%;top:${y}px;animation-delay:-${d}s">${e}</span>`).join('');
+  // [emoji (shown as our icon), left %, top px, delay s, colour]
+  const floats = [['💊', 30, 14, 0, '#E07A5F'], ['🍎', 50, 26, 1.4, '#D64545'], ['🧼', 64, 10, 2.6, '#8E6BBF'], ['🍃', 41, 36, 3.5, '#5E8C31']]
+    .map(([e, x, y, d, c]) => `<span class="gh-float hs-anim" style="left:${x}%;top:${y}px;animation-delay:-${d}s;color:${c}">${e}</span>`).join('');
   const bubbles = [8, 19, 33, 47, 58, 72, 86, 93]
     .map((x, i) => `<span class="gh-bubble hs-anim" style="left:${x}%;bottom:${Math.max(2, water - 18)}px;animation-delay:-${(i * 0.9).toFixed(1)}s;animation-duration:${3 + (i % 3)}s"></span>`).join('');
   const wave = 'M0 8 Q25 0 50 8 T100 8 T150 8 T200 8 V40 H0Z';

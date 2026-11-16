@@ -2133,7 +2133,7 @@ window.PINN_I18N && window.PINN_I18N.keys("zh", {
   "fin.cat.overOf": "超出 {budget} {amount}",
   "fin.cat.own": "自定义",
   "fin.cat.ownTitle": "自定义分类",
-  "fin.cat.symbol": "图标（表情符号）",
+  "fin.cat.symbol": "图标",
   "fin.confirm.deleteExpense": "要删除这笔支出吗？",
   "fin.confirm.deleteIncome": "要删除这笔收入吗？",
   "fin.confirm.deleteRec": "要删除这条周期性账目及其所有之前的账目吗？提示：“结束”会保留之前的账目。",

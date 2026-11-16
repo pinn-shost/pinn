@@ -111,7 +111,7 @@ let dashCountTimer = null;
 function tickDashboardClock() {
   const now = new Date();
   let clockText = escapeHtml(now.toLocaleTimeString(PINN_I18N.language.locale, { hour: '2-digit', minute: '2-digit' }));
-  if (weatherData) clockText += ` | ${escapeHtml(tDeg(weatherData.temp))} ${weatherIconForCode(weatherData.code)}`;
+  if (weatherData) clockText += `<span class="dc-sep">|</span><span class="dc-wx">${escapeHtml(tDeg(weatherData.temp))} ${weatherIconForCode(weatherData.code)}</span>`;
   document.getElementById('dashClock').innerHTML = clockText;
   document.getElementById('dashDate').textContent = now.toLocaleDateString(PINN_I18N.language.locale, { weekday: 'long', day: 'numeric', month: 'long' });
 }

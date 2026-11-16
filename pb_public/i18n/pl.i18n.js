@@ -2145,7 +2145,7 @@ window.PINN_I18N && window.PINN_I18N.keys("pl", {
   "fin.cat.overOf": "{amount} ponad {budget}",
   "fin.cat.own": "Własna",
   "fin.cat.ownTitle": "Własna kategoria",
-  "fin.cat.symbol": "Ikona (emoji)",
+  "fin.cat.symbol": "Ikona",
   "fin.confirm.deleteExpense": "Usunąć ten wydatek?",
   "fin.confirm.deleteIncome": "Usunąć ten dochód?",
   "fin.confirm.deleteRec": "Usunąć tę transakcję cykliczną razem ze wszystkimi wcześniejszymi transakcjami? Wskazówka: „Zakończ” zachowuje wcześniejsze transakcje.",

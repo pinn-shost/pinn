@@ -133,6 +133,13 @@ Toque em qualquer imagem para abri-la em tamanho real.
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.150.8
+
+**Ícones por todo o lado, escolhidos na app**
+
+- **Ícones próprios em todo o lado.** Comida, casa, veículos, plantas, roupa, brinquedos e desporto também têm agora ícones de linha próprios (divisões, tipos de lixo, tipos de veículo, jardim, despertador, alternador do calendário, contagem decrescente). Os **ícones das categorias** em Finanças, Contratos, Documentos e Despensa escolhem-se entre cerca de 150 ícones prontos em vez do teclado de emojis, e o mesmo tipo de categoria tem o mesmo ícone em todo o lado. As cenas de Casa e Veículos mostram novos veículos coloridos. Pormenores: tempo «Agora» sem contorno tracejado, tipo de letra do relógio do painel, ícone da lista do plano de refeições, ícones na linha do texto.
+- Alterado: `js/szenen.js`, `js/symbolwahl.js` (new), `js/symbole.js`, `css/wetterlogos.css`, `js/zustand.js`, `js/zuhause.js`, `js/fahrzeuge.js`, `js/gesundheit.js`, `js/finanzen.js`, `js/vertraege.js`, `js/dokumente.js`, `js/vorrat.js`, `js/vorrat2.js`, `js/einkauf.js`, `js/profilauswahl.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
+
 ## Novidades da 1.150.7
 
 **Ícones próprios do tempo**
@@ -231,15 +238,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Aviso claro nas definições.** A secção do painel indica agora que este dispositivo é o painel de outra família – um dispositivo só pode ser um painel.
 - Alterado: `js/dashboard.js`, `js/anmeldung.js`, `js/profilauswahl.js`, `js/dashboardkonto.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, todos os README. Sem parte de servidor.
 
-## Novidades da 1.148.1
-
-**A receita continua aberta no painel**
-
-- **Painel da família.** Depois de “Para a seleção de perfil” e do PIN, uma receita aberta volta mesmo a estar aberta. A primeira mudança de ecrã após o arranque (por ex. quando o iPad volta a mostrar a app) reconstruía a página e fechava a receita – corrigido.
-- **Também se o iOS fechar a app.** Num painel a nota mantém-se mesmo que o iOS feche a app enquanto espera na seleção de perfil (no máximo 12 horas). Um resto no endereço já não o impede.
-- **Rodar o iPad** mantém a receita aberta, com porções e posição de leitura.
-- Alterado: `js/fortsetzen.js`, `js/ansichten.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`, todos os README. Sem parte de servidor.
-
 ## Como funciona
 
 ```mermaid
@@ -268,7 +266,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.150.7` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.150.8` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

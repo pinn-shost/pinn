@@ -45,7 +45,7 @@ function renderHouseholdFilters() {
   if (householdFilterCategory && householdFilterCategory !== HOUSEHOLD_FILTER_BINS && !cats.some(c => c.id === householdFilterCategory)) householdFilterCategory = '';
   roomSel.innerHTML = '<option value="">' + escapeHtml(tk('household.allRooms')) + '</option>' + rooms.map(r => `<option value="${escapeHtml(r.id)}">${escapeHtml((r.icon ? r.icon + ' ' : '') + r.name)}</option>`).join('');
   catSel.innerHTML = '<option value="">' + escapeHtml(tk('household.allCategories')) + '</option>'
-    + cats.map(c => `<option value="${escapeHtml(c.id)}">🧹 ${escapeHtml(i18nT(c.label))}</option>`).join('')
+    + cats.map(c => `<option value="${escapeHtml(c.id)}">${escapeHtml(i18nT(c.label))}</option>`).join('')
     + `<option value="${HOUSEHOLD_FILTER_BINS}">${escapeHtml(tk('household.binsFilter'))}</option>`;
   roomSel.value = householdFilterRoom;
   catSel.value = householdFilterCategory;

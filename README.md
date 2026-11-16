@@ -129,6 +129,13 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski and 🇺🇦 Українська**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.150.8
+
+**Icons everywhere, picked from the app**
+
+- **Own icons everywhere.** Food, household, vehicles, plants, clothes, toys and sports now have our own line icons too (rooms, waste types, vehicle types, garden, alarm clock, calendar switch, countdown). **Category icons** in Finances, Contracts, Documents and Pantry are picked from about 150 ready-made icons instead of the emoji keyboard, and the same kind of category has the same icon everywhere. The scenes of Home and Vehicles show new colourful vehicles. Small fixes: weather “Now” without the dashed border, dashboard clock font, meal-plan list icon, icons sit on the text line.
+- Changed: `js/szenen.js`, `js/symbolwahl.js` (new), `js/symbole.js`, `css/wetterlogos.css`, `js/zustand.js`, `js/zuhause.js`, `js/fahrzeuge.js`, `js/gesundheit.js`, `js/finanzen.js`, `js/vertraege.js`, `js/dokumente.js`, `js/vorrat.js`, `js/vorrat2.js`, `js/einkauf.js`, `js/profilauswahl.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
+
 ## What's new in 1.150.7
 
 **Own weather icons**
@@ -264,15 +271,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Seasons.** Under Appearance → Seasons, the buttons “Winter” and “Christmas” open a window to choose the period (preset 1 Dec – 6 Jan and 1 – 26 Dec) and switch every part on or off: snow on text and tiles, snow falling over the screen, dashboard landscape, fairy lights, Santa, hat and holly. “Voice control & widgets” now starts with its guides closed.
 - Changed: `js/entsperren.js` (new), `js/geraete.js`, `js/verbindung.js`, `js/sprachsteuerung.js`, `js/winterzeit.js`, `pb_hooks/pinn-sitzungen.js`, `pb_hooks/sitzungen.pb.js`, `pb_hooks/pinn-sprache.js`, `src/`, `index.html`, `pinn-setup.sh`, `i18n/`, all READMEs. Server part: install the hooks, PocketBase restarts.
 
-## What's new in 1.146.1
-
-**Snow on every letter, winter on the dashboard**
-
-- **Snow like real snow.** The snow now lies on every single letter, only at the very top: a layer on flat edges (the top bar of B or L, both upper ends of K), a blob in the middle of round tops (O), nothing on steep sides, on the foot of the L or in the gaps. Emoji stay free. The family name in the header gets snow too and adapts when it changes.
-- **Winter on the family dashboard.** Snow on the family name, clock and temperature, a snow cap on every tile (each one different) and a small winter landscape at the bottom.
-- **Santa** flies only half as often (every 10–18 minutes, every 4–6 on Christmas Eve).
-- Changed: `js/winterzeit.js`, `css/winterzeit.css`, `src/`, `index.html`, all READMEs. No server part.
-
 ## How it works
 
 ```mermaid
@@ -299,7 +297,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.150.7` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.150.8` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

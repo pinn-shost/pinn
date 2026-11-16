@@ -110,6 +110,13 @@ Dotknij obrazu, aby otworzyć go w pełnym rozmiarze.
 
 pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski i 🇺🇦 Українська**; dostosowuje walutę i numery alarmowe do twojego regionu i przełącza się między określeniami **rodzina** i **wspólne mieszkanie**. Jeden serwer może obsługiwać wiele rodzin, każdą z własnymi administratorami.
 
+## Nowości w 1.150.8
+
+**Ikony wszędzie, wybierane w aplikacji**
+
+- **Własne ikony wszędzie.** Jedzenie, dom, pojazdy, rośliny, ubrania, zabawki i sport mają teraz również własne ikony liniowe (pokoje, rodzaje odpadów, rodzaje pojazdów, ogród, budzik, przełącznik kalendarza, odliczanie). **Ikony kategorii** w Finansach, Umowach, Dokumentach i Spiżarni wybierasz spośród około 150 gotowych ikon zamiast z klawiatury emoji, a ten sam rodzaj kategorii ma wszędzie tę samą ikonę. Sceny Domu i Pojazdów pokazują nowe, kolorowe pojazdy. Drobiazgi: pogoda „Teraz” bez przerywanej ramki, czcionka zegara na pulpicie, ikona listy planu posiłków, ikony na linii tekstu.
+- Zmienione: `js/szenen.js`, `js/symbolwahl.js` (new), `js/symbole.js`, `css/wetterlogos.css`, `js/zustand.js`, `js/zuhause.js`, `js/fahrzeuge.js`, `js/gesundheit.js`, `js/finanzen.js`, `js/vertraege.js`, `js/dokumente.js`, `js/vorrat.js`, `js/vorrat2.js`, `js/einkauf.js`, `js/profilauswahl.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
+
 ## Nowości w 1.150.7
 
 **Własne ikony pogody**
@@ -170,18 +177,6 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 - **Od razu widoczne.** Dopóki nic nie wybierzesz, kafelek pokazuje zestaw domyślny (picie, zakupy, zadanie, termin, gotowanie dziś, notatka, wydatek, plan sprzątania). Bez wybranej aplikacji proponuje „Wybierz aplikacje” zamiast znikać.
 - Zmieniono: `js/kurzbefehle.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README.
 
-## Nowości w 1.150.0
-
-**Godziny w Twoim regionie · Skróty na przeglądzie · Szybkie okna dla skrótów**
-
-- **Przypomnienia o właściwej porze.** pinn. oblicza teraz przypomnienia w strefie czasowej Twojego urządzenia, z czasem letnim i zimowym Twojego regionu. Nie trzeba nic ustawiać: urządzenie po cichu przekazuje serwerowi swoją strefę, także po przeprowadzce lub w podróży.
-- **Najpierw przypomnienia zdrowotne.** Leki, picie i mycie rąk już działają według zegara każdej osoby; wszystkie przyszłe przypomnienia użyją tego samego zegara. Starsze przypomnienia (urodziny, zwierzęta, lista pakowania, spiżarnia, umowy, dokumenty, przegląd tygodnia) nadal używają czasu środkowoeuropejskiego i zostaną zmienione później.
-- **Kafelek Skróty.** Nowy kafelek na przeglądzie pokazuje ikony jak z aplikacji, które od razu otwierają funkcję: picie, mycie rąk (+1 na dotknięcie), leki, zakupy, nowe zadanie, nowe wydarzenie, notatka, czat, sprzątanie, rośliny, zwierzęta, spiżarnia, dodanie wydatku, dodanie przychodu, finanse, SOS i w drodze.
-- **Twój wybór.** Ustawienia → Przegląd → Skróty: włącz potrzebne aplikacje. Obowiązuje dla profilu; bez wybranej aplikacji kafelek pozostaje ukryty. Goście nie widzą aplikacji zdrowia, SOS i finansów.
-- **Długie naciśnięcie.** Długie naciśnięcie skrótu (kliknięcie prawym na komputerze) otwiera małe okno dla tej funkcji: picie (napój, ilość, cofnięcie przez 10 minut), mycie rąk (+/−), leki, zakupy, zadania, sprzątanie, wydarzenia, gotowanie, notatki, zwierzęta, spiżarnia, wydatek i przychód, SOS i w drodze. Krótkie dotknięcie działa jak dotąd.
-- **Zostaje otwarte.** Okno pozostaje otwarte po akcji, więc można zrobić kilka rzeczy z rzędu; „Otwórz” prowadzi do pełnej funkcji.
-- Zmieniono: `pb_hooks/pinn-zeit.js`, `pb_hooks/zeit.pb.js`, `js/zeit.js`, `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `pb_hooks/pinn-gesundheit.js`, `js/appstart.js`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/ansichten.js`, `js/design.js`, `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, README (+ 1.149.1).
-
 ## Wymagania
 
 - NAS lub mini PC z zainstalowanym **Dockerem** i **Docker Compose** (np. Synology, UGREEN, QNAP albo zwykły serwer z Linuksem)
@@ -191,7 +186,7 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 ## Instalacja
 
 1. Pobierz i rozpakuj plik ZIP [najnowszej wersji](https://github.com/pinn-shost/pinn/releases/latest).
-2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.150.7` lub `pinn-main`) bez zmian.
+2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.150.8` lub `pinn-main`) bez zmian.
 3. Połącz się przez SSH i uruchom:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

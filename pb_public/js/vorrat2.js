@@ -1708,7 +1708,7 @@ function renderFinCategoryEditor() {
     return `
       <div class="fin-cat-edit rounded-xl border border-ink/10 p-2.5 ${inactive ? 'opacity-50' : ''}" data-idx="${i}">
         <div class="flex items-center gap-2">
-          <input type="text" data-field="icon" value="${escapeHtml(c.icon || '')}" maxlength="4" class="w-11 shrink-0 rounded-lg border border-ink/15 px-1 py-1.5 text-center text-lg" aria-label="${escapeHtml(tk('household.icon'))}" />
+          ${sympInput(c.icon, tk('household.icon'))}
           <input type="color" data-field="color" value="${escapeHtml(c.color || '#9A9A9A')}" class="w-9 h-9 shrink-0 rounded-lg border border-ink/15 p-0.5 bg-white cursor-pointer" aria-label="${escapeHtml(tk('account.dashBg.color'))}" />
           <input type="text" data-field="label" value="${escapeHtml(i18nT(c.label || ''))}" maxlength="40" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-sm" aria-label="${escapeHtml(tk('common.name'))}" />
           ${c.id === 'sonstiges' ? '' : `<button type="button" data-action="toggle" class="shrink-0 px-2 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:border-pine transition">${escapeHtml(inactive ? tk('fin.settings.show') : tk('fin.settings.hide'))}</button>`}

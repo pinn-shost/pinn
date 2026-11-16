@@ -2145,7 +2145,7 @@ window.PINN_I18N && window.PINN_I18N.keys("de", {
   "fin.cat.overOf": "{amount} über {budget}",
   "fin.cat.own": "Eigene",
   "fin.cat.ownTitle": "Eigene Kategorie",
-  "fin.cat.symbol": "Symbol (Emoji)",
+  "fin.cat.symbol": "Symbol",
   "fin.confirm.deleteExpense": "Diese Ausgabe löschen?",
   "fin.confirm.deleteIncome": "Diese Einnahme löschen?",
   "fin.confirm.deleteRec": "Diese regelmäßige Buchung samt aller bisherigen Buchungen löschen? Tipp: „Beenden“ behält die bisherigen Buchungen.",

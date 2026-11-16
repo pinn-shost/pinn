@@ -2147,7 +2147,7 @@ window.PINN_I18N && window.PINN_I18N.keys("pt", {
   "fin.cat.overOf": "{amount} acima de {budget}",
   "fin.cat.own": "Personalizado",
   "fin.cat.ownTitle": "Categoria própria",
-  "fin.cat.symbol": "Ícone (emoji)",
+  "fin.cat.symbol": "Ícone",
   "fin.confirm.deleteExpense": "Excluir esta despesa?",
   "fin.confirm.deleteIncome": "Excluir esta receita?",
   "fin.confirm.deleteRec": "Excluir este lançamento recorrente junto com todos os lançamentos anteriores? Dica: “Encerrar” mantém os lançamentos anteriores.",

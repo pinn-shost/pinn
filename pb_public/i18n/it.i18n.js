@@ -2145,7 +2145,7 @@ window.PINN_I18N && window.PINN_I18N.keys("it", {
   "fin.cat.overOf": "{amount} oltre {budget}",
   "fin.cat.own": "Personalizzato",
   "fin.cat.ownTitle": "Categoria personalizzata",
-  "fin.cat.symbol": "Icona (emoji)",
+  "fin.cat.symbol": "Icona",
   "fin.confirm.deleteExpense": "Eliminare questa spesa?",
   "fin.confirm.deleteIncome": "Eliminare questa entrata?",
   "fin.confirm.deleteRec": "Eliminare questa registrazione ricorrente insieme a tutte le registrazioni precedenti? Suggerimento: scegli «Termina» per conservarle.",

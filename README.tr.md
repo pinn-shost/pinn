@@ -110,6 +110,13 @@ Tam boyutta açmak için bir resme dokun.
 
 pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski ve 🇺🇦 Українська**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
 
+## 1.150.8 sürümündeki yenilikler
+
+**Her yerde simgeler, uygulamadan seçilir**
+
+- **Her yerde kendi simgeler.** Yiyecek, ev, taşıt, bitki, giysi, oyuncak ve spor da artık kendi çizgi simgelerine sahip (odalar, atık türleri, taşıt türleri, bahçe, çalar saat, takvim düğmesi, geri sayım). Finans, Sözleşmeler, Belgeler ve Kiler bölümlerindeki **kategori simgeleri** emoji klavyesi yerine yaklaşık 150 hazır simgeden seçilir; aynı tür kategori her yerde aynı simgeyi taşır. Ev ve Taşıtlar sahneleri yeni renkli taşıtları gösterir. Küçük düzeltmeler: “Şimdi” hava durumunda kesikli kenarlık yok, panodaki saat yazı tipi, yemek planı listesi simgesi, simgeler metin satırında.
+- Değişenler: `js/szenen.js`, `js/symbolwahl.js` (new), `js/symbole.js`, `css/wetterlogos.css`, `js/zustand.js`, `js/zuhause.js`, `js/fahrzeuge.js`, `js/gesundheit.js`, `js/finanzen.js`, `js/vertraege.js`, `js/dokumente.js`, `js/vorrat.js`, `js/vorrat2.js`, `js/einkauf.js`, `js/profilauswahl.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
+
 ## 1.150.7 sürümündeki yenilikler
 
 **Kendi hava durumu simgeleri**
@@ -170,18 +177,6 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 - **Hemen görünür.** Siz bir şey seçene kadar kutucuk varsayılan bir seçim gösterir (su içme, alışveriş, görev, randevu, bugün yemek, not, gider, temizlik planı). Hiç uygulama seçilmemişse kaybolmak yerine „Uygulama seç” sunar.
 - Değişenler: `js/kurzbefehle.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README.
 
-## 1.150.0 sürümündeki yenilikler
-
-**Bölgenizin saatiyle · Genel bakışta kısayollar · Kısayollar için hızlı pencereler**
-
-- **Hatırlatmalar doğru saatte.** pinn. hatırlatmaları artık cihazınızın saat dilimine göre, bölgenizin yaz ve kış saatiyle hesaplar. Ayar yapmanız gerekmez: cihaz saat dilimini sunucuya sessizce bildirir; taşınma veya seyahat sonrasında da.
-- **Önce sağlık hatırlatmaları.** İlaç, su içme ve el yıkama hatırlatmaları zaten herkesin kendi saatine göre çalışır; gelecekteki tüm hatırlatmalar aynı saati kullanır. Eski hatırlatmalar (doğum günleri, evcil hayvanlar, bavul listesi, kiler, sözleşmeler, belgeler, haftalık önizleme) hâlâ Orta Avrupa saatini kullanır, sonra güncellenecek.
-- **Kısayollar kutucuğu.** Genel bakıştaki yeni kutucuk, bir işlevi doğrudan açan uygulama benzeri simgeler gösterir: su içme, el yıkama (her dokunuşta +1), ilaçlar, alışveriş, yeni görev, yeni etkinlik, not, sohbet, temizlik, bitkiler, evcil hayvanlar, kiler, gider girme, gelir girme, finans, SOS ve yoldayım.
-- **Sizin seçiminiz.** Ayarlar → Genel bakış → Kısayollar: istediğiniz uygulamaları açın. Profil başına geçerlidir; uygulama seçilmezse kutucuk gizli kalır. Misafirler sağlık, SOS ve finans uygulamalarını görmez.
-- **Uzun basma.** Bir kısayola uzun basmak (bilgisayarda sağ tık) o işlev için küçük bir pencere açar: su içme (içecek, miktar, 10 dakika geri alma), el yıkama (+/−), ilaçlar, alışveriş, görevler, temizlik, etkinlikler, yemek, notlar, evcil hayvanlar, kiler, gider ve gelir, SOS ve yoldayım. Kısa dokunuş eskisi gibi çalışır.
-- **Açık kalır.** Pencere bir işlemden sonra açık kalır, böylece art arda birkaç şey yapılabilir; “Aç” tam işleve götürür.
-- Değişenler: `pb_hooks/pinn-zeit.js`, `pb_hooks/zeit.pb.js`, `js/zeit.js`, `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `pb_hooks/pinn-gesundheit.js`, `js/appstart.js`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/ansichten.js`, `js/design.js`, `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, README (+ 1.149.1).
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -191,7 +186,7 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.150.7` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.150.8` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

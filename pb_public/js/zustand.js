@@ -9,7 +9,7 @@
    while loading). The UI state is in js/bedienzustand.js. */
 
 const PALETTE = ['#2F4B41', '#B9842E', '#7A5C8E', '#B85C5C', '#3E7CA6', '#5C8A3E'];
-const ROOM_ICONS = ['🛏️', '🛁', '🍳', '🛋️', '🚪', '📚', '🧸', '🚗', '🌳', '🧺', '🪜', '🏠'];
+const ROOM_ICONS = ['🛏️', '🛁', '🍳', '🛋️', '🚪', '📚', '🧸', '🚗', '🌳', '🧺', '🪜', '🏠', '🚽', '🪟', '🧹', '🔌', '💻', '🎮', '🪴', '🔑'];
 // Common waste types in Germany - "keywords" are used to recognise collection dates by their title in the
 // (already synced) calendar (e.g. a title like "Gelbe Tonne" from a
 // municipal waste collection calendar subscription). label = text key (display), taskLabel = German task title (data,
@@ -51,13 +51,13 @@ const ALL_MENU_TABS = [
 ];
 // Finances: predefined categories (can be changed/extended in the finance settings)
 const FIN_DEFAULT_CATEGORIES = [
-  { id: 'lebensmittel', label: 'Lebensmittel', icon: '🥦', color: '#5E8C31' },
+  { id: 'lebensmittel', label: 'Lebensmittel', icon: '🛒', color: '#5E8C31' },
   { id: 'drogerie', label: 'Drogerie', icon: '🧴', color: '#8E6BBF' },
   { id: 'baumarkt', label: 'Baumarkt', icon: '🔨', color: '#D9822B' },
   { id: 'haushalt', label: 'Haushalt & Wohnen', icon: '🏠', color: '#3B7EA1' },
   { id: 'kleidung', label: 'Kleidung', icon: '👕', color: '#C0567A' },
-  { id: 'gesundheit', label: 'Gesundheit', icon: '💊', color: '#2A9D8F' },
-  { id: 'mobilitaet', label: 'Auto & Mobilität', icon: '⛽', color: '#5C6B7A' },
+  { id: 'gesundheit', label: 'Gesundheit', icon: '🩺', color: '#2A9D8F' },
+  { id: 'mobilitaet', label: 'Auto & Mobilität', icon: '🚗', color: '#5C6B7A' },
   { id: 'essen_gehen', label: 'Essen gehen', icon: '🍕', color: '#B5543C' },
   { id: 'freizeit', label: 'Freizeit', icon: '🎉', color: '#D4A017' },
   { id: 'kinder', label: 'Kinder', icon: '🧸', color: '#4FA3D9' },
@@ -68,6 +68,16 @@ const FIN_DEFAULT_CATEGORIES = [
   { id: 'einkommen', label: 'Einnahmen', icon: '💰', color: '#2F9E5B' },
   { id: 'sonstiges', label: 'Sonstiges', icon: '📦', color: '#9A9A9A' },
 ];
+// One symbol per kind of category across finances, contracts, documents and the pantry (since 1.150.8). Stored categories
+// whose symbol is still the old default are moved to the new one: [old symbol, new symbol] per category id.
+const CAT_ICON_UPGRADE = {
+  fin: { lebensmittel: ['🥦', '🛒'], gesundheit: ['💊', '🩺'], mobilitaet: ['⛽', '🚗'] },
+  vt: { freizeit: ['🏋️', '🎉'], sonstiges: ['📄', '📦'] },
+};
+function catIconUpgrade(cats, map) {
+  cats.forEach(c => { const m = map[c.id]; if (m && c.icon === m[0]) c.icon = m[1]; });
+  return cats;
+}
 // Finances → contracts: default categories (finCat = expense category the costs are booked under)
 const VT_DEFAULT_CATEGORIES = [
   { id: 'versicherung', label: 'Versicherungen', icon: '🛡️', color: '#4A6FA5', finCat: 'versicherungen' },
@@ -77,11 +87,11 @@ const VT_DEFAULT_CATEGORIES = [
   { id: 'streaming', label: 'Streaming & Abos', icon: '📺', color: '#9C4DCC', finCat: 'abos' },
   { id: 'wohnen', label: 'Wohnen', icon: '🏠', color: '#5E8C31', finCat: 'haushalt' },
   { id: 'auto', label: 'Auto & Mobilität', icon: '🚗', color: '#546E7A', finCat: 'mobilitaet' },
-  { id: 'freizeit', label: 'Sport & Freizeit', icon: '🏋️', color: '#D4A017', finCat: 'freizeit' },
+  { id: 'freizeit', label: 'Sport & Freizeit', icon: '🎉', color: '#D4A017', finCat: 'freizeit' },
   { id: 'kredit', label: 'Kredite & Finanzierung', icon: '🏦', color: '#B5543C', finCat: 'sonstiges' },
   { id: 'zeitung', label: 'Zeitung & Magazine', icon: '📰', color: '#8E6BBF', finCat: 'abos' },
   { id: 'abgaben', label: 'Steuern & Abgaben', icon: '🏛️', color: '#7A6F5A', finCat: 'sonstiges' },
-  { id: 'sonstiges', label: 'Sonstige', icon: '📄', color: '#9A9A9A', finCat: 'sonstiges' },
+  { id: 'sonstiges', label: 'Sonstige', icon: '📦', color: '#9A9A9A', finCat: 'sonstiges' },
 ];
 // Category chosen automatically when an amount with a minus (= income) is entered
 const FIN_INCOME_CATEGORY = 'einkommen';

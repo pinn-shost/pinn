@@ -2155,7 +2155,7 @@ window.PINN_I18N && window.PINN_I18N.keys("ru", {
   "fin.cat.overOf": "перерасход {amount} из {budget}",
   "fin.cat.own": "Своя",
   "fin.cat.ownTitle": "Своя категория",
-  "fin.cat.symbol": "Значок (эмодзи)",
+  "fin.cat.symbol": "Значок",
   "fin.confirm.deleteExpense": "Удалить этот расход?",
   "fin.confirm.deleteIncome": "Удалить этот доход?",
   "fin.confirm.deleteRec": "Удалить эту повторяющуюся операцию вместе со всеми прежними операциями? Подсказка: «Завершить» сохраняет прежние операции.",

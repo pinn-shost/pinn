@@ -2142,7 +2142,7 @@ window.PINN_I18N && window.PINN_I18N.keys("fr", {
   "fin.cat.overOf": "{amount} au-delà de {budget}",
   "fin.cat.own": "Personnalisé",
   "fin.cat.ownTitle": "Catégorie personnalisée",
-  "fin.cat.symbol": "Icône (emoji)",
+  "fin.cat.symbol": "Icône",
   "fin.confirm.deleteExpense": "Supprimer cette dépense ?",
   "fin.confirm.deleteIncome": "Supprimer ce revenu ?",
   "fin.confirm.deleteRec": "Supprimer cette opération récurrente avec toutes les opérations précédentes ? Astuce : « Terminer » garde les opérations précédentes.",

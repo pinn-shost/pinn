@@ -2145,7 +2145,7 @@ window.PINN_I18N && window.PINN_I18N.keys("ko", {
   "fin.cat.overOf": "{budget} 대비 {amount} 초과",
   "fin.cat.own": "직접 설정",
   "fin.cat.ownTitle": "직접 만든 카테고리",
-  "fin.cat.symbol": "아이콘(이모지)",
+  "fin.cat.symbol": "아이콘",
   "fin.confirm.deleteExpense": "이 지출을 삭제할까요?",
   "fin.confirm.deleteIncome": "이 수입을 삭제할까요?",
   "fin.confirm.deleteRec": "이전 거래를 모두 포함해 이 반복 거래를 삭제할까요? 팁: ‘종료’를 쓰면 이전 거래가 유지돼요.",

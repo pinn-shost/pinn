@@ -2145,7 +2145,7 @@ window.PINN_I18N && window.PINN_I18N.keys("tr", {
   "fin.cat.overOf": "Bütçe {budget}: {amount} aşıldı",
   "fin.cat.own": "Özel",
   "fin.cat.ownTitle": "Özel kategori",
-  "fin.cat.symbol": "Simge (emoji)",
+  "fin.cat.symbol": "Simge",
   "fin.confirm.deleteExpense": "Bu gider silinsin mi?",
   "fin.confirm.deleteIncome": "Bu gelir silinsin mi?",
   "fin.confirm.deleteRec": "Bu yinelenen işlem, tüm önceki işlemleriyle birlikte silinsin mi? İpucu: “Bitir” önceki işlemleri korur.",

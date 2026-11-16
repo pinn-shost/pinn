@@ -2145,7 +2145,7 @@ window.PINN_I18N && window.PINN_I18N.keys("nl", {
   "fin.cat.overOf": "{amount} boven {budget}",
   "fin.cat.own": "Eigen",
   "fin.cat.ownTitle": "Eigen categorie",
-  "fin.cat.symbol": "Pictogram (emoji)",
+  "fin.cat.symbol": "Pictogram",
   "fin.confirm.deleteExpense": "Deze uitgave verwijderen?",
   "fin.confirm.deleteIncome": "Deze inkomsten verwijderen?",
   "fin.confirm.deleteRec": "Deze terugkerende boeking verwijderen, inclusief alle eerdere boekingen? Tip: met “Beëindigen” blijven de eerdere boekingen behouden.",

@@ -162,6 +162,7 @@ function normalizeFinance(f) {
   const cats = (Array.isArray(f.categories) && f.categories.length)
     ? f.categories.filter(c => c && c.id).map(c => ({ ...c }))
     : d.categories;
+  catIconUpgrade(cats, CAT_ICON_UPGRADE.fin);
   // Add standard categories that were introduced later (e.g. savings, insurance, income).
   // Standard categories cannot be deleted, only hidden - so missing ones are new.
   FIN_DEFAULT_CATEGORIES.forEach(dc => {
@@ -1165,7 +1166,7 @@ function finNewCategoryFormEl(containerId) {
     form.innerHTML = `
       <div class="text-[11px] uppercase tracking-wide text-ink/40 mb-1.5">${escapeHtml(tk('fin.cat.ownTitle'))}</div>
       <div class="flex items-center gap-2">
-        <input type="text" data-field="icon" maxlength="4" value="🏷️" class="w-11 shrink-0 rounded-lg border border-ink/15 px-1 py-1.5 text-center text-lg" aria-label="${escapeHtml(tk('fin.cat.symbol'))}" />
+        ${sympInput('🏷️', tk('fin.cat.symbol'))}
         <input type="text" data-field="label" maxlength="40" placeholder="${escapeHtml(tk('fin.cat.namePh'))}" autocomplete="off" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-base" aria-label="${escapeHtml(tk('fin.cat.nameLabel'))}" />
       </div>
       <p data-field="error" class="hidden text-xs text-red-500 mt-1.5"></p>
@@ -1184,7 +1185,7 @@ function finNewCategoryFormEl(containerId) {
 }
 function finShowNewCategoryForm(containerId) {
   const form = finNewCategoryFormEl(containerId);
-  form.querySelector('[data-field="icon"]').value = '🏷️';
+  sympSet(form.querySelector('[data-field="icon"]'), '🏷️');
   form.querySelector('[data-field="label"]').value = '';
   form.querySelector('[data-field="error"]').classList.add('hidden');
   form.classList.remove('hidden');

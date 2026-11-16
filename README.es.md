@@ -129,6 +129,13 @@ Pulsa cualquier imagen para verla en tamaño completo.
 
 pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski y 🇺🇦 Українська**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades de la 1.150.8
+
+**Iconos en todas partes, elegidos desde la app**
+
+- **Iconos propios en todas partes.** Comida, hogar, vehículos, plantas, ropa, juguetes y deporte también tienen ahora iconos de línea propios (habitaciones, tipos de residuos, tipos de vehículo, jardín, despertador, selector de calendario, cuenta atrás). Los **iconos de categoría** en Finanzas, Contratos, Documentos y Despensa se eligen entre unos 150 iconos listos en lugar del teclado de emojis, y el mismo tipo de categoría tiene el mismo icono en todas partes. Las escenas de Hogar y Vehículos muestran vehículos nuevos y coloridos. Detalles: el tiempo «Ahora» sin borde discontinuo, tipo de letra del reloj del panel, icono de la lista del plan de comidas, iconos sobre la línea del texto.
+- Cambiado: `js/szenen.js`, `js/symbolwahl.js` (new), `js/symbole.js`, `css/wetterlogos.css`, `js/zustand.js`, `js/zuhause.js`, `js/fahrzeuge.js`, `js/gesundheit.js`, `js/finanzen.js`, `js/vertraege.js`, `js/dokumente.js`, `js/vorrat.js`, `js/vorrat2.js`, `js/einkauf.js`, `js/profilauswahl.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
+
 ## Novedades de la 1.150.7
 
 **Iconos propios del tiempo**
@@ -264,15 +271,6 @@ pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Estaciones.** En Apariencia → Estaciones, los botones «Invierno» y «Navidad» abren una ventana para elegir el periodo (por defecto 1/12–6/1 y 1–26/12) y activar o desactivar cada parte: nieve en texto y mosaicos, nevada en pantalla, paisaje del panel, luces, Papá Noel, gorro y acebo. «Control por voz y widgets» empieza con las guías cerradas.
 - Cambiado: `js/entsperren.js` (nuevo), `js/geraete.js`, `js/verbindung.js`, `js/sprachsteuerung.js`, `js/winterzeit.js`, `pb_hooks/pinn-sitzungen.js`, `pb_hooks/sitzungen.pb.js`, `pb_hooks/pinn-sprache.js`, `src/`, `index.html`, `pinn-setup.sh`, `i18n/`, todos los README. Parte del servidor: instalar los hooks, PocketBase se reinicia.
 
-## Novedades de la 1.146.1
-
-**Nieve en cada letra, invierno en el panel**
-
-- **Nieve como la de verdad.** La nieve se posa ahora en cada letra, solo arriba del todo: una capa en los bordes planos (barra superior de la B o la L, los dos extremos superiores de la K), un montoncito en el centro de las curvas (O), nada en los lados empinados, en el pie de la L ni en los huecos. Los emoji quedan libres. El apellido de la familia en la cabecera también lleva nieve, que se adapta cuando cambia.
-- **Invierno en el panel familiar.** Nieve sobre el apellido, la hora y la temperatura, un gorro de nieve en cada tarjeta (cada uno algo distinto) y abajo un pequeño paisaje invernal.
-- **Papá Noel** pasa solo la mitad de veces (cada 10–18 minutos, cada 4–6 en Nochebuena).
-- Cambiado: `js/winterzeit.js`, `css/winterzeit.css`, `src/`, `index.html`, todos los README. Sin parte del servidor.
-
 ## Cómo funciona
 
 ```mermaid
@@ -299,7 +297,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.150.7` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.150.8` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

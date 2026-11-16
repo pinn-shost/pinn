@@ -205,10 +205,10 @@ function fzSceneHtml(v) {
   const hills = `<svg class="fz-hills" viewBox="0 0 400 34" preserveAspectRatio="none" aria-hidden="true">
       <path d="M0 34 V20 Q40 6 90 16 T190 12 T300 18 T400 10 V34Z" class="fz-hill-far"/>
       <path d="M0 34 V26 Q60 16 130 24 T260 22 T400 24 V34Z" class="fz-hill-near"/></svg>`;
-  // [emoji, duration s, delay s]; far lane = oncoming traffic (to the right), near lane = overtaking (to the left)
+  // [figure (scFig), duration s, delay s]; far lane = oncoming traffic (to the right), near lane = overtaking (to the left)
   const bikes = !!(k.bike || k.id === 'escooter');
-  const far = bikes ? [['🚗', 9, 2], ['🚲', 16, 9], ['🚌', 13, 5]] : [['🚚', 11, 3], ['🚗', 8, 7], ['🚌', 14, 11], ['🏍️', 7, 1]];
-  const near = bikes ? [['🚲', 12, 4], ['🛴', 15, 10]] : [['🚙', 10, 6], ['🚕', 13, 1], ['🚐', 16, 12]];
+  const far = bikes ? [[scFig('car', 0), 9, 2], [scFig('bike', 1), 16, 9], [scFig('bus', 1), 13, 5]] : [[scFig('truck', 1), 11, 3], [scFig('hatch', 2), 8, 7], [scFig('bus', 0), 14, 11], [scFig('moto', 0), 7, 1]];
+  const near = bikes ? [[scFig('bike', 3), 12, 4], [scFig('scooter', 0), 15, 10]] : [[scFig('suv', 1), 10, 6], [scFig('taxi'), 13, 1], [scFig('van', 4), 16, 12]];
   const mover = (lane, [emoji, dur, delay]) => `<div class="hs-mover fz-car ${lane} hs-anim${lane === 'far' ? ' ltr' : ''}" style="animation-duration:${dur}s;animation-delay:-${delay}s"><span>${emoji}</span></div>`;
   return `<div class="fz-hero-band hs-scene fz-scene${night ? ' is-night' : ''}" aria-hidden="true">
       ${sky}${hills}${fzSceneTrees(night)}

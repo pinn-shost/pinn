@@ -129,6 +129,13 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski et 🇺🇦 Українська**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.150.8
+
+**Des icônes partout, à choisir dans l’appli**
+
+- **Des icônes maison partout.** Nourriture, maison, véhicules, plantes, vêtements, jouets et sport ont maintenant eux aussi leurs icônes en trait (pièces, types de déchets, types de véhicules, jardin, réveil, bascule du calendrier, compte à rebours). Les **icônes de catégorie** dans Finances, Contrats, Documents et Réserves se choisissent parmi environ 150 icônes prêtes à l’emploi au lieu du clavier d’emojis, et un même type de catégorie a partout la même icône. Les scènes de Maison et Véhicules montrent de nouveaux véhicules colorés. Détails : météo « Maintenant » sans bordure en pointillés, police de l’horloge du tableau de bord, icône de la liste du plan de repas, icônes alignées sur la ligne de texte.
+- Modifié : `js/szenen.js`, `js/symbolwahl.js` (new), `js/symbole.js`, `css/wetterlogos.css`, `js/zustand.js`, `js/zuhause.js`, `js/fahrzeuge.js`, `js/gesundheit.js`, `js/finanzen.js`, `js/vertraege.js`, `js/dokumente.js`, `js/vorrat.js`, `js/vorrat2.js`, `js/einkauf.js`, `js/profilauswahl.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
+
 ## Nouveautés de la 1.150.7
 
 **Icônes météo maison**
@@ -264,15 +271,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Saisons.** Sous Apparence → Saisons, les boutons « Hiver » et « Noël » ouvrent une fenêtre pour choisir la période (par défaut 1/12–6/1 et 1–26/12) et activer ou désactiver chaque élément : neige sur le texte et les tuiles, chute de neige à l'écran, paysage du tableau de bord, guirlande, père Noël, bonnet et houx. « Commande vocale & widgets » s'ouvre avec les guides fermés.
 - Modifié : `js/entsperren.js` (nouveau), `js/geraete.js`, `js/verbindung.js`, `js/sprachsteuerung.js`, `js/winterzeit.js`, `pb_hooks/pinn-sitzungen.js`, `pb_hooks/sitzungen.pb.js`, `pb_hooks/pinn-sprache.js`, `src/`, `index.html`, `pinn-setup.sh`, `i18n/`, tous les README. Partie serveur : installer les hooks, PocketBase redémarre.
 
-## Nouveautés de la 1.146.1
-
-**De la neige sur chaque lettre, l’hiver sur le tableau de bord**
-
-- **De la neige comme la vraie.** La neige se pose désormais sur chaque lettre, tout en haut seulement : une couche sur les bords plats (barre du haut du B ou du L, les deux extrémités hautes du K), un petit tas au milieu des arrondis (O), rien sur les flancs raides, au pied du L ou dans les espaces. Les emoji restent libres. Le nom de famille dans l’en-tête reçoit aussi de la neige, qui s’adapte quand il change.
-- **L’hiver sur le tableau de bord familial.** De la neige sur le nom de famille, l’heure et la température, un chapeau de neige sur chaque tuile (chacun un peu différent) et un petit paysage d’hiver en bas.
-- **Le père Noël** passe deux fois moins souvent (toutes les 10–18 minutes, toutes les 4–6 la veille de Noël).
-- Modifié : `js/winterzeit.js`, `css/winterzeit.css`, `src/`, `index.html`, tous les README. Pas de partie serveur.
-
 ## Comment ça marche
 
 ```mermaid
@@ -299,7 +297,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.150.7` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.150.8` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

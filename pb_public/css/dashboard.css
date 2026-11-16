@@ -14,7 +14,10 @@
   padding: calc(env(safe-area-inset-top, 0px) + 2rem) 2rem calc(env(safe-area-inset-bottom, 0px) + 1.5rem);
 }
 .dash-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
-.dash-clock { font-family: 'Fraunces', Georgia, serif; font-size: clamp(2.2rem, 6vw, 3.4rem); line-height: 1; font-variant-numeric: tabular-nums; }
+.dash-clock { font-family: Inter, system-ui, -apple-system, sans-serif; font-weight: 600; letter-spacing: -0.02em; font-size: clamp(2.2rem, 6vw, 3.4rem); line-height: 1; font-variant-numeric: tabular-nums; }
+/* time | temperature + icon: lighter, so the weather reads as a second line of the same clock */
+.dash-clock .dc-wx { font-weight: 500; opacity: .85; }
+.dash-clock .dc-sep { font-weight: 300; opacity: .35; margin: 0 .22em; }
 /* Profiles always centred: tiles of fixed width, wrapping centred and vertically in the middle */
 .dash-main { flex: 1 0 auto; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%; }
 .dash-grid { display: flex; flex-wrap: wrap; justify-content: center; align-items: stretch; gap: 1.25rem; width: 100%; }
