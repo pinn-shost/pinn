@@ -42,14 +42,14 @@ function monthGridDays(year, monthIndex) {
    ========================================================== */
 function tickClock() {
   const now = new Date();
-  let text = now.toLocaleDateString(PINN_I18N.language.locale, { weekday: 'long', day: 'numeric', month: 'long' }) + ' · ' + now.toLocaleTimeString(PINN_I18N.language.locale, { hour: '2-digit', minute: '2-digit' });
+  let text = escapeHtml(now.toLocaleDateString(PINN_I18N.language.locale, { weekday: 'long', day: 'numeric', month: 'long' }) + ' · ' + now.toLocaleTimeString(PINN_I18N.language.locale, { hour: '2-digit', minute: '2-digit' }));
   const hw = document.getElementById('headerWeather');
   const headerWeatherShown = !!(hw && !hw.classList.contains('hidden'));
   if (weatherData && !headerWeatherShown) {
-    text += ` | ${weatherIconForCode(weatherData.code)} ${tDeg(weatherData.temp)}`;
-    if (weatherData.uv !== null) text += ` | UV ${weatherData.uv}`;
+    text += ` | ${weatherIconForCode(weatherData.code)} ${escapeHtml(tDeg(weatherData.temp))}`;
+    if (weatherData.uv !== null) text += ` | UV ${escapeHtml(String(weatherData.uv))}`;
   }
-  document.getElementById('clock').textContent = text;
+  document.getElementById('clock').innerHTML = text;
 }
 tickClock();
 setInterval(tickClock, 30000);
@@ -62,16 +62,8 @@ setInterval(tickClock, 30000);
    again every time it opened. As long as no home is set, the former weather location
    (weatherLocation in the family data) serves as a fallback.
    ========================================================== */
-function weatherIconForCode(code) {
-  if (code === 0) return '☀️';
-  if (code === 1 || code === 2) return '⛅';
-  if (code === 3) return '☁️';
-  if (code === 45 || code === 48) return '🌫️';
-  if ([51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82].includes(code)) return '🌧️';
-  if ([71, 73, 75, 77, 85, 86].includes(code)) return '❄️';
-  if ([95, 96, 99].includes(code)) return '⛈️';
-  return '🌡️';
-}
+// Own simple icons (js/wetterlogos.js) instead of emoji; night = moon instead of sun. Returns an <svg> string.
+function weatherIconForCode(code, night) { return wxIcon(wxIconName(code, !!night)); }
 
 // Marks this file as loaded – the start check in index.html reports missing app files
 (window.PINN_PARTS = window.PINN_PARTS || []).push('grundlagen');

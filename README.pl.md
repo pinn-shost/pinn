@@ -110,6 +110,14 @@ Dotknij obrazu, aby otworzyć go w pełnym rozmiarze.
 
 pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski i 🇺🇦 Українська**; dostosowuje walutę i numery alarmowe do twojego regionu i przełącza się między określeniami **rodzina** i **wspólne mieszkanie**. Jeden serwer może obsługiwać wiele rodzin, każdą z własnymi administratorami.
 
+## Nowości w 1.150.7
+
+**Własne ikony pogody**
+
+- **Ikony pogody.** Widoki pogody mają teraz własne, proste ikony liniowe zamiast emoji Apple, w tym samym stylu co ikony skrótów: słońce, księżyc, chmury, deszcz, śnieg, burza, wiatr, UV, wschód słońca, woda i wskazówki dotyczące ubioru. W trybie ciemnym zmieniają kolor.
+- **Własne ikony wszędzie.** Około 150 prostych ikon liniowych zastępuje teraz emoji Apple w całej aplikacji (gwiazdki, ptaszki, ostrzeżenia, miejsca, prezenty, zegar, kalendarz, kłódka, poczta, narzędzia, zdrowie, dom, pieniądze i więcej). Zwierzęta, jedzenie, ubrania, rośliny, pojazdy, sport i zabawki, emoji wybrane lub wpisane samodzielnie (zdjęcia członków, teksty czatu, pola wpisywania) oraz powiadomienia push pozostają emoji.
+- Zmienione: `js/symbole.js` (new), `js/wetterlogos.js`, `css/wetterlogos.css` (new), `js/familie.js`, `js/grundlagen.js`, `js/profilauswahl.js`, `js/wetterkachel.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
+
 ## Nowości w 1.150.6
 
 **Face ID znów odblokowuje samo**
@@ -174,14 +182,6 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 - **Zostaje otwarte.** Okno pozostaje otwarte po akcji, więc można zrobić kilka rzeczy z rzędu; „Otwórz” prowadzi do pełnej funkcji.
 - Zmieniono: `pb_hooks/pinn-zeit.js`, `pb_hooks/zeit.pb.js`, `js/zeit.js`, `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `pb_hooks/pinn-gesundheit.js`, `js/appstart.js`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/ansichten.js`, `js/design.js`, `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, README (+ 1.149.1).
 
-## Nowości w 1.149.1
-
-**Przypomnienia push**
-
-- **Przypomnienia o zdrowiu.** Na stronie zdrowia można włączyć przypomnienie push dla każdego bloku: leki i witaminy o swoich godzinach, picie w odstępach między dwiema godzinami dnia (z brakującą ilością) i mycie rąk o stałych porach.
-- **Tylko dla samej osoby.** Przypomnienia trafiają na urządzenia tej osoby; do innych członków rodziny nic nie jest wysyłane. Dotknięcie powiadomienia otwiera stronę zdrowia – przy piciu od razu okno napoju.
-- Zmienione: `pb_hooks/pinn-gesundheit.js`, `pb_hooks/gesundheit.pb.js`, `js/gesundheit.js`, `css/gesundheit.css`, `js/hinweise.js`, `js/fortsetzen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, wszystkie README. Zawiera 1.149.0.
-
 ## Wymagania
 
 - NAS lub mini PC z zainstalowanym **Dockerem** i **Docker Compose** (np. Synology, UGREEN, QNAP albo zwykły serwer z Linuksem)
@@ -191,7 +191,7 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 ## Instalacja
 
 1. Pobierz i rozpakuj plik ZIP [najnowszej wersji](https://github.com/pinn-shost/pinn/releases/latest).
-2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.150.6` lub `pinn-main`) bez zmian.
+2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.150.7` lub `pinn-main`) bez zmian.
 3. Połącz się przez SSH i uruchom:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -110,6 +110,14 @@ Tam boyutta açmak için bir resme dokun.
 
 pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski ve 🇺🇦 Українська**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
 
+## 1.150.7 sürümündeki yenilikler
+
+**Kendi hava durumu simgeleri**
+
+- **Hava durumu simgeleri.** Hava durumu ekranlarında artık Apple emojileri yerine kendi sade çizgi simgeleri var; kısayol simgeleriyle aynı görünümde: güneş, ay, bulutlar, yağmur, kar, fırtına, rüzgâr, UV, gün doğumu, su ve giyim ipuçları. Karanlık modda renkleri de değişir.
+- **Her yerde kendi simgeler.** Yaklaşık 150 sade çizgi simgesi artık uygulamanın her yerinde Apple emojilerinin yerini alıyor (yıldızlar, onay işaretleri, uyarılar, yerler, hediyeler, saat, takvim, kilit, posta, aletler, sağlık, ev, para ve daha fazlası). Hayvanlar, yiyecekler, giysiler, bitkiler, taşıtlar, spor ve oyuncaklar, kendi seçtiğiniz veya yazdığınız emojiler (üye resimleri, sohbet metinleri, giriş alanları) ve push bildirimleri emoji olarak kalır.
+- Değişenler: `js/symbole.js` (new), `js/wetterlogos.js`, `css/wetterlogos.css` (new), `js/familie.js`, `js/grundlagen.js`, `js/profilauswahl.js`, `js/wetterkachel.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
+
 ## 1.150.6 sürümündeki yenilikler
 
 **Face ID yine kendiliğinden açıyor**
@@ -174,14 +182,6 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 - **Açık kalır.** Pencere bir işlemden sonra açık kalır, böylece art arda birkaç şey yapılabilir; “Aç” tam işleve götürür.
 - Değişenler: `pb_hooks/pinn-zeit.js`, `pb_hooks/zeit.pb.js`, `js/zeit.js`, `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `pb_hooks/pinn-gesundheit.js`, `js/appstart.js`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/ansichten.js`, `js/design.js`, `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, README (+ 1.149.1).
 
-## 1.149.1 sürümündeki yenilikler
-
-**Push hatırlatmaları**
-
-- **Sağlık için hatırlatmalar.** Sağlık sayfasında her blok için push hatırlatması açılabilir: ilaçlar ve vitaminler kendi saatlerinde, su içme günün iki saati arasında belirli aralıklarla (eksik miktarla birlikte) ve el yıkama sabit saatlerde.
-- **Yalnızca kişinin kendisi için.** Hatırlatmalar o kişinin cihazlarına gider; diğer aile üyelerine hiçbir şey gönderilmez. Bildirime dokunmak sağlık sayfasını açar; su içmede doğrudan içecek penceresini.
-- Değişenler: `pb_hooks/pinn-gesundheit.js`, `pb_hooks/gesundheit.pb.js`, `js/gesundheit.js`, `css/gesundheit.css`, `js/hinweise.js`, `js/fortsetzen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, tüm README’ler. 1.149.0’ı içerir.
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -191,7 +191,7 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.150.6` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.150.7` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

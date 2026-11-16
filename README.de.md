@@ -133,6 +133,14 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski und 🇺🇦 Українська**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.150.7
+
+**Eigene Wetter-Symbole**
+
+- **Wetter-Symbole.** Die Wetter-Ansichten haben jetzt eigene, schlichte Linien-Symbole statt der Apple-Emojis – im gleichen Stil wie die Shortcut-Symbole: Sonne, Mond, Wolken, Regen, Schnee, Gewitter, Wind, UV, Sonnenaufgang, Wasser und die Kleidungs-Tipps. Im Dunkelmodus wechseln sie mit.
+- **Eigene Symbole überall.** Rund 150 schlichte Linien-Symbole ersetzen jetzt in der ganzen App die Apple-Emojis (Sterne, Haken, Warnungen, Orte, Geschenke, Uhr, Kalender, Schloss, Post, Werkzeug, Gesundheit, Haus, Geld und mehr). Tiere, Essen, Kleidung, Pflanzen, Fahrzeuge, Sport und Spielzeug, selbst gewählte oder getippte Emojis (Profilbilder, Chat-Texte, Eingabefelder) und Push-Nachrichten bleiben Emojis.
+- Geändert: `js/symbole.js` (new), `js/wetterlogos.js`, `css/wetterlogos.css` (new), `js/familie.js`, `js/grundlagen.js`, `js/profilauswahl.js`, `js/wetterkachel.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
+
 ## Neu in 1.150.6
 
 **Face ID entsperrt wieder von selbst**
@@ -241,15 +249,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Wie lange.** Solange die App geöffnet bleibt (auch im Hintergrund), höchstens 12 Stunden. Nach dem Schließen der App, nach „Abmelden“ auf dem eigenen Gerät oder über einen Link aus einer Benachrichtigung startest du wie gewohnt. Auch auf dem eigenen Gerät bleibt die Seite erhalten, wenn die App neu lädt, z. B. nach einem Update.
 - Geändert: `js/fortsetzen.js` (neu), `js/appstart.js`, `js/dashboard.js`, `js/anmeldung.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`, `pinn-setup.sh`, alle READMEs. Kein Server-Teil.
 
-## Neu in 1.147.1
-
-**Geräte einmal in der Liste, Link in den Anleitungen**
-
-- **Angemeldete Geräte.** Ein Gerät, das sich zweimal gleichzeitig angemeldet hat (z. B. das Familien-Dashboard am Mac), stand doppelt mit derselben ID in der Liste. Jetzt steht es einmal da, zählt einmal, und „Abmelden“ entfernt es ganz.
-- **Kein „Nur Benachrichtigungen“ mehr.** Eine übrig gebliebene Benachrichtigungs-Adresse eines Geräts, das schon angemeldet ist, wird automatisch entfernt – damit nichts doppelt ankommt.
-- **Sprachsteuerung & Widgets.** Der persönliche Link steht jetzt direkt in den Feldern „Siri-Kurzbefehl“ und „Android“ (mit Kopieren-Knopf) statt in der Gesamtübersicht.
-- Geändert: `js/geraete.js`, `js/sprachsteuerung.js`, `js/sprachen.js`, `pb_hooks/pinn-sitzungen.js`, `src/`, `index.html`, `i18n/`, alle READMEs. Server-Teil: Hooks einspielen, PocketBase startet neu.
-
 ## So funktioniert’s
 
 ```mermaid
@@ -278,7 +277,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.150.6` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.150.7` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

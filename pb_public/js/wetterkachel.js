@@ -53,7 +53,7 @@ function renderWeatherTileNow() {
         <div class="ov-weather-label">${escapeHtml(weatherDayLabel(d.date, days.length > 3 ? 0 : i))}</div>
         <div class="ov-weather-icon">${weatherIconForCode(d.code)}</div>
         <div class="ov-weather-temp">${d.max != null ? tDeg(d.max) : '–'}<span class="ov-weather-min">${d.min != null ? tDeg(d.min) : ''}</span></div>
-        <div class="ov-weather-rain">${d.rain != null ? '💧 ' + d.rain + ' %' : ''}</div>
+        <div class="ov-weather-rain">${d.rain != null ? wxIcon('drop') + ' ' + d.rain + ' %' : ''}</div>
       </div>`).join('')}</div>${homeSunLine() ? `<p class="ov-weather-sun">${homeSunLine()}</p>` : ''}${wxTileTripsHtml()}${old ? `<p class="ov-weather-stale">${escapeHtml(tk('overview.weather.asOf', { time: new Date(weatherDaily.ts).toLocaleString(sysLocale(), { weekday: 'short', hour: '2-digit', minute: '2-digit' }) }))}</p>` : ''}`;
 }
 
@@ -83,7 +83,7 @@ function renderHeaderWeather() {
     <span class="hw-day${d.date === today ? ' is-today' : ''}">
       <span class="hw-label">${escapeHtml(weatherDayLabel(d.date, 0))}</span>
       <span class="hw-main"><span class="hw-icon">${weatherIconForCode(d.code)}</span><span class="hw-temp">${d.max != null ? tDeg(d.max) : ''}<span class="hw-min">${d.min != null ? tDeg(d.min) : ''}</span></span></span>
-      <span class="hw-rain">${d.rain != null ? '💧 ' + d.rain + ' %' : ''}</span>
+      <span class="hw-rain">${d.rain != null ? wxIcon('drop') + ' ' + d.rain + ' %' : ''}</span>
     </span>`).join('');
   tickClock();
 }

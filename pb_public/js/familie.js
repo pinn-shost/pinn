@@ -4913,15 +4913,15 @@ function wxTips(d) {
   if (!d) return [];
   const t = [];
   const code = d.code;
-  if ([95, 96, 99].includes(code)) t.push(['⛈️', tk('wx.thunderstormsPossibleTakeCare')]);
-  if ([71, 73, 75, 77, 85, 86, 56, 57, 66, 67].includes(code) || (d.min != null && d.min <= 0)) t.push(['❄️', tk('wx.couldSlipperySturdyShoes')]);
-  if ((d.rain != null && d.rain >= 60) || (d.mm != null && d.mm >= 2)) t.push(['☔', tk('wx.takeRainJacketUmbrella')]);
-  if (d.max != null && d.max <= 5) t.push(['🧤', tk('wx.hatScarfGloves')]);
-  else if (d.max != null && d.max <= 13) t.push(['🧥', tk('wx.wearWarmJacket')]);
-  else if (d.max != null && d.max >= 26) t.push(['🩳', tk('wx.dressLightDrinkPlenty')]);
-  if (d.uv != null && d.uv >= 6) t.push(['🧴', tk('wx.sunscreenCap')]);
-  if ((d.boeen != null && d.boeen >= 60) || (d.wind != null && d.wind >= 40)) t.push(['💨', tk('wx.veryWindyHoodInstead')]);
-  if (!t.length && d.max != null && d.max >= 18 && !wxRainy(d)) t.push(['😎', tk('wx.perfectBeingOutdoors')]);
+  if ([95, 96, 99].includes(code)) t.push(['storm', tk('wx.thunderstormsPossibleTakeCare')]);
+  if ([71, 73, 75, 77, 85, 86, 56, 57, 66, 67].includes(code) || (d.min != null && d.min <= 0)) t.push(['flake', tk('wx.couldSlipperySturdyShoes')]);
+  if ((d.rain != null && d.rain >= 60) || (d.mm != null && d.mm >= 2)) t.push(['umbrella', tk('wx.takeRainJacketUmbrella')]);
+  if (d.max != null && d.max <= 5) t.push(['hat', tk('wx.hatScarfGloves')]);
+  else if (d.max != null && d.max <= 13) t.push(['jacket', tk('wx.wearWarmJacket')]);
+  else if (d.max != null && d.max >= 26) t.push(['shorts', tk('wx.dressLightDrinkPlenty')]);
+  if (d.uv != null && d.uv >= 6) t.push(['sunscreen', tk('wx.sunscreenCap')]);
+  if ((d.boeen != null && d.boeen >= 60) || (d.wind != null && d.wind >= 40)) t.push(['wind', tk('wx.veryWindyHoodInstead')]);
+  if (!t.length && d.max != null && d.max >= 18 && !wxRainy(d)) t.push(['smile', tk('wx.perfectBeingOutdoors')]);
   return t.slice(0, 3);
 }
 
@@ -5084,7 +5084,7 @@ function wxClose() {
 function wxPlaceTabs() {
   const trips = tripList();
   if (!trips.length) return '';
-  return `<div class="wx-tabs">${[`<button type="button" class="wx-tab${wxState.place === 'home' ? ' active' : ''}" data-wxplace="home">🏠 <span>${tk('nav.home')}</span></button>`]
+  return `<div class="wx-tabs">${[`<button type="button" class="wx-tab${wxState.place === 'home' ? ' active' : ''}" data-wxplace="home">${wxIcon('home')} <span>${tk('nav.home')}</span></button>`]
     .concat(trips.map(l => `<button type="button" class="wx-tab${wxState.place === l.id ? ' active' : ''}" data-wxplace="${escapeHtml(l.id)}">${escapeHtml(l.icon || '🧳')} ${escapeHtml(tripName(l))}</button>`)).join('')}</div>`;
 }
 function wxRender() {
@@ -5098,10 +5098,10 @@ function wxRender() {
   const sky = wxSky(weatherData && weatherData.code != null ? weatherData.code : (t0 ? t0.code : 3));
   const hero = `<div class="wx-hero sky-${sky}">
     <div class="wx-hero-deco" aria-hidden="true">${weatherIconForCode(weatherData && weatherData.code != null ? weatherData.code : (t0 ? t0.code : 3))}</div>
-    <div class="wx-kicker">🏠 <span>${tk('nav.home')}</span></div>
+    <div class="wx-kicker">${wxIcon('home')} <span>${tk('nav.home')}</span></div>
     <div class="wx-place">${escapeHtml((weatherDaily && weatherDaily.label) || tk('app.weather'))}</div>
     ${weatherData && weatherData.temp != null ? `<div class="wx-now"><b>${tDeg(weatherData.temp)}</b><span>${escapeHtml(wxDesc(weatherData.code))}</span></div>` : ''}
-    <div class="wx-hero-sub">${t0 ? `<span>↑ <b>${tDeg(t0.max)}</b></span><span>↓ <b>${tDeg(t0.min)}</b></span>` : ''}${weatherData && weatherData.gef != null ? `<span><span>${tk('wx.feelsLike')}</span> <b>${tDeg(weatherData.gef)}</b></span>` : ''}${weatherData && weatherData.wind != null ? `<span>💨 <b>${weatherData.wind}</b> km/h</span>` : ''}</div>
+    <div class="wx-hero-sub">${t0 ? `<span>↑ <b>${tDeg(t0.max)}</b></span><span>↓ <b>${tDeg(t0.min)}</b></span>` : ''}${weatherData && weatherData.gef != null ? `<span><span>${tk('wx.feelsLike')}</span> <b>${tDeg(weatherData.gef)}</b></span>` : ''}${weatherData && weatherData.wind != null ? `<span>${wxIcon('wind')} <b>${weatherData.wind}</b> km/h</span>` : ''}</div>
   </div>`;
   let list = '';
   if (!days.length) {
@@ -5111,8 +5111,8 @@ function wxRender() {
   }
   const tips = t0 ? wxTips(t0) : [];
   body.innerHTML = `${hero}${wxPlaceTabs()}<div class="wx-wrap">
-    ${tips.length ? `<div class="wx-card wx-tips"><div class="wx-h">👕 <span>${tk('wx.whatWearToday')}</span></div>${tips.map(([i, t]) => `<div class="wx-tip"><span>${i}</span><span>${escapeHtml(t)}</span></div>`).join('')}</div>` : ''}
-    <div class="wx-card"><div class="wx-h">📅 <span>${tk('wx.n14Days')}</span></div>${list}</div>
+    ${tips.length ? `<div class="wx-card wx-tips"><div class="wx-h">${wxIcon('shirt')} <span>${tk('wx.whatWearToday')}</span></div>${tips.map(([i, t]) => `<div class="wx-tip"><span>${wxIcon(i)}</span><span>${escapeHtml(t)}</span></div>`).join('')}</div>` : ''}
+    <div class="wx-card"><div class="wx-h">${wxIcon('calendar')} <span>${tk('wx.n14Days')}</span></div>${list}</div>
     ${weatherDaily && weatherDaily.ts ? `<p class="wx-note"><span>${tk('lists.item.status')}</span> ${escapeHtml(new Date(weatherDaily.ts).toLocaleString(sysLocale(), { weekday: 'short', hour: '2-digit', minute: '2-digit' }))} · Open-Meteo</p>` : ''}
   </div>`;
   wxAfterRender();
@@ -5128,7 +5128,7 @@ function wxDaysHtml(days, placeKey) {
     const idx = daysBetweenDateStrs(today, d.date);
     const kind = d.quelle === 'klima' ? 'klima' : (idx >= 7 ? 'tendenz' : 'nah');
     if (kind !== lastKind && (kind !== 'nah' || lastKind)) {
-      html += `<div class="wx-sep">${kind === 'klima' ? ('📊 <span>' + tk('wx.typicalValuesAverageLast') + '</span>') : kind === 'tendenz' ? ('〰️ <span>' + tk('wx.trendStillUncertain') + '</span>') : ('🔭 <span>' + tk('wx.forecast') + '</span>')}</div>`;
+      html += `<div class="wx-sep">${kind === 'klima' ? (wxIcon('chart') + ' <span>' + tk('wx.typicalValuesAverageLast') + '</span>') : kind === 'tendenz' ? (wxIcon('trend') + ' <span>' + tk('wx.trendStillUncertain') + '</span>') : (wxIcon('far') + ' <span>' + tk('wx.forecast') + '</span>')}</div>`;
     }
     lastKind = kind;
     const mn = d.min != null ? d.min : d.max;
@@ -5137,7 +5137,7 @@ function wxDaysHtml(days, placeKey) {
     html += `<button type="button" class="wx-row${open ? ' open' : ''} ${kind}" data-wxday="${d.date}" aria-expanded="${open ? 'true' : 'false'}">
       <span class="wx-d"><b>${escapeHtml(wxDayName(d.date, i))}</b><small>${escapeHtml(wxShortDate(d.date))}</small></span>
       <span class="wx-ic">${weatherIconForCode(d.code)}</span>
-      <span class="wx-rain">${d.rain != null && d.rain >= 10 ? `💧<b>${d.rain}</b>%` : ''}</span>
+      <span class="wx-rain">${d.rain != null && d.rain >= 10 ? `${wxIcon('drop')}<b>${d.rain}</b>%` : ''}</span>
       <span class="wx-mn">${mn != null ? tDeg(mn) : ''}</span>
       <span class="wx-range"><i style="left:${left}%;right:${right}%"></i></span>
       <span class="wx-mx">${tDeg(d.max)}</span>
@@ -5154,19 +5154,19 @@ function wxDetailHtml(d, placeKey, kind) {
   const desc = wxDesc(d.code);
   if (kind === 'klima') {
     return `<p class="wx-dd"><span>${tk('wx.typicalValue')}</span> – <span>${tk('wx.whatDayWasLike')}</span>${d.jahre ? ` (${tk('wx.yearsN', { n: d.jahre })})` : ''}.</p>
-      <div class="wx-tiles">${wxTile('🌡️', tk('wx.avgHigh'), tDeg(d.max))}${wxTile('🌙', tk('wx.avgLow'), d.min != null ? tDeg(d.min) : null)}
-      ${wxTile('💧', tk('wx.rain'), d.mm != null ? escapeHtml(String(d.mm).replace('.', ',')) + ' ' + PINN_REGION.unit('mm') : null, d.rain != null ? `<b>${d.rain}</b> % <span>${tk('wx.rainyDays')}</span>` : '')}
-      ${wxTile('☀️', tk('wx.sun'), d.sonne != null ? escapeHtml(String(d.sonne).replace('.', ',')) + ' h' : null)}</div>`;
+      <div class="wx-tiles">${wxTile(wxIcon('thermo'), tk('wx.avgHigh'), tDeg(d.max))}${wxTile(wxIcon('moon'), tk('wx.avgLow'), d.min != null ? tDeg(d.min) : null)}
+      ${wxTile(wxIcon('drop'), tk('wx.rain'), d.mm != null ? escapeHtml(String(d.mm).replace('.', ',')) + ' ' + PINN_REGION.unit('mm') : null, d.rain != null ? `<b>${d.rain}</b> % <span>${tk('wx.rainyDays')}</span>` : '')}
+      ${wxTile(wxIcon('sun'), tk('wx.sun'), d.sonne != null ? escapeHtml(String(d.sonne).replace('.', ',')) + ' h' : null)}</div>`;
   }
   const arrow = d.richtung != null ? `<span class="wx-arrow" style="transform:rotate(${(d.richtung + 180) % 360}deg)">↑</span>` : '';
   const tiles = [
-    wxTile('🌡️', tk('wx.feelsLike2'), d.gefMax != null ? (d.gefMin != null ? tDeg(d.gefMin) + ' / ' : '') + tDeg(d.gefMax) : null),
-    wxTile('💧', tk('wx.rain'), d.mm != null ? escapeHtml(String(d.mm).replace('.', ',')) + ' ' + PINN_REGION.unit('mm') : null, d.regenStd ? `<b>${d.regenStd}</b> <span>${tk('family.hr')}</span>` : (d.rain != null ? `<b>${d.rain}</b> %` : '')),
-    wxTile('💨', tk('wx.wind'), d.wind != null ? `${arrow}${d.wind} ${PINN_REGION.unit('km/h')}` : null, d.boeen != null ? `<span>${tk('wx.gusts')}</span> <b>${d.boeen}</b>` : ''),
-    wxTile('🕶️', tk('wx.uvIndex'), d.uv != null ? String(Math.round(d.uv)) : null, d.uv != null ? escapeHtml(wxUvLabel(d.uv)) : ''),
-    wxTile('☀️', tk('wx.sun'), d.sonne != null ? escapeHtml(String(d.sonne).replace('.', ',')) + ' h' : null),
-    wxTile('🌅', tk('wx.sunriseSunset'), d.auf ? d.auf + ' · ' + (d.unter || '') : null),
-    wxTile('🌊', tk('wx.water'), d.wasser != null ? tDeg(d.wasser) : null),
+    wxTile(wxIcon('thermo'), tk('wx.feelsLike2'), d.gefMax != null ? (d.gefMin != null ? tDeg(d.gefMin) + ' / ' : '') + tDeg(d.gefMax) : null),
+    wxTile(wxIcon('drop'), tk('wx.rain'), d.mm != null ? escapeHtml(String(d.mm).replace('.', ',')) + ' ' + PINN_REGION.unit('mm') : null, d.regenStd ? `<b>${d.regenStd}</b> <span>${tk('family.hr')}</span>` : (d.rain != null ? `<b>${d.rain}</b> %` : '')),
+    wxTile(wxIcon('wind'), tk('wx.wind'), d.wind != null ? `${arrow}${d.wind} ${PINN_REGION.unit('km/h')}` : null, d.boeen != null ? `<span>${tk('wx.gusts')}</span> <b>${d.boeen}</b>` : ''),
+    wxTile(wxIcon('uv'), tk('wx.uvIndex'), d.uv != null ? String(Math.round(d.uv)) : null, d.uv != null ? escapeHtml(wxUvLabel(d.uv)) : ''),
+    wxTile(wxIcon('sun'), tk('wx.sun'), d.sonne != null ? escapeHtml(String(d.sonne).replace('.', ',')) + ' h' : null),
+    wxTile(wxIcon('sunrise'), tk('wx.sunriseSunset'), d.auf ? d.auf + ' · ' + (d.unter || '') : null),
+    wxTile(wxIcon('water'), tk('wx.water'), d.wasser != null ? tDeg(d.wasser) : null),
   ].join('');
   const tips = wxTips(d);
   const key = (placeKey || 'home') + '|' + d.date;
@@ -5175,16 +5175,16 @@ function wxDetailHtml(d, placeKey, kind) {
   if (h && Array.isArray(h.stunden) && h.stunden.length) {
     const now = new Date().getHours();
     const rows = h.stunden.filter(x => d.date !== isoDate(new Date()) || Number(x.h) >= now);
-    hours = `<div class="wx-hours">${rows.map(x => `<div class="wx-hour${x.tag ? '' : ' night'}"><small>${escapeHtml(x.h)}</small><span>${x.tag ? weatherIconForCode(x.code) : (x.code <= 2 ? '🌙' : weatherIconForCode(x.code))}</span><b>${x.temp != null ? tDeg(x.temp) : ''}</b><i class="wx-hbar"><em style="height:${Math.min(100, x.rain || 0)}%"></em></i><small class="wx-hr">${x.rain ? x.rain + '%' : ''}</small></div>`).join('')}</div>`;
+    hours = `<div class="wx-hours">${rows.map(x => `<div class="wx-hour${x.tag ? '' : ' night'}"><small>${escapeHtml(x.h)}</small><span>${x.tag ? weatherIconForCode(x.code) : weatherIconForCode(x.code, true)}</span><b>${x.temp != null ? tDeg(x.temp) : ''}</b><i class="wx-hbar"><em style="height:${Math.min(100, x.rain || 0)}%"></em></i><small class="wx-hr">${x.rain ? x.rain + '%' : ''}</small></div>`).join('')}</div>`;
   } else if (h && h.err) {
     hours = '';
   } else if (kind !== 'klima' && daysBetweenDateStrs(isoDate(new Date()), d.date) <= 15) {
-    hours = `<div class="wx-hours-load">⏳ <span>${tk('wx.loadingHourlyForecast')}</span></div>`;
+    hours = `<div class="wx-hours-load">${wxIcon('hourglass')} <span>${tk('wx.loadingHourlyForecast')}</span></div>`;
   }
   return `${desc ? `<p class="wx-dd"><b>${escapeHtml(desc)}</b>${d.unsicher || kind === 'tendenz' ? (' · <span>' + tk('wx.trend') + '</span>') : ''}</p>` : ''}
     ${hours}
     <div class="wx-tiles">${tiles}</div>
-    ${tips.length ? `<div class="wx-tips-in">${tips.map(([i, t]) => `<span class="wx-chip">${i} <span>${escapeHtml(t)}</span></span>`).join('')}</div>` : ''}`;
+    ${tips.length ? `<div class="wx-tips-in">${tips.map(([i, t]) => `<span class="wx-chip">${wxIcon(i)} <span>${escapeHtml(t)}</span></span>`).join('')}</div>` : ''}`;
 }
 async function wxLoadHours(placeKey, date) {
   const key = placeKey + '|' + date;
@@ -5217,10 +5217,10 @@ function wxTripHtml(l) {
   const when = tripWhenText(l);
   const hero = `<div class="wx-hero sky-${sky} trip">
     <div class="wx-hero-deco" aria-hidden="true">${escapeHtml(l.icon || '🧳')}</div>
-    <div class="wx-kicker">🧳 <span>${tk('wx.holidayWeather')}</span></div>
+    <div class="wx-kicker">${wxIcon('suitcase')} <span>${tk('wx.holidayWeather')}</span></div>
     <div class="wx-place">${escapeHtml(tripName(l))}</div>
     ${l.trip.place.zusatz ? `<div class="wx-place-sub">${escapeHtml(l.trip.place.zusatz)}</div>` : ''}
-    <div class="wx-hero-sub"><span>📅 ${escapeHtml(tripRangeText(l))}</span><span>${escapeHtml(when)}</span></div>
+    <div class="wx-hero-sub"><span>${wxIcon('calendar')} ${escapeHtml(tripRangeText(l))}</span><span>${escapeHtml(when)}</span></div>
   </div>`;
   let content = '';
   if (!data) {
@@ -5233,20 +5233,20 @@ function wxTripHtml(l) {
     content = `${sum ? `<div class="wx-card wx-sum">
         <div class="wx-sum-main"><span class="wx-sum-ic">${weatherIconForCode(sum.code)}</span><div><b>${tDeg(sum.max)}</b><span class="wx-sum-min">${tDeg(sum.min)}</span><div class="wx-sum-l"><span>${tk('wx.avgDayNight')}</span></div></div></div>
         <div class="wx-sum-chips">
-          <span class="wx-chip">${sum.rainDays ? '🌧️' : '🌤️'} ${sum.rainDays ? `<b>${sum.rainDays}</b> <span>${sum.rainDays === 1 ? tk('wx.rainyDay') : tk('wx.rainyDays')}</span>` : ('<span>' + tk('wx.dry') + '</span>')}</span>
-          ${sum.sun != null ? `<span class="wx-chip">☀️ <b>${String(sum.sun).replace('.', ',')}</b> <span>${tk('wx.hrsSunDay')}</span></span>` : ''}
-          ${sum.water != null ? `<span class="wx-chip">🌊 <span>${tk('wx.water')}</span> <b>${tDeg(sum.water)}</b></span>` : ''}
-          <span class="wx-chip">🌡️ <b>${tDeg(sum.cold)}</b> – <b>${tDeg(sum.hot)}</b></span>
+          <span class="wx-chip">${wxIcon(sum.rainDays ? 'rain' : 'part')} ${sum.rainDays ? `<b>${sum.rainDays}</b> <span>${sum.rainDays === 1 ? tk('wx.rainyDay') : tk('wx.rainyDays')}</span>` : ('<span>' + tk('wx.dry') + '</span>')}</span>
+          ${sum.sun != null ? `<span class="wx-chip">${wxIcon('sun')} <b>${String(sum.sun).replace('.', ',')}</b> <span>${tk('wx.hrsSunDay')}</span></span>` : ''}
+          ${sum.water != null ? `<span class="wx-chip">${wxIcon('water')} <span>${tk('wx.water')}</span> <b>${tDeg(sum.water)}</b></span>` : ''}
+          <span class="wx-chip">${wxIcon('thermo')} <b>${tDeg(sum.cold)}</b> – <b>${tDeg(sum.hot)}</b></span>
         </div>
-        ${sum.climate ? ('<p class="wx-note2">📊 <span>' + tk('wx.stillTooFarOff') + '</span></p>') : sum.someClimate ? ('<p class="wx-note2">📊 <span>' + tk('wx.laterDaysStillShown') + '</span></p>') : ''}
+        ${sum.climate ? ('<p class="wx-note2">' + wxIcon('chart') + ' <span>' + tk('wx.stillTooFarOff') + '</span></p>') : sum.someClimate ? ('<p class="wx-note2">' + wxIcon('chart') + ' <span>' + tk('wx.laterDaysStillShown') + '</span></p>') : ''}
       </div>` : ''}
-      ${tips.length ? `<div class="wx-card"><div class="wx-h">🎒 <span>${tk('wx.packWeather')}</span></div><div class="wx-pack">${tips.map(t => `<button type="button" class="wx-pack-chip" data-wxtip="${escapeHtml(t)}">＋ <span>${escapeHtml(t)}</span></button>`).join('')}</div>
+      ${tips.length ? `<div class="wx-card"><div class="wx-h">${wxIcon('backpack')} <span>${tk('wx.packWeather')}</span></div><div class="wx-pack">${tips.map(t => `<button type="button" class="wx-pack-chip" data-wxtip="${escapeHtml(t)}">＋ <span>${escapeHtml(t)}</span></button>`).join('')}</div>
         <button type="button" class="wx-btn" data-wxtipall="1">✓ <span>${tk('wx.addAllPackingList')}</span></button></div>` : ''}
-      <div class="wx-card"><div class="wx-h">📅 <span>${tk('wx.dayDay')}</span></div>${days.length ? wxDaysHtml(days, l.id) : ('<div class="wx-empty"><span>' + tk('wx.noDataYet') + '</span></div>')}</div>
+      <div class="wx-card"><div class="wx-h">${wxIcon('calendar')} <span>${tk('wx.dayDay')}</span></div>${days.length ? wxDaysHtml(days, l.id) : ('<div class="wx-empty"><span>' + tk('wx.noDataYet') + '</span></div>')}</div>
       ${data.fehler ? `<p class="wx-note">${escapeHtml(data.fehler)}</p>` : ''}`;
   }
   return `${hero}${wxPlaceTabs()}<div class="wx-wrap">${content}
-    <button type="button" class="wx-btn ghost" data-wxlist="${escapeHtml(l.id)}">🧳 <span>${tk('wx.packingList')}</span> ›</button>
+    <button type="button" class="wx-btn ghost" data-wxlist="${escapeHtml(l.id)}">${wxIcon('suitcase')} <span>${tk('wx.packingList')}</span> ›</button>
     <p class="wx-note">Open-Meteo</p></div>`;
 }
 (function wxWire() {
@@ -5317,7 +5317,7 @@ function lsTripDrawChosen() {
   const pl = ctx.trip && ctx.trip.place;
   box.classList.toggle('hidden', !pl);
   input.classList.toggle('hidden', !!pl);
-  box.innerHTML = pl ? `<span class="ls-trip-pin">📍</span><span class="min-w-0 flex-1"><b>${escapeHtml(pl.titel)}</b>${pl.zusatz ? `<small>${escapeHtml(pl.zusatz)}</small>` : ''}</span><button type="button" class="fam-x" data-tripclear="1" aria-label="${escapeHtml(tk('wx.changeDestination'))}">×</button>` : '';
+  box.innerHTML = pl ? `<span class="ls-trip-pin">${wxIcon('pin')}</span><span class="min-w-0 flex-1"><b>${escapeHtml(pl.titel)}</b>${pl.zusatz ? `<small>${escapeHtml(pl.zusatz)}</small>` : ''}</span><button type="button" class="fam-x" data-tripclear="1" aria-label="${escapeHtml(tk('wx.changeDestination'))}">×</button>` : '';
 }
 function lsTripDays() {
   const ctx = lsListCtx;
@@ -5334,7 +5334,7 @@ async function lsTripSearch(q) {
     const body = await res.json().catch(() => ({}));
     if (seq !== lsTripSugSeq) return;
     lsTripHits = Array.isArray(body.treffer) ? body.treffer : [];
-    box.innerHTML = lsTripHits.length ? lsTripHits.map((h, i) => `<button type="button" class="home-sug-row" data-triphit="${i}"><span>📍</span><span class="min-w-0"><b>${escapeHtml(h.titel)}</b><span class="home-sug-z">${escapeHtml(h.zusatz || '')}</span></span></button>`).join('')
+    box.innerHTML = lsTripHits.length ? lsTripHits.map((h, i) => `<button type="button" class="home-sug-row" data-triphit="${i}"><span>${wxIcon('pin')}</span><span class="min-w-0"><b>${escapeHtml(h.titel)}</b><span class="home-sug-z">${escapeHtml(h.zusatz || '')}</span></span></button>`).join('')
       : `<p class="home-sug-msg">${escapeHtml(body.error || tk('wx.noMatchingPlaceFound'))}</p>`;
   } catch (e) {
     if (seq === lsTripSugSeq) box.innerHTML = ('<p class="home-sug-msg">' + tk('wx.placeSearchNotPossible') + '</p>');
@@ -5355,7 +5355,7 @@ async function lsTripPreview() {
     if (seq !== lsTripWxSeq) return;
     const sum = tripSummary(data);
     if (!sum) { box.innerHTML = `<span class="text-ink/50">${escapeHtml(err || (data && data.vorbei ? tk('wx.datesPast') : tk('wx.loadingHolidayWeather')))}</span>`; return; }
-    box.innerHTML = `<span class="ls-trip-wx-ic">${weatherIconForCode(sum.code)}</span><span class="min-w-0 flex-1"><b>${tDeg(sum.max)}</b> / ${tDeg(sum.min)} · <span>${sum.rainDays ? sum.rainDays + (sum.rainDays === 1 ? (' ' + tk('wx.rainyDay')) : (' ' + tk('wx.rainyDays'))) : tk('wx.dry')}</span>${sum.water != null ? ` · 🌊 ${tDeg(sum.water)}` : ''}<small>${sum.climate ? tk('wx.typicalValuesFromRecent') : tk('wx.forecastTrip')}</small></span>`;
+    box.innerHTML = `<span class="ls-trip-wx-ic">${weatherIconForCode(sum.code)}</span><span class="min-w-0 flex-1"><b>${tDeg(sum.max)}</b> / ${tDeg(sum.min)} · <span>${sum.rainDays ? sum.rainDays + (sum.rainDays === 1 ? (' ' + tk('wx.rainyDay')) : (' ' + tk('wx.rainyDays'))) : tk('wx.dry')}</span>${sum.water != null ? ` · ${wxIcon('water')} ${tDeg(sum.water)}` : ''}<small>${sum.climate ? tk('wx.typicalValuesFromRecent') : tk('wx.forecastTrip')}</small></span>`;
     const tips = tripPackTips(sum);
     const show = ctx.mode === 'new' && tips.length > 0;
     tipsWrap.classList.toggle('hidden', !show);
@@ -5427,10 +5427,10 @@ function lsTripCardHtml(l) {
   if (!data && !past) tripWeather(l).then(() => { if (listsDetailId === l.id) { const x = lsGetList(l.id); if (x) lsRenderDetail(x); } }).catch(() => { /* offline */ });
   const tips = sum ? tripMissingTips(l, sum) : [];
   return `<button type="button" class="ls-trip-card sky-${sum ? sum.sky : 'part'}" data-tripwx="${escapeHtml(l.id)}">
-    <span class="ls-trip-card-ic">${sum ? weatherIconForCode(sum.code) : '🧳'}</span>
-    <span class="min-w-0 flex-1"><b>📍 ${escapeHtml(tripName(l))}</b><small>${escapeHtml(tripRangeText(l))} · ${escapeHtml(past ? tk('wx.over') : tripWhenText(l))}</small>
-      ${sum ? `<small class="ls-trip-card-w"><b>${tDeg(sum.max)}</b> / ${tDeg(sum.min)} · <span>${sum.rainDays ? sum.rainDays + (sum.rainDays === 1 ? (' ' + tk('wx.rainyDay')) : (' ' + tk('wx.rainyDays'))) : tk('wx.dry')}</span>${sum.water != null ? ' · 🌊 ' + tDeg(sum.water) : ''}${sum.climate ? (' · <span>' + tk('wx.typicalValues') + '</span>') : ''}</small>` : ''}</span>
-    <span class="ls-trip-card-go">${tips.length ? `<span class="ls-trip-badge">🎒 ${tips.length}</span>` : ''}›</span>
+    <span class="ls-trip-card-ic">${sum ? weatherIconForCode(sum.code) : wxIcon('suitcase')}</span>
+    <span class="min-w-0 flex-1"><b>${wxIcon('pin')} ${escapeHtml(tripName(l))}</b><small>${escapeHtml(tripRangeText(l))} · ${escapeHtml(past ? tk('wx.over') : tripWhenText(l))}</small>
+      ${sum ? `<small class="ls-trip-card-w"><b>${tDeg(sum.max)}</b> / ${tDeg(sum.min)} · <span>${sum.rainDays ? sum.rainDays + (sum.rainDays === 1 ? (' ' + tk('wx.rainyDay')) : (' ' + tk('wx.rainyDays'))) : tk('wx.dry')}</span>${sum.water != null ? ' · ' + wxIcon('water') + ' ' + tDeg(sum.water) : ''}${sum.climate ? (' · <span>' + tk('wx.typicalValues') + '</span>') : ''}</small>` : ''}</span>
+    <span class="ls-trip-card-go">${tips.length ? `<span class="ls-trip-badge">${wxIcon('backpack')} ${tips.length}</span>` : ''}›</span>
   </button>`;
 }
 (function lsTripCardWire() {
@@ -5491,12 +5491,12 @@ async function abTripCardsHtml(mondayIso, endIso) {
       if (sum.sun != null) bits.push(abT('u_sonne', { h: window.PINN_REGION ? PINN_REGION.dec(String(sum.sun)) : String(sum.sun) }));
       line = bits.join(' · ');
     }
-    out.push(`<div class="ab-card ab-trip"><div class="ab-h2">🧳 ${abEsc(abT('s_urlaub'))}<small>${abEsc(range)}</small></div>
+    out.push(`<div class="ab-card ab-trip"><div class="ab-h2">${wxIcon('suitcase')} ${abEsc(abT('s_urlaub'))}<small>${abEsc(range)}</small></div>
       <div class="ab-trip-head"><span class="ab-trip-ic">${sum ? weatherIconForCode(sum.code) : escapeHtml(l.icon || '🧳')}</span><span><b>${abEsc(tripName(l))}</b>${l.trip.place.zusatz ? `<small>${abEsc(l.trip.place.zusatz)}</small>` : ''}</span></div>
       ${line ? `<p class="ab-trip-line">${abEsc(line)}</p>` : `<p class="ab-note">${abEsc(abT('u_keine'))}</p>`}
       ${days.length ? `<div class="ab-wx">${days.map(d => `<div class="ab-wx-d${wxRainy(d) ? ' rain' : ''}"><span>${abEsc(abFmt(d.date, { weekday: 'short' }))}</span><span class="i">${weatherIconForCode(d.code)}</span><b>${tDeg(d.max)}</b> <span>${d.min != null ? tDeg(d.min) : ''}</span></div>`).join('')}</div>` : ''}
-      ${sum && sum.someClimate ? `<p class="ab-note">📊 ${abEsc(abT('u_klima'))}</p>` : ''}
-      <div class="ab-foot" style="padding:6px 0 0"><button type="button" class="ab-btn ghost" data-abtrip="${abEsc(l.id)}">🌦️ ${abEsc(abT('u_mehr'))}</button></div>
+      ${sum && sum.someClimate ? `<p class="ab-note">${wxIcon('chart')} ${abEsc(abT('u_klima'))}</p>` : ''}
+      <div class="ab-foot" style="padding:6px 0 0"><button type="button" class="ab-btn ghost" data-abtrip="${abEsc(l.id)}">${wxIcon('part')} ${abEsc(abT('u_mehr'))}</button></div>
     </div>`);
   }
   return out.join('');

@@ -110,9 +110,9 @@ let dashWeatherTimer = null;
 let dashCountTimer = null;
 function tickDashboardClock() {
   const now = new Date();
-  let clockText = now.toLocaleTimeString(PINN_I18N.language.locale, { hour: '2-digit', minute: '2-digit' });
-  if (weatherData) clockText += ` | ${tDeg(weatherData.temp)} ${weatherIconForCode(weatherData.code)}`;
-  document.getElementById('dashClock').textContent = clockText;
+  let clockText = escapeHtml(now.toLocaleTimeString(PINN_I18N.language.locale, { hour: '2-digit', minute: '2-digit' }));
+  if (weatherData) clockText += ` | ${escapeHtml(tDeg(weatherData.temp))} ${weatherIconForCode(weatherData.code)}`;
+  document.getElementById('dashClock').innerHTML = clockText;
   document.getElementById('dashDate').textContent = now.toLocaleDateString(PINN_I18N.language.locale, { weekday: 'long', day: 'numeric', month: 'long' });
 }
 function hideDashboardScreen() {

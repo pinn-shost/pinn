@@ -1,0 +1,20 @@
+/* pinn. – Weather icons (css/wetterlogos.css, since 1.150.7) – icons from js/wetterlogos.js.
+   They are as big as the text around them (1em), so the old font-size rules of the weather views still apply. */
+.wi { display: inline-block; width: 1em; height: 1em; flex: none; vertical-align: -0.14em; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; overflow: visible; }
+.wi .wi-a { stroke: var(--wi-accent, #A67B01); }
+html.dark .wi .wi-a { stroke: var(--wi-accent, #D9A21B); }
+/* On the coloured weather backgrounds (hero, holiday card) everything stays in the text colour */
+.wx-hero .wi .wi-a, .ls-trip-card .wi .wi-a { stroke: currentColor; }
+/* Small icons between small text: a bit bigger and bolder so they stay readable */
+.wx-h .wi, .wx-kicker .wi, .wx-sep .wi, .wx-chip .wi, .wx-note2 .wi, .wx-tab .wi, .ab-h2 .wi, .ab-note .wi, .ls-trip-badge .wi { width: 1.25em; height: 1.25em; stroke-width: 2; }
+.wx-rain .wi, .ov-weather-rain .wi, .hw-rain .wi { width: 1.1em; height: 1.1em; stroke-width: 2.2; }
+.wx-hero-deco .wi { stroke-width: 1.2; }
+.wx-hero-sub .wi { stroke-width: 2.2; }
+.wx-tile-ic .wi, .wx-tip > span:first-child .wi { stroke-width: 1.8; }
+#clock .wi, #dashClock .wi { vertical-align: -0.16em; }
+
+/* ---- Symbols that replace emoji everywhere (js/symbole.js, since 1.150.7) ---- */
+.sym { display: inline-block; position: relative; width: 1em; height: 1em; vertical-align: -0.14em; line-height: 1; flex: none; }
+.sym > .sym-i { width: 100%; height: 100%; vertical-align: top; }
+/* the emoji itself stays in the page as invisible text (copy, textContent, reading a picked emoji back) */
+.sym-t { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }

@@ -129,6 +129,14 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski and 🇺🇦 Українська**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.150.7
+
+**Own weather icons**
+
+- **Weather icons.** The weather views now have their own simple line icons instead of the Apple emoji – the same look as the shortcut icons: sun, moon, clouds, rain, snow, thunderstorm, wind, UV, sunrise, water and the clothing tips. In the dark mode they switch colour with it.
+- **Own icons everywhere.** About 150 simple line icons now replace the Apple emoji throughout the app (stars, ticks, warnings, places, gifts, clock, calendar, lock, mail, tools, health, home, money and more). Animals, food, clothes, plants, vehicles, sports and toys, the emoji you pick or type yourself (member pictures, chat texts, input fields) and push messages stay emoji.
+- Changed: `js/symbole.js` (new), `js/wetterlogos.js`, `css/wetterlogos.css` (new), `js/familie.js`, `js/grundlagen.js`, `js/profilauswahl.js`, `js/wetterkachel.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
+
 ## What's new in 1.150.6
 
 **Face ID unlocks by itself again**
@@ -265,15 +273,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Santa** flies only half as often (every 10–18 minutes, every 4–6 on Christmas Eve).
 - Changed: `js/winterzeit.js`, `css/winterzeit.css`, `src/`, `index.html`, all READMEs. No server part.
 
-## What's new in 1.146.0
-
-**Snow that fits every heading, update time by region**
-
-- **Made-to-measure snow.** pinn. measures every letter of a heading in the real font and lays the snow right on top – higher on tall letters, lower on small ones, with lumps and the odd drip. Gaps between words stay free, emoji get no snow, nothing is stretched, and it works in every language and script.
-- **Automatic updates by region.** The chosen time now applies in the time zone of the device it is saved on (summer and winter time included), no longer always German time. The settings show which time zone applies.
-- **Locked dashboard loads new versions by itself.** An iPad with a locked family dashboard (or the sign-in screen) now reloads about a minute after an update when nobody is typing. The app also shows “waiting” when a backup is running at the update time.
-- Changed: `js/winterzeit.js`, `css/winterzeit.css`, `js/versionspruefung.js`, `js/sicherungen.js`, `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`, `i18n/`, `src/`, `index.html`, all READMEs. Server part: copy the hooks, PocketBase restarts.
-
 ## How it works
 
 ```mermaid
@@ -300,7 +299,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.150.6` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.150.7` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

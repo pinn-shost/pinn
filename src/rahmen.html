@@ -165,6 +165,7 @@
 <link rel="stylesheet" href="css/pinnwand.css?v={{VERSION}}">
 <link rel="stylesheet" href="css/chat.css?v={{VERSION}}">
 <link rel="stylesheet" href="css/haustierewetter.css?v={{VERSION}}">
+<link rel="stylesheet" href="css/wetterlogos.css?v={{VERSION}}">
 <link rel="stylesheet" href="css/winterzeit.css?v={{VERSION}}">
 </head>
 <body class="font-sans text-ink antialiased">
@@ -407,6 +408,8 @@ const APP_VERSION = '{{VERSION}}';
 <!-- App parts under pb_public/js/ (classic scripts without a build step, order matters).
      ausblick.js must come last – it starts the app (bootApp). New file: add its line here and its name
      in pinn-setup.sh – src/build.js fills in the list of the start check (PINN_APP_PARTS) by itself. -->
+<script src="js/wetterlogos.js?v={{VERSION}}"></script>
+<script src="js/symbole.js?v={{VERSION}}"></script>
 <script src="js/grundlagen.js?v={{VERSION}}"></script>
 <script src="js/popups.js?v={{VERSION}}"></script>
 <script src="js/verbindung.js?v={{VERSION}}"></script>

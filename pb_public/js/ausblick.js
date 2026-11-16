@@ -473,7 +473,7 @@ async function abRenderWeek(body, mondayIso) {
   // Weather
   const wx = days.map(abWeatherFor);
   if (wx.some(Boolean)) {
-    html += `<div class="ab-card"><div class="ab-h2">🌤️ ${abEsc(abT('s_wetter'))}</div><div class="ab-wx">${days.map((d, i) => {
+    html += `<div class="ab-card"><div class="ab-h2">${wxIcon('part')} ${abEsc(abT('s_wetter'))}</div><div class="ab-wx">${days.map((d, i) => {
       const w = wx[i];
       const wd = abFmt(d, { weekday: 'short' });
       if (!w) return `<div class="ab-wx-d"><span>${abEsc(wd)}</span><span class="i">·</span></div>`;

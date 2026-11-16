@@ -129,6 +129,14 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski et 🇺🇦 Українська**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.150.7
+
+**Icônes météo maison**
+
+- **Icônes météo.** Les vues météo ont maintenant leurs propres icônes en trait simple à la place des emojis Apple, dans le même style que les icônes des raccourcis : soleil, lune, nuages, pluie, neige, orage, vent, UV, lever du soleil, eau et les conseils vestimentaires. En mode sombre, elles changent de couleur.
+- **Des icônes maison partout.** Environ 150 icônes en trait simple remplacent désormais les emojis Apple dans toute l’appli (étoiles, coches, avertissements, lieux, cadeaux, horloge, calendrier, cadenas, courrier, outils, santé, maison, argent et plus). Animaux, nourriture, vêtements, plantes, véhicules, sport et jouets, les emojis que vous choisissez ou saisissez (photos des membres, textes du chat, champs de saisie) et les notifications push restent des emojis.
+- Modifié : `js/symbole.js` (new), `js/wetterlogos.js`, `css/wetterlogos.css` (new), `js/familie.js`, `js/grundlagen.js`, `js/profilauswahl.js`, `js/wetterkachel.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
+
 ## Nouveautés de la 1.150.6
 
 **Face ID déverrouille de nouveau tout seul**
@@ -265,15 +273,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Le père Noël** passe deux fois moins souvent (toutes les 10–18 minutes, toutes les 4–6 la veille de Noël).
 - Modifié : `js/winterzeit.js`, `css/winterzeit.css`, `src/`, `index.html`, tous les README. Pas de partie serveur.
 
-## Nouveautés de la 1.146.0
-
-**De la neige à la taille de chaque titre, heure de mise à jour selon la région**
-
-- **Neige sur mesure.** pinn. mesure chaque lettre d’un titre dans la vraie police et pose la neige juste dessus – plus haut sur les grandes lettres, plus bas sur les petites, avec des amas et quelques gouttes. Les espaces entre les mots restent libres, les emoji n’ont pas de neige, rien n’est étiré, et cela fonctionne dans toutes les langues et écritures.
-- **Mises à jour automatiques selon la région.** L’heure choisie s’applique désormais dans le fuseau horaire de l’appareil sur lequel elle est enregistrée (heure d’été et d’hiver comprises), et non plus toujours à l’heure allemande. Les réglages indiquent le fuseau horaire utilisé.
-- **Le tableau de bord verrouillé charge seul les nouvelles versions.** Un iPad avec le tableau de bord familial verrouillé (ou l’écran de connexion) se recharge environ une minute après une mise à jour si personne ne tape. L’app affiche « en attente » si une sauvegarde est en cours à l’heure prévue.
-- Modifié : `js/winterzeit.js`, `css/winterzeit.css`, `js/versionspruefung.js`, `js/sicherungen.js`, `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`, `i18n/`, `src/`, `index.html`, tous les README. Partie serveur : copier les hooks, PocketBase redémarre.
-
 ## Comment ça marche
 
 ```mermaid
@@ -300,7 +299,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.150.6` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.150.7` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

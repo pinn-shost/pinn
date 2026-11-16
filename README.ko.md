@@ -133,6 +133,14 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.150.7의 새 소식
+
+**나만의 날씨 아이콘**
+
+- **날씨 아이콘.** 날씨 화면에서 Apple 이모지 대신 단순한 선 아이콘을 직접 만들어 사용합니다. 바로가기 아이콘과 같은 스타일이며 해, 달, 구름, 비, 눈, 뇌우, 바람, 자외선, 일출, 수온, 옷차림 팁에 쓰입니다. 다크 모드에서는 색도 함께 바뀝니다.
+- **어디서나 나만의 아이콘.** 약 150개의 단순한 선 아이콘이 이제 앱 전체에서 Apple 이모지를 대신합니다(별, 체크, 경고, 장소, 선물, 시계, 달력, 자물쇠, 우편, 도구, 건강, 집, 돈 등). 동물, 음식, 옷, 식물, 탈것, 스포츠, 장난감, 직접 고르거나 입력한 이모지(멤버 사진, 채팅 글, 입력란)와 푸시 알림은 이모지로 남습니다.
+- 변경: `js/symbole.js` (new), `js/wetterlogos.js`, `css/wetterlogos.css` (new), `js/familie.js`, `js/grundlagen.js`, `js/profilauswahl.js`, `js/wetterkachel.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
+
 ## 1.150.6의 새 소식
 
 **Face ID가 다시 자동으로 잠금 해제**
@@ -232,15 +240,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - **iPad를 돌려도** 인원 수와 읽던 위치를 그대로 둔 채 레시피가 열려 있어요.
 - 변경: `js/fortsetzen.js`, `js/ansichten.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`, 모든 README. 서버 부분 없음.
 
-## 1.148.0의 새 소식
-
-**멈춘 곳에서 이어서**
-
-- **가족 대시보드.** 잠시 쉬었다가 PIN으로 프로필을 다시 열면 개요가 아니라 멈췄던 곳으로 돌아갑니다. 열어 둔 레시피는 선택한 인원수 그대로, 읽던 위치에서 다시 열립니다.
-- **레시피만이 아닙니다.** 페이지(예: 목록, 할 일, 가계부), 열어 둔 목록, ‘집’과 ‘차량’의 탭, 휴대폰에서는 개요의 탭도 기억합니다. 프로필마다 따로 기억합니다.
-- **유지 시간.** 앱이 열려 있는 동안(백그라운드 포함), 최대 12시간입니다. 앱을 닫은 뒤, 내 기기에서 ‘로그아웃’한 뒤, 알림의 링크로 들어올 때는 평소처럼 시작합니다. 내 기기에서도 업데이트 후처럼 앱이 다시 로드될 때 페이지가 유지됩니다.
-- 변경: `js/fortsetzen.js`(신규), `js/appstart.js`, `js/dashboard.js`, `js/anmeldung.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`, `pinn-setup.sh`, 모든 README. 서버 부분 없음.
-
 ## 작동 방식
 
 ```mermaid
@@ -269,7 +268,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.150.6` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.150.7` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

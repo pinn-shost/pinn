@@ -133,6 +133,14 @@ Tocca un’immagine per aprirla a dimensione intera.
 
 pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
 
+## Novità della 1.150.7
+
+**Icone meteo tutte nuove**
+
+- **Icone meteo.** Le schermate del meteo hanno ora icone a linea semplici e proprie al posto delle emoji Apple, con lo stesso stile delle icone degli shortcut: sole, luna, nuvole, pioggia, neve, temporale, vento, UV, alba, acqua e i consigli sull’abbigliamento. Nella modalità scura cambiano colore.
+- **Icone proprie ovunque.** Circa 150 icone a linea semplici sostituiscono ora le emoji Apple in tutta l’app (stelle, spunte, avvisi, luoghi, regali, orologio, calendario, lucchetto, posta, attrezzi, salute, casa, denaro e altro). Animali, cibo, abbigliamento, piante, veicoli, sport e giocattoli, le emoji che scegli o scrivi tu (immagini dei membri, testi della chat, campi di inserimento) e le notifiche push restano emoji.
+- Modificato: `js/symbole.js` (new), `js/wetterlogos.js`, `css/wetterlogos.css` (new), `js/familie.js`, `js/grundlagen.js`, `js/profilauswahl.js`, `js/wetterkachel.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
+
 ## Novità della 1.150.6
 
 **Face ID sblocca di nuovo da solo**
@@ -232,15 +240,6 @@ pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Ruotare l’iPad** lascia aperta la ricetta, con porzioni e punto di lettura.
 - Modificati: `js/fortsetzen.js`, `js/ansichten.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`, tutti i README. Nessuna parte server.
 
-## Novità della 1.148.0
-
-**Riprendi da dove eri rimasto**
-
-- **Dashboard familiare.** Quando riapri il tuo profilo con il PIN dopo una pausa, arrivi dove eri rimasto e non più sulla panoramica. Una ricetta aperta è di nuovo aperta, con il numero di porzioni scelto e nel punto fino a cui avevi letto.
-- **Non solo ricette.** Vengono ricordati anche la pagina (ad es. Liste, Attività, Finanze), la lista aperta, la scheda in Casa e in Veicoli e, sul telefono, la scheda della panoramica. Ogni profilo ha il proprio posto.
-- **Per quanto tempo.** Finché l'app resta aperta (anche in background), al massimo 12 ore. Dopo aver chiuso l'app, dopo «Esci» sul proprio dispositivo o arrivando da un link di una notifica si parte come sempre. Sul proprio dispositivo la pagina resta anche quando l'app si ricarica, ad es. dopo un aggiornamento.
-- Modificato: `js/fortsetzen.js` (nuovo), `js/appstart.js`, `js/dashboard.js`, `js/anmeldung.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`, `pinn-setup.sh`, tutti i README. Nessuna parte server.
-
 ## Come funziona
 
 ```mermaid
@@ -269,7 +268,7 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 ## Installazione
 
 1. Scarica lo ZIP dell’[ultima release](https://github.com/pinn-shost/pinn/releases/latest) e decomprimilo.
-2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.150.6` o `pinn-main`) così com’è.
+2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.150.7` o `pinn-main`) così com’è.
 3. Accedi via SSH ed esegui:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

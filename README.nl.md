@@ -110,6 +110,14 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski en 🇺🇦 Українська**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.150.7
+
+**Eigen weericonen**
+
+- **Weericonen.** De weerweergaven hebben nu eigen, eenvoudige lijnpictogrammen in plaats van de Apple-emoji, in dezelfde stijl als de shortcut-pictogrammen: zon, maan, wolken, regen, sneeuw, onweer, wind, UV, zonsopkomst, water en de kledingtips. In de donkere modus kleuren ze mee.
+- **Eigen pictogrammen overal.** Zo’n 150 eenvoudige lijnpictogrammen vervangen nu de Apple-emoji in de hele app (sterren, vinkjes, waarschuwingen, plaatsen, cadeaus, klok, agenda, slot, post, gereedschap, gezondheid, huis, geld en meer). Dieren, eten, kleding, planten, voertuigen, sport en speelgoed, zelf gekozen of getypte emoji (profielfoto’s, chatteksten, invoervelden) en pushberichten blijven emoji.
+- Gewijzigd: `js/symbole.js` (new), `js/wetterlogos.js`, `css/wetterlogos.css` (new), `js/familie.js`, `js/grundlagen.js`, `js/profilauswahl.js`, `js/wetterkachel.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
+
 ## Nieuw in 1.150.6
 
 **Face ID ontgrendelt weer vanzelf**
@@ -174,14 +182,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Blijft open.** Het venster blijft na een actie open, dus je kunt meerdere dingen achter elkaar doen; “Openen” leidt naar de volledige functie.
 - Gewijzigd: `pb_hooks/pinn-zeit.js`, `pb_hooks/zeit.pb.js`, `js/zeit.js`, `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `pb_hooks/pinn-gesundheit.js`, `js/appstart.js`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/ansichten.js`, `js/design.js`, `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, README (+ 1.149.1).
 
-## Nieuw in 1.149.1
-
-**Pushherinneringen**
-
-- **Herinneringen voor gezondheid.** Op de gezondheidspagina kun je per bouwsteen een pushherinnering aanzetten: medicijnen & vitamines op hun tijden, drinken met een interval tussen twee tijdstippen (met de hoeveelheid die nog ontbreekt) en handen wassen op vaste tijden.
-- **Alleen voor de persoon zelf.** De herinneringen gaan naar de apparaten van die persoon; aan andere gezinsleden wordt niets gestuurd. Tikken op het bericht opent de gezondheidspagina – bij drinken meteen het drinkvenster.
-- Gewijzigd: `pb_hooks/pinn-gesundheit.js`, `pb_hooks/gesundheit.pb.js`, `js/gesundheit.js`, `css/gesundheit.css`, `js/hinweise.js`, `js/fortsetzen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, alle README's. Bevat 1.149.0.
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -191,7 +191,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.150.6` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.150.7` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
