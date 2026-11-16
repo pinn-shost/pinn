@@ -110,6 +110,15 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski en 🇺🇦 Українська**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.150.5
+
+**Nieuwe gezondheidsbanner · drinken opgeruimd**
+
+- **Gezondheidsbanner.** De gezondheidspagina en de pagina van elke persoon hebben weer een banner: water dat stijgt met wat je vandaag dronk, belletjes, een hartslaglijn en zwevende dingen – ’s nachts sterren.
+- **Drinken.** Doel, de drankjes van vandaag en de herinnering staan nu in een uitklapbaar veld „Instellingen” onder de knop.
+- **Face ID.** Ontgrendelen start alleen nog met de knop (geen venster „Toegangssleutel gebruiken” meer); de knop zit onderaan, binnen bereik van je duim.
+- Gewijzigd: `js/gesundheit.js`, `css/gesundheit.css`, `js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
+
 ## Nieuw in 1.150.4
 
 **Meldingen blijven aan na updates**
@@ -176,14 +185,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Privé.** Gezondheidsgegevens ziet alleen de persoon zelf, bij kinderen ook de volwassenen. Pushherinneringen volgen in 1.149.1.
 - Gewijzigd: `js/gesundheit.js`, `css/gesundheit.css`, `pb_hooks/gesundheit.pb.js`, `pb_hooks/pinn-gesundheit.js`, `pb_hooks/pinn-schema.js`, `js/familie.js`, `js/serverzugriff.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, alle README's. Met serverdeel (nieuwe verzameling „gesundheit”). Bevat 1.148.2.
 
-## Nieuw in 1.148.2
-
-**Een andere familie op het dashboardapparaat**
-
-- **Inloggen met een andere familie.** Log je op een dashboardapparaat via “Inloggen met wachtwoord” in met een profiel van een andere familie, dan is dat nu een gewone sessie: de dashboardknop ontbreekt en “Uitloggen” beëindigt haar. Eerder bracht de knop je terug naar het dashboard van de eerste familie.
-- **Duidelijke melding in de instellingen.** Het dashboardgedeelte zegt nu dat dit apparaat het dashboard van een andere familie is – een apparaat kan maar één dashboard zijn.
-- Gewijzigd: `js/dashboard.js`, `js/anmeldung.js`, `js/profilauswahl.js`, `js/dashboardkonto.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, alle README's. Geen serverdeel.
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -193,7 +194,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.150.4` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.150.5` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

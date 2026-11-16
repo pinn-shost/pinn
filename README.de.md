@@ -133,6 +133,15 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski und 🇺🇦 Українська**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.150.5
+
+**Neues Gesundheits-Banner · Trinken aufgeräumt**
+
+- **Gesundheits-Banner.** Die Gesundheitsseite und die Seite jeder Person haben wieder ein Banner: Wasser, das mit dem Getrunkenen steigt, Bläschen, Herzschlag und schwebende Dinge – nachts mit Sternen.
+- **Trinken.** Ziel, heutige Getränke und Erinnerung stehen jetzt im aufklappbaren Feld „Einstellungen“ unter dem Knopf. Der Shortcut „Heute kochen“ heißt jetzt „Kochen“.
+- **Face ID.** Entsperren startet nur noch mit dem Knopf (kein Fenster „Passkey verwenden“ mehr); der Knopf sitzt unten, mit dem Daumen erreichbar.
+- Geändert: `js/gesundheit.js`, `css/gesundheit.css`, `js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
+
 ## Neu in 1.150.4
 
 **Benachrichtigungen bleiben nach Updates an**
@@ -244,15 +253,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Jahreszeiten.** Unter Darstellung → Jahreszeiten öffnen „Winter“ und „Weihnachten“ ein Fenster: Zeitraum selbst wählen (voreingestellt 1.12.–6.1. bzw. 1.–26.12.) und jeden Teil an- oder ausschalten – Schnee auf Schrift und Kacheln, Schneefall über den Bildschirm, Dashboard-Landschaft, Lichterkette, Weihnachtsmann, Mütze und Stechpalme. „Sprachsteuerung & Widgets“ startet mit zugeklappten Anleitungen.
 - Geändert: `js/entsperren.js` (neu), `js/geraete.js`, `js/verbindung.js`, `js/sprachsteuerung.js`, `js/winterzeit.js`, `pb_hooks/pinn-sitzungen.js`, `pb_hooks/sitzungen.pb.js`, `pb_hooks/pinn-sprache.js`, `src/`, `index.html`, `pinn-setup.sh`, `i18n/`, alle READMEs. Server-Teil: Hooks einspielen, PocketBase startet neu.
 
-## Neu in 1.146.1
-
-**Schnee auf jedem Buchstaben, Winter auf dem Dashboard**
-
-- **Schnee wie echter Schnee.** Der Schnee liegt jetzt auf jedem einzelnen Buchstaben, nur ganz oben: eine Schicht auf flachen Kanten (oberer Balken von B oder L, die beiden oberen Enden vom K), ein Klecks in der Mitte von Rundungen (O), nichts an steilen Seiten, am Fuß des L oder in den Lücken. Emoji bleiben frei. Auch der Familienname in der Kopfzeile bekommt Schnee und passt sich an, wenn er geändert wird.
-- **Winter auf dem Familien-Dashboard.** Schnee auf Familienname, Uhrzeit und Temperatur, eine Schneehaube auf jeder Kachel (jede etwas anders) und unten eine kleine Winterlandschaft.
-- **Der Weihnachtsmann** fliegt nur noch halb so oft (alle 10–18 Minuten, an Heiligabend alle 4–6).
-- Geändert: `js/winterzeit.js`, `css/winterzeit.css`, `src/`, `index.html`, alle READMEs. Kein Server-Teil.
-
 ## So funktioniert’s
 
 ```mermaid
@@ -281,7 +281,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.150.4` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.150.5` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

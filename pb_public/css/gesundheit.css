@@ -55,3 +55,44 @@ html.dark .hp-sheet { background: #23211E; color: #EDEAE2; }
 html.dark .hp-pick { background: #2E2C28; border-color: rgba(255,255,255,0.12); color: #EDEAE2; }
 html.dark .hp-pick-t { color: #EDEAE2; }
 html.dark .hp-vessel, html.dark .hp-x { color: rgba(237,234,226,0.6); }
+
+/* Folding "Settings" of the drink block (since 1.150.5): goal, today's drinks, reminder */
+.hp-fold { margin-top: 12px; border-top: 1px solid rgba(37,35,31,0.08); }
+.hp-fold-sum { display: flex; align-items: center; gap: 8px; padding: 10px 0 2px; cursor: pointer; list-style: none; font-size: 13px; font-weight: 600; color: #4A463E; -webkit-tap-highlight-color: transparent; }
+.hp-fold-sum::-webkit-details-marker { display: none; }
+.hp-fold-meta { margin-left: auto; font-size: 12px; font-weight: 400; color: rgba(37,35,31,0.5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hp-fold-arrow { flex-shrink: 0; font-size: 18px; line-height: 1; color: rgba(37,35,31,0.4); transition: transform .2s ease; }
+.hp-fold[open] .hp-fold-arrow { transform: rotate(90deg); }
+.hp-fold-body { padding: 8px 0 2px; animation: hp-fold-in .2s ease-out; }
+@keyframes hp-fold-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+.hp-fold-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.hp-fold-l { font-size: 12px; color: rgba(37,35,31,0.6); }
+.hp-fold-row .hp-goal { font-size: 14px; padding: 6px 10px; }
+.hp-fold .hp-remind { margin-top: 14px; }
+html.dark .hp-fold { border-top-color: rgba(255,255,255,0.1); }
+html.dark .hp-fold-sum { color: #EDEAE2; }
+html.dark .hp-fold-meta, html.dark .hp-fold-l, html.dark .hp-fold-arrow { color: rgba(237,234,226,0.55); }
+
+/* Health banner (since 1.150.5): rising water, bubbles, heartbeat, floating things */
+.fam-band.gh-scene { background: linear-gradient(180deg, #A7DCEB 0%, #D6EFF2 60%, #EAF6EE 100%); }
+.fam-band.gh-scene.is-night { background: linear-gradient(180deg, #14213D 0%, #23325A 70%, #2F3F6B 100%); }
+.gh-scene > * { position: absolute; pointer-events: none; }
+.gh-sun { right: 14%; top: 10px; width: 20px; height: 20px; border-radius: 50%; background: #FFD45C; box-shadow: 0 0 0 5px rgba(255,212,92,.25), 0 0 18px rgba(255,212,92,.6); animation: hsGlow 3s ease-in-out infinite alternate; }
+.gh-ecg { left: 0; right: 0; top: 18px; width: 100%; height: 34px; }
+.gh-ecg path { fill: none; stroke: color-mix(in srgb, var(--fz, var(--c-pine)) 70%, #fff); stroke-width: 2.2; stroke-linejoin: round; stroke-linecap: round; stroke-dasharray: 420; stroke-dashoffset: 420; animation: famEcg 2.6s linear infinite; }
+.gh-scene.is-night .gh-ecg path { stroke: rgba(126,224,196,0.85); }
+.gh-heart { right: 6%; top: 24px; font-size: 18px; line-height: 1; animation: ghBeat 1.3s ease-in-out infinite; }
+.gh-float { font-size: 15px; line-height: 1; opacity: .9; animation: ghFloat 5.5s ease-in-out infinite; }
+.gh-scene.is-night .gh-float { opacity: .55; }
+.gh-water { left: 0; right: 0; bottom: 0; transition: height .8s ease; }
+.gh-wave { position: absolute; left: 0; bottom: 0; width: 200%; height: 100%; animation: ghWave 7s linear infinite; }
+.gh-wave.back { animation-duration: 11s; animation-direction: reverse; opacity: .55; bottom: 3px; }
+.gh-wave path { fill: #4FA9D6; }
+.gh-wave.back path { fill: #8FD0EA; }
+.gh-scene.is-night .gh-wave path { fill: #2D5E8C; }
+.gh-scene.is-night .gh-wave.back path { fill: #3F75A8; }
+.gh-bubble { width: 6px; height: 6px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,.85); opacity: 0; animation: ghBubble 4s ease-in infinite; }
+@keyframes ghBeat { 0%, 100% { transform: scale(1); } 15% { transform: scale(1.28); } 30% { transform: scale(1); } 45% { transform: scale(1.18); } 60% { transform: scale(1); } }
+@keyframes ghFloat { 0%, 100% { transform: translate(0, 0) rotate(-6deg); } 50% { transform: translate(6px, -7px) rotate(6deg); } }
+@keyframes ghWave { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@keyframes ghBubble { 0% { transform: translateY(0) scale(.6); opacity: 0; } 15% { opacity: .9; } 100% { transform: translateY(-46px) scale(1.1); opacity: 0; } }

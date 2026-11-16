@@ -133,6 +133,15 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.150.5의 새 소식
+
+**새 건강 배너 · 수분 섭취 정리**
+
+- **건강 배너.** 건강 페이지와 각 사람의 페이지에 다시 배너가 생겼습니다. 오늘 마신 양만큼 차오르는 물, 거품, 심장 박동선, 떠다니는 물건들, 밤에는 별이 보입니다.
+- **마시기.** 목표, 오늘 마신 음료, 알림이 이제 버튼 아래 접을 수 있는 “설정”에 있습니다. 바로가기 “오늘 요리”는 이제 “요리”입니다.
+- **Face ID.** 잠금 해제는 버튼을 눌러야만 시작됩니다(“패스키 사용” 창이 더 이상 나오지 않음). 버튼은 엄지가 닿는 아래쪽에 있습니다.
+- 변경: `js/gesundheit.js`, `css/gesundheit.css`, `js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
+
 ## 1.150.4의 새 소식
 
 **업데이트 후에도 알림 유지**
@@ -234,15 +243,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - **음성 제어 및 위젯.** 개인 링크가 전체 개요 대신 ‘Siri 단축어’와 ‘Android’ 칸 안(복사 버튼 포함)에 표시됩니다.
 - 변경: `js/geraete.js`, `js/sprachsteuerung.js`, `js/sprachen.js`, `pb_hooks/pinn-sitzungen.js`, `src/`, `index.html`, `i18n/`, 모든 README. 서버 부분: hooks를 설치하면 PocketBase가 다시 시작됩니다.
 
-## 1.147.0의 새 소식
-
-**Face ID와 지문, 기기 정확히 인식, 위젯에 집과 정원**
-
-- **Face ID, Touch ID, 지문.** 계정에서 기기별로 pinn.을 잠글 수 있어요. 열 때와 잠시 후에 얼굴이나 손가락으로 확인해요. 확인은 기기가 직접 하고 아무것도 전송되지 않아요.
-- **로그인된 기기.** 이름과 종류가 올바르게 표시되고(휴대폰에 노트북 아이콘의 „브라우저“가 더 이상 안 나와요), 짧은 ID와 ✏️ 이름 지정, 알림만 받는 기기도 목록에 나와요.
-- **위젯.** 열린 할 일은 빈 원, 완료는 체크, 새 그룹 „집과 정원“. 스크립트를 한 번 다시 복사하세요.
-- **계절.** 화면 → 계절에서 겨울과 크리스마스의 기간과 각 요소(눈, 눈 내림, 전구 장식, 산타 등)를 고를 수 있어요. „음성 제어 및 위젯“ 안내는 접힌 상태. 서버 부분: hooks를 넣어 주세요.
-
 ## 작동 방식
 
 ```mermaid
@@ -271,7 +271,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.150.4` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.150.5` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

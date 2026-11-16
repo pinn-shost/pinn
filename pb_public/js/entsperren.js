@@ -6,7 +6,9 @@
    - Switching it on creates a key in the secure chip of the device (Web Authentication, "platform authenticator").
      The device itself checks the face or the finger – pinn. and the server never see any of it, nothing is sent.
    - Lock screen: when pinn. is opened and when it comes back from the background after the chosen time. A tap on
-     "Unlock" asks the device for Face ID / Touch ID / fingerprint; "Sign in with password" signs this device out,
+     "Unlock" (big button at the bottom, within thumb reach) asks the device for Face ID / Touch ID / fingerprint.
+     Since 1.150.5 it no longer starts by itself: without a tap iOS puts its own "Use passkey" sheet in between,
+     with the tap Face ID starts right away; "Sign in with password" signs this device out,
      so a forgotten or broken sensor never locks anybody out.
    - Works on iPhone/iPad (Face ID, Touch ID), Android (fingerprint, face unlock) and on computers with Touch ID or
      Windows Hello. Needs an https address. Not on the family dashboard and not for guests (no password).
@@ -114,20 +116,29 @@ function bioBuildOverlay() {
   el.id = 'bioLockScreen';
   el.setAttribute('role', 'dialog');
   el.setAttribute('aria-modal', 'true');
+  // Since 1.150.5: lock symbol and title in the middle, the buttons at the bottom within thumb reach
   el.style.cssText = 'position:fixed;inset:0;z-index:2147483000;display:flex;flex-direction:column;align-items:center;' +
-    'justify-content:center;gap:14px;padding:24px;text-align:center;' +
-    'padding-top:calc(24px + env(safe-area-inset-top, 0px));padding-bottom:calc(24px + env(safe-area-inset-bottom, 0px));' +
+    'padding:24px;text-align:center;' +
+    'padding-top:calc(24px + env(safe-area-inset-top, 0px));padding-bottom:calc(20px + env(safe-area-inset-bottom, 0px));' +
     'background:' + (dark ? '#141416' : 'var(--c-paper, #FFFBFB)') + ';color:' + (dark ? '#f2f2f2' : '#1f2328') + ';';
-  var btnBase = 'border-radius:12px;padding:12px 22px;font-size:16px;font-weight:600;cursor:pointer;min-width:220px;';
+  var btnBase = 'width:100%;max-width:360px;border-radius:16px;font-size:16px;font-weight:600;cursor:pointer;';
   el.innerHTML =
-    '<div style="font-size:52px;line-height:1">🔒</div>' +
-    '<div class="font-serif" style="font-size:24px;font-weight:600"></div>' +
-    '<div data-bio="msg" style="font-size:14px;opacity:.65;min-height:20px;max-width:320px"></div>' +
-    '<button type="button" data-bio="go" style="' + btnBase + 'border:0;background:var(--c-pine, #00374A);color:#fff"></button>' +
-    '<button type="button" data-bio="pw" style="' + btnBase + 'font-weight:500;background:none;border:1px solid ' +
-    (dark ? 'rgba(255,255,255,.25)' : 'rgba(0,0,0,.15)') + ';color:inherit"></button>';
-  el.children[1].textContent = tk('lock.title');
-  el.querySelector('[data-bio="go"]').textContent = tk('lock.unlock', { method: bioMethodName() });
+    '<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px">' +
+      '<div style="font-size:52px;line-height:1">🔒</div>' +
+      '<div data-bio="title" class="font-serif" style="font-size:24px;font-weight:600"></div>' +
+      '<div data-bio="msg" style="font-size:14px;opacity:.65;min-height:20px;max-width:320px"></div>' +
+    '</div>' +
+    '<div style="width:100%;display:flex;flex-direction:column;align-items:center;gap:10px">' +
+      '<button type="button" data-bio="go" style="' + btnBase + 'display:flex;align-items:center;justify-content:center;gap:10px;' +
+        'min-height:58px;padding:14px 22px;border:0;background:var(--c-pine, #00374A);color:#fff;box-shadow:0 10px 24px -12px rgba(0,0,0,.45)">' +
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+        '<path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/>' +
+        '<path d="M9 9.5v1M15 9.5v1M12 9.5v3.5h-1M9.5 15.5c1.4 1.1 3.6 1.1 5 0"/></svg><span data-bio="golabel"></span></button>' +
+      '<button type="button" data-bio="pw" style="' + btnBase + 'min-height:46px;padding:10px 22px;font-weight:500;background:none;border:1px solid ' +
+        (dark ? 'rgba(255,255,255,.25)' : 'rgba(0,0,0,.15)') + ';color:inherit"></button>' +
+    '</div>';
+  el.querySelector('[data-bio="title"]').textContent = tk('lock.title');
+  el.querySelector('[data-bio="golabel"]').textContent = tk('lock.unlock', { method: bioMethodName() });
   el.querySelector('[data-bio="pw"]').textContent = tk('lock.password');
   el.querySelector('[data-bio="go"]').addEventListener('click', function () { bioTryUnlock(true); });
   el.querySelector('[data-bio="pw"]').addEventListener('click', bioUsePassword);
@@ -164,7 +175,7 @@ async function bioTryUnlock(byTap) {
     });
     if (res) bioUnlockDone();
   } catch (e) {
-    // Without a tap some browsers refuse at once – then the button is the way (no message for that first try)
+    // Only started by a tap since 1.150.5 (byTap stays for safety)
     if (msg && byTap) msg.textContent = tk('lock.failed');
   } finally {
     bioBusy = false;
@@ -234,7 +245,6 @@ function bioAfterChanged() {
   // Cold start: locked right away, before anything of the family is visible
   if (bioApplies()) {
     bioShowLock();
-    setTimeout(function () { bioTryUnlock(false); }, 350);
   }
   document.addEventListener('visibilitychange', function () {
     if (document.hidden) {
@@ -250,7 +260,6 @@ function bioAfterChanged() {
     try { away = Date.now() - Number(localStorage.getItem(BIO_AWAY_KEY) || Date.now()); } catch (e) { away = 0; }
     if (bioLocked || away >= Number(cfg.after || 0) * 60000) {
       bioShowLock();
-      setTimeout(function () { bioTryUnlock(false); }, 350);
     }
   });
   var toggle = document.getElementById('bioToggle');

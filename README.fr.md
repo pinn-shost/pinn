@@ -129,6 +129,15 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski et 🇺🇦 Українська**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.150.5
+
+**Nouvelle bannière santé · boissons rangées**
+
+- **Bannière santé.** La page santé et celle de chaque personne ont de nouveau une bannière : de l’eau qui monte avec ce qui a été bu, des bulles, un battement de cœur et des objets flottants – la nuit, des étoiles.
+- **Boire.** L’objectif, les boissons du jour et le rappel sont désormais dans une section repliable « Réglages » sous le bouton. Le raccourci s’appelle toujours « Cuisiner ».
+- **Face ID.** Le déverrouillage ne démarre plus qu’avec le bouton (plus de fenêtre « Utiliser la clé d’identification ») ; le bouton est en bas, à portée du pouce.
+- Modifié : `js/gesundheit.js`, `css/gesundheit.css`, `js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
+
 ## Nouveautés de la 1.150.4
 
 **Les notifications restent actives après les mises à jour**
@@ -267,13 +276,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Activé par défaut, désactivable par profil** dans Réglages → Apparence ; « Aperçu » l’affiche une minute à tout moment. Économe en batterie et sur une couche à part : rien ne bouge en veille et rien ne se décale dans la mise en page.
 - Modifié : `js/winterzeit.js` (nouveau), `css/winterzeit.css` (nouveau), `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`, tous les README. Pas de partie serveur.
 
-## Nouveautés de la 1.144.2
-
-**Mises à jour automatiques : aussi pour aujourd’hui**
-
-- **Le jour même.** Si l’heure choisie est encore à venir, pinn. vérifie le jour même – même s’il a déjà vérifié aujourd’hui. On peut ainsi tester tout de suite un nouveau réglage. Une heure déjà passée à l’enregistrement vaut à partir de demain ; « Prochaine vérification » l’affiche correctement.
-- Modifié : `pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, tous les README. Serveur (remplacer les hooks, PocketBase redémarre) : `pb_hooks/pinn-system.js`.
-
 ## Comment ça marche
 
 ```mermaid
@@ -300,7 +302,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.150.4` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.150.5` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

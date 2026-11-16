@@ -133,6 +133,15 @@ Toque em qualquer imagem para abri-la em tamanho real.
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.150.5
+
+**Novo banner de saúde · bebidas arrumadas**
+
+- **Banner de saúde.** A página de saúde e a de cada pessoa voltam a ter um banner: água que sobe com o que se bebeu, bolhas, batimento cardíaco e objetos a flutuar – à noite, estrelas.
+- **Beber.** O objetivo, as bebidas de hoje e o lembrete estão agora numa secção dobrável «Definições» por baixo do botão.
+- **Face ID.** O desbloqueio só começa com o botão (sem a janela «Usar chave-passe»); o botão fica em baixo, ao alcance do polegar.
+- Alterado: `js/gesundheit.js`, `css/gesundheit.css`, `js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
+
 ## Novidades da 1.150.4
 
 **As notificações continuam ativas após as atualizações**
@@ -234,15 +243,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Controle por voz e widgets.** O link pessoal agora fica dentro dos campos «Atalho da Siri» e «Android» (com o botão de copiar) em vez da visão geral.
 - Alterado: `js/geraete.js`, `js/sprachsteuerung.js`, `js/sprachen.js`, `pb_hooks/pinn-sitzungen.js`, `src/`, `index.html`, `i18n/`, todos os README. Parte do servidor: instalar os hooks, o PocketBase reinicia.
 
-## Novidades da 1.147.0
-
-**Face ID e digital, aparelhos bem reconhecidos, widget com casa e jardim**
-
-- **Face ID, Touch ID, digital.** Em Conta você pode bloquear o pinn. em cada aparelho: ao abrir e depois de uma pausa o aparelho pede rosto ou dedo. O próprio aparelho verifica, nada é enviado.
-- **Aparelhos.** Nome e tipo corretos (sem «Navegador» com ícone de notebook no celular), ID curto, nome próprio com ✏️; aparelhos que só recebem notificações aparecem na lista.
-- **Widget.** Círculo vazio para tarefas abertas, visto para as concluídas, novo grupo «Casa e jardim». Copie o script de novo.
-- **Estações.** Em Aparência → Estações você escolhe o período e cada parte (neve, nevada, pisca-pisca, Papai Noel …) para Inverno e Natal; «Controle por voz e widgets» com os guias fechados. Parte do servidor: instalar os hooks.
-
 ## Como funciona
 
 ```mermaid
@@ -271,7 +271,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.150.4` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.150.5` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

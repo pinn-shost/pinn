@@ -110,6 +110,15 @@ Tam boyutta açmak için bir resme dokun.
 
 pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski ve 🇺🇦 Українська**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
 
+## 1.150.5 sürümündeki yenilikler
+
+**Yeni sağlık afişi · içecekler düzenlendi**
+
+- **Sağlık afişi.** Sağlık sayfası ve her kişinin sayfası yeniden bir afişe sahip: bugün içilenlerle yükselen su, kabarcıklar, kalp atışı çizgisi ve süzülen nesneler – gece yıldızlar.
+- **İçmek.** Hedef, bugünkü içecekler ve hatırlatma artık düğmenin altındaki açılır „Ayarlar” bölümünde.
+- **Face ID.** Kilit açma artık yalnızca düğmeyle başlar („Geçiş anahtarını kullan” penceresi yok); düğme altta, başparmakla kolayca ulaşılır.
+- Değişenler: `js/gesundheit.js`, `css/gesundheit.css`, `js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
+
 ## 1.150.4 sürümündeki yenilikler
 
 **Bildirimler güncellemelerden sonra açık kalır**
@@ -176,14 +185,6 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 - **Gizli.** Sağlık verilerini yalnızca kişinin kendisi, çocuklarda ayrıca yetişkinler görür. Push hatırlatmaları 1.149.1 ile gelecek.
 - Değişenler: `js/gesundheit.js`, `css/gesundheit.css`, `pb_hooks/gesundheit.pb.js`, `pb_hooks/pinn-gesundheit.js`, `pb_hooks/pinn-schema.js`, `js/familie.js`, `js/serverzugriff.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, tüm README’ler. Sunucu kısmı var (yeni “gesundheit” koleksiyonu). 1.148.2’yi içerir.
 
-## 1.148.2 sürümündeki yenilikler
-
-**Pano cihazında başka bir aile**
-
-- **Başka bir aileyle giriş.** Pano cihazında “Parolayla giriş yap” ile başka bir ailenin profiliyle giriş yaparsan bu artık normal bir oturumdur: pano düğmesi görünmez ve “Çıkış yap” oturumu bitirir. Önceden düğme ilk ailenin panosuna geri götürüyordu.
-- **Ayarlarda net bilgi.** Pano bölümü artık bu cihazın başka bir ailenin panosu olduğunu söylüyor – bir cihaz yalnızca tek bir pano olabilir.
-- Değişenler: `js/dashboard.js`, `js/anmeldung.js`, `js/profilauswahl.js`, `js/dashboardkonto.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, tüm README’ler. Sunucu kısmı yok.
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -193,7 +194,7 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.150.4` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.150.5` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

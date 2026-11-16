@@ -133,6 +133,15 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski和 🇺🇦 Українська**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.150.5 新功能
+
+**全新健康横幅 · 饮水整理**
+
+- **健康横幅。** 健康页面和每个人的页面重新有了横幅：水位随当天饮水量上升，还有气泡、心跳线和漂浮的小物件，夜晚会出现星星。
+- **饮水。** 目标、今天喝过的饮品和提醒现在都在按钮下方可展开的“设置”中。快捷方式“今日做饭”改名为“做饭”。
+- **Face ID。** 解锁只在点按按钮后开始（不再出现“使用通行密钥”窗口）；按钮位于底部，拇指即可轻松点到。
+- 更改：`js/gesundheit.js`, `css/gesundheit.css`, `js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
+
 ## 1.150.4 新功能
 
 **更新后通知保持开启**
@@ -234,15 +243,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 - **语音控制与小组件。** 个人链接现在位于“Siri 快捷指令”和“Android”栏内（带复制按钮），不再放在总览里。
 - 已更改：`js/geraete.js`、`js/sprachsteuerung.js`、`js/sprachen.js`、`pb_hooks/pinn-sitzungen.js`、`src/`、`index.html`、`i18n/`、所有 README。服务器部分：安装 hooks，PocketBase 会重启。
 
-## 1.147.0 新功能
-
-**面容 ID 与指纹、正确识别设备、小组件新增房屋与花园**
-
-- **面容 ID、触控 ID、指纹。** 在“账户”中可按设备锁定 pinn.：打开时和离开一段时间后，设备会要求验证面容或指纹。由设备自行验证，不会发送任何信息。
-- **已登录设备。** 名称和类型正确（手机上不再显示带笔记本图标的“浏览器”），显示简短 ID，可用 ✏️ 重命名；仅接收通知的设备也会列出。
-- **小组件。** 未完成任务显示空心圆，已完成显示对勾，新增“房屋与花园”分组。请重新复制一次脚本。
-- **季节。** 在“外观 → 季节”中可为冬季和圣诞节选择时间段并单独开关各项（雪、飘雪、彩灯、圣诞老人……）；“语音控制与小组件”中的指南默认收起。服务器部分：安装 hooks。
-
 ## 工作原理
 
 ```mermaid
@@ -271,7 +271,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.150.4` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.150.5` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

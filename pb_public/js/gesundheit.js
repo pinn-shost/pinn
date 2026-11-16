@@ -202,6 +202,66 @@ function ghVesselSvg(drink, fill) {
     + `<path d="${shape}" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>${handle}</svg>`;
 }
 
+/* ---------- Banner of the health pages (since 1.150.5) ----------
+   Water that rises with the drinks of the day (level = share of the daily goal), bubbles, a heartbeat line
+   with a beating heart and a few floating things (pill, apple, soap, leaf). At night: stars instead of the sun.
+   Animated parts carry hs-anim, so energy saving and "reduce motion" stop them (css/energiesparen.css). */
+function ghSceneHtml(level, color) {
+  const night = typeof fzSceneIsNight === 'function' ? fzSceneIsNight() : (new Date().getHours() >= 20 || new Date().getHours() < 6);
+  const lv = Math.max(0, Math.min(1, Number(level) || 0));
+  const water = Math.round(16 + lv * 34); // px of water: 16 (empty) to 50 (goal reached)
+  const sky = night
+    ? [[6, 10], [18, 24], [31, 8], [44, 30], [57, 12], [69, 22], [82, 6], [91, 18]].map(([x, y], i) => `<span class="hs-star${i % 3 === 0 ? ' tw hs-anim' : ''}" style="left:${x}%;top:${y}px;animation-delay:-${i * 0.6}s"></span>`).join('')
+    : '<span class="gh-sun hs-anim"></span>';
+  const floats = [['💊', 30, 14, 0], ['🍎', 50, 26, 1.4], ['🧼', 64, 10, 2.6], ['🍃', 41, 36, 3.5]]
+    .map(([e, x, y, d]) => `<span class="gh-float hs-anim" style="left:${x}%;top:${y}px;animation-delay:-${d}s">${e}</span>`).join('');
+  const bubbles = [8, 19, 33, 47, 58, 72, 86, 93]
+    .map((x, i) => `<span class="gh-bubble hs-anim" style="left:${x}%;bottom:${Math.max(2, water - 18)}px;animation-delay:-${(i * 0.9).toFixed(1)}s;animation-duration:${3 + (i % 3)}s"></span>`).join('');
+  const wave = 'M0 8 Q25 0 50 8 T100 8 T150 8 T200 8 V40 H0Z';
+  return `<div class="fam-band gh-scene${night ? ' is-night' : ''}" style="--fz:${famAttr(color || 'var(--c-pine)')}" aria-hidden="true">
+      ${sky}
+      <svg class="gh-ecg" viewBox="0 0 300 40" preserveAspectRatio="none"><path class="hs-anim" d="M0 22 H95 L104 10 L114 34 L124 4 L136 30 L144 22 H300"></path></svg>
+      <span class="gh-heart hs-anim">❤️</span>
+      ${floats}
+      <div class="gh-water" style="height:${water}px">
+        <svg class="gh-wave back hs-anim" viewBox="0 0 200 40" preserveAspectRatio="none"><path d="${wave}"/></svg>
+        <svg class="gh-wave front hs-anim" viewBox="0 0 200 40" preserveAspectRatio="none"><path d="${wave}"/></svg>
+      </div>
+      ${bubbles}
+    </div>`;
+}
+// Share of the daily drinking goal of one person (0..1), 0 without the drink block
+function ghDrinkLevel(memberId) {
+  if (!ghCanSee(memberId)) return 0;
+  const d = ghData(memberId);
+  if (!d.blocks.drink) return 0;
+  const goal = Number(d.drink.goal) || 2000;
+  return Math.min(1, ghDrinkTotal(d, ghToday()) / goal);
+}
+// Banner on top of the tab "Health": the water shows the average of the family
+function ghListHeroHtml(people) {
+  const today = ghToday();
+  const seen = people.filter(m => ghCanSee(m.id));
+  const drinkers = seen.filter(m => ghData(m.id).blocks.drink);
+  const avg = drinkers.length ? drinkers.reduce((n, m) => n + ghDrinkLevel(m.id), 0) / drinkers.length : 0.35;
+  const reached = drinkers.filter(m => ghDrinkLevel(m.id) >= 1).length;
+  let medsAll = 0, medsDone = 0;
+  seen.forEach(m => {
+    const d = ghData(m.id);
+    if (!d.blocks.meds || !d.meds.list.length) return;
+    const slots = ghMedSlots(d).length;
+    medsAll += slots;
+    medsDone += Math.min((d.meds.taken[today] || []).length, slots);
+  });
+  const chips = [];
+  if (drinkers.length) chips.push(`<span class="vt-chip${reached >= drinkers.length ? '' : ' muted'}">💧 ${reached}/${drinkers.length}</span>`);
+  if (medsAll) chips.push(`<span class="vt-chip${medsDone >= medsAll ? '' : ' muted'}">💊 ${medsDone}/${medsAll}</span>`);
+  return `<div class="fz-hero gh-listhero" style="--fz:var(--c-pine)">
+    ${ghSceneHtml(avg)}
+    <div class="pt-listhero-body"><h3 class="font-serif text-xl leading-tight">${tk('gh.title')}</h3>${chips.length ? `<div class="flex items-center gap-1.5 flex-wrap">${chips.join('')}</div>` : ''}</div>
+  </div>`;
+}
+
 /* ---------- Tab "Health" (list of persons) ---------- */
 function ghPaneHtml() {
   ghEnsureLoaded();
@@ -235,6 +295,7 @@ function ghPaneHtml() {
     </button>`;
   }).join('');
   return `
+    ${ghListHeroHtml(members.filter(m => !famIsPet(m)))}
     <div class="fam-card">
       <div class="fz-h">${tk('family.emergency2')}</div>
       <div class="flex gap-2">${calls.join('')}</div>
@@ -269,6 +330,7 @@ function ghPersonHtml(m) {
   return `
     <button type="button" class="self-start text-sm text-ink/55 hover:text-pine -mb-1" data-ghact="back">‹ ${tk('gh.title')}</button>
     <div class="fz-hero" style="--fz:${famAttr(famColor(m))}">
+      ${ghSceneHtml(ghDrinkLevel(m.id), famColor(m))}
       <div class="fam-hero-ava"><span class="fam-ava big" style="--fam:${famAttr(famColor(m))}">${famAvatarInner(m)}</span></div>
       <div class="fam-hero-body">
         <div class="font-serif text-xl">${escapeHtml(memberLabel(m))}</div>
@@ -340,6 +402,8 @@ function ghDrinkHint(total, goal) {
   const plan = total >= expected ? tk('gh.drink.onTrack') : tk('gh.drink.behind');
   return tk('gh.drink.rest', { ml: ghNum(rest), glasses: ghNum(glasses), perHour: ghNum(perHour), until: GH_DAY_TO + ':00' }) + ' ' + plan;
 }
+// Open "Settings" sections of the drink block per person (survive the re-render after every change)
+const ghDrinkSettingsOpen = new Set();
 function ghDrinkHtml(m, d, edit) {
   const today = ghToday();
   const list = (d.drink.log[today] || []).slice().sort((a, b) => String(a.t).localeCompare(String(b.t)));
@@ -353,6 +417,17 @@ function ghDrinkHtml(m, d, edit) {
     const dr = ghDrinkById(x.kind);
     return `<span class="hp-chip">${ghVesselSvg(dr, 0.7)}<span>${ghNum(x.ml)} ml</span><span class="text-ink/40">${escapeHtml(x.t || '')}</span>${edit ? `<button type="button" class="hp-x" data-ghact="drink-del" data-member="${famAttr(m.id)}" data-id="${famAttr(x.id)}" aria-label="${ghAttr(tk('common.delete'))}">×</button>` : ''}</span>`;
   }).join('');
+  // Since 1.150.5: goal, today's drinks and the reminder sit in one folding "Settings" section under the button
+  const open = ghDrinkSettingsOpen.has(m.id);
+  const settings = `<details class="hp-fold" data-ghfold="drink" data-member="${famAttr(m.id)}"${open ? ' open' : ''}>
+      <summary class="hp-fold-sum"><span>⚙️ ${tk('nav.settings')}</span><span class="hp-fold-meta">${tk('gh.drink.goalOpt', { ml: ghNum(goal) })}${list.length ? ' · ' + list.length + ' ×' : ''}</span><span class="hp-fold-arrow" aria-hidden="true">›</span></summary>
+      <div class="hp-fold-body">
+        <div class="hp-fold-row"><span class="hp-fold-l">🎯 ${tk('gh.drink.goal')}</span>${goalSel}</div>
+        <div class="hp-fold-l mt-3">🥤 ${tk('gh.drink.todayList')}</div>
+        ${chips ? `<div class="hp-chips mt-1.5">${chips}</div>` : `<p class="text-xs text-ink/45 mt-1">${tk('gh.drink.nothingYet')}</p>`}
+        ${ghRemindHtml('drink', m, d.drink.remind, edit)}
+      </div>
+    </details>`;
   const body = `
     <div class="hp-progress" role="progressbar" aria-valuemin="0" aria-valuemax="${goal}" aria-valuenow="${total}"><span style="width:${pct}%"></span></div>
     <div class="flex items-baseline justify-between gap-2 mt-1.5">
@@ -361,10 +436,16 @@ function ghDrinkHtml(m, d, edit) {
     </div>
     <p class="text-xs text-ink/60 mt-1">${escapeHtml(ghDrinkHint(total, goal))}</p>
     ${edit ? `<button type="button" class="hp-big-btn" data-ghact="drink-add" data-member="${famAttr(m.id)}">💧 ${tk('gh.drink.add')}</button>` : ''}
-    ${chips ? `<div class="hp-chips">${chips}</div>` : ''}
-    ${ghRemindHtml('drink', m, d.drink.remind, edit)}`;
-  return ghCard('💧', tk('gh.block.drink'), body, goalSel);
+    ${settings}`;
+  return ghCard('💧', tk('gh.block.drink'), body, '');
 }
+// Remember whether "Settings" of the drink block is open ("toggle" does not bubble, hence capture)
+document.addEventListener('toggle', (e) => {
+  const el = e.target;
+  if (!el || !el.matches || !el.matches('details[data-ghfold="drink"]')) return;
+  const id = el.dataset.member;
+  if (el.open) ghDrinkSettingsOpen.add(id); else ghDrinkSettingsOpen.delete(id);
+}, true);
 function ghOpenDrinkPopup(memberId) {
   if (!ghCanEdit(memberId)) return;
   ghDrinkPick = { memberId, drink: null };

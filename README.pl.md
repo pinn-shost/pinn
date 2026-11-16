@@ -110,6 +110,15 @@ Dotknij obrazu, aby otworzyć go w pełnym rozmiarze.
 
 pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski i 🇺🇦 Українська**; dostosowuje walutę i numery alarmowe do twojego regionu i przełącza się między określeniami **rodzina** i **wspólne mieszkanie**. Jeden serwer może obsługiwać wiele rodzin, każdą z własnymi administratorami.
 
+## Nowości w 1.150.5
+
+**Nowy baner zdrowia · picie uporządkowane**
+
+- **Baner zdrowia.** Strona zdrowia i strona każdej osoby znów mają baner: woda, która podnosi się z tym, co wypito, bąbelki, linia tętna i unoszące się przedmioty – nocą gwiazdy.
+- **Picie.** Cel, dzisiejsze napoje i przypomnienie są teraz w rozwijanej sekcji „Ustawienia” pod przyciskiem.
+- **Face ID.** Odblokowanie startuje tylko przyciskiem (bez okna „Użyj klucza dostępu”); przycisk jest na dole, w zasięgu kciuka.
+- Zmienione: `js/gesundheit.js`, `css/gesundheit.css`, `js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
+
 ## Nowości w 1.150.4
 
 **Powiadomienia pozostają włączone po aktualizacjach**
@@ -176,14 +185,6 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 - **Prywatne.** Dane o zdrowiu widzi tylko sama osoba, a u dzieci także dorośli. Przypomnienia push pojawią się w 1.149.1.
 - Zmienione: `js/gesundheit.js`, `css/gesundheit.css`, `pb_hooks/gesundheit.pb.js`, `pb_hooks/pinn-gesundheit.js`, `pb_hooks/pinn-schema.js`, `js/familie.js`, `js/serverzugriff.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, wszystkie README. Z częścią serwerową (nowa kolekcja „gesundheit”). Zawiera 1.148.2.
 
-## Nowości w 1.148.2
-
-**Inna rodzina na urządzeniu z panelem**
-
-- **Logowanie inną rodziną.** Jeśli na urządzeniu z panelem użyjesz „Zaloguj się hasłem” z profilem innej rodziny, będzie to teraz zwykła sesja: przycisk panelu znika, a „Wyloguj się” ją kończy. Wcześniej przycisk prowadził z powrotem do panelu pierwszej rodziny.
-- **Czytelna informacja w ustawieniach.** Sekcja panelu mówi teraz, że to urządzenie jest panelem innej rodziny – urządzenie może być tylko jednym panelem.
-- Zmienione: `js/dashboard.js`, `js/anmeldung.js`, `js/profilauswahl.js`, `js/dashboardkonto.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, wszystkie README. Bez części serwerowej.
-
 ## Wymagania
 
 - NAS lub mini PC z zainstalowanym **Dockerem** i **Docker Compose** (np. Synology, UGREEN, QNAP albo zwykły serwer z Linuksem)
@@ -193,7 +194,7 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 ## Instalacja
 
 1. Pobierz i rozpakuj plik ZIP [najnowszej wersji](https://github.com/pinn-shost/pinn/releases/latest).
-2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.150.4` lub `pinn-main`) bez zmian.
+2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.150.5` lub `pinn-main`) bez zmian.
 3. Połącz się przez SSH i uruchom:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

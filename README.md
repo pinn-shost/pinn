@@ -129,6 +129,15 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski and 🇺🇦 Українська**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.150.5
+
+**New health banner · drinking tidied up**
+
+- **Health banner.** The health page and each person's page have a banner again: water that rises with today's drinks, bubbles, a heartbeat and floating things – stars at night.
+- **Drinking.** Goal, today's drinks and the reminder are now in a folding “Settings” section under the button. The shortcut “Cook today” is now “Cook”.
+- **Face ID.** Unlocking starts only with the button (no more “Use passkey” sheet); the button sits at the bottom within thumb reach.
+- Changed: `js/gesundheit.js`, `css/gesundheit.css`, `js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
+
 ## What's new in 1.150.4
 
 **Notifications stay on after updates**
@@ -267,13 +276,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **On by default, switch it off per profile** under Settings → Appearance; “Preview” shows it for a minute at any time. Easy on the battery and a layer of its own: nothing moves in idle mode, and nothing in the layout shifts.
 - Changed: `js/winterzeit.js` (new), `css/winterzeit.css` (new), `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`, all READMEs. No server part.
 
-## What's new in 1.144.2
-
-**Automatic updates: plan for today as well**
-
-- **Same day possible.** If the chosen time is still ahead, pinn. checks on the same day – even if it already checked today. So a new setting can be tried out right away. A time that is already over when saving applies from tomorrow; “Next check” shows this correctly.
-- Changed: `pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, all READMEs. Server (replace the hooks, PocketBase restarts): `pb_hooks/pinn-system.js`.
-
 ## How it works
 
 ```mermaid
@@ -300,7 +302,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.150.4` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.150.5` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
