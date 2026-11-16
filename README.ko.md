@@ -133,6 +133,13 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.150.9의 새 소식
+
+**아이콘에 색, 탈것·식물 아이콘**
+
+- **낮에는 색이 있어요.** 아이콘에 은은한 색이 입혀졌습니다(흰 면, 해는 노랑, 비는 파랑, 자동차는 빨강, 도구는 회색, 식물은 초록). 선 스타일은 그대로이고 다크 모드도 그대로입니다. **탈것 아이콘:** 자동차 이모지 대신 선 아이콘을 고를 수 있습니다(세단, SUV, 택시, 밴, 픽업, 트랙터, 캐러밴, 자전거, 전기 자전거 등). **식물 아이콘**도 앱에서 고르며 선인장, 야자수, 튤립, 해바라기, 장미 등이 새로 생겼습니다. 탈것과 집 배너에서 자동차는 밤에만 빛납니다(앞은 노르스름, 뒤는 빨강).
+- 변경: `js/symbole2.js`, `css/symbolfarbe.css` (new), `js/symbole.js`, `js/wetterlogos.js`, `js/symbolwahl.js`, `js/fahrzeuge.js`, `js/zuhause.js`, `js/dokumente.js`, `css/fahrzeuge.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
+
 ## 1.150.8의 새 소식
 
 **어디서나 아이콘, 앱에서 바로 선택**
@@ -230,14 +237,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - **비공개.** 건강 데이터는 본인만 볼 수 있고, 아이의 경우 어른도 볼 수 있습니다. 푸시 알림은 1.149.1에서 제공됩니다.
 - 변경: `js/gesundheit.js`, `css/gesundheit.css`, `pb_hooks/gesundheit.pb.js`, `pb_hooks/pinn-gesundheit.js`, `pb_hooks/pinn-schema.js`, `js/familie.js`, `js/serverzugriff.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, 모든 README. 서버 부분 포함(새 컬렉션 “gesundheit”). 1.148.2 포함.
 
-## 1.148.2의 새 소식
-
-**대시보드 기기에서 다른 가족으로 로그인**
-
-- **다른 가족으로 로그인.** 대시보드 기기에서 “비밀번호로 로그인”으로 다른 가족의 프로필에 로그인하면 이제 일반 세션이 됩니다. 대시보드 버튼은 보이지 않고 “로그아웃”으로 끝납니다. 이전에는 이 버튼이 첫 번째 가족의 대시보드로 돌아갔습니다.
-- **설정의 명확한 안내.** 대시보드 항목에 이 기기가 다른 가족의 대시보드라는 안내가 표시됩니다. 기기 하나는 대시보드 하나만 될 수 있습니다.
-- 변경: `js/dashboard.js`, `js/anmeldung.js`, `js/profilauswahl.js`, `js/dashboardkonto.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, 모든 README. 서버 부분 없음.
-
 ## 작동 방식
 
 ```mermaid
@@ -266,7 +265,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.150.8` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.150.9` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -58,7 +58,7 @@ function wxIconName(code, night) {
 function wxIcon(name, cls) {
   var p = WX_ICON_PATHS[name];
   if (!p) return '';
-  return '<svg class="wi' + (cls ? ' ' + cls : '') + '" viewBox="0 0 24 24" aria-hidden="true" focusable="false">' + p + '</svg>';
+  return '<svg class="wi' + (cls ? ' ' + cls : '') + '" data-i="' + name + '" viewBox="0 0 24 24" aria-hidden="true" focusable="false">' + p + '</svg>';
 }
 
 // Marks this file as loaded – the start check in index.html reports missing app files

@@ -635,15 +635,59 @@ function symScan(root) {
   list.forEach(symText);
 }
 
+// ---- Colours in light mode (css/symbolfarbe.css) ----
+// Every svg.wi whose surrounding text colour is dark gets data-t="1" (colour theme on) and its parts are marked:
+// .wf = closed shapes (filled), .wo = open lines. Icons on coloured areas (light text) and dark mode stay unchanged.
+var symTintQ = [], symTintTimer = 0;
+function symTintOne(svg) {
+  if (svg.hasAttribute('data-t')) return;
+  var c = getComputedStyle(svg).color.match(/[\d.]+/g) || [];
+  var lum = c.length > 2 ? (0.299 * c[0] + 0.587 * c[1] + 0.114 * c[2]) / 255 : 0;
+  var on = lum < 0.6 && (c.length < 4 || Number(c[3]) > 0.4);
+  if (on && !svg.hasAttribute('data-w')) {
+    svg.setAttribute('data-w', '1');
+    Array.prototype.forEach.call(svg.children, function (el) {
+      if (el.hasAttribute('fill')) return; // own fixed colour (coloured dots)
+      var t = el.tagName.toLowerCase();
+      var closed = t === 'circle' || t === 'rect' || t === 'ellipse' || t === 'polygon' || (t === 'path' && /[zZ]/.test(el.getAttribute('d') || ''));
+      el.classList.add(closed ? 'wf' : 'wo');
+    });
+  }
+  svg.setAttribute('data-t', on ? '1' : '0');
+}
+function symTintRun() {
+  symTintTimer = 0;
+  var list = symTintQ; symTintQ = [];
+  if (document.documentElement.classList.contains('dark')) return;
+  list.forEach(function (n) {
+    if (n.nodeType !== 1) return;
+    if (n.matches('svg.wi')) symTintOne(n);
+    else n.querySelectorAll('svg.wi:not([data-t])').forEach(symTintOne);
+  });
+}
+function symTintQueue(n) {
+  symTintQ.push(n);
+  if (!symTintTimer) symTintTimer = setTimeout(symTintRun, 30);
+}
 function symInit() {
   if (typeof MutationObserver === 'undefined' || !document.body) return;
   symScan(document.body);
+  symTintQueue(document.body);
   new MutationObserver(function (list) {
     list.forEach(function (r) {
       if (r.type === 'characterData') symText(r.target);
-      else r.addedNodes.forEach(symScan);
+      else r.addedNodes.forEach(function (n) { symScan(n); symTintQueue(n); });
     });
   }).observe(document.body, { childList: true, characterData: true, subtree: true });
+  // Theme switch: forget the decisions of the old theme, light mode decides again
+  var wasDark = document.documentElement.classList.contains('dark');
+  new MutationObserver(function () {
+    var dark = document.documentElement.classList.contains('dark');
+    if (dark === wasDark) return;
+    wasDark = dark;
+    document.querySelectorAll('svg.wi[data-t]').forEach(function (s) { s.removeAttribute('data-t'); });
+    symTintQueue(document.body);
+  }).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
 }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', symInit);
 else symInit();

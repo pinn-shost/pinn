@@ -133,6 +133,13 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski、🇺🇦 Українська** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.150.9の新機能
+
+**アイコンに色、乗り物と植物のアイコン**
+
+- **昼は色付き。** アイコンにうっすら色が付きました（白い面、太陽は黄色、雨は青、車は赤、工具は灰色、植物は緑）。線のスタイルは同じで、ダークモードは変わりません。**乗り物アイコン：** 車の絵文字の代わりに線のアイコンを選べます（セダン、SUV、タクシー、バン、ピックアップ、トラクター、キャラバン、自転車、電動自転車など）。**植物アイコン**もアプリ内から選べ、サボテン、ヤシ、チューリップ、ヒマワリ、バラなどが加わりました。乗り物とホームのバナーでは、車は夜だけ光ります（前は黄色っぽく、後ろは赤）。
+- 変更：`js/symbole2.js`, `css/symbolfarbe.css` (new), `js/symbole.js`, `js/wetterlogos.js`, `js/symbolwahl.js`, `js/fahrzeuge.js`, `js/zuhause.js`, `js/dokumente.js`, `css/fahrzeuge.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
+
 ## 1.150.8の新機能
 
 **どこでも専用アイコン、アプリ内で選択**
@@ -230,14 +237,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - **プライベート。** 健康データは本人だけが見られ、子どもの場合は大人も見られます。プッシュ通知は 1.149.1 で追加予定です。
 - 変更：`js/gesundheit.js`, `css/gesundheit.css`, `pb_hooks/gesundheit.pb.js`, `pb_hooks/pinn-gesundheit.js`, `pb_hooks/pinn-schema.js`, `js/familie.js`, `js/serverzugriff.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`、すべてのREADME。サーバー側の変更あり（新しいコレクション「gesundheit」）。1.148.2 を含みます。
 
-## 1.148.2の新機能
-
-**ダッシュボード端末で別の家族にログイン**
-
-- **別の家族でのログイン。** ダッシュボード端末で「パスワードでログイン」を使って別の家族のプロフィールにログインすると、通常のセッションになります。ダッシュボードのボタンは表示されず、「ログアウト」で終了します。以前はこのボタンが最初の家族のダッシュボードに戻っていました。
-- **設定にわかりやすい案内。** ダッシュボードの項目に、この端末が別の家族のダッシュボードであることが表示されます（1台の端末で設定できるダッシュボードは1つだけです）。
-- 変更：`js/dashboard.js`, `js/anmeldung.js`, `js/profilauswahl.js`, `js/dashboardkonto.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`、すべてのREADME。サーバー側の変更はありません。
-
 ## しくみ
 
 ```mermaid
@@ -266,7 +265,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.150.8`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.150.9`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

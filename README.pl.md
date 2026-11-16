@@ -110,6 +110,13 @@ Dotknij obrazu, aby otworzyć go w pełnym rozmiarze.
 
 pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski i 🇺🇦 Українська**; dostosowuje walutę i numery alarmowe do twojego regionu i przełącza się między określeniami **rodzina** i **wspólne mieszkanie**. Jeden serwer może obsługiwać wiele rodzin, każdą z własnymi administratorami.
 
+## Nowości w 1.150.9
+
+**Kolor ikon, ikony pojazdów i roślin**
+
+- **Kolor w dzień.** Ikony są teraz lekko wypełnione kolorem (białe pola, słońce żółte, deszcz niebieski, auto czerwone, narzędzia szare, rośliny zielone) w tym samym stylu linii; tryb ciemny bez zmian. **Ikony pojazdów:** zamiast emoji samochodu wybierasz ikonę liniową (sedan, SUV, taksówka, van, pickup, traktor, przyczepa kempingowa, rower, e-bike …). **Ikony roślin** też wybierasz w aplikacji, z nowymi ikonami kaktusa, palmy, tulipana, słonecznika, róży i innych. W banerach Pojazdów i Domu auta świecą tylko nocą: z przodu żółtawo, z tyłu na czerwono.
+- Zmienione: `js/symbole2.js`, `css/symbolfarbe.css` (new), `js/symbole.js`, `js/wetterlogos.js`, `js/symbolwahl.js`, `js/fahrzeuge.js`, `js/zuhause.js`, `js/dokumente.js`, `css/fahrzeuge.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
+
 ## Nowości w 1.150.8
 
 **Ikony wszędzie, wybierane w aplikacji**
@@ -168,15 +175,6 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 - **Jeden lub kilka rzędów.** W Ustawienia → Skróty wybierasz osobno dla telefonu oraz dla tabletu i komputera: jeden rząd (przesuń w bok, by zobaczyć resztę) lub kilka rzędów (wszystkie skróty wypełniane w dół).
 - Zmieniono: `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/design.js`, `js/ansichten.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.1).
 
-## Nowości w 1.150.1
-
-**Skróty we własnym punkcie menu**
-
-- **Własny punkt.** Wybór aplikacji jest teraz w Ustawienia → Skróty. Wcześniej otwarcie „Skróty” zwijało ustawienie Przegląd i strony nie dało się już przewijać.
-- **Włącz lub wyłącz w Przeglądzie.** Kafelek Skróty włączasz lub wyłączasz jak każdy inny; „Wybierz aplikacje” prowadzi prosto do wyboru.
-- **Od razu widoczne.** Dopóki nic nie wybierzesz, kafelek pokazuje zestaw domyślny (picie, zakupy, zadanie, termin, gotowanie dziś, notatka, wydatek, plan sprzątania). Bez wybranej aplikacji proponuje „Wybierz aplikacje” zamiast znikać.
-- Zmieniono: `js/kurzbefehle.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README.
-
 ## Wymagania
 
 - NAS lub mini PC z zainstalowanym **Dockerem** i **Docker Compose** (np. Synology, UGREEN, QNAP albo zwykły serwer z Linuksem)
@@ -186,7 +184,7 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 ## Instalacja
 
 1. Pobierz i rozpakuj plik ZIP [najnowszej wersji](https://github.com/pinn-shost/pinn/releases/latest).
-2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.150.8` lub `pinn-main`) bez zmian.
+2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.150.9` lub `pinn-main`) bez zmian.
 3. Połącz się przez SSH i uruchom:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -133,6 +133,13 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski和 🇺🇦 Українська**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.150.9 新功能
+
+**图标上色，车辆和植物图标**
+
+- **白天有颜色。** 图标现在带有淡淡的填色（白色区域、太阳黄色、雨蓝色、汽车红色、工具灰色、植物绿色），线条风格不变；深色模式保持原样。**车辆图标：**用线条图标代替汽车表情符号（轿车、SUV、出租车、厢式车、皮卡、拖拉机、房车、自行车、电动自行车等）。**植物图标**也在应用内选择，新增仙人掌、棕榈、郁金香、向日葵、玫瑰等图标。车辆和家居横幅中的汽车只在夜间发光：前面微黄，后面红色。
+- 更改：`js/symbole2.js`, `css/symbolfarbe.css` (new), `js/symbole.js`, `js/wetterlogos.js`, `js/symbolwahl.js`, `js/fahrzeuge.js`, `js/zuhause.js`, `js/dokumente.js`, `css/fahrzeuge.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
+
 ## 1.150.8 新功能
 
 **图标无处不在，在应用内选择**
@@ -230,14 +237,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 - **私密。** 健康数据只有本人可见，儿童的数据成年人也可见。推送提醒将在 1.149.1 中推出。
 - 更改：`js/gesundheit.js`, `css/gesundheit.css`, `pb_hooks/gesundheit.pb.js`, `pb_hooks/pinn-gesundheit.js`, `pb_hooks/pinn-schema.js`, `js/familie.js`, `js/serverzugriff.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`、所有 README。含服务器部分（新数据集“gesundheit”）。包含 1.148.2。
 
-## 1.148.2 新功能
-
-**在仪表盘设备上登录另一个家庭**
-
-- **用另一个家庭登录。** 在仪表盘设备上通过“使用密码登录”以另一个家庭的成员登录时，现在是一次普通会话：仪表盘按钮不再出现，点“退出登录”即结束。之前该按钮会返回第一个家庭的仪表盘。
-- **设置中的明确提示。** 仪表盘部分现在会说明此设备是另一个家庭的仪表盘——一台设备只能是一个仪表盘。
-- 更改：`js/dashboard.js`, `js/anmeldung.js`, `js/profilauswahl.js`, `js/dashboardkonto.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`、所有 README。无服务器部分。
-
 ## 工作原理
 
 ```mermaid
@@ -266,7 +265,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.150.8` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.150.9` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

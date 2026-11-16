@@ -227,6 +227,8 @@ function fzLogs() { return (finance && Array.isArray(finance.vehicleLog)) ? fina
 function fzLogById(id) { return id ? (fzLogs().find(l => l.id === id) || null) : null; }
 function fzLogSort(a, b) { return String(a.date || '').localeCompare(String(b.date || '')) || ((Number(a.odo) || 0) - (Number(b.odo) || 0)) || String(a.id).localeCompare(String(b.id)); }
 function fzLogsFor(vid) { return fzLogs().filter(l => l.vehicle === vid).sort(fzLogSort); }
+// Symbol of a vehicle: the one picked in the form (line icon set), else the one of its kind
+function fzIcon(v) { return (v && v.icon) || fzKind(v && v.kind).icon; }
 function fzKind(id) { return FZ_KINDS.find(k => k.id === id) || FZ_KINDS[0]; }
 function fzDrive(v) {
   const k = fzKind(v && v.kind);
@@ -858,7 +860,7 @@ function fzDocTypeLabel(id) {
 }
 function fzLinkLabel(id) {
   const v = fzVehicle(id);
-  return v ? fzKind(v.kind).icon + ' ' + fzName(v) : '';
+  return v ? fzIcon(v) + ' ' + fzName(v) : '';
 }
 
 /* ---------- Page ---------- */
@@ -968,7 +970,7 @@ function renderVehicleList(pane) {
     const firstDue = r.due[0];
     return `
       <button type="button" class="fz-card" style="--fz:${fzColor(v)}" data-fzact="open" data-v="${escapeHtml(v.id)}">
-        <span class="fz-icon">${escapeHtml(fzKind(v.kind).icon)}</span>
+        <span class="fz-icon">${escapeHtml(fzIcon(v))}</span>
         <span class="flex-1 min-w-0">
           <span class="block text-sm font-medium truncate">${escapeHtml(fzName(v))}</span>
           <span class="block text-xs text-ink/45 truncate">${sub || escapeHtml(fzKind(v.kind).label)}</span>
@@ -990,7 +992,7 @@ function renderVehicleList(pane) {
       <summary class="text-sm cursor-pointer select-none">${tk('vehicle.soldDeregistered', { n: archived.length })}</summary>
       <div class="flex flex-col gap-2 mt-3">${archived.map(v => `
         <button type="button" class="fz-card is-archived" style="--fz:${fzColor(v)}" data-fzact="open" data-v="${escapeHtml(v.id)}">
-          <span class="fz-icon">${escapeHtml(fzKind(v.kind).icon)}</span>
+          <span class="fz-icon">${escapeHtml(fzIcon(v))}</span>
           <span class="flex-1 min-w-0">
             <span class="block text-sm font-medium truncate">${escapeHtml(fzName(v))}</span>
             <span class="block text-xs text-ink/45 truncate">${escapeHtml(tk('home.sinceDate', { date: vtFmt(v.archived.date) }))}${Number(v.archived.price) > 0 ? ' · ' + escapeHtml(tk('vehicle.soldFor', { amount: fzEur(v.archived.price) })) : ''}</span>
@@ -1351,7 +1353,7 @@ function renderVehicleBalance(pane) {
       </div>` : ''}
       <select id="fzBalVehicleSel" class="min-w-0 flex-1 rounded-lg border border-ink/15 px-2 py-1.5 text-xs bg-white" aria-label="${escapeHtml(tk('search.type.vehicle'))}">
         <option value="">${tk('vehicle.allVehicles2')}</option>
-        ${fzVehicles().map(v => `<option value="${escapeHtml(v.id)}"${v.id === fzBalVehicle ? ' selected' : ''}>${escapeHtml(fzKind(v.kind).icon + ' ' + fzName(v) + (fzIsArchived(v) ? ' (' + tk('vehicle.sold') + ')' : ''))}</option>`).join('')}
+        ${fzVehicles().map(v => `<option value="${escapeHtml(v.id)}"${v.id === fzBalVehicle ? ' selected' : ''}>${escapeHtml(fzIcon(v) + ' ' + fzName(v) + (fzIsArchived(v) ? ' (' + tk('vehicle.sold') + ')' : ''))}</option>`).join('')}
       </select>
     </div>`;
 
@@ -1425,7 +1427,7 @@ function renderVehicleTools(pane) {
     <div class="flex items-center gap-2">
       <span class="text-xs text-ink/50 shrink-0">${tk('vehicle.valuesFrom')}</span>
       <select id="fzToolVehicleSel" class="min-w-0 flex-1 rounded-lg border border-ink/15 px-2 py-1.5 text-xs bg-white">
-        ${fzActiveVehicles().map(v => `<option value="${escapeHtml(v.id)}"${d.v && v.id === d.v.id ? ' selected' : ''}>${escapeHtml(fzKind(v.kind).icon + ' ' + fzName(v))}</option>`).join('')}
+        ${fzActiveVehicles().map(v => `<option value="${escapeHtml(v.id)}"${d.v && v.id === d.v.id ? ' selected' : ''}>${escapeHtml(fzIcon(v) + ' ' + fzName(v))}</option>`).join('')}
       </select>
     </div>` : '';
   const tool = (id, icon, title, sub, body, open) => `
@@ -1666,6 +1668,7 @@ function fzOpenVehicleModal(id, kindPreset) {
     <h3 class="font-serif text-lg mb-3 pr-6">${v ? tk('vehicle.editVehicle') : tk('vehicle.newVehicle')}</h3>
     <span class="fz-lbl">${tk('contract.kind')}</span>
     <div class="flex flex-wrap gap-1.5 mb-3" id="fzvKinds">${FZ_KINDS.map(k => `<button type="button" class="fz-kind-btn px-2.5 py-1.5 text-xs${k.id === draft.kind ? ' active' : ''}" data-kind="${k.id}">${k.icon} ${escapeHtml(k.label)}</button>`).join('')}</div>
+    <div class="fz-field"><span class="fz-lbl">${escapeHtml(tk('household.icon'))}</span>${sympInput(draft.icon || '', tk('household.icon'), { set: 'vehicles', id: 'fzvIcon', ph: fzKind(draft.kind).icon })}</div>
     ${fzIn('fzvName', tk('common.name'), draft.name || '', { ph: tk('vehicle.eGFamilyBus'), max: 60 })}
     <div class="fz-grid2">${fzIn('fzvMake', tk('vehicle.make'), draft.make || '', { ph: tk('vehicle.eGVw'), max: 40 })}${fzIn('fzvModel', tk('vehicle.model'), draft.model || '', { ph: tk('vehicle.eGGolf8'), max: 60 })}</div>
     <div class="fz-grid2">
@@ -1773,6 +1776,8 @@ function fzOpenVehicleModal(id, kindPreset) {
       const k = fzKind(draft.kind);
       if (!k.drives.includes(draft.drive)) draft.drive = k.defaultDrive;
       body.querySelectorAll('#fzvKinds .fz-kind-btn').forEach(x => x.classList.toggle('active', x === b));
+      const ib = body.querySelector('#fzvIcon + [data-symp]');
+      if (ib && !fzVal('fzvIcon')) ib.textContent = k.icon;
       fzVehicleFormUi();
     }));
     body.querySelectorAll('#fzvColors .fz-color-btn').forEach(b => b.addEventListener('click', () => {
@@ -1882,7 +1887,7 @@ function fzSaveVehicle() {
   const prevAuto = fzAutoSettings(existing || {});
   const vehicle = {
     ...(existing || {}),
-    id, kind: d.kind, name, make, model,
+    id, kind: d.kind, name, make, model, icon: fzVal('fzvIcon'),
     plate: k.bike ? '' : fzPlateText(fzVal('fzvPlate')).slice(0, 16),
     plateStyle: k.plate ? fzPlateStyleCode(fzVal('fzvPlateStyle')) : '',
     color: fzColor(d), drive: k.drives.length ? d.drive : '',
@@ -1984,7 +1989,7 @@ function fzOpenLogModal({ vehicleId = '', logId = '', type = '', fromDue = null 
   const sortOpts = f => [['', '–']].concat((FZ_FUELS[f] && FZ_FUELS[f].sorts ? FZ_FUELS[f].sorts : []).map(s => [s, s]));
   const html = `
     <h3 class="font-serif text-lg mb-1 pr-6">${log ? tk('lists.item.editTitle') : tk('vehicle.newEntry')}</h3>
-    <div class="text-xs text-ink/50 mb-3">${escapeHtml(fzKind(v.kind).icon + ' ' + fzShortName(v))}</div>
+    <div class="text-xs text-ink/50 mb-3">${escapeHtml(fzIcon(v) + ' ' + fzShortName(v))}</div>
     <div class="fz-type-row mb-3" id="fzlTypes">${types.map(x => `<button type="button" class="fz-type-chip${x.id === t ? ' active' : ''}" data-type="${x.id}"><span class="fz-ti">${x.icon}</span>${escapeHtml(x.label)}</button>`).join('')}</div>
 
     <div id="fzlEnergy">

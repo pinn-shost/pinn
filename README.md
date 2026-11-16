@@ -129,6 +129,13 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski and 🇺🇦 Українська**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.150.9
+
+**Colour for the icons, vehicle and plant icons**
+
+- **Colour by day.** The icons are lightly coloured in now (white fills, sun yellow, rain blue, car red, tools grey, plants green) in the same line style; dark mode stays as it was. **Vehicle icons:** pick a line icon (saloon, SUV, taxi, van, pickup, tractor, caravan, bicycle, e-bike …) instead of the car emoji. **Plant icons** are picked from the app too, with new icons for cactus, palm, tulip, sunflower, rose and more. In the banners of Vehicles and Home the cars only glow at night – yellowish at the front, red at the back.
+- Changed: `js/symbole2.js`, `css/symbolfarbe.css` (new), `js/symbole.js`, `js/wetterlogos.js`, `js/symbolwahl.js`, `js/fahrzeuge.js`, `js/zuhause.js`, `js/dokumente.js`, `css/fahrzeuge.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
+
 ## What's new in 1.150.8
 
 **Icons everywhere, picked from the app**
@@ -261,16 +268,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Voice control & widgets.** The personal link now sits inside the fields “Siri shortcut” and “Android” (with its copy button) instead of the general overview.
 - Changed: `js/geraete.js`, `js/sprachsteuerung.js`, `js/sprachen.js`, `pb_hooks/pinn-sitzungen.js`, `src/`, `index.html`, `i18n/`, all READMEs. Server part: install the hooks, PocketBase restarts.
 
-## What's new in 1.147.0
-
-**Face ID & fingerprint, devices recognised correctly, widget with house & garden**
-
-- **Face ID, Touch ID, fingerprint.** Under Account pinn. can be locked per device: when it is opened and after a break (immediately, 1, 5 or 15 minutes) the device asks for your face or finger – iPhone, iPad, Android, Mac with Touch ID, Windows Hello. The device checks it itself, nothing is sent. If it ever fails, sign in again with your password.
-- **Signed-in devices.** The app reports name and kind of the device on every start – no more “Browser” with a laptop icon on a phone. Each entry shows a short ID, ✏️ gives it a name of its own, and devices that only receive notifications are listed and can be removed.
-- **Widget.** Open tasks with an empty circle, done ones with a tick, and a new group “House & garden” for the maintenance plan (shown ahead of time with the date). Copy the script again once.
-- **Seasons.** Under Appearance → Seasons, the buttons “Winter” and “Christmas” open a window to choose the period (preset 1 Dec – 6 Jan and 1 – 26 Dec) and switch every part on or off: snow on text and tiles, snow falling over the screen, dashboard landscape, fairy lights, Santa, hat and holly. “Voice control & widgets” now starts with its guides closed.
-- Changed: `js/entsperren.js` (new), `js/geraete.js`, `js/verbindung.js`, `js/sprachsteuerung.js`, `js/winterzeit.js`, `pb_hooks/pinn-sitzungen.js`, `pb_hooks/sitzungen.pb.js`, `pb_hooks/pinn-sprache.js`, `src/`, `index.html`, `pinn-setup.sh`, `i18n/`, all READMEs. Server part: install the hooks, PocketBase restarts.
-
 ## How it works
 
 ```mermaid
@@ -297,7 +294,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.150.8` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.150.9` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

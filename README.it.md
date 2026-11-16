@@ -133,6 +133,13 @@ Tocca un’immagine per aprirla a dimensione intera.
 
 pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
 
+## Novità della 1.150.9
+
+**Colore per le icone, icone di veicoli e piante**
+
+- **Colore di giorno.** Le icone sono ora leggermente colorate (superfici bianche, sole giallo, pioggia blu, auto rossa, attrezzi grigi, piante verdi) nello stesso stile a linee; la modalità scura resta invariata. **Icone dei veicoli:** al posto dell’emoji dell’auto si sceglie un’icona a linee (berlina, SUV, taxi, furgone, pickup, trattore, roulotte, bicicletta, e-bike …). Anche le **icone delle piante** si scelgono nell’app, con nuove icone per cactus, palma, tulipano, girasole, rosa e altro. Nei banner di Veicoli e Casa le auto brillano solo di notte: giallastre davanti, rosse dietro.
+- Modificato: `js/symbole2.js`, `css/symbolfarbe.css` (new), `js/symbole.js`, `js/wetterlogos.js`, `js/symbolwahl.js`, `js/fahrzeuge.js`, `js/zuhause.js`, `js/dokumente.js`, `css/fahrzeuge.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
+
 ## Novità della 1.150.8
 
 **Icone ovunque, da scegliere nell’app**
@@ -230,14 +237,6 @@ pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Privato.** I dati sulla salute li vede solo la persona, per i bambini anche gli adulti. I promemoria push arrivano con la 1.149.1.
 - Modificati: `js/gesundheit.js`, `css/gesundheit.css`, `pb_hooks/gesundheit.pb.js`, `pb_hooks/pinn-gesundheit.js`, `pb_hooks/pinn-schema.js`, `js/familie.js`, `js/serverzugriff.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, tutti i README. Con parte server (nuova raccolta «gesundheit»). Include 1.148.2.
 
-## Novità della 1.148.2
-
-**Un’altra famiglia sul dispositivo della dashboard**
-
-- **Accesso con un’altra famiglia.** Se su un dispositivo dashboard usi «Accedi con password» con un profilo di un’altra famiglia, ora è una sessione normale: il pulsante della dashboard non c’è più e «Esci» la termina. Prima il pulsante riportava alla dashboard della prima famiglia.
-- **Avviso chiaro nelle impostazioni.** La sezione dashboard ora indica che questo dispositivo è la dashboard di un’altra famiglia: un dispositivo può essere una sola dashboard.
-- Modificati: `js/dashboard.js`, `js/anmeldung.js`, `js/profilauswahl.js`, `js/dashboardkonto.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, tutti i README. Nessuna parte server.
-
 ## Come funziona
 
 ```mermaid
@@ -266,7 +265,7 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 ## Installazione
 
 1. Scarica lo ZIP dell’[ultima release](https://github.com/pinn-shost/pinn/releases/latest) e decomprimilo.
-2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.150.8` o `pinn-main`) così com’è.
+2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.150.9` o `pinn-main`) così com’è.
 3. Accedi via SSH ed esegui:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

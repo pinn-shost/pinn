@@ -133,6 +133,13 @@ Toque em qualquer imagem para abri-la em tamanho real.
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.150.9
+
+**Cor nos ícones, ícones de veículos e plantas**
+
+- **Cor de dia.** Os ícones têm agora um leve preenchimento (superfícies brancas, sol amarelo, chuva azul, carro vermelho, ferramentas cinzentas, plantas verdes) no mesmo estilo de linha; o modo escuro mantém-se. **Ícones de veículo:** em vez do emoji de carro escolhe-se um ícone de linha (sedan, SUV, táxi, carrinha, pick-up, trator, caravana, bicicleta, e-bike …). Os **ícones de plantas** também se escolhem na app, com novos ícones de cato, palmeira, tulipa, girassol, rosa e mais. Nos banners de Veículos e Casa os carros só brilham à noite: amarelados à frente, vermelhos atrás.
+- Alterado: `js/symbole2.js`, `css/symbolfarbe.css` (new), `js/symbole.js`, `js/wetterlogos.js`, `js/symbolwahl.js`, `js/fahrzeuge.js`, `js/zuhause.js`, `js/dokumente.js`, `css/fahrzeuge.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
+
 ## Novidades da 1.150.8
 
 **Ícones por todo o lado, escolhidos na app**
@@ -230,14 +237,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Privado.** Os dados de saúde só são vistos pela própria pessoa e, nas crianças, também pelos adultos. Os lembretes push chegam com a 1.149.1.
 - Alterado: `js/gesundheit.js`, `css/gesundheit.css`, `pb_hooks/gesundheit.pb.js`, `pb_hooks/pinn-gesundheit.js`, `pb_hooks/pinn-schema.js`, `js/familie.js`, `js/serverzugriff.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, todos os README. Com parte de servidor (nova coleção «gesundheit»). Inclui 1.148.2.
 
-## Novidades da 1.148.2
-
-**Outra família no dispositivo do painel**
-
-- **Entrar com outra família.** Se num dispositivo com painel usares «Entrar com senha» com um perfil de outra família, passa a ser uma sessão normal: o botão do painel desaparece e «Sair» termina-a. Antes o botão levava ao painel da primeira família.
-- **Aviso claro nas definições.** A secção do painel indica agora que este dispositivo é o painel de outra família – um dispositivo só pode ser um painel.
-- Alterado: `js/dashboard.js`, `js/anmeldung.js`, `js/profilauswahl.js`, `js/dashboardkonto.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, todos os README. Sem parte de servidor.
-
 ## Como funciona
 
 ```mermaid
@@ -266,7 +265,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.150.8` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.150.9` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

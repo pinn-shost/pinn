@@ -29,11 +29,18 @@ var SYMP_PALETTE = [
   '⭐', '✨', '⚡', '🔒', '🔔', '⏰', '📅', '🎯', '🏆', '⚠️', '🤝'
 ];
 
+// Own sets for plants and vehicle types (since 1.150.9): the sheet shows only these
+var SYMP_SETS = {
+  plants: ['🌱', '🪴', '🌿', '🌵', '🌴', '🌳', '🌲', '🌷', '🌻', '🌹', '🌼', '🪻', '🍀', '🍄', '🍅', '🍓', '🥕', '🌽', '🌶️', '🍎', '🍂', '💧', '☀️', '✂️', '🪣'],
+  vehicles: ['🚗', '🚘', '🚙', '🚕', '🚐', '🛻', '🏎️', '🚌', '🚚', '🚜', '🛖', '🏍️', '🚲', '🚴', '🛴', '✈️', '🚢', '🚆']
+};
 // HTML of the symbol button for a category row (the hidden input keeps data-field="icon" like the old text field)
-function sympInput(value, label) {
+// opts: { set: 'plants' | 'vehicles' (own choice), id: id of the hidden input, ph: shown while empty }
+function sympInput(value, label, opts) {
+  opts = opts || {};
   var v = String(value || '');
-  return '<span class="symp-wrap shrink-0"><input type="hidden" data-field="icon" value="' + escapeHtml(v) + '">'
-    + '<button type="button" class="symp-btn" data-symp aria-label="' + escapeHtml(label || '') + '">' + escapeHtml(v || '🏷️') + '</button></span>';
+  return '<span class="symp-wrap shrink-0"><input type="hidden" ' + (opts.id ? 'id="' + opts.id + '" ' : '') + 'data-field="icon" value="' + escapeHtml(v) + '">'
+    + '<button type="button" class="symp-btn" data-symp' + (opts.set ? ' data-set="' + opts.set + '"' : '') + ' aria-label="' + escapeHtml(label || '') + '">' + escapeHtml(v || opts.ph || '🏷️') + '</button></span>';
 }
 // Sets the value from code and refreshes the button
 function sympSet(input, emoji) {
@@ -54,7 +61,7 @@ function sympOpen(btn) {
   ov.className = 'symp-ov';
   // one button per icon (several emoji can share an icon)
   var seen = {};
-  var grid = SYMP_PALETTE.filter(function (e) {
+  var grid = (SYMP_SETS[btn.getAttribute('data-set')] || SYMP_PALETTE).filter(function (e) {
     var n = SYM_MAP[e.replace(/[\uFE0F\u{1F3FB}-\u{1F3FF}]/gu, '')] || e;
     if (seen[n]) return false;
     seen[n] = 1;

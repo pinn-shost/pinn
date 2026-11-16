@@ -566,7 +566,7 @@ function docFinRowsHtml(list) {
 // Linked vehicles of a document as a short text (e.g. "🚗 Golf")
 function docVehicleNames(docId) {
   if (isCurrentUserGuest() || typeof fzVehiclesForDoc !== 'function') return '';
-  return fzVehiclesForDoc(docId).map(v => fzKind(v.kind).icon + ' ' + fzName(v)).join(', ');
+  return fzVehiclesForDoc(docId).map(v => fzIcon(v) + ' ' + fzName(v)).join(', ');
 }
 function docMatchesSearch(d, q) {
   if (!q) return true;
@@ -794,7 +794,7 @@ function renderDocDetail() {
     <h4 class="vt-detail-h">${tk('contract.vehicle')}</h4>
     <div class="flex flex-col gap-1.5">${vlinks.map(v => `
       <button type="button" class="fin-doc-row flex items-center gap-2.5 rounded-xl border border-ink/10 px-2.5 py-2 text-left w-full" data-docveh="${escapeHtml(v.id)}">
-        <span class="text-xl leading-none shrink-0">${escapeHtml(fzKind(v.kind).icon)}</span>
+        <span class="text-xl leading-none shrink-0">${escapeHtml(fzIcon(v))}</span>
         <span class="min-w-0 flex-1"><span class="block text-sm font-medium truncate">${escapeHtml(fzName(v))}</span><span class="block text-[11px] text-ink/45 truncate">${escapeHtml([v.plate ? fzPlateText(v.plate) : '', fzIsArchived(v) ? tk('doc.archived') : '', tk('doc.openVehicle')].filter(Boolean).join(' · '))}</span></span>
         <span class="shrink-0 text-ink/30 text-sm">›</span>
       </button>`).join('')}</div>` : '';
@@ -1115,7 +1115,7 @@ function renderDocVehiclePicker() {
   wrap.classList.toggle('hidden', !list.length);
   if (!list.length) { box.innerHTML = ''; return; }
   box.innerHTML = list.map(v => `
-    <button type="button" class="pantry-chip px-2.5 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/70 transition ${docDraft.vehicles.includes(v.id) ? 'active' : ''}" data-veh="${escapeHtml(v.id)}">${escapeHtml(fzKind(v.kind).icon + ' ' + fzName(v) + (v.plate ? ' · ' + fzPlateText(v.plate) : '') + (fzIsArchived(v) ? ' (' + tk('doc.archived') + ')' : ''))}</button>`).join('');
+    <button type="button" class="pantry-chip px-2.5 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/70 transition ${docDraft.vehicles.includes(v.id) ? 'active' : ''}" data-veh="${escapeHtml(v.id)}">${escapeHtml(fzIcon(v) + ' ' + fzName(v) + (v.plate ? ' · ' + fzPlateText(v.plate) : '') + (fzIsArchived(v) ? ' (' + tk('doc.archived') + ')' : ''))}</button>`).join('');
   box.querySelectorAll('[data-veh]').forEach(b => b.addEventListener('click', () => {
     const vid = b.dataset.veh;
     docDraft.vehTouched = true;

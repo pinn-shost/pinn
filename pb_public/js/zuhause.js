@@ -1135,7 +1135,7 @@ function hsOpenPlantModal(id, tplId) {
   const html = `
     <h3 class="font-serif text-lg mb-3 pr-6">${x ? tk('home.editPlant') : tk('home.newPlant')}</h3>
     <div class="grid gap-3" style="grid-template-columns:4.2rem minmax(0,1fr)">
-      ${fzIn('hsgIcon', tk('household.icon'), d.icon || '🪴', { max: 8 })}
+      <div class="fz-field"><span class="fz-lbl">${escapeHtml(tk('household.icon'))}</span>${sympInput(d.icon || '🪴', tk('household.icon'), { set: 'plants', id: 'hsgIcon' })}</div>
       ${fzIn('hsgName', tk('common.name'), d.name || '', { ph: tk('home.eGMonsteraLiving'), max: 60 })}
     </div>
     <div class="fz-grid2">

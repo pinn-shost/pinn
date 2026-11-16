@@ -133,6 +133,13 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski und 🇺🇦 Українська**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.150.9
+
+**Farbe bei den Symbolen, Fahrzeug- und Pflanzen-Symbole**
+
+- **Farbe am Tag.** Die Symbole sind jetzt leicht ausgemalt (weiße Flächen, Sonne gelb, Regen blau, Auto rot, Werkzeug grau, Pflanzen grün) – im gleichen Linien-Stil; der Dunkelmodus bleibt wie er war. **Fahrzeug-Symbole:** statt des Auto-Emojis wählst du ein Linien-Symbol (Limousine, SUV, Taxi, Transporter, Pick-up, Traktor, Wohnwagen, Fahrrad, E-Bike …). Auch die **Pflanzen-Symbole** wählst du aus der App, mit neuen Symbolen für Kaktus, Palme, Tulpe, Sonnenblume, Rose und mehr. In den Bannern von Fahrzeuge und Zuhause leuchten die Autos nur nachts – vorne gelblich, hinten rot.
+- Geändert: `js/symbole2.js`, `css/symbolfarbe.css` (new), `js/symbole.js`, `js/wetterlogos.js`, `js/symbolwahl.js`, `js/fahrzeuge.js`, `js/zuhause.js`, `js/dokumente.js`, `css/fahrzeuge.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
+
 ## Neu in 1.150.8
 
 **Symbole überall, Auswahl aus der App**
@@ -238,15 +245,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Klarer Hinweis in den Einstellungen.** Der Dashboard-Bereich sagt jetzt, dass dieses Gerät das Dashboard einer anderen Familie ist – ein Gerät kann nur ein Dashboard sein.
 - Geändert: `js/dashboard.js`, `js/anmeldung.js`, `js/profilauswahl.js`, `js/dashboardkonto.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, alle READMEs. Kein Server-Teil.
 
-## Neu in 1.148.1
-
-**Rezept bleibt am Dashboard offen**
-
-- **Familien-Dashboard.** Nach „Zur Profilauswahl“ und der PIN ist ein offenes Rezept jetzt wirklich wieder offen. Der erste Bildschirm-Wechsel nach dem Start (z. B. wenn das iPad die App wieder zeigt) baute die Seite neu auf und schloss das Rezept – behoben.
-- **Auch wenn iOS die App beendet.** Auf einem Dashboard bleibt die Notiz jetzt erhalten, auch wenn iOS die App beendet, während sie auf der Profilauswahl wartet (höchstens 12 Stunden). Ein übrig gebliebener Zusatz in der Adresse verhindert das Weitermachen nicht mehr.
-- **iPad drehen** lässt ein offenes Rezept offen, mit Personenzahl und Lesestelle.
-- Geändert: `js/fortsetzen.js`, `js/ansichten.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`, alle READMEs. Kein Server-Teil.
-
 ## So funktioniert’s
 
 ```mermaid
@@ -275,7 +273,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.150.8` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.150.9` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

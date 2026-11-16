@@ -110,6 +110,13 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski en 🇺🇦 Українська**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.150.9
+
+**Kleur in de pictogrammen, voertuig- en plantenpictogrammen**
+
+- **Kleur overdag.** De pictogrammen zijn nu licht ingekleurd (witte vlakken, zon geel, regen blauw, auto rood, gereedschap grijs, planten groen) in dezelfde lijnstijl; de donkere modus blijft zoals hij was. **Voertuigpictogrammen:** in plaats van de auto-emoji kies je een lijnpictogram (sedan, SUV, taxi, bestelbus, pick-up, tractor, caravan, fiets, e-bike …). Ook de **plantenpictogrammen** kies je in de app, met nieuwe pictogrammen voor cactus, palm, tulp, zonnebloem, roos en meer. In de banners van Voertuigen en Thuis lichten de auto’s alleen ’s nachts op: geelachtig voor, rood achter.
+- Gewijzigd: `js/symbole2.js`, `css/symbolfarbe.css` (new), `js/symbole.js`, `js/wetterlogos.js`, `js/symbolwahl.js`, `js/fahrzeuge.js`, `js/zuhause.js`, `js/dokumente.js`, `css/fahrzeuge.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
+
 ## Nieuw in 1.150.8
 
 **Pictogrammen overal, te kiezen in de app**
@@ -168,15 +175,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Eén of meerdere rijen.** Onder Instellingen → Snelkoppelingen kies je apart voor de telefoon en voor tablet & computer: één rij (opzij vegen voor de rest) of meerdere rijen (alle snelkoppelingen naar beneden aangevuld).
 - Gewijzigd: `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/design.js`, `js/ansichten.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.1).
 
-## Nieuw in 1.150.1
-
-**Snelkoppelingen in een eigen menu-onderdeel**
-
-- **Eigen onderdeel.** Apps kies je nu onder Instellingen → Snelkoppelingen. Eerder klapte bij het openen van „Snelkoppelingen” de instelling Overzicht dicht en kon de pagina niet meer scrollen.
-- **Aan of uit onder Overzicht.** De tegel Snelkoppelingen zet je aan of uit zoals elke andere tegel; „Apps kiezen” brengt je direct naar de keuze.
-- **Meteen zichtbaar.** Zolang je zelf niets kiest, toont de tegel een standaardkeuze (drinken, boodschappen, taak, afspraak, vandaag koken, notitie, uitgave, schoonmaakplan). Zonder gekozen app biedt hij „Apps kiezen” aan in plaats van te verdwijnen.
-- Gewijzigd: `js/kurzbefehle.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README.
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -186,7 +184,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.150.8` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.150.9` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

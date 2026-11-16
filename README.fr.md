@@ -129,6 +129,13 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski et 🇺🇦 Українська**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.150.9
+
+**De la couleur pour les icônes, icônes de véhicules et de plantes**
+
+- **Couleur de jour.** Les icônes sont maintenant légèrement colorées (surfaces blanches, soleil jaune, pluie bleue, voiture rouge, outils gris, plantes vertes) dans le même style de trait ; le mode sombre reste inchangé. **Icônes de véhicule :** au lieu de l’emoji de voiture, on choisit une icône en trait (berline, SUV, taxi, camionnette, pick-up, tracteur, caravane, vélo, vélo électrique …). Les **icônes de plantes** se choisissent aussi dans l’appli, avec de nouvelles icônes de cactus, palmier, tulipe, tournesol, rose et plus. Dans les bannières Véhicules et Maison, les voitures ne brillent que la nuit : jaunâtre à l’avant, rouge à l’arrière.
+- Modifié : `js/symbole2.js`, `css/symbolfarbe.css` (new), `js/symbole.js`, `js/wetterlogos.js`, `js/symbolwahl.js`, `js/fahrzeuge.js`, `js/zuhause.js`, `js/dokumente.js`, `css/fahrzeuge.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
+
 ## Nouveautés de la 1.150.8
 
 **Des icônes partout, à choisir dans l’appli**
@@ -261,16 +268,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Commande vocale et widgets.** Le lien personnel se trouve maintenant dans les champs « Raccourci Siri » et « Android » (avec son bouton de copie) et plus dans la vue d'ensemble.
 - Modifié : `js/geraete.js`, `js/sprachsteuerung.js`, `js/sprachen.js`, `pb_hooks/pinn-sitzungen.js`, `src/`, `index.html`, `i18n/`, tous les README. Partie serveur : installer les hooks, PocketBase redémarre.
 
-## Nouveautés de la 1.147.0
-
-**Face ID et empreinte, appareils bien reconnus, widget avec maison & jardin**
-
-- **Face ID, Touch ID, empreinte.** Sous Compte, pinn. peut être verrouillé par appareil : à l'ouverture et après une pause (immédiatement, 1, 5 ou 15 minutes), l'appareil demande ton visage ou ton doigt – iPhone, iPad, Android, Mac avec Touch ID, Windows Hello. L'appareil vérifie lui-même, rien n'est envoyé. En cas d'échec, reconnecte-toi avec ton mot de passe.
-- **Appareils connectés.** L'application indique le nom et le type d'appareil à chaque démarrage – fini le « Navigateur » avec une icône d'ordinateur sur le téléphone. Chaque entrée affiche un court ID, ✏️ lui donne un nom, et les appareils qui reçoivent seulement des notifications apparaissent dans la liste et peuvent être retirés.
-- **Widget.** Tâches ouvertes avec un cercle vide, terminées avec une coche, et le nouveau groupe « Maison & jardin » pour le plan d'entretien (à l'avance avec la date). Copie le script une nouvelle fois.
-- **Saisons.** Sous Apparence → Saisons, les boutons « Hiver » et « Noël » ouvrent une fenêtre pour choisir la période (par défaut 1/12–6/1 et 1–26/12) et activer ou désactiver chaque élément : neige sur le texte et les tuiles, chute de neige à l'écran, paysage du tableau de bord, guirlande, père Noël, bonnet et houx. « Commande vocale & widgets » s'ouvre avec les guides fermés.
-- Modifié : `js/entsperren.js` (nouveau), `js/geraete.js`, `js/verbindung.js`, `js/sprachsteuerung.js`, `js/winterzeit.js`, `pb_hooks/pinn-sitzungen.js`, `pb_hooks/sitzungen.pb.js`, `pb_hooks/pinn-sprache.js`, `src/`, `index.html`, `pinn-setup.sh`, `i18n/`, tous les README. Partie serveur : installer les hooks, PocketBase redémarre.
-
 ## Comment ça marche
 
 ```mermaid
@@ -297,7 +294,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.150.8` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.150.9` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -44,7 +44,10 @@
 .fz-car.far { bottom: 11px; font-size: 13px; }
 .fz-car.near { bottom: 0; font-size: 17px; }
 .fz-car.ltr > span { transform: scaleX(-1); }
-.fz-scene.is-night .fz-car > span { filter: drop-shadow(0 0 3px rgba(255,214,107,.85)); }
+/* Night only: soft light cone in front (yellowish, the figures face left) and a red glow at the back */
+.fz-car > span, .hs-car > span { position: relative; display: inline-block; }
+.is-night .fz-car > span::before, .is-night .hs-car > span::before { content: ''; position: absolute; right: 88%; top: 38%; width: 1.5em; height: .8em; pointer-events: none; background: radial-gradient(ellipse at 100% 50%, rgba(255,224,130,.7) 0%, rgba(255,224,130,.28) 45%, transparent 75%); }
+.is-night .fz-car > span::after, .is-night .hs-car > span::after { content: ''; position: absolute; left: 90%; top: 40%; width: .7em; height: .6em; pointer-events: none; background: radial-gradient(ellipse at 0% 50%, rgba(255,60,50,.65) 0%, rgba(255,60,50,.2) 50%, transparent 78%); }
 @keyframes fzScroll { from { transform: translateX(0); } to { transform: translateX(400px); } }
 @keyframes fzLane { from { transform: translateX(0); } to { transform: translateX(32px); } }
 

@@ -110,6 +110,13 @@ Tam boyutta açmak için bir resme dokun.
 
 pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski ve 🇺🇦 Українська**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
 
+## 1.150.9 sürümündeki yenilikler
+
+**Simgelere renk, taşıt ve bitki simgeleri**
+
+- **Gündüz renk.** Simgeler artık hafifçe boyalı (beyaz alanlar, güneş sarı, yağmur mavi, araba kırmızı, aletler gri, bitkiler yeşil), aynı çizgi stilinde; karanlık mod aynı kalır. **Taşıt simgeleri:** araba emojisi yerine bir çizgi simgesi seçilir (sedan, SUV, taksi, minibüs, pikap, traktör, karavan, bisiklet, e-bisiklet …). **Bitki simgeleri** de uygulamadan seçilir; kaktüs, palmiye, lale, ayçiçeği, gül ve daha fazlası için yeni simgeler var. Taşıtlar ve Ev bannerlarında arabalar yalnızca geceleri parlar: önde sarımsı, arkada kırmızı.
+- Değişenler: `js/symbole2.js`, `css/symbolfarbe.css` (new), `js/symbole.js`, `js/wetterlogos.js`, `js/symbolwahl.js`, `js/fahrzeuge.js`, `js/zuhause.js`, `js/dokumente.js`, `css/fahrzeuge.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
+
 ## 1.150.8 sürümündeki yenilikler
 
 **Her yerde simgeler, uygulamadan seçilir**
@@ -168,15 +175,6 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 - **Tek veya birden çok sıra.** Ayarlar → Kısayollar altında telefon ve tablet/bilgisayar için ayrı ayrı seçersiniz: tek sıra (geri kalanlar için yana kaydırın) veya birden çok sıra (tüm kısayollar aşağıya doğru).
 - Değişenler: `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/design.js`, `js/ansichten.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.1).
 
-## 1.150.1 sürümündeki yenilikler
-
-**Kısayollar kendi menü öğesinde**
-
-- **Kendi menü öğesi.** Uygulamalar artık Ayarlar → Kısayollar altında seçiliyor. Önceden „Kısayollar” açılınca Genel bakış ayarı kapanıyor ve sayfa artık kaydırılamıyordu.
-- **Genel bakış altında aç/kapat.** Kısayollar kutucuğu diğerleri gibi açılıp kapatılır; „Uygulama seç” doğrudan seçime götürür.
-- **Hemen görünür.** Siz bir şey seçene kadar kutucuk varsayılan bir seçim gösterir (su içme, alışveriş, görev, randevu, bugün yemek, not, gider, temizlik planı). Hiç uygulama seçilmemişse kaybolmak yerine „Uygulama seç” sunar.
-- Değişenler: `js/kurzbefehle.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README.
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -186,7 +184,7 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.150.8` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.150.9` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
