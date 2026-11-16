@@ -50,6 +50,8 @@ const PINN_CHANGELOG = [
       ['info', '1.150.5 Trinken aufgeräumt: Unter „Getrunken“ gibt es jetzt ein aufklappbares Feld „Einstellungen“. Darin stehen das Tagesziel (änderbar), die heute schon getrunkenen Getränke (zum Löschen) und die Erinnerung. Zugeklappt siehst du daneben kurz Ziel und Anzahl. Der Shortcut „Heute kochen“ heißt jetzt „Kochen“.'],
       ['info', '1.150.5 Entsperren mit Face ID startet nicht mehr von selbst, sondern erst mit dem Knopf – so springt Face ID direkt an, ohne das Apple-Fenster „Passkey verwenden“. Der Knopf sitzt jetzt groß unten, mit dem Daumen gut erreichbar.'],
       ['info', '1.150.5 geändert: js/gesundheit.js, css/gesundheit.css, js/entsperren.js, js/sprachen.js, js/versionslog.js, i18n/ (alle Sprachen, 2 neue Texte, „Kochen“), i18n/versionslog.en.js, src/version.txt, index.html.'],
+      ['fix', '1.150.6 Face ID entsperrt wieder von selbst: Beim Öffnen von pinn. fragt die Sperre wieder von allein nach Face ID, wie vor 1.150.5. iOS zeigt vor Face ID immer sein eigenes Fenster „Passkey verwenden“ – das lässt sich aus einer Web-App nicht überspringen, auch nicht mit dem Knopf. Der Knopf hatte deshalb nur einen zweiten Tipp verlangt. Der große Knopf unten bleibt, falls du das Fenster wegwischst.'],
+      ['info', '1.150.6 geändert: js/entsperren.js, js/sprachen.js, js/versionslog.js, i18n/versionslog.en.js, src/version.txt, index.html, alle READMEs. Kein Server-Teil.'],
     ],
   },
   {

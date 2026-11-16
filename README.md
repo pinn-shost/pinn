@@ -129,6 +129,13 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski and 🇺🇦 Українська**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.150.6
+
+**Face ID unlocks by itself again**
+
+- **Face ID.** pinn. asks for Face ID by itself again when it opens, as before 1.150.5. iOS always puts its own “Use passkey” sheet in front – one tap on it, then Face ID; the web cannot skip it, and the extra button only meant a second tap. The big button at the bottom stays for when you swipe the sheet away.
+- Changed: `js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
+
 ## What's new in 1.150.5
 
 **New health banner · drinking tidied up**
@@ -267,15 +274,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Locked dashboard loads new versions by itself.** An iPad with a locked family dashboard (or the sign-in screen) now reloads about a minute after an update when nobody is typing. The app also shows “waiting” when a backup is running at the update time.
 - Changed: `js/winterzeit.js`, `css/winterzeit.css`, `js/versionspruefung.js`, `js/sicherungen.js`, `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`, `i18n/`, `src/`, `index.html`, all READMEs. Server part: copy the hooks, PocketBase restarts.
 
-## What's new in 1.145.0
-
-**Winter and Christmas look**
-
-- **Winter look from 1 December to 6 January.** Snow on the pinn. logo, on the headings and at the bottom of the sidebar, plus a short snow shower when you open the app. Tap the logo for more snow.
-- **Christmas extras until 26 December.** Fairy lights under the header, a Santa hat on the logo, holly at the headings and the bell, a little tree in the sidebar – and now and then Santa flies across the top with sleigh and reindeer.
-- **On by default, switch it off per profile** under Settings → Appearance; “Preview” shows it for a minute at any time. Easy on the battery and a layer of its own: nothing moves in idle mode, and nothing in the layout shifts.
-- Changed: `js/winterzeit.js` (new), `css/winterzeit.css` (new), `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`, all READMEs. No server part.
-
 ## How it works
 
 ```mermaid
@@ -302,7 +300,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.150.5` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.150.6` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

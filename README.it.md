@@ -133,6 +133,13 @@ Tocca un’immagine per aprirla a dimensione intera.
 
 pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
 
+## Novità della 1.150.6
+
+**Face ID sblocca di nuovo da solo**
+
+- **Face ID.** pinn. chiede di nuovo Face ID da solo all’apertura, come prima della 1.150.5. iOS mostra sempre prima la sua finestra «Usa passkey»: un tocco su di essa, poi Face ID; il web non può saltarla e il pulsante in più significava solo un secondo tocco. Il grande pulsante in basso resta, nel caso chiudessi la finestra.
+- Modificato: `js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
+
 ## Novità della 1.150.5
 
 **Nuovo banner salute · bevande in ordine**
@@ -234,15 +241,6 @@ pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Per quanto tempo.** Finché l'app resta aperta (anche in background), al massimo 12 ore. Dopo aver chiuso l'app, dopo «Esci» sul proprio dispositivo o arrivando da un link di una notifica si parte come sempre. Sul proprio dispositivo la pagina resta anche quando l'app si ricarica, ad es. dopo un aggiornamento.
 - Modificato: `js/fortsetzen.js` (nuovo), `js/appstart.js`, `js/dashboard.js`, `js/anmeldung.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`, `pinn-setup.sh`, tutti i README. Nessuna parte server.
 
-## Novità della 1.147.1
-
-**Dispositivi una sola volta, link dentro le guide**
-
-- **Dispositivi connessi.** Un dispositivo che ha effettuato l'accesso due volte nello stesso momento (ad es. la dashboard familiare su un Mac) compariva due volte con lo stesso ID. Ora compare una volta, conta una volta e «Esci» lo rimuove del tutto.
-- **Niente più «Solo notifiche».** Un indirizzo di notifica rimasto di un dispositivo già connesso viene rimosso automaticamente, così nulla arriva due volte.
-- **Controllo vocale e widget.** Il link personale è ora dentro i campi «Comando Siri» e «Android» (con il pulsante Copia) invece che nella panoramica generale.
-- Modificato: `js/geraete.js`, `js/sprachsteuerung.js`, `js/sprachen.js`, `pb_hooks/pinn-sitzungen.js`, `src/`, `index.html`, `i18n/`, tutti i README. Parte del server: installare gli hook, PocketBase si riavvia.
-
 ## Come funziona
 
 ```mermaid
@@ -271,7 +269,7 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 ## Installazione
 
 1. Scarica lo ZIP dell’[ultima release](https://github.com/pinn-shost/pinn/releases/latest) e decomprimilo.
-2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.150.5` o `pinn-main`) così com’è.
+2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.150.6` o `pinn-main`) così com’è.
 3. Accedi via SSH ed esegui:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

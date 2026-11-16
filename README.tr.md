@@ -110,6 +110,13 @@ Tam boyutta açmak için bir resme dokun.
 
 pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski ve 🇺🇦 Українська**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
 
+## 1.150.6 sürümündeki yenilikler
+
+**Face ID yine kendiliğinden açıyor**
+
+- **Face ID.** pinn. açılırken Face ID’yi yine kendiliğinden ister, tıpkı 1.150.5’ten önceki gibi. iOS her zaman önce kendi „Geçiş anahtarını kullan” penceresini gösterir – ona bir dokunuş, sonra Face ID; web bunu atlayamaz ve ek düğme yalnızca ikinci bir dokunuş demekti. Pencereyi kapatırsan diye alttaki büyük düğme kalıyor.
+- Değişenler: `js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
+
 ## 1.150.5 sürümündeki yenilikler
 
 **Yeni sağlık afişi · içecekler düzenlendi**
@@ -175,16 +182,6 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 - **Yalnızca kişinin kendisi için.** Hatırlatmalar o kişinin cihazlarına gider; diğer aile üyelerine hiçbir şey gönderilmez. Bildirime dokunmak sağlık sayfasını açar; su içmede doğrudan içecek penceresini.
 - Değişenler: `pb_hooks/pinn-gesundheit.js`, `pb_hooks/gesundheit.pb.js`, `js/gesundheit.js`, `css/gesundheit.css`, `js/hinweise.js`, `js/fortsetzen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, tüm README’ler. 1.149.0’ı içerir.
 
-## 1.149.0 sürümündeki yenilikler
-
-**Sağlık**
-
-- **Aile altında Sağlık.** “Acil” sekmesinin adı artık “Sağlık”, aile özetindeki düğmenin de. Herkesin, Ev’deki gibi bloklardan oluşan kendi sağlık sayfası var: su içme, ilaçlar ve vitaminler, el yıkama, değerler, aşılar ve doktor randevuları.
-- **Su içme.** Günlük hedef seç ve “İçtim”e dokun: içeceği (su, meyve suyu, kahve, çay, süt, gazoz) ve miktarı az ya da çok dolu bir bardak olarak seç. pinn. toplar, ne kadar kaldığını ve plana uyup uymadığını söyler.
-- **Acil durum kartı içinde.** Sağlık sayfasında bir tikle açılır; boş kart hemen formu açar. Mevcut acil durum kartları korunur ve tüm aile tarafından, çevrimdışı da görülür.
-- **Gizli.** Sağlık verilerini yalnızca kişinin kendisi, çocuklarda ayrıca yetişkinler görür. Push hatırlatmaları 1.149.1 ile gelecek.
-- Değişenler: `js/gesundheit.js`, `css/gesundheit.css`, `pb_hooks/gesundheit.pb.js`, `pb_hooks/pinn-gesundheit.js`, `pb_hooks/pinn-schema.js`, `js/familie.js`, `js/serverzugriff.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, tüm README’ler. Sunucu kısmı var (yeni “gesundheit” koleksiyonu). 1.148.2’yi içerir.
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -194,7 +191,7 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.150.5` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.150.6` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

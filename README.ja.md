@@ -133,6 +133,13 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski、🇺🇦 Українська** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.150.6の新機能
+
+**Face IDが再び自動でロック解除**
+
+- **Face ID。** 開いたときに、1.150.5より前と同じようにpinn.が自動でFace IDを求めます。iOSは必ず先に独自の「パスキーを使用」画面を表示します（1回タップしてからFace ID）。Webからはこれを省略できず、追加のボタンはタップが1回増えるだけでした。画面を閉じてしまった場合に備えて、下の大きなボタンは残ります。
+- 変更：`js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
+
 ## 1.150.5の新機能
 
 **新しい健康バナー · 水分記録を整理**
@@ -234,15 +241,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - **有効な時間。** アプリを開いたままにしている間（バックグラウンドを含む）、最長12時間です。アプリを閉じたあと、自分のデバイスで「ログアウト」したあと、通知のリンクから開いたときは、これまでどおりに始まります。自分のデバイスでも、更新後などにアプリが再読み込みされたときはページが保たれます。
 - 変更：`js/fortsetzen.js`（新規）、`js/appstart.js`、`js/dashboard.js`、`js/anmeldung.js`、`js/rezepte.js`、`js/sprachen.js`、`js/versionslog.js`、`src/`、`index.html`、`pinn-setup.sh`、すべてのREADME。サーバー側の変更はありません。
 
-## 1.147.1の新機能
-
-**デバイスは1回だけ表示、リンクはガイドの中に**
-
-- **ログイン中のデバイス。** 同時に2回ログインしたデバイス（例：Macの家族ダッシュボード）が同じIDで2件表示されていました。今は1件だけ表示・1回だけカウントされ、「ログアウト」で完全に削除されます。
-- **「通知のみ」は廃止。** すでにログイン済みのデバイスに残った通知アドレスは自動的に削除され、通知が二重に届くことはありません。
-- **音声操作とウィジェット。** 個人用リンクは、全体の概要ではなく「Siriショートカット」と「Android」の欄の中（コピーボタン付き）に表示されます。
-- 変更：`js/geraete.js`、`js/sprachsteuerung.js`、`js/sprachen.js`、`pb_hooks/pinn-sitzungen.js`、`src/`、`index.html`、`i18n/`、すべてのREADME。サーバー側：hooksを入れ替えるとPocketBaseが再起動します。
-
 ## しくみ
 
 ```mermaid
@@ -271,7 +269,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.150.5`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.150.6`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -133,6 +133,13 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski und 🇺🇦 Українська**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.150.6
+
+**Face ID entsperrt wieder von selbst**
+
+- **Face ID.** pinn. fragt beim Öffnen wieder von selbst nach Face ID, wie vor 1.150.5. iOS zeigt immer sein eigenes Fenster „Passkey verwenden“ davor – ein Tipp darauf, dann Face ID; die Web-App kann es nicht überspringen, und der zusätzliche Knopf bedeutete nur einen zweiten Tipp. Der große Knopf unten bleibt, falls du das Fenster wegwischst.
+- Geändert: `js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
+
 ## Neu in 1.150.5
 
 **Neues Gesundheits-Banner · Trinken aufgeräumt**
@@ -243,16 +250,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Sprachsteuerung & Widgets.** Der persönliche Link steht jetzt direkt in den Feldern „Siri-Kurzbefehl“ und „Android“ (mit Kopieren-Knopf) statt in der Gesamtübersicht.
 - Geändert: `js/geraete.js`, `js/sprachsteuerung.js`, `js/sprachen.js`, `pb_hooks/pinn-sitzungen.js`, `src/`, `index.html`, `i18n/`, alle READMEs. Server-Teil: Hooks einspielen, PocketBase startet neu.
 
-## Neu in 1.147.0
-
-**Face ID & Fingerabdruck, Geräte richtig erkannt, Widget mit Haus & Garten**
-
-- **Face ID, Touch ID, Fingerabdruck.** Unter Konto lässt sich pinn. pro Gerät sperren: beim Öffnen und nach einer Pause (sofort, 1, 5 oder 15 Minuten) fragt das Gerät nach Gesicht oder Finger – iPhone, iPad, Android, Mac mit Touch ID, Windows Hello. Das Gerät prüft selbst, nichts wird gesendet. Klappt es einmal nicht, meldest du dich mit dem Passwort neu an.
-- **Angemeldete Geräte.** Die App meldet bei jedem Start Name und Art des Geräts – kein „Browser“ mit Laptop-Symbol mehr auf dem Handy. Jeder Eintrag zeigt eine kurze ID, mit ✏️ bekommt er einen eigenen Namen, und Geräte, die nur Benachrichtigungen bekommen, stehen jetzt in der Liste und lassen sich entfernen.
-- **Widget.** Offene Aufgaben mit leerem Kreis, erledigte mit Haken, dazu die neue Gruppe „Haus & Garten“ für den Wartungsplan (schon vorab mit Datum). Skript einmal neu kopieren.
-- **Jahreszeiten.** Unter Darstellung → Jahreszeiten öffnen „Winter“ und „Weihnachten“ ein Fenster: Zeitraum selbst wählen (voreingestellt 1.12.–6.1. bzw. 1.–26.12.) und jeden Teil an- oder ausschalten – Schnee auf Schrift und Kacheln, Schneefall über den Bildschirm, Dashboard-Landschaft, Lichterkette, Weihnachtsmann, Mütze und Stechpalme. „Sprachsteuerung & Widgets“ startet mit zugeklappten Anleitungen.
-- Geändert: `js/entsperren.js` (neu), `js/geraete.js`, `js/verbindung.js`, `js/sprachsteuerung.js`, `js/winterzeit.js`, `pb_hooks/pinn-sitzungen.js`, `pb_hooks/sitzungen.pb.js`, `pb_hooks/pinn-sprache.js`, `src/`, `index.html`, `pinn-setup.sh`, `i18n/`, alle READMEs. Server-Teil: Hooks einspielen, PocketBase startet neu.
-
 ## So funktioniert’s
 
 ```mermaid
@@ -281,7 +278,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.150.5` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.150.6` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

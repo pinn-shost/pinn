@@ -133,6 +133,13 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski和 🇺🇦 Українська**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.150.6 新功能
+
+**Face ID 再次自动解锁**
+
+- **Face ID。** 打开时 pinn. 又会自动请求 Face ID，和 1.150.5 之前一样。iOS 总会先显示自己的“使用通行密钥”窗口——点一下它，然后 Face ID；网页无法跳过它，额外的按钮只会多一次点按。底部的大按钮仍然保留，以防你把窗口划走。
+- 更改：`js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
+
 ## 1.150.5 新功能
 
 **全新健康横幅 · 饮水整理**
@@ -234,15 +241,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 - **保留多久。** 只要应用保持打开（包括在后台），最长 12 小时。关闭应用后、在自己的设备上“退出登录”后，或从通知里的链接进入时，照常从头开始。在自己的设备上，应用重新加载时（例如更新之后）也会保留页面。
 - 已更改：`js/fortsetzen.js`（新增）、`js/appstart.js`、`js/dashboard.js`、`js/anmeldung.js`、`js/rezepte.js`、`js/sprachen.js`、`js/versionslog.js`、`src/`、`index.html`、`pinn-setup.sh`、所有 README。没有服务器部分。
 
-## 1.147.1 新功能
-
-**设备只显示一次，链接放进说明里**
-
-- **已登录设备。** 同时登录两次的设备（例如 Mac 上的家庭看板）以前会以相同 ID 出现两次。现在只显示一次、只计一次，“退出登录”会彻底移除它。
-- **不再有“仅通知”。** 已登录设备遗留的通知地址会被自动移除，避免通知重复到达。
-- **语音控制与小组件。** 个人链接现在位于“Siri 快捷指令”和“Android”栏内（带复制按钮），不再放在总览里。
-- 已更改：`js/geraete.js`、`js/sprachsteuerung.js`、`js/sprachen.js`、`pb_hooks/pinn-sitzungen.js`、`src/`、`index.html`、`i18n/`、所有 README。服务器部分：安装 hooks，PocketBase 会重启。
-
 ## 工作原理
 
 ```mermaid
@@ -271,7 +269,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.150.5` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.150.6` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

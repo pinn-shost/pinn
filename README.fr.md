@@ -129,6 +129,13 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski et 🇺🇦 Українська**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.150.6
+
+**Face ID déverrouille de nouveau tout seul**
+
+- **Face ID.** pinn. redemande Face ID de lui-même à l’ouverture, comme avant la 1.150.5. iOS affiche toujours d’abord sa propre fenêtre « Utiliser la clé d’identification » : un toucher dessus, puis Face ID ; le web ne peut pas la sauter, et le bouton supplémentaire ne faisait qu’ajouter un second toucher. Le grand bouton en bas reste, au cas où tu fermerais la fenêtre.
+- Modifié : `js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
+
 ## Nouveautés de la 1.150.5
 
 **Nouvelle bannière santé · boissons rangées**
@@ -267,15 +274,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Le tableau de bord verrouillé charge seul les nouvelles versions.** Un iPad avec le tableau de bord familial verrouillé (ou l’écran de connexion) se recharge environ une minute après une mise à jour si personne ne tape. L’app affiche « en attente » si une sauvegarde est en cours à l’heure prévue.
 - Modifié : `js/winterzeit.js`, `css/winterzeit.css`, `js/versionspruefung.js`, `js/sicherungen.js`, `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`, `i18n/`, `src/`, `index.html`, tous les README. Partie serveur : copier les hooks, PocketBase redémarre.
 
-## Nouveautés de la 1.145.0
-
-**Thème hiver et Noël**
-
-- **Thème hiver du 1er décembre au 6 janvier.** De la neige sur le logo pinn., sur les titres et en bas de la barre latérale, et une courte averse de neige à l’ouverture de l’app. Touchez le logo pour plus de neige.
-- **Extras de Noël jusqu’au 26 décembre.** Guirlande lumineuse sous l’en-tête, bonnet de Père Noël sur le logo, houx sur les titres et la cloche, un petit sapin dans la barre latérale – et de temps en temps, le Père Noël passe avec son traîneau et ses rennes.
-- **Activé par défaut, désactivable par profil** dans Réglages → Apparence ; « Aperçu » l’affiche une minute à tout moment. Économe en batterie et sur une couche à part : rien ne bouge en veille et rien ne se décale dans la mise en page.
-- Modifié : `js/winterzeit.js` (nouveau), `css/winterzeit.css` (nouveau), `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`, tous les README. Pas de partie serveur.
-
 ## Comment ça marche
 
 ```mermaid
@@ -302,7 +300,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.150.5` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.150.6` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

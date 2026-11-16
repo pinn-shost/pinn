@@ -5,10 +5,11 @@
    - Account → "Face ID / fingerprint": switch per device plus "lock after" (immediately, 1, 5 or 15 minutes).
    - Switching it on creates a key in the secure chip of the device (Web Authentication, "platform authenticator").
      The device itself checks the face or the finger – pinn. and the server never see any of it, nothing is sent.
-   - Lock screen: when pinn. is opened and when it comes back from the background after the chosen time. A tap on
-     "Unlock" (big button at the bottom, within thumb reach) asks the device for Face ID / Touch ID / fingerprint.
-     Since 1.150.5 it no longer starts by itself: without a tap iOS puts its own "Use passkey" sheet in between,
-     with the tap Face ID starts right away; "Sign in with password" signs this device out,
+   - Lock screen: when pinn. is opened and when it comes back from the background after the chosen time. The device is
+     asked for Face ID / Touch ID / fingerprint by itself (since 1.150.6 again; 1.150.5 tried "tap only"). iOS always
+     puts its own "Use passkey" sheet in front of Face ID, tap or not – the web cannot skip it – so a tap on our own
+     button only added a second tap. The big "Unlock" button at the bottom (within thumb reach) stays as the way to
+     start again after the sheet was dismissed; "Sign in with password" signs this device out,
      so a forgotten or broken sensor never locks anybody out.
    - Works on iPhone/iPad (Face ID, Touch ID), Android (fingerprint, face unlock) and on computers with Touch ID or
      Windows Hello. Needs an https address. Not on the family dashboard and not for guests (no password).
@@ -175,7 +176,7 @@ async function bioTryUnlock(byTap) {
     });
     if (res) bioUnlockDone();
   } catch (e) {
-    // Only started by a tap since 1.150.5 (byTap stays for safety)
+    // Started by itself (byTap false): stay silent, the button is still there; after a tap show the hint
     if (msg && byTap) msg.textContent = tk('lock.failed');
   } finally {
     bioBusy = false;
@@ -245,6 +246,7 @@ function bioAfterChanged() {
   // Cold start: locked right away, before anything of the family is visible
   if (bioApplies()) {
     bioShowLock();
+    setTimeout(function () { bioTryUnlock(false); }, 350);
   }
   document.addEventListener('visibilitychange', function () {
     if (document.hidden) {
@@ -260,6 +262,7 @@ function bioAfterChanged() {
     try { away = Date.now() - Number(localStorage.getItem(BIO_AWAY_KEY) || Date.now()); } catch (e) { away = 0; }
     if (bioLocked || away >= Number(cfg.after || 0) * 60000) {
       bioShowLock();
+      setTimeout(function () { bioTryUnlock(false); }, 350);
     }
   });
   var toggle = document.getElementById('bioToggle');

@@ -110,6 +110,13 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski en 🇺🇦 Українська**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.150.6
+
+**Face ID ontgrendelt weer vanzelf**
+
+- **Face ID.** pinn. vraagt bij het openen weer vanzelf om Face ID, zoals vóór 1.150.5. iOS toont altijd eerst zijn eigen venster „Toegangssleutel gebruiken” – één tik erop, daarna Face ID; het web kan dat niet overslaan, en de extra knop betekende alleen een tweede tik. De grote knop onderaan blijft, voor als je het venster wegveegt.
+- Gewijzigd: `js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
+
 ## Nieuw in 1.150.5
 
 **Nieuwe gezondheidsbanner · drinken opgeruimd**
@@ -175,16 +182,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Alleen voor de persoon zelf.** De herinneringen gaan naar de apparaten van die persoon; aan andere gezinsleden wordt niets gestuurd. Tikken op het bericht opent de gezondheidspagina – bij drinken meteen het drinkvenster.
 - Gewijzigd: `pb_hooks/pinn-gesundheit.js`, `pb_hooks/gesundheit.pb.js`, `js/gesundheit.js`, `css/gesundheit.css`, `js/hinweise.js`, `js/fortsetzen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, alle README's. Bevat 1.149.0.
 
-## Nieuw in 1.149.0
-
-**Gezondheid**
-
-- **Gezondheid onder Gezin.** Het tabblad „Nood” heet nu „Gezondheid”, net als de knop in het gezinsoverzicht. Iedereen krijgt een eigen gezondheidspagina uit bouwstenen, zoals bij Thuis: drinken, medicijnen & vitamines, handen wassen, waarden, vaccinaties en doktersafspraken.
-- **Drinken.** Kies een dagdoel en tik op „Gedronken”: de drank (water, sap, koffie, thee, melk, frisdrank) en de hoeveelheid als een min of meer vol glas. pinn. telt mee en zegt hoeveel er nog ontbreekt en of je op schema ligt.
-- **Noodpas geïntegreerd.** Met een vinkje op de gezondheidspagina aan te zetten; een lege pas opent meteen het formulier. Bestaande noodpassen blijven behouden en zichtbaar voor het hele gezin, ook offline.
-- **Privé.** Gezondheidsgegevens ziet alleen de persoon zelf, bij kinderen ook de volwassenen. Pushherinneringen volgen in 1.149.1.
-- Gewijzigd: `js/gesundheit.js`, `css/gesundheit.css`, `pb_hooks/gesundheit.pb.js`, `pb_hooks/pinn-gesundheit.js`, `pb_hooks/pinn-schema.js`, `js/familie.js`, `js/serverzugriff.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, alle README's. Met serverdeel (nieuwe verzameling „gesundheit”). Bevat 1.148.2.
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -194,7 +191,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.150.5` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.150.6` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
