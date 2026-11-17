@@ -4299,6 +4299,8 @@ window.PINN_I18N && window.PINN_I18N.keys("pt", {
   "maint.err.unpack": "Não foi possível descompactar o backup – nada foi alterado.",
   "maint.githubDown": "Não foi possível acessar o GitHub agora – tente novamente mais tarde.",
   "maint.installNow": "Instalar agora",
+  "maint.imageMode": "O pinn. funciona como imagem pronta (stack do Portainer). Atualizações: abra o seu stack no Portainer → Editor → «Atualizar o stack» com «Voltar a obter a imagem e reimplantar» ativado. Cópias de segurança: guarde os volumes do stack – veja o guia no GitHub.",
+  "maint.imageShort": "Funciona como imagem pronta – atualize e faça cópias de segurança no Portainer.",
   "maint.installVersion": "Instalar a versão {version}",
   "maint.issue.device": "Aparelho / navegador",
   "maint.issue.expected": "O que deveria ter acontecido?",

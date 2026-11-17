@@ -4298,6 +4298,8 @@ window.PINN_I18N && window.PINN_I18N.keys("pl", {
   "maint.err.unpack": "Nie udało się rozpakować kopii zapasowej – nic nie zmieniono.",
   "maint.githubDown": "GitHub jest teraz nieosiągalny – spróbuj ponownie później.",
   "maint.installNow": "Zainstaluj teraz",
+  "maint.imageMode": "pinn. działa jako gotowy obraz (stos Portainera). Aktualizacje: otwórz swój stos w Portainerze → Edytor → „Zaktualizuj stos” z włączonym „Pobierz obraz ponownie i wdróż ponownie”. Kopie zapasowe: zrób kopię woluminów stosu – patrz przewodnik na GitHubie.",
+  "maint.imageShort": "Działa jako gotowy obraz – aktualizacje i kopie zapasowe w Portainerze.",
   "maint.installVersion": "Zainstaluj wersję {version}",
   "maint.issue.device": "Urządzenie / przeglądarka",
   "maint.issue.expected": "Co powinno się stać?",

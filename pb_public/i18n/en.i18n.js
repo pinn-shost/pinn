@@ -4297,6 +4297,8 @@ window.PINN_I18N && window.PINN_I18N.keys("en", {
   "maint.err.unpack": "The backup could not be unpacked – nothing was changed.",
   "maint.githubDown": "GitHub can't be reached right now – please try again later.",
   "maint.installNow": "Install now",
+  "maint.imageMode": "pinn. runs as a ready-made image (Portainer stack). Updates: open your stack in Portainer → Editor → “Update the stack” with “Re-pull image and redeploy” switched on. Backups: back up the volumes of the stack – see the guide on GitHub.",
+  "maint.imageShort": "Runs as a ready-made image – update and back up in Portainer.",
   "maint.installVersion": "Install version {version}",
   "maint.issue.device": "Device / browser",
   "maint.issue.expected": "What should have happened?",

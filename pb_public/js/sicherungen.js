@@ -103,6 +103,7 @@ async function sysRefreshSummary() {
 }
 function sysSummaryText(info) {
   const w = info.wartung || {};
+  if (w.image) return tk('maint.imageShort');
   if (!w.eingerichtet || !w.aktiv) return tk('maint.notRunningShort');
   const list = info.backups || [];
   if (!list.length) return tk('maint.noBackupYet');
@@ -165,7 +166,8 @@ function sysRender() {
 
   // Notes about the setup or the permissions
   let notice = '';
-  if (!w.eingerichtet || !w.aktiv) notice = tk('maint.notRunning');
+  if (w.image) notice = tk('maint.imageMode');
+  else if (!w.eingerichtet || !w.aktiv) notice = tk('maint.notRunning');
   else if (!w.docker) notice = tk('maint.noDocker');
   else if (!info.darf) notice = tk('maint.noPermission');
   sysNotice(notice);

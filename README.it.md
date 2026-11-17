@@ -133,6 +133,13 @@ Tocca un’immagine per aprirla a dimensione intera.
 
 pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
 
+## Novità della 1.151.0
+
+**Stack di Portainer, immagine già pronta**
+
+- Novità: pinn. si può installare dall’interfaccia degli stack di Portainer, senza SSH e senza lo script di installazione. A ogni versione viene creata un’immagine pronta (amd64, arm64) e pubblicata su `ghcr.io/pinn-shost/pinn`; il nuovo file `docker/docker-compose.portainer.yaml` la usa con volumi e senza nomi di container fissi (niente più conflitti con un container Tailscale esistente). Nell’app «Backup e aggiornamenti» rimanda a Portainer quando gira come immagine. Vedi «Stack di Portainer (senza script)» in Installazione.
+- Modificato: `docker/` (new), `.github/workflows/image.yml` (new), `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
+
 ## Novità della 1.150.11
 
 **Icone e piccole correzioni**
@@ -221,18 +228,6 @@ pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Subito visibile.** Finché non scegli nulla, il riquadro mostra una selezione predefinita (bere, spesa, attività, appuntamento, cucinare oggi, nota, spesa in uscita, piano pulizie). Senza app scelte offre «Scegli le app» invece di sparire.
 - Modificato: `js/kurzbefehle.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README.
 
-## Novità della 1.150.0
-
-**Orari nella tua regione · Scorciatoie nella panoramica · Finestre rapide per le scorciatoie**
-
-- **Promemoria all’ora giusta.** pinn. ora calcola i promemoria nel fuso orario del tuo dispositivo, con l’ora legale e solare della tua regione. Non c’è nulla da impostare: il dispositivo comunica al server il proprio fuso orario, anche dopo un trasloco o in viaggio.
-- **Prima i promemoria della salute.** Farmaci, bere e lavarsi le mani seguono già l’orologio di ciascuna persona; tutti i promemoria futuri useranno lo stesso orologio. I promemoria più vecchi (compleanni, animali, lista valigia, scorte, contratti, documenti, anteprima settimanale) usano ancora l’ora dell’Europa centrale e seguiranno più avanti.
-- **Riquadro Scorciatoie.** Un nuovo riquadro della panoramica mostra icone di app che aprono direttamente una funzione: bere, lavarsi le mani (+1 a ogni tocco), farmaci, spesa, nuova attività, nuovo evento, nota, chat, pulizie, piante, animali, scorte, registrare un’uscita, registrare un’entrata, finanze, SOS e in viaggio.
-- **La tua scelta.** Impostazioni → Panoramica → Scorciatoie: attiva le app che vuoi. Vale per profilo; senza app scelte il riquadro resta nascosto. Gli ospiti non vedono app di salute, SOS e finanze.
-- **Pressione lunga.** Una pressione lunga su una scorciatoia (clic destro sul computer) apre una piccola finestra per quella funzione: bere (bevanda, quantità, annulla per 10 minuti), lavarsi le mani (+/−), farmaci, spesa, attività, pulizie, eventi, cucinare, note, animali, scorte, uscita ed entrata, SOS e in viaggio. Un tocco breve funziona come prima.
-- **Resta aperta.** La finestra resta aperta dopo un’azione, così si possono fare più cose di seguito; «Apri» porta alla funzione completa.
-- Modificato: `pb_hooks/pinn-zeit.js`, `pb_hooks/zeit.pb.js`, `js/zeit.js`, `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `pb_hooks/pinn-gesundheit.js`, `js/appstart.js`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/ansichten.js`, `js/design.js`, `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, README (+ 1.149.1).
-
 ## Come funziona
 
 ```mermaid
@@ -261,7 +256,7 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 ## Installazione
 
 1. Scarica lo ZIP dell’[ultima release](https://github.com/pinn-shost/pinn/releases/latest) e decomprimilo.
-2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.150.11` o `pinn-main`) così com’è.
+2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.151.0` o `pinn-main`) così com’è.
 3. Accedi via SSH ed esegui:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -280,6 +275,19 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 I **backup** vengono eseguiti ogni notte in `./backups` e conservati per 14 giorni.
 
 <a id="privacy"></a>
+
+### Stack di Portainer (senza script)
+
+Preferisci Portainer? Allora non servono né SSH né lo script di installazione:
+
+1. In Portainer apri **Stacks → Add stack**, chiamalo `pinn` e scegli **Web editor**.
+2. Incolla il contenuto di [`docker/docker-compose.portainer.yaml`](docker/docker-compose.portainer.yaml).
+3. Facoltativo: in **Environment variables** cambia la porta (`PINN_PORT`, predefinita 8090) o fissa una versione (`PINN_IMAGE_TAG`, ad es. `1.151.0`). Clicca **Deploy the stack**.
+4. Apri `http://<IP-del-NAS>:8090` → **Accedi come amministratore principale** → procedura guidata, come ai passaggi 4–6 sopra.
+
+L’immagine arriva già pronta da `ghcr.io/pinn-shost/pinn` (amd64 e arm64). I dati stanno in volumi, non servono cartelle. Lo stack non usa nomi di container fissi, quindi non entra in conflitto con quelli che hai già. Se Tailscale gira già sul tuo NAS, elimina il blocco `tailscale`; con un indirizzo HTTPS o un reverse proxy tuo, elimina anche `caddy` e `duckdns`.
+
+**Aggiornamento:** Stack → Editor → *Update the stack* con *Re-pull image and redeploy* attivo. **Backup:** Portainer non salva i tuoi volumi da solo: copia regolarmente i volumi `data` e `konfig` (ad es. snapshot del NAS o uno strumento di backup dei volumi). Nell’app «Backup e aggiornamenti» mostra un’indicazione al posto dei pulsanti. Non inclusi: Traccar (localizzatori GPS con SIM) e la deviazione verso Home Assistant – i telefoni non ne hanno bisogno.
 
 ## Privacy
 

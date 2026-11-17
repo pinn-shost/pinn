@@ -133,6 +133,13 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.151.0의 새 소식
+
+**Portainer 스택, 완성된 이미지**
+
+- 새 기능: SSH와 설치 스크립트 없이 Portainer 스택 화면에서 pinn.을 설치할 수 있습니다. 릴리스마다 완성된 이미지(amd64, arm64)가 만들어져 `ghcr.io/pinn-shost/pinn`에 게시됩니다. 새 파일 `docker/docker-compose.portainer.yaml`은 이를 볼륨과 고정되지 않은 컨테이너 이름으로 사용합니다(기존 Tailscale 컨테이너와 더는 충돌하지 않음). 이미지로 실행 중이면 앱의 “백업 및 업데이트”가 Portainer를 안내합니다. 설치 항목의 “Portainer 스택 (스크립트 없이)”을 참고하세요.
+- 변경: `docker/` (new), `.github/workflows/image.yml` (new), `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
+
 ## 1.150.11의 새 소식
 
 **아이콘과 작은 수정**
@@ -221,18 +228,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - **바로 표시.** 직접 고르기 전까지 타일에는 기본 앱(물 마시기, 장보기, 할 일, 일정, 오늘 요리, 메모, 지출, 청소 계획)이 표시됩니다. 선택한 앱이 없으면 사라지는 대신 „앱 선택”을 보여 줍니다.
 - 변경: `js/kurzbefehle.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README.
 
-## 1.150.0의 새 소식
-
-**내 지역의 시각으로 · 개요의 바로가기 · 바로가기 빠른 창**
-
-- **알맞은 시각에 알림.** pinn.은 이제 기기의 시간대로 알림을 계산하며 지역의 서머타임도 반영합니다. 설정할 것은 없습니다. 기기가 서버에 시간대를 조용히 알려 주며, 이사나 여행 후에도 마찬가지입니다.
-- **먼저 건강 알림.** 복약, 물 마시기, 손 씻기 알림은 이미 각자의 시계를 따릅니다. 앞으로의 모든 알림도 같은 시계를 사용합니다. 이전 알림(생일, 반려동물, 짐 목록, 비축품, 계약, 문서, 주간 미리보기)은 아직 중부 유럽 시간이며 이후에 반영됩니다.
-- **바로가기 타일.** 개요에 새 타일이 생겨 앱 같은 아이콘으로 기능을 바로 엽니다: 물 마시기, 손 씻기(탭할 때마다 +1), 복약, 장보기, 새 할 일, 새 일정, 메모, 채팅, 청소, 식물, 반려동물, 비축품, 지출 기록, 수입 기록, 재정, SOS, 이동 중.
-- **직접 선택.** 설정 → 개요 → 바로가기에서 원하는 앱을 켜세요. 프로필별로 적용되며 선택한 앱이 없으면 타일은 숨겨집니다. 게스트에게는 건강, SOS, 재정 앱이 보이지 않습니다.
-- **길게 누르기.** 바로가기를 길게 누르면(컴퓨터에서는 오른쪽 클릭) 해당 기능의 작은 창이 열립니다: 물 마시기(음료, 양, 10분간 되돌리기), 손 씻기(+/−), 복약, 장보기, 할 일, 청소, 일정, 요리, 메모, 반려동물, 비축품, 지출과 수입, SOS, 이동 중. 짧게 누르면 이전과 같습니다.
-- **계속 열려 있음.** 동작 후에도 창이 열려 있어 여러 작업을 이어서 할 수 있습니다. “열기”는 전체 기능으로 이동합니다.
-- 변경: `pb_hooks/pinn-zeit.js`, `pb_hooks/zeit.pb.js`, `js/zeit.js`, `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `pb_hooks/pinn-gesundheit.js`, `js/appstart.js`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/ansichten.js`, `js/design.js`, `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, README (+ 1.149.1).
-
 ## 작동 방식
 
 ```mermaid
@@ -261,7 +256,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.150.11` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.151.0` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -280,6 +275,19 @@ flowchart LR
 **백업**은 매일 밤 `./backups`에 만들어지고 14일 동안 보관돼요.
 
 <a id="privacy"></a>
+
+### Portainer 스택 (스크립트 없이)
+
+Portainer가 더 편하신가요? 그렇다면 SSH도 설치 스크립트도 필요 없습니다.
+
+1. Portainer에서 **Stacks → Add stack**을 열고 이름을 `pinn`으로 지정한 뒤 **Web editor**를 선택합니다.
+2. [`docker/docker-compose.portainer.yaml`](docker/docker-compose.portainer.yaml)의 내용을 붙여 넣습니다.
+3. 선택 사항: **Environment variables**에서 포트(`PINN_PORT`, 기본값 8090)를 바꾸거나 버전을 고정합니다(`PINN_IMAGE_TAG`, 예: `1.151.0`). **Deploy the stack**을 클릭합니다.
+4. `http://<NAS-IP>:8090`을 열고 **주 관리자로 로그인** → 설정 도우미로 진행합니다(위의 4~6단계와 동일).
+
+이미지는 `ghcr.io/pinn-shost/pinn`(amd64, arm64)에서 완성된 상태로 제공됩니다. 데이터는 볼륨에 저장되므로 폴더가 필요 없습니다. 스택은 고정된 컨테이너 이름을 쓰지 않으므로 이미 있는 컨테이너와 충돌하지 않습니다. NAS에 Tailscale이 이미 있으면 `tailscale` 블록을 삭제하고, 자체 HTTPS 주소나 리버스 프록시를 쓰면 `caddy`와 `duckdns`도 삭제하세요.
+
+**업데이트:** Stack → Editor → *Update the stack*에서 *Re-pull image and redeploy*를 켭니다. **백업:** Portainer는 볼륨을 자동으로 백업하지 않습니다. 볼륨 `data`와 `konfig`를 정기적으로 복사하세요(예: NAS 스냅샷 또는 볼륨 백업 도구). 앱의 “백업 및 업데이트”에는 버튼 대신 안내가 표시됩니다. 이 스택에 포함되지 않은 것: Traccar(SIM 카드가 있는 GPS 추적기)와 Home Assistant 우회 — 휴대폰에는 둘 다 필요 없습니다.
 
 ## 개인정보 보호
 

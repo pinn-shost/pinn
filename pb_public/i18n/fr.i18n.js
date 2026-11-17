@@ -4294,6 +4294,8 @@ window.PINN_I18N && window.PINN_I18N.keys("fr", {
   "maint.err.unpack": "La sauvegarde n'a pas pu être décompressée – rien n'a été modifié.",
   "maint.githubDown": "GitHub est injoignable pour le moment – réessaie plus tard.",
   "maint.installNow": "Installer maintenant",
+  "maint.imageMode": "pinn. fonctionne comme image prête à l’emploi (stack Portainer). Mises à jour : ouvre ton stack dans Portainer → Éditeur → « Mettre à jour le stack » avec « Récupérer à nouveau l’image et redéployer » activé. Sauvegardes : sauvegarde les volumes du stack – voir le guide sur GitHub.",
+  "maint.imageShort": "Fonctionne comme image prête à l’emploi – mises à jour et sauvegardes dans Portainer.",
   "maint.installVersion": "Installer la version {version}",
   "maint.issue.device": "Appareil / navigateur",
   "maint.issue.expected": "Qu’aurait-il dû se passer ?",

@@ -4298,6 +4298,8 @@ window.PINN_I18N && window.PINN_I18N.keys("tr", {
   "maint.err.unpack": "Yedek açılamadı – hiçbir şey değiştirilmedi.",
   "maint.githubDown": "GitHub'a şu anda ulaşılamıyor – lütfen daha sonra tekrar dene.",
   "maint.installNow": "Şimdi yükle",
+  "maint.imageMode": "pinn. hazır bir imaj (Portainer yığını) olarak çalışıyor. Güncellemeler: Portainer’da yığınını aç → Düzenleyici → “Yığını güncelle” ve “İmajı yeniden çek ve yeniden dağıt” açık olsun. Yedekler: yığının birimlerini yedekle – GitHub’daki kılavuza bak.",
+  "maint.imageShort": "Hazır imaj olarak çalışıyor – güncelleme ve yedekleme Portainer’da.",
   "maint.installVersion": "{version} sürümünü yükle",
   "maint.issue.device": "Cihaz / tarayıcı",
   "maint.issue.expected": "Ne olmalıydı?",

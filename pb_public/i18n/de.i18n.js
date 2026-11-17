@@ -4297,6 +4297,8 @@ window.PINN_I18N && window.PINN_I18N.keys("de", {
   "maint.err.unpack": "Die Sicherung ließ sich nicht entpacken – es wurde nichts verändert.",
   "maint.githubDown": "GitHub ist gerade nicht erreichbar – bitte später noch einmal versuchen.",
   "maint.installNow": "Jetzt installieren",
+  "maint.imageMode": "pinn. läuft als fertiges Image (Portainer-Stack). Updates: In Portainer den Stack öffnen → Editor → „Stack aktualisieren“ mit eingeschaltetem „Image neu laden und neu bereitstellen“. Sicherungen: die Volumes des Stacks sichern – siehe Anleitung auf GitHub.",
+  "maint.imageShort": "Läuft als fertiges Image – Updates und Sicherungen in Portainer.",
   "maint.installVersion": "Version {version} installieren",
   "maint.issue.device": "Gerät / Browser",
   "maint.issue.expected": "Was hätte passieren sollen?",

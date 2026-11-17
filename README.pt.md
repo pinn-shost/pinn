@@ -133,6 +133,13 @@ Toque em qualquer imagem para abri-la em tamanho real.
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.151.0
+
+**Stack do Portainer, imagem pronta**
+
+- Novidade: o pinn. pode ser instalado a partir da interface de stacks do Portainer, sem SSH e sem o script de instalação. A cada versão é criada uma imagem pronta (amd64, arm64) e publicada em `ghcr.io/pinn-shost/pinn`; o novo ficheiro `docker/docker-compose.portainer.yaml` usa-a com volumes e sem nomes de contentor fixos (acabou o conflito com um contentor Tailscale existente). Na app, «Cópias e atualizações» remete para o Portainer quando corre como imagem. Veja «Stack do Portainer (sem script)» em Instalação.
+- Alterado: `docker/` (new), `.github/workflows/image.yml` (new), `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
+
 ## Novidades da 1.150.11
 
 **Ícones e pequenas correções**
@@ -221,18 +228,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Visível na hora.** Enquanto você não escolher nada, o bloco mostra uma seleção padrão (beber, compras, tarefa, compromisso, cozinhar hoje, nota, despesa, plano de limpeza). Sem nenhum app escolhido, ele oferece «Escolher apps» em vez de sumir.
 - Alterado: `js/kurzbefehle.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README.
 
-## Novidades da 1.150.0
-
-**Horários na sua região · Atalhos na visão geral · Janelas rápidas para os atalhos**
-
-- **Lembretes na hora certa.** O pinn. agora calcula os lembretes no fuso horário do seu dispositivo, com o horário de verão e de inverno da sua região. Não há nada a configurar: o dispositivo informa o fuso horário ao servidor, também após uma mudança ou em viagem.
-- **Primeiro os lembretes de saúde.** Medicamentos, beber água e lavar as mãos já seguem o relógio de cada pessoa; todos os lembretes futuros usarão o mesmo relógio. Os lembretes mais antigos (aniversários, animais, lista de bagagem, despensa, contratos, documentos, prévia semanal) ainda usam a hora da Europa Central e virão depois.
-- **Bloco Atalhos.** Um novo bloco da visão geral mostra ícones de apps que abrem uma função diretamente: beber, lavar as mãos (+1 por toque), remédios, compras, nova tarefa, novo evento, nota, chat, limpeza, plantas, pets, despensa, registrar despesa, registrar receita, finanças, SOS e a caminho.
-- **Sua escolha.** Configurações → Visão geral → Atalhos: ative os apps desejados. Vale por perfil; sem app escolhido o bloco fica oculto. Convidados não veem apps de saúde, SOS nem finanças.
-- **Toque longo.** Um toque longo em um atalho (clique direito no computador) abre uma pequena janela para essa função: beber (bebida, quantidade, desfazer por 10 minutos), lavar as mãos (+/−), remédios, compras, tarefas, limpeza, eventos, cozinhar, notas, pets, despensa, despesa e receita, SOS e a caminho. Um toque curto funciona como antes.
-- **Continua aberta.** A janela continua aberta após uma ação, então dá para fazer várias coisas seguidas; “Abrir” leva à função completa.
-- Alterado: `pb_hooks/pinn-zeit.js`, `pb_hooks/zeit.pb.js`, `js/zeit.js`, `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `pb_hooks/pinn-gesundheit.js`, `js/appstart.js`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/ansichten.js`, `js/design.js`, `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, README (+ 1.149.1).
-
 ## Como funciona
 
 ```mermaid
@@ -261,7 +256,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.150.11` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.151.0` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -280,6 +275,19 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 Os **backups** rodam toda noite em `./backups` e são mantidos por 14 dias.
 
 <a id="privacy"></a>
+
+### Stack do Portainer (sem script)
+
+Prefere o Portainer? Então não precisa de SSH nem do script de instalação:
+
+1. No Portainer abra **Stacks → Add stack**, dê-lhe o nome `pinn` e escolha **Web editor**.
+2. Cole o conteúdo de [`docker/docker-compose.portainer.yaml`](docker/docker-compose.portainer.yaml).
+3. Opcional: em **Environment variables** altere a porta (`PINN_PORT`, predefinição 8090) ou fixe uma versão (`PINN_IMAGE_TAG`, p. ex. `1.151.0`). Clique em **Deploy the stack**.
+4. Abra `http://<IP-do-NAS>:8090` → **Entrar como administrador principal** → assistente de configuração, como nos passos 4–6 acima.
+
+A imagem já vem pronta de `ghcr.io/pinn-shost/pinn` (amd64 e arm64). Os dados ficam em volumes, não são precisas pastas. O stack não usa nomes de contentor fixos, por isso não colide com contentores que já tenha. Se o Tailscale já corre no seu NAS, apague o bloco `tailscale`; com endereço HTTPS ou proxy inverso próprio, apague também `caddy` e `duckdns`.
+
+**Atualizar:** Stack → Editor → *Update the stack* com *Re-pull image and redeploy* ativado. **Cópias de segurança:** o Portainer não guarda os seus volumes sozinho – copie regularmente os volumes `data` e `konfig` (p. ex. snapshot do NAS ou uma ferramenta de cópia de volumes). Na app, «Cópias e atualizações» mostra uma indicação em vez de botões. Não incluídos: Traccar (localizadores GPS com SIM) e o desvio para o Home Assistant – os telemóveis não precisam deles.
 
 ## Privacidade
 

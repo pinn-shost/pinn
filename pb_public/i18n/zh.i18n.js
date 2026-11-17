@@ -4278,6 +4278,8 @@ window.PINN_I18N && window.PINN_I18N.keys("zh", {
   "maint.err.unpack": "无法解压备份——未做任何更改。",
   "maint.githubDown": "目前无法访问 GitHub——请稍后再试。",
   "maint.installNow": "立即安装",
+  "maint.imageMode": "pinn. 以现成镜像方式运行（Portainer 堆栈）。更新：在 Portainer 中打开你的堆栈 → 编辑器 →“更新堆栈”，并开启“重新拉取镜像并重新部署”。备份：请备份堆栈的卷——见 GitHub 上的指南。",
+  "maint.imageShort": "以现成镜像运行——请在 Portainer 中更新和备份。",
   "maint.installVersion": "安装版本 {version}",
   "maint.issue.device": "设备 / 浏览器",
   "maint.issue.expected": "本应发生什么？",

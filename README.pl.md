@@ -110,6 +110,13 @@ Dotknij obrazu, aby otworzyć go w pełnym rozmiarze.
 
 pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski i 🇺🇦 Українська**; dostosowuje walutę i numery alarmowe do twojego regionu i przełącza się między określeniami **rodzina** i **wspólne mieszkanie**. Jeden serwer może obsługiwać wiele rodzin, każdą z własnymi administratorami.
 
+## Nowości w 1.151.0
+
+**Stos Portainera, gotowy obraz**
+
+- Nowość: pinn. można zainstalować z interfejsu stosów Portainera, bez SSH i bez skryptu instalacyjnego. Przy każdym wydaniu powstaje gotowy obraz (amd64, arm64) publikowany w `ghcr.io/pinn-shost/pinn`; nowy plik `docker/docker-compose.portainer.yaml` używa go z woluminami i bez stałych nazw kontenerów (koniec kolizji z istniejącym kontenerem Tailscale). W aplikacji „Kopie i aktualizacje” odsyła do Portainera, gdy pinn. działa jako obraz. Zobacz „Stos Portainera (bez skryptu)” w Instalacji.
+- Zmieniono: `docker/` (new), `.github/workflows/image.yml` (new), `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
+
 ## Nowości w 1.150.11
 
 **Ikony i drobne poprawki**
@@ -162,14 +169,6 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 - **Face ID.** Odblokowanie startuje tylko przyciskiem (bez okna „Użyj klucza dostępu”); przycisk jest na dole, w zasięgu kciuka.
 - Zmienione: `js/gesundheit.js`, `css/gesundheit.css`, `js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
 
-## Nowości w 1.150.4
-
-**Powiadomienia pozostają włączone po aktualizacjach**
-
-- **Push przetrwa aktualizacje.** Jeśli serwer podczas aktualizacji przez chwilę nie mógł odczytać swojego klucza push, tworzył nowy – i wszystkie urządzenia traciły powiadomienia. Teraz klucz nigdy nie jest zastępowany, dopóki istnieje, jest bezpiecznie zapisywany i dodatkowo przechowywany jako kopia zapasowa.
-- **Wystarczy jedno dotknięcie.** Jeśli urządzenie mimo to straci rejestrację (np. zresetował ją iOS), pinn. zarejestruje je ponownie samodzielnie – albo pokaże na dole „Włącz ponownie”, bez wchodzenia w ustawienia.
-- Zmienione: `pb_hooks/pinn-push.js`, `pb_hooks/push.pb.js`, `pb_hooks/pinn-sitzungen.js`, `js/mitteilungen.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
-
 ## Wymagania
 
 - NAS lub mini PC z zainstalowanym **Dockerem** i **Docker Compose** (np. Synology, UGREEN, QNAP albo zwykły serwer z Linuksem)
@@ -179,7 +178,7 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 ## Instalacja
 
 1. Pobierz i rozpakuj plik ZIP [najnowszej wersji](https://github.com/pinn-shost/pinn/releases/latest).
-2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.150.11` lub `pinn-main`) bez zmian.
+2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.151.0` lub `pinn-main`) bez zmian.
 3. Połącz się przez SSH i uruchom:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -191,6 +190,19 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
    - **Android (Chrome):** Ustawienia → Powiadomienia → *zainstaluj pinn. jako aplikację* albo menu Chrome ⋮ → *Zainstaluj aplikację*
 
 **Aktualizacja:** pobierz nowy plik ZIP, umieść rozpakowany folder w tym samym folderze i uruchom ponownie `sudo sh pinn-*/pinn-setup.sh`. Zmienione pliki trafiają do folderu `_alt/`, twoje dane pozostają nietknięte. **Kopie zapasowe** powstają co noc w folderze `./backups` i są przechowywane przez 14 dni.
+
+### Stos Portainera (bez skryptu)
+
+Wolisz Portainera? Wtedy nie potrzebujesz ani SSH, ani skryptu instalacyjnego:
+
+1. W Portainerze otwórz **Stacks → Add stack**, nazwij go `pinn` i wybierz **Web editor**.
+2. Wklej zawartość [`docker/docker-compose.portainer.yaml`](docker/docker-compose.portainer.yaml).
+3. Opcjonalnie: w **Environment variables** zmień port (`PINN_PORT`, domyślnie 8090) lub przypnij wersję (`PINN_IMAGE_TAG`, np. `1.151.0`). Kliknij **Deploy the stack**.
+4. Otwórz `http://<IP-NAS>:8090` → **Zaloguj się jako główny administrator** → kreator konfiguracji, jak w krokach 4–6 powyżej.
+
+Obraz jest gotowy w `ghcr.io/pinn-shost/pinn` (amd64 i arm64). Dane leżą w woluminach, foldery nie są potrzebne. Stos nie używa stałych nazw kontenerów, więc nie koliduje z kontenerami, które już masz. Jeśli Tailscale działa już na Twoim NAS-ie, usuń blok `tailscale`; przy własnym adresie HTTPS lub reverse proxy usuń też `caddy` i `duckdns`.
+
+**Aktualizacja:** Stack → Editor → *Update the stack* z włączonym *Re-pull image and redeploy*. **Kopie zapasowe:** Portainer sam nie tworzy kopii woluminów – regularnie kopiuj woluminy `data` i `konfig` (np. migawka NAS lub narzędzie do kopii woluminów). W aplikacji „Kopie i aktualizacje” pokazuje wskazówkę zamiast przycisków. Nie ma w stosie: Traccara (lokalizatory GPS z kartą SIM) i objazdu do Home Assistanta – telefony nie potrzebują żadnego z nich.
 
 ## Prywatność
 

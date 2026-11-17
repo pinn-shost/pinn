@@ -1,0 +1,181 @@
+# ─────────────────────────────────────────────────────────────
+#  pinn. – stack for Portainer (Stack UI / Web editor) and plain "docker compose" – NO set-up script, NO project folder.
+#  (since 1.151.0)
+#
+#  How to use:
+#   Portainer → Stacks → Add stack → Web editor → paste this file → (optional) set the variables
+#   under "Environment variables" → Deploy the stack.
+#   Then open  http://<NAS-IP>:8090  → "Sign in as main admin" → the set-up wizard starts (DuckDNS, Google, AI …).
+#   Update: Stacks → your stack → Editor → "Update the stack" with "Re-pull image and redeploy" switched on.
+#   Guide: https://github.com/pinn-shost/pinn#portainer-stack-no-script
+#
+#  Everything is stored in volumes (no folders needed). No fixed container names – the stack does not clash
+#  with containers you already have (e.g. your own Tailscale).
+#  Not part of this stack: the "wartung" container (backups/updates by button – here Portainer takes over, see the guide),
+#  Traccar (GPS trackers with a SIM card) and the Home Assistant detour. Phones need none of them.
+#
+#  All variables are optional: whatever you save in the set-up wizard in pinn. takes precedence.
+# ─────────────────────────────────────────────────────────────
+
+x-pinn-config: &pinn-config
+  DUCKDNS_SUBDOMAIN: ""                     # default – comes from the set-up in pinn.
+  DUCKDNS_TOKEN: "${DUCKDNS_TOKEN:-}"       # optional default (better: enter it in the set-up)
+  NAS_IP: ""                                # default – local IP of the NAS (empty = the set-up detects it)
+
+services:
+
+  pinn:
+    image: ghcr.io/pinn-shost/pinn:${PINN_IMAGE_TAG:-latest}
+    restart: unless-stopped
+    environment:
+      <<: *pinn-config
+      TZ: "${TZ:-Europe/Berlin}"
+      PINN_SCHLUESSEL: "${PINN_SCHLUESSEL:-}"
+      PINN_ADRESSE: "${PINN_ADRESSE:-}"
+      PINN_GOOGLE_CLIENT_ID: "${PINN_GOOGLE_CLIENT_ID:-}"
+      PINN_GOOGLE_CLIENT_SECRET: "${PINN_GOOGLE_CLIENT_SECRET:-}"
+      PINN_GEMINI_KEY: "${PINN_GEMINI_KEY:-}"
+      PINN_GEMINI_MODELL: "${PINN_GEMINI_MODELL:-}"
+      PINN_PUSH_KONTAKT: "${PINN_PUSH_KONTAKT:-}"
+    ports:
+      - "${PINN_PORT:-8090}:80"     # first set-up and access in the home network: http://<NAS-IP>:8090
+    volumes:
+      - data:/pb_data               # database and uploaded files – back this volume up
+      - konfig:/pinn_konfig         # values from the set-up wizard
+
+  # HTTPS with an address like <subdomain>.duckdns.org (certificate via DNS challenge, no port forwarding needed).
+  # Starts working as soon as DuckDNS is set up in pinn. Skip this and "duckdns" if you use your own reverse proxy or Tailscale.
+  caddy:
+    image: serfriz/caddy-duckdns:latest
+    restart: unless-stopped
+    environment: *pinn-config
+    ports:
+      - "${PINN_HTTPS_PORT:-8443}:443"
+      - "${PINN_HTTPS_PORT:-8443}:443/udp"
+    volumes:
+      - caddy_data:/data            # certificates – do not delete
+      - caddy_config:/config
+      - konfig:/pinn_konfig:ro
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        K=/pinn_konfig/pinn.env
+        lade() { if [ -f "$$K" ] && ( . "$$K" ) >/dev/null 2>&1; then set -a; . "$$K"; set +a; fi; }
+        stand() { grep -E '^export (DUCKDNS_SUBDOMAIN|DUCKDNS_TOKEN)=' "$$K" 2>/dev/null | md5sum | cut -d' ' -f1; }
+        # The Caddyfile is written here, so no file has to be put next to the stack
+        cat > /tmp/Caddyfile <<'CADDYFILE'
+        {
+        	auto_https disable_redirects
+        }
+        {$$DUCKDNS_SUBDOMAIN}.duckdns.org {
+        	tls {
+        		dns duckdns {$$DUCKDNS_TOKEN}
+        		resolvers 1.1.1.1 9.9.9.9
+        	}
+        	encode zstd gzip
+        	reverse_proxy pinn:80
+        }
+        CADDYFILE
+        PID=""; ALT="-"
+        trap '[ -n "$$PID" ] && kill "$$PID" 2>/dev/null; exit 0' TERM INT
+        while true; do
+          NEU=$$(stand)
+          if [ "$$NEU" != "$$ALT" ]; then
+            ALT=$$NEU
+            if [ -n "$$PID" ]; then kill "$$PID" 2>/dev/null; wait "$$PID" 2>/dev/null; PID=""; fi
+            if ( lade; [ -n "$$DUCKDNS_SUBDOMAIN" ] && [ -n "$$DUCKDNS_TOKEN" ] ); then
+              ( lade; exec caddy run --config /tmp/Caddyfile --adapter caddyfile ) &
+              PID=$$!
+              echo "$$(date '+%d.%m.%Y %H:%M') Caddy started for $$(lade; echo "$$DUCKDNS_SUBDOMAIN").duckdns.org"
+            else
+              echo "$$(date '+%d.%m.%Y %H:%M') Caddy is waiting for the set-up in pinn. (DuckDNS missing)"
+            fi
+          elif [ -n "$$PID" ] && ! kill -0 "$$PID" 2>/dev/null; then
+            echo "$$(date '+%d.%m.%Y %H:%M') Caddy ended – container restarts"
+            exit 1
+          fi
+          sleep 15 &
+          wait $$!
+        done
+    depends_on:
+      - pinn
+
+  # Keeps the DuckDNS address current (reports hourly and immediately after every change).
+  duckdns:
+    image: curlimages/curl:latest
+    restart: unless-stopped
+    user: "0:0"            # may read the values of the set-up (readable by root only, contains the token)
+    environment: *pinn-config
+    volumes:
+      - konfig:/pinn_konfig:ro
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        K=/pinn_konfig/pinn.env
+        lade() { if [ -f "$$K" ] && ( . "$$K" ) >/dev/null 2>&1; then set -a; . "$$K"; set +a; fi; }
+        stand() { grep -E '^export (DUCKDNS_SUBDOMAIN|DUCKDNS_TOKEN|NAS_IP)=' "$$K" 2>/dev/null | md5sum | cut -d' ' -f1; }
+        ALT="-"; LETZTES=0
+        while true; do
+          NEU=$$(stand); JETZT=$$(date +%s)
+          if [ "$$NEU" != "$$ALT" ] || [ $$((JETZT - LETZTES)) -ge 3600 ]; then
+            ALT=$$NEU; LETZTES=$$JETZT
+            (
+              lade
+              if [ -n "$$DUCKDNS_SUBDOMAIN" ] && [ -n "$$DUCKDNS_TOKEN" ] && [ -n "$$NAS_IP" ]; then
+                echo "$$(date) DuckDNS: $$(curl -fsS "https://www.duckdns.org/update?domains=$${DUCKDNS_SUBDOMAIN}&token=$${DUCKDNS_TOKEN}&ip=$${NAS_IP}")"
+              else
+                echo "$$(date) DuckDNS is waiting for the set-up in pinn."
+              fi
+            )
+          fi
+          sleep 30
+        done
+
+  # Optional: Tailscale (reach pinn. on the go). Stays off until a Tailscale key is entered in pinn. under
+  # Set-up → "Use on the go". Delete this whole block if Tailscale already runs on your NAS – then simply use
+  # http://<Tailscale address of the NAS>:8090.
+  tailscale:
+    image: tailscale/tailscale:latest
+    restart: unless-stopped
+    environment:
+      <<: *pinn-config
+      TS_STATE_DIR: /var/lib/tailscale
+      TS_USERSPACE: "true"
+      TS_HOSTNAME: "${TS_HOSTNAME:-pinn}"
+    volumes:
+      - tailscale:/var/lib/tailscale
+      - konfig:/pinn_konfig:ro
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        K=/pinn_konfig/pinn.env
+        lade() { if [ -f "$$K" ] && ( . "$$K" ) >/dev/null 2>&1; then set -a; . "$$K"; set +a; fi; }
+        stand() { grep -E '^export (TS_AUTHKEY|NAS_IP)=' "$$K" 2>/dev/null | md5sum | cut -d' ' -f1; }
+        ALT=$$(stand)
+        lade
+        if [ -z "$$TS_AUTHKEY" ]; then
+          echo "$$(date '+%d.%m.%Y %H:%M') Tailscale is off - waiting for a key from the set-up in pinn."
+          while [ "$$(stand)" = "$$ALT" ]; do sleep 30; done
+          exit 0
+        fi
+        export TS_ROUTES="$${NAS_IP}/32"
+        echo "$$(date '+%d.%m.%Y %H:%M') Tailscale starts (route $${TS_ROUTES})"
+        /usr/local/bin/containerboot &
+        PID=$$!
+        trap 'kill "$$PID" 2>/dev/null; exit 0' TERM INT
+        while kill -0 "$$PID" 2>/dev/null; do
+          sleep 30
+          if [ "$$(stand)" != "$$ALT" ]; then
+            echo "Set-up changed - Tailscale restarts"
+            kill "$$PID" 2>/dev/null; wait "$$PID" 2>/dev/null
+            exit 0
+          fi
+        done
+        exit 1
+
+volumes:
+  data:
+  konfig:
+  caddy_data:
+  caddy_config:
+  tailscale:

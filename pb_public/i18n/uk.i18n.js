@@ -4291,6 +4291,8 @@ window.PINN_I18N && window.PINN_I18N.keys("uk", {
   "maint.err.unpack": "Не вдалося розпакувати копію – нічого не змінено.",
   "maint.githubDown": "GitHub зараз недоступний – будь ласка, спробуй пізніше.",
   "maint.installNow": "Встановити зараз",
+  "maint.imageMode": "pinn. працює як готовий образ (стек Portainer). Оновлення: відкрий стек у Portainer → Редактор → «Оновити стек» з увімкненим «Завантажити образ знову і перерозгорнути». Резервні копії: зберігай томи стека – див. посібник на GitHub.",
+  "maint.imageShort": "Працює як готовий образ – оновлення й резервні копії в Portainer.",
   "maint.installVersion": "Встановити версію {version}",
   "maint.issue.device": "Пристрій / браузер",
   "maint.issue.expected": "Що мало статися?",

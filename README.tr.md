@@ -110,6 +110,13 @@ Tam boyutta açmak için bir resme dokun.
 
 pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski ve 🇺🇦 Українська**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
 
+## 1.151.0 sürümündeki yenilikler
+
+**Portainer yığını, hazır imaj**
+
+- Yeni: pinn., SSH ve kurulum betiği olmadan Portainer’ın yığın arayüzünden kurulabilir. Her sürümde hazır bir imaj (amd64, arm64) oluşturulur ve `ghcr.io/pinn-shost/pinn` adresinde yayımlanır; yeni `docker/docker-compose.portainer.yaml` dosyası bunu birimlerle ve sabit kapsayıcı adı olmadan kullanır (mevcut bir Tailscale kapsayıcısıyla çakışma yok). İmaj olarak çalışırken uygulamadaki “Yedekler ve güncellemeler” Portainer’a yönlendirir. Kurulum bölümündeki “Portainer yığını (betiksiz)” konusuna bak.
+- Değiştirildi: `docker/` (new), `.github/workflows/image.yml` (new), `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
+
 ## 1.150.11 sürümündeki yenilikler
 
 **Simgeler ve küçük düzeltmeler**
@@ -162,14 +169,6 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 - **Face ID.** Kilit açma artık yalnızca düğmeyle başlar („Geçiş anahtarını kullan” penceresi yok); düğme altta, başparmakla kolayca ulaşılır.
 - Değişenler: `js/gesundheit.js`, `css/gesundheit.css`, `js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
 
-## 1.150.4 sürümündeki yenilikler
-
-**Bildirimler güncellemelerden sonra açık kalır**
-
-- **Push güncellemelerden etkilenmez.** Sunucu bir güncelleme sırasında push anahtarını kısa süre okuyamazsa yeni bir anahtar oluşturuyordu – ve tüm cihazların bildirimleri kapanıyordu. Artık anahtar var olduğu sürece asla değiştirilmez, güvenli şekilde kaydedilir ve ayrıca yedek kopyası tutulur.
-- **Tek dokunuş yeter.** Bir cihaz kaydını yine de kaybederse (ör. iOS sıfırladıysa) pinn. onu kendiliğinden yeniden kaydeder – ya da altta „Yeniden aç” gösterir, ayarlara gitmeye gerek kalmaz.
-- Değişenler: `pb_hooks/pinn-push.js`, `pb_hooks/push.pb.js`, `pb_hooks/pinn-sitzungen.js`, `js/mitteilungen.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -179,7 +178,7 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.150.11` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.151.0` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -191,6 +190,19 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
    - **Android (Chrome):** Ayarlar → Bildirimler → *pinn.'i uygulama olarak yükle* veya Chrome menüsü ⋮ → *Uygulamayı yükle*
 
 **Güncelleme:** yeni ZIP'i indir, çıkardığın klasörü aynı klasöre koy ve `sudo sh pinn-*/pinn-setup.sh` komutunu yeniden çalıştır. Değiştirilen dosyalar `_alt/` klasöründe kalır, verilerine dokunulmaz. **Yedekler** her gece `./backups` klasörüne alınır ve 14 gün saklanır.
+
+### Portainer yığını (betiksiz)
+
+Portainer’ı mı tercih ediyorsun? O zaman ne SSH ne de kurulum betiği gerekir:
+
+1. Portainer’da **Stacks → Add stack** aç, adını `pinn` yap ve **Web editor**’ı seç.
+2. [`docker/docker-compose.portainer.yaml`](docker/docker-compose.portainer.yaml) dosyasının içeriğini yapıştır.
+3. İsteğe bağlı: **Environment variables** altında bağlantı noktasını (`PINN_PORT`, varsayılan 8090) değiştir veya bir sürüm sabitle (`PINN_IMAGE_TAG`, örn. `1.151.0`). **Deploy the stack**’e tıkla.
+4. `http://<NAS-IP>:8090` adresini aç → **Ana yönetici olarak giriş yap** → kurulum sihirbazı, yukarıdaki 4–6. adımlardaki gibi.
+
+İmaj `ghcr.io/pinn-shost/pinn` adresinden hazır gelir (amd64 ve arm64). Veriler birimlerde durur, klasör gerekmez. Yığın sabit kapsayıcı adları kullanmaz, bu yüzden mevcut kapsayıcılarınla çakışmaz. NAS’ında Tailscale zaten çalışıyorsa `tailscale` bloğunu sil; kendi HTTPS adresin veya ters proxy’n varsa `caddy` ve `duckdns` bloklarını da sil.
+
+**Güncelleme:** Stack → Editor → *Update the stack*, *Re-pull image and redeploy* açık olsun. **Yedekler:** Portainer birimlerini kendiliğinden yedeklemez – `data` ve `konfig` birimlerini düzenli kopyala (örn. NAS anlık görüntüsü veya birim yedekleme aracı). Uygulamada “Yedekler ve güncellemeler” düğmeler yerine bir not gösterir. Yığına dahil değil: Traccar (SIM kartlı GPS izleyiciler) ve Home Assistant’a dolambaçlı yol – telefonlar ikisine de ihtiyaç duymaz.
 
 ## Gizlilik
 

@@ -4297,6 +4297,8 @@ window.PINN_I18N && window.PINN_I18N.keys("nl", {
   "maint.err.unpack": "De back-up kon niet worden uitgepakt – er is niets gewijzigd.",
   "maint.githubDown": "GitHub is op dit moment niet bereikbaar – probeer het later opnieuw.",
   "maint.installNow": "Nu installeren",
+  "maint.imageMode": "pinn. draait als kant-en-klare image (Portainer-stack). Updates: open je stack in Portainer → Editor → “Stack bijwerken” met “Image opnieuw ophalen en opnieuw uitrollen” aan. Back-ups: maak een back-up van de volumes van de stack – zie de handleiding op GitHub.",
+  "maint.imageShort": "Draait als kant-en-klare image – updaten en back-ups maken in Portainer.",
   "maint.installVersion": "Versie {version} installeren",
   "maint.issue.device": "Apparaat / browser",
   "maint.issue.expected": "Wat had er moeten gebeuren?",

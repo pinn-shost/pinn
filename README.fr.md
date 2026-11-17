@@ -129,6 +129,13 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski et 🇺🇦 Українська**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.151.0
+
+**Stack Portainer, image prête à l’emploi**
+
+- Nouveau : pinn. s’installe depuis l’interface de stacks de Portainer, sans SSH et sans script d’installation. À chaque version, une image prête (amd64, arm64) est construite et publiée sur `ghcr.io/pinn-shost/pinn` ; le nouveau fichier `docker/docker-compose.portainer.yaml` l’utilise avec des volumes et sans noms de conteneur fixes (plus de conflit avec un conteneur Tailscale existant). Dans l’app, « Sauvegardes et mises à jour » renvoie à Portainer quand pinn. tourne comme image. Voir « Stack Portainer (sans script) » dans Installation.
+- Modifié: `docker/` (new), `.github/workflows/image.yml` (new), `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
+
 ## Nouveautés de la 1.150.11
 
 **Icônes et petites corrections**
@@ -255,15 +262,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Indication claire dans les réglages.** La section du tableau de bord indique maintenant que cet appareil est le tableau de bord d'une autre famille – un appareil ne peut être qu'un seul tableau de bord.
 - Modifié : `js/dashboard.js`, `js/anmeldung.js`, `js/profilauswahl.js`, `js/dashboardkonto.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, tous les README. Pas de partie serveur.
 
-## Nouveautés de la 1.148.1
-
-**La recette reste ouverte sur le tableau de bord**
-
-- **Tableau de bord familial.** Après « Vers la sélection du profil » et le code PIN, une recette ouverte est maintenant vraiment rouverte. Le premier changement d’écran après le démarrage (p. ex. quand l’iPad réaffiche l’app) reconstruisait la page et fermait la recette – corrigé.
-- **Même si iOS ferme l’app.** Sur un tableau de bord, la note est conservée même si iOS ferme l’app pendant qu’elle attend sur la sélection du profil (12 heures au maximum). Un reste dans l’adresse ne l’empêche plus.
-- **Tourner l’iPad** laisse la recette ouverte, avec le nombre de personnes et la position de lecture.
-- Modifié : `js/fortsetzen.js`, `js/ansichten.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`, tous les README. Pas de partie serveur.
-
 ## Comment ça marche
 
 ```mermaid
@@ -290,7 +288,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.150.11` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.151.0` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -307,6 +305,19 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 **Mettre à jour :** télécharge le nouveau ZIP, mets le dossier décompressé dans le même dossier et relance `sudo sh pinn-*/pinn-setup.sh`. Les fichiers remplacés sont conservés dans `_alt/`, tes données restent intactes.
 
 **Les sauvegardes** ont lieu chaque nuit dans `./backups` et sont conservées 14 jours.
+
+### Stack Portainer (sans script)
+
+Vous préférez Portainer ? Alors ni SSH ni le script d’installation ne sont nécessaires :
+
+1. Dans Portainer, ouvrez **Stacks → Add stack**, nommez-le `pinn` et choisissez **Web editor**.
+2. Collez le contenu de [`docker/docker-compose.portainer.yaml`](docker/docker-compose.portainer.yaml).
+3. Facultatif : sous **Environment variables**, changez le port (`PINN_PORT`, 8090 par défaut) ou fixez une version (`PINN_IMAGE_TAG`, p. ex. `1.151.0`). Cliquez sur **Deploy the stack**.
+4. Ouvrez `http://<IP-du-NAS>:8090` → **Se connecter en tant qu’administrateur principal** → l’assistant de configuration, comme aux étapes 4 à 6 ci-dessus.
+
+L’image est fournie toute prête par `ghcr.io/pinn-shost/pinn` (amd64 et arm64). Les données sont dans des volumes, aucun dossier n’est nécessaire. Le stack n’utilise pas de noms de conteneur fixes ; il n’entre donc pas en conflit avec vos conteneurs existants. Si Tailscale tourne déjà sur votre NAS, supprimez le bloc `tailscale` ; avec votre propre adresse HTTPS ou reverse proxy, supprimez aussi `caddy` et `duckdns`.
+
+**Mise à jour :** Stack → Editor → *Update the stack* avec *Re-pull image and redeploy* activé. **Sauvegardes :** Portainer ne sauvegarde pas vos volumes tout seul – copiez régulièrement les volumes `data` et `konfig` (p. ex. snapshot du NAS ou outil de sauvegarde de volumes). Dans l’app, « Sauvegardes et mises à jour » affiche une indication à la place des boutons. Non inclus : Traccar (traceurs GPS avec carte SIM) et le détour vers Home Assistant – les téléphones n’en ont pas besoin.
 
 ## Confidentialité
 

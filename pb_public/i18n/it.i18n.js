@@ -4298,6 +4298,8 @@ window.PINN_I18N && window.PINN_I18N.keys("it", {
   "maint.err.unpack": "Impossibile estrarre il backup. Non è stata apportata alcuna modifica.",
   "maint.githubDown": "GitHub non è raggiungibile al momento. Riprova più tardi.",
   "maint.installNow": "Installa ora",
+  "maint.imageMode": "pinn. funziona come immagine già pronta (stack di Portainer). Aggiornamenti: apri il tuo stack in Portainer → Editor → «Aggiorna lo stack» con «Scarica di nuovo l’immagine e ridistribuisci» attivo. Backup: salva i volumi dello stack – vedi la guida su GitHub.",
+  "maint.imageShort": "Funziona come immagine già pronta – aggiorna e fai i backup in Portainer.",
   "maint.installVersion": "Installa la versione {version}",
   "maint.issue.device": "Dispositivo / browser",
   "maint.issue.expected": "Che cosa sarebbe dovuto succedere?",

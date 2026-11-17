@@ -4288,6 +4288,8 @@ window.PINN_I18N && window.PINN_I18N.keys("ja", {
   "maint.err.unpack": "バックアップを展開できませんでした。何も変更されていません。",
   "maint.githubDown": "現在GitHubに接続できません。しばらくしてからもう一度お試しください。",
   "maint.installNow": "今すぐインストール",
+  "maint.imageMode": "pinn. は出来合いのイメージ（Portainer スタック）として動いています。更新：Portainer でスタックを開く →「エディター」→「スタックを更新」で「イメージを再取得して再デプロイ」をオンにします。バックアップ：スタックのボリュームを保存してください。GitHub のガイドをご覧ください。",
+  "maint.imageShort": "出来合いのイメージで動作中。更新とバックアップは Portainer で行います。",
   "maint.installVersion": "バージョン{version}をインストール",
   "maint.issue.device": "デバイス／ブラウザ",
   "maint.issue.expected": "本来どうなるべきでしたか？",

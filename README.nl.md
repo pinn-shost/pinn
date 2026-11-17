@@ -110,6 +110,13 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski en 🇺🇦 Українська**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.151.0
+
+**Portainer-stack, kant-en-klare image**
+
+- Nieuw: pinn. is te installeren via de stack-omgeving van Portainer, zonder SSH en zonder installatiescript. Bij elke release wordt een kant-en-klare image (amd64, arm64) gebouwd en gepubliceerd op `ghcr.io/pinn-shost/pinn`; het nieuwe bestand `docker/docker-compose.portainer.yaml` gebruikt die met volumes en zonder vaste containernamen (geen botsing meer met een bestaande Tailscale-container). In de app verwijst “Back-ups & updates” naar Portainer als pinn. als image draait. Zie “Portainer-stack (zonder script)” onder Installatie.
+- Gewijzigd: `docker/` (new), `.github/workflows/image.yml` (new), `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
+
 ## Nieuw in 1.150.11
 
 **Pictogrammen en kleine verbeteringen**
@@ -162,14 +169,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Face ID.** Ontgrendelen start alleen nog met de knop (geen venster „Toegangssleutel gebruiken” meer); de knop zit onderaan, binnen bereik van je duim.
 - Gewijzigd: `js/gesundheit.js`, `css/gesundheit.css`, `js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
 
-## Nieuw in 1.150.4
-
-**Meldingen blijven aan na updates**
-
-- **Push overleeft updates.** Kon de server zijn push-sleutel tijdens een update even niet lezen, dan maakte hij een nieuwe aan – en waren alle apparaten afgemeld voor meldingen. De sleutel wordt nu nooit vervangen zolang hij bestaat, wordt veilig opgeslagen en daarnaast als reservekopie bewaard.
-- **Eén tik is genoeg.** Raakt een apparaat zijn aanmelding toch kwijt (bijv. omdat iOS die heeft teruggezet), dan meldt pinn. het zelf opnieuw aan – of toont onderaan „Weer inschakelen”, zonder omweg via de instellingen.
-- Gewijzigd: `pb_hooks/pinn-push.js`, `pb_hooks/push.pb.js`, `pb_hooks/pinn-sitzungen.js`, `js/mitteilungen.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -179,7 +178,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.150.11` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.151.0` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -191,6 +190,19 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
    - **Android (Chrome):** Instellingen → Meldingen → *pinn. als app installeren* of Chrome-menu ⋮ → *App installeren*
 
 **Updaten:** download de nieuwe ZIP, zet de uitgepakte map in dezelfde map en voer opnieuw `sudo sh pinn-*/pinn-setup.sh` uit. Vervangen bestanden blijven in `_alt/` staan, je gegevens blijven onaangeroerd. **Back-ups** worden elke nacht gemaakt in `./backups` en 14 dagen bewaard.
+
+### Portainer-stack (zonder script)
+
+Liever Portainer? Dan heb je geen SSH en geen installatiescript nodig:
+
+1. Open in Portainer **Stacks → Add stack**, geef hem de naam `pinn` en kies **Web editor**.
+2. Plak de inhoud van [`docker/docker-compose.portainer.yaml`](docker/docker-compose.portainer.yaml).
+3. Optioneel: wijzig onder **Environment variables** de poort (`PINN_PORT`, standaard 8090) of leg een versie vast (`PINN_IMAGE_TAG`, bijv. `1.151.0`). Klik op **Deploy the stack**.
+4. Open `http://<NAS-IP>:8090` → **Inloggen als hoofdbeheerder** → de installatieassistent, zoals bij stap 4–6 hierboven.
+
+De image komt kant-en-klaar van `ghcr.io/pinn-shost/pinn` (amd64 en arm64). De gegevens staan in volumes, mappen zijn niet nodig. De stack gebruikt geen vaste containernamen en botst dus niet met containers die je al hebt. Draait Tailscale al op je NAS, verwijder dan het blok `tailscale`; bij een eigen HTTPS-adres of reverse proxy ook `caddy` en `duckdns`.
+
+**Bijwerken:** Stack → Editor → *Update the stack* met *Re-pull image and redeploy* aan. **Back-ups:** Portainer maakt zelf geen back-up van je volumes – kopieer de volumes `data` en `konfig` regelmatig (bijv. NAS-snapshot of een volume-back-uptool). In de app toont “Back-ups & updates” een melding in plaats van knoppen. Niet inbegrepen: Traccar (gps-trackers met simkaart) en de omleiding naar Home Assistant – telefoons hebben geen van beide nodig.
 
 ## Privacy
 

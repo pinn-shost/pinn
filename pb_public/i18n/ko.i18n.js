@@ -4297,6 +4297,8 @@ window.PINN_I18N && window.PINN_I18N.keys("ko", {
   "maint.err.unpack": "백업을 풀 수 없었어요. 아무것도 변경되지 않았어요.",
   "maint.githubDown": "지금은 GitHub에 연결할 수 없어요. 나중에 다시 시도해 주세요.",
   "maint.installNow": "지금 설치",
+  "maint.imageMode": "pinn.는 완성된 이미지(Portainer 스택)로 실행 중입니다. 업데이트: Portainer에서 스택 열기 → 편집기 → “스택 업데이트”에서 “이미지 다시 가져오기 및 재배포”를 켭니다. 백업: 스택의 볼륨을 백업하세요. GitHub의 안내서를 참고하세요.",
+  "maint.imageShort": "완성된 이미지로 실행 중 – 업데이트와 백업은 Portainer에서 합니다.",
   "maint.installVersion": "버전 {version} 설치",
   "maint.issue.device": "기기 / 브라우저",
   "maint.issue.expected": "어떻게 되어야 했나요?",

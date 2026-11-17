@@ -133,6 +133,13 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski、🇺🇦 Українська** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.151.0の新機能
+
+**Portainer スタックと出来合いのイメージ**
+
+- 新機能：SSH もセットアップスクリプトも使わず、Portainer のスタック画面から pinn. をインストールできます。リリースごとに出来合いのイメージ（amd64、arm64）が作られ、`ghcr.io/pinn-shost/pinn` に公開されます。新しいファイル `docker/docker-compose.portainer.yaml` はこれをボリュームと固定名なしのコンテナで利用します（既存の Tailscale コンテナと衝突しません）。イメージとして動作中は、アプリの「バックアップと更新」が Portainer を案内します。インストールの「Portainer スタック（スクリプト不要）」を参照してください。
+- 変更: `docker/` (new), `.github/workflows/image.yml` (new), `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
+
 ## 1.150.11の新機能
 
 **アイコンと小さな修正**
@@ -221,18 +228,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - **すぐに表示。** 自分で選ぶまでは、タイルに標準のセット（水分補給、買い物、タスク、予定、今日の料理、メモ、支出、掃除プラン）が表示されます。アプリが一つも選ばれていないときは、消える代わりに「アプリを選ぶ」を表示します。
 - 変更: `js/kurzbefehle.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README.
 
-## 1.150.0の新機能
-
-**お住まいの地域の時刻で · 概要にショートカットを追加 · ショートカットのクイックウィンドウ**
-
-- **正しい時刻にリマインダー。** pinn. はリマインダーを端末のタイムゾーンで計算するようになりました（地域の夏時間・冬時間を含む）。設定は不要です。端末が自動でサーバーにタイムゾーンを伝え、引っ越しや旅行の後も対応します。
-- **まずは健康のリマインダーから。** 服薬・水分補給・手洗いのリマインダーは、各自の時計に従います。今後のリマインダーもすべて同じ時計を使います。以前のリマインダー（誕生日、ペット、持ち物リスト、買い置き、契約、書類、週間プレビュー）はまだ中央ヨーロッパ時間で、順次対応します。
-- **ショートカットのタイル。** 概要に新しいタイルが加わり、アプリのようなアイコンから機能を直接開けます：水分補給、手洗い（タップごとに+1）、服薬、買い物、新規タスク、新規予定、メモ、チャット、掃除、植物、ペット、買い置き、支出の記録、収入の記録、家計、SOS、移動中。
-- **お好みで選択。** 設定 → 概要 → ショートカット：使いたいアプリをオンにします。プロフィールごとに有効で、アプリを選ばないとタイルは非表示です。ゲストには健康・SOS・家計のアプリは表示されません。
-- **長押し。** ショートカットを長押し（パソコンでは右クリック）すると、その機能用の小さなウィンドウが開きます：水分補給（飲み物・量・10分間の取り消し）、手洗い（＋/−）、服薬、買い物、タスク、掃除、予定、料理、メモ、ペット、買い置き、支出と収入、SOS、移動中。短いタップは従来どおりです。
-- **開いたまま。** 操作後もウィンドウは開いたままなので続けて操作できます。「開く」で完全な機能に進みます。
-- 変更: `pb_hooks/pinn-zeit.js`, `pb_hooks/zeit.pb.js`, `js/zeit.js`, `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `pb_hooks/pinn-gesundheit.js`, `js/appstart.js`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/ansichten.js`, `js/design.js`, `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, README (+ 1.149.1).
-
 ## しくみ
 
 ```mermaid
@@ -261,7 +256,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.150.11`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.151.0`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -280,6 +275,19 @@ flowchart LR
 **バックアップ**は毎晩`./backups`に作成され、14日間保存されます。
 
 <a id="privacy"></a>
+
+### Portainer スタック（スクリプト不要）
+
+Portainer のほうがお好みですか？ SSH もセットアップスクリプトも不要です。
+
+1. Portainer で **Stacks → Add stack** を開き、名前を `pinn` にして **Web editor** を選びます。
+2. [`docker/docker-compose.portainer.yaml`](docker/docker-compose.portainer.yaml) の内容を貼り付けます。
+3. 任意：**Environment variables** でポート（`PINN_PORT`、既定は 8090）を変更するか、バージョンを固定します（`PINN_IMAGE_TAG`、例：`1.151.0`）。**Deploy the stack** をクリックします。
+4. `http://<NASのIP>:8090` を開き、**メイン管理者としてログイン** → 設定アシスタントへ（上の手順 4～6 と同じ）。
+
+イメージは `ghcr.io/pinn-shost/pinn`（amd64 と arm64）から出来合いで提供されます。データはボリュームに保存されるのでフォルダは不要です。スタックは固定のコンテナ名を使わないため、既存のコンテナと衝突しません。NAS で Tailscale がすでに動いている場合は `tailscale` ブロックを削除し、独自の HTTPS アドレスやリバースプロキシを使う場合は `caddy` と `duckdns` も削除してください。
+
+**更新：** Stack → Editor → *Update the stack* で *Re-pull image and redeploy* をオンにします。**バックアップ：** Portainer はボリュームを自動ではバックアップしません。ボリューム `data` と `konfig` を定期的にコピーしてください（NAS のスナップショットやボリュームバックアップツールなど）。アプリの「バックアップと更新」にはボタンの代わりに案内が表示されます。このスタックに含まれないもの：Traccar（SIM 付き GPS トラッカー）と Home Assistant への迂回。スマートフォンには不要です。
 
 ## プライバシー
 

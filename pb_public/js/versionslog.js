@@ -22,6 +22,16 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.151', datum: '17.11.2026', titel: 'Portainer-Stack mit fertigem Image',
+    punkte: [
+      ['neu', 'pinn. lässt sich jetzt ohne SSH und ohne Setup-Skript über die Portainer-Stack-Oberfläche installieren: Stacks → Add stack → Web editor → Inhalt von docker/docker-compose.portainer.yaml einfügen → Deploy. Danach wie gewohnt http://<NAS-IP>:8090 öffnen und den Einrichtungsassistenten durchgehen.'],
+      ['neu', 'Bei jedem Release baut GitHub ein fertiges Image (amd64 und arm64) und veröffentlicht es unter ghcr.io/pinn-shost/pinn – mit Volumes statt Ordnern und ohne feste Container-Namen. Damit gibt es keinen Konflikt mehr mit einem schon vorhandenen Tailscale-Container; läuft Tailscale schon auf dem NAS, wird der Block „tailscale“ im Stack einfach gelöscht.'],
+      ['info', 'Update im Stack: Stacks → dein Stack → Editor → „Update the stack“ mit eingeschaltetem „Re-pull image and redeploy“. Sicherungen: die Volumes „data“ und „konfig“ regelmäßig kopieren. Enthalten sind pinn., Caddy/DuckDNS (HTTPS) und Tailscale; nicht enthalten sind Traccar und der Umweg zu Home Assistant.'],
+      ['info', '1.151.0 Läuft pinn. als Image, zeigt „Sicherungen & Updates“ einen Hinweis auf Portainer statt „Container wartung läuft nicht“.'],
+      ['info', '1.151.0 geändert: docker/ (neu: Dockerfile, entrypoint.sh, fetch-libs.sh, docker-compose.portainer.yaml), .github/workflows/image.yml (neu), pb_hooks/pinn-system.js, js/sicherungen.js, js/sprachen.js, js/versionslog.js, i18n/ (de, en, fr, es, it, pt, zh, ja, ko, nl, ru, tr, pl, uk, versionslog.en.js), src/ (Version), index.html, alle READMEs. Kein Eingriff in bestehende Installationen.'],
+    ],
+  },
+  {
     v: '1.150', datum: '13.11.2026', titel: 'Zeiten in deiner Region, Shortcuts mit Schnellfenstern',
     punkte: [
       ['neu', 'Erinnerungen zur richtigen Uhrzeit: pinn. rechnet die Erinnerungen jetzt in der Zeitzone deines Geräts – mit der Sommer- und Winterzeit deiner Region. Du musst nichts einstellen: Dein Gerät meldet dem Server still seine Zeitzone, auch nach einem Umzug oder auf Reisen. Gilt jetzt für die Erinnerungen der Gesundheitsseite (Medikamente & Vitamine, Trinken, Hände waschen): Jede Person bekommt sie nach ihrer eigenen Uhr. Alle künftigen Erinnerungen nutzen dieselbe Uhr.'],

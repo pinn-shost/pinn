@@ -163,6 +163,9 @@ function wartung() {
     const arbeitet = !!(j && (j.zustand === "laeuft" || j.zustand === "wartet"));
     const aktiv = eingerichtet && ((zeit > 0 && nowSec() - zeit < LEBT_MAX) || arbeitet);
     return {
+        // Since 1.151.0: pinn. runs as a ready-made image (Portainer stack) – there is no "wartung" container; updates and
+        // backups are done in Portainer. The app then shows a note instead of "wartung is not running".
+        image: env("PINN_BETRIEB") === "image",
         eingerichtet,
         aktiv,
         docker: aktiv && l.docker === true,

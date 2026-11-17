@@ -133,6 +133,13 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski和 🇺🇦 Українська**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.151.0 新功能
+
+**Portainer 堆栈，现成镜像**
+
+- 新功能：无需 SSH 和安装脚本，即可通过 Portainer 堆栈界面安装 pinn.。每次发布都会构建现成的镜像（amd64、arm64）并发布到 `ghcr.io/pinn-shost/pinn`；新文件 `docker/docker-compose.portainer.yaml` 使用该镜像，采用卷且不使用固定容器名（不再与已有的 Tailscale 容器冲突）。以镜像方式运行时，应用中的“备份与更新”会指向 Portainer。见安装部分的“Portainer 堆栈（无需脚本）”。
+- 已更改: `docker/` (new), `.github/workflows/image.yml` (new), `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
+
 ## 1.150.11 新功能
 
 **图标与小修复**
@@ -221,18 +228,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 - **立即可见。** 在您自行选择之前，卡片显示一组默认应用（喝水、购物、任务、日程、今天做饭、便签、支出、清洁计划）。未选择任何应用时，卡片会提供“选择应用”，而不是消失。
 - 已更改: `js/kurzbefehle.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README.
 
-## 1.150.0 新功能
-
-**按您所在地区的时间 · 概览上的快捷方式 · 快捷方式的快速窗口**
-
-- **提醒准时送达。** pinn. 现在按设备所在时区计算提醒，包含当地的夏令时和冬令时。无需任何设置——设备会悄悄把时区告知服务器，搬家或旅行后也一样。
-- **先从健康提醒开始。** 用药、喝水和洗手提醒已按每个人自己的时间运行；今后所有提醒都使用同一时钟。较早的提醒（生日、宠物、行李清单、库存、合同、文档、每周预览）仍按中欧时间，之后会跟进。
-- **“快捷方式”卡片。** 概览上的新卡片显示类似应用的图标，可直接打开某项功能：喝水、洗手（每点一次 +1）、用药、购物、新任务、新日程、便签、聊天、清洁、植物、宠物、库存、记支出、记收入、财务、SOS 和在路上。
-- **由您选择。** 设置 → 概览 → 快捷方式：打开需要的应用。按个人资料生效；未选择任何应用时卡片保持隐藏。访客看不到健康、SOS 和财务应用。
-- **长按。** 长按某个快捷方式（电脑上右键）会打开该功能的小窗口：喝水（饮品、用量、10 分钟内可撤销）、洗手（+/−）、用药、购物、任务、清洁、日程、做饭、便签、宠物、库存、支出与收入、SOS 和在路上。短按和以前一样。
-- **保持打开。** 操作后窗口保持打开，可以连续做多件事；“打开”进入完整功能。
-- 已更改: `pb_hooks/pinn-zeit.js`, `pb_hooks/zeit.pb.js`, `js/zeit.js`, `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `pb_hooks/pinn-gesundheit.js`, `js/appstart.js`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/ansichten.js`, `js/design.js`, `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, README (+ 1.149.1).
-
 ## 工作原理
 
 ```mermaid
@@ -261,7 +256,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.150.11` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.151.0` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -280,6 +275,19 @@ flowchart LR
 **备份**每晚运行并保存到 `./backups`，保留 14 天。
 
 <a id="privacy"></a>
+
+### Portainer 堆栈（无需脚本）
+
+更喜欢 Portainer？那么既不需要 SSH，也不需要安装脚本：
+
+1. 在 Portainer 中打开 **Stacks → Add stack**，命名为 `pinn`，选择 **Web editor**。
+2. 粘贴 [`docker/docker-compose.portainer.yaml`](docker/docker-compose.portainer.yaml) 的内容。
+3. 可选：在 **Environment variables** 中修改端口（`PINN_PORT`，默认 8090）或固定版本（`PINN_IMAGE_TAG`，例如 `1.151.0`）。点击 **Deploy the stack**。
+4. 打开 `http://<NAS-IP>:8090` → **以主管理员身份登录** → 进入设置向导，同上面的第 4–6 步。
+
+镜像由 `ghcr.io/pinn-shost/pinn` 现成提供（amd64 和 arm64）。数据保存在卷中，无需文件夹。堆栈不使用固定的容器名称，因此不会与你已有的容器冲突。如果 NAS 上已有 Tailscale，请删除 `tailscale` 块；如果使用自己的 HTTPS 地址或反向代理，也请删除 `caddy` 和 `duckdns`。
+
+**更新：** Stack → Editor → *Update the stack*，并打开 *Re-pull image and redeploy*。**备份：** Portainer 不会自动备份你的卷——请定期复制卷 `data` 和 `konfig`（例如 NAS 快照或卷备份工具）。应用中的“备份与更新”会显示提示而不是按钮。此堆栈不包含：Traccar（带 SIM 卡的 GPS 追踪器）和通往 Home Assistant 的绕行——手机不需要它们。
 
 ## 隐私
 

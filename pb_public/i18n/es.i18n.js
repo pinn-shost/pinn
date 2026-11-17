@@ -4295,6 +4295,8 @@ window.PINN_I18N && window.PINN_I18N.keys("es", {
   "maint.err.unpack": "No se pudo descomprimir la copia – no se ha cambiado nada.",
   "maint.githubDown": "GitHub no está disponible ahora – inténtalo más tarde.",
   "maint.installNow": "Instalar ahora",
+  "maint.imageMode": "pinn. se ejecuta como imagen ya preparada (stack de Portainer). Actualizaciones: abre tu stack en Portainer → Editor → «Actualizar el stack» con «Volver a descargar la imagen y redesplegar» activado. Copias de seguridad: guarda los volúmenes del stack; consulta la guía en GitHub.",
+  "maint.imageShort": "Se ejecuta como imagen ya preparada: actualiza y haz copias en Portainer.",
   "maint.installVersion": "Instalar la versión {version}",
   "maint.issue.device": "Dispositivo / navegador",
   "maint.issue.expected": "¿Qué debería haber pasado?",

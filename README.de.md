@@ -133,6 +133,13 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski und 🇺🇦 Українська**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.151.0
+
+**Portainer-Stack, fertiges Image**
+
+- Neu: pinn. lässt sich ohne SSH und ohne Setup-Skript über die Portainer-Stack-Oberfläche installieren. Bei jedem Release wird ein fertiges Image (amd64, arm64) gebaut und unter `ghcr.io/pinn-shost/pinn` veröffentlicht; die neue Datei `docker/docker-compose.portainer.yaml` nutzt es mit Volumes und ohne feste Container-Namen (kein Konflikt mehr mit einem vorhandenen Tailscale-Container). In der App verweist „Sicherungen & Updates“ auf Portainer, wenn pinn. als Image läuft. Siehe „Portainer-Stack (ohne Skript)“ unter Installation.
+- Geändert: `docker/` (new), `.github/workflows/image.yml` (new), `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
+
 ## Neu in 1.150.11
 
 **Symbole und Kleinigkeiten**
@@ -233,14 +240,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Bleibt offen.** Das Fenster bleibt nach einer Aktion offen, mehrere Dinge nacheinander sind möglich; „Öffnen“ führt zur vollständigen Funktion.
 - Geändert: `pb_hooks/pinn-zeit.js`, `pb_hooks/zeit.pb.js`, `js/zeit.js`, `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `pb_hooks/pinn-gesundheit.js`, `js/appstart.js`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/ansichten.js`, `js/design.js`, `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, README (+ 1.149.1).
 
-## Neu in 1.149.1
-
-**Push-Erinnerungen**
-
-- **Erinnerungen für Gesundheit.** Auf der Gesundheitsseite lässt sich je Baustein eine Push-Erinnerung einschalten: Medikamente & Vitamine zu ihren Uhrzeiten, Trinken im Abstand zwischen zwei Uhrzeiten (mit der noch fehlenden Menge), Hände waschen zu festen Uhrzeiten.
-- **Nur für die Person selbst.** Die Erinnerungen gehen an die Geräte dieser Person; an andere Familienmitglieder wird nichts geschickt. Tippen auf die Meldung öffnet die Gesundheitsseite – beim Trinken gleich das Trink-Popup.
-- Geändert: `pb_hooks/pinn-gesundheit.js`, `pb_hooks/gesundheit.pb.js`, `js/gesundheit.js`, `css/gesundheit.css`, `js/hinweise.js`, `js/fortsetzen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, alle READMEs. Enthält 1.149.0.
-
 ## So funktioniert’s
 
 ```mermaid
@@ -269,7 +268,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.150.11` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.151.0` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -288,6 +287,19 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 **Sicherungen** laufen jede Nacht in `./backups` und werden 14 Tage aufbewahrt.
 
 <a id="privacy"></a>
+
+### Portainer-Stack (ohne Skript)
+
+Lieber Portainer? Dann brauchst du weder SSH noch das Setup-Skript:
+
+1. In Portainer **Stacks → Add stack** öffnen, Namen `pinn` vergeben und **Web editor** wählen.
+2. Den Inhalt von [`docker/docker-compose.portainer.yaml`](docker/docker-compose.portainer.yaml) einfügen.
+3. Optional unter **Environment variables** den Port (`PINN_PORT`, Standard 8090) ändern oder eine Version festlegen (`PINN_IMAGE_TAG`, z. B. `1.151.0`). Dann **Deploy the stack**.
+4. `http://<NAS-IP>:8090` öffnen → **Als Hauptadmin anmelden** → der Einrichtungsassistent, wie in Schritt 4–6 oben.
+
+Das Image kommt fertig von `ghcr.io/pinn-shost/pinn` (amd64 und arm64). Die Daten liegen in Volumes, Ordner sind nicht nötig. Der Stack vergibt keine festen Container-Namen und kollidiert deshalb nicht mit vorhandenen Containern. Läuft Tailscale schon auf dem NAS, den Block `tailscale` löschen; bei eigener HTTPS-Adresse oder eigenem Reverse Proxy auch `caddy` und `duckdns`.
+
+**Update:** Stack → Editor → *Update the stack* mit eingeschaltetem *Re-pull image and redeploy*. **Sicherungen:** Portainer sichert deine Volumes nicht von selbst – kopiere die Volumes `data` und `konfig` regelmäßig (z. B. NAS-Snapshot oder ein Volume-Backup-Werkzeug). In der App zeigt „Sicherungen & Updates“ einen Hinweis statt der Knöpfe. Nicht im Stack enthalten: Traccar (GPS-Tracker mit SIM-Karte) und der Umweg zu Home Assistant – Handys brauchen beides nicht.
 
 ## Datenschutz
 
