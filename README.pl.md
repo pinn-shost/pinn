@@ -110,12 +110,19 @@ Dotknij obrazu, aby otworzyć go w pełnym rozmiarze.
 
 pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski i 🇺🇦 Українська**; dostosowuje walutę i numery alarmowe do twojego regionu i przełącza się między określeniami **rodzina** i **wspólne mieszkanie**. Jeden serwer może obsługiwać wiele rodzin, każdą z własnymi administratorami.
 
+## Nowości w 1.152.0
+
+**Własny reverse proxy zamiast Tailscale**
+
+- Nowość: dostęp z internetu przez własny reverse proxy (Nginx Proxy Manager, Traefik, Cloudflare Tunnel …) – zobacz „Dostęp z internetu przez własny reverse proxy” w Instalacji. pinn. wierzy adresowi odwiedzającego tylko od zaufanych proxy (`PINN_PROXY_NETZE`), więc blokady po błędnych hasłach nie da się obejść (IPv6: na /64). Z internetu panel PocketBase i jego własne sposoby logowania są zablokowane, hasło startowe `Admin` nie działa, a zgadywanie ID lokalizatorów jest spowalniane. Przy takich próbach administratorzy dostają powiadomienie „🚨 Ostrzeżenie bezpieczeństwa” (adres, sieć domowa lub internet, urządzenie); wszystkie szczegóły są w dzienniku błędów w części „Bezpieczeństwo”. W sieci domowej nic się nie zmienia.
+- Zmienione: `pb_hooks/pinn-netz.js` (new), `pb_hooks/netz.pb.js` (new), `pb_hooks/pinn-alarm.js` (new), `pb_hooks/pinn-sitzungen.js`, `pb_hooks/benutzer.pb.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/zuhause.pb.js`, `pb_hooks/sprache.pb.js`, `pb_hooks/smarthome.pb.js`, `pb_hooks/pinn-ortung.js`, `pb_hooks/pinn-protokoll.js`, `pb_hooks/pinn-pushtext.js`, `js/anmeldemaske.js`, `js/fehlerprotokoll.js`, `js/hinweise.js`, `js/appstart.js`, `i18n/`, `docker/docker-compose.portainer.yaml`, `env.txt`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
+
 ## Nowości w 1.151.0
 
 **Stos Portainera, gotowy obraz**
 
-- Nowość: pinn. można zainstalować z interfejsu stosów Portainera, bez SSH i bez skryptu instalacyjnego. Przy każdym wydaniu powstaje gotowy obraz (amd64, arm64) publikowany w `ghcr.io/pinn-shost/pinn`; nowy plik `docker/docker-compose.portainer.yaml` używa go z woluminami i bez stałych nazw kontenerów (koniec kolizji z istniejącym kontenerem Tailscale). W aplikacji „Kopie i aktualizacje” odsyła do Portainera, gdy pinn. działa jako obraz. Zobacz „Stos Portainera (bez skryptu)” w Instalacji.
-- Zmieniono: `docker/` (new), `.github/workflows/image.yml` (new), `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
+- Nowość: pinn. można zainstalować z interfejsu stosów Portainera, bez SSH i bez skryptu instalacyjnego. Przy każdym wydaniu powstaje gotowy obraz (amd64, arm64) publikowany w `ghcr.io/pinn-shost/pinn`; nowy plik `docker/docker-compose.portainer.yaml` używa go z woluminami i bez stałych nazw kontenerów (koniec kolizji z istniejącym kontenerem Tailscale). Stos zawiera też usługę kopii zapasowych (kopia nocna, „Zrób kopię teraz” i „Przywróć” w aplikacji; aktualizacje zostają w Portainerze) oraz opcjonalne, zakomentowane bloki dla Traccara i objazdu do Home Assistanta. Zobacz „Stos Portainera (bez skryptu)” w Instalacji.
+- Zmieniono: `docker/` (new), `.github/workflows/image.yml` (new), `pinn-wartung.sh`, `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
 
 ## Nowości w 1.150.11
 
@@ -160,15 +167,6 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 - **Face ID.** pinn. znów samo prosi o Face ID przy otwarciu, jak przed 1.150.5. iOS zawsze najpierw pokazuje własne okno „Użyj klucza dostępu” – jedno stuknięcie w nie, potem Face ID; aplikacja webowa nie może go pominąć, a dodatkowy przycisk oznaczał tylko drugie stuknięcie. Duży przycisk na dole zostaje, na wypadek gdybyś zamknął okno.
 - Zmienione: `js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
 
-## Nowości w 1.150.5
-
-**Nowy baner zdrowia · picie uporządkowane**
-
-- **Baner zdrowia.** Strona zdrowia i strona każdej osoby znów mają baner: woda, która podnosi się z tym, co wypito, bąbelki, linia tętna i unoszące się przedmioty – nocą gwiazdy.
-- **Picie.** Cel, dzisiejsze napoje i przypomnienie są teraz w rozwijanej sekcji „Ustawienia” pod przyciskiem.
-- **Face ID.** Odblokowanie startuje tylko przyciskiem (bez okna „Użyj klucza dostępu”); przycisk jest na dole, w zasięgu kciuka.
-- Zmienione: `js/gesundheit.js`, `css/gesundheit.css`, `js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
-
 ## Wymagania
 
 - NAS lub mini PC z zainstalowanym **Dockerem** i **Docker Compose** (np. Synology, UGREEN, QNAP albo zwykły serwer z Linuksem)
@@ -178,7 +176,7 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 ## Instalacja
 
 1. Pobierz i rozpakuj plik ZIP [najnowszej wersji](https://github.com/pinn-shost/pinn/releases/latest).
-2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.151.0` lub `pinn-main`) bez zmian.
+2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.152.0` lub `pinn-main`) bez zmian.
 3. Połącz się przez SSH i uruchom:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -202,7 +200,22 @@ Wolisz Portainera? Wtedy nie potrzebujesz ani SSH, ani skryptu instalacyjnego:
 
 Obraz jest gotowy w `ghcr.io/pinn-shost/pinn` (amd64 i arm64). Dane leżą w woluminach, foldery nie są potrzebne. Stos nie używa stałych nazw kontenerów, więc nie koliduje z kontenerami, które już masz. Jeśli Tailscale działa już na Twoim NAS-ie, usuń blok `tailscale`; przy własnym adresie HTTPS lub reverse proxy usuń też `caddy` i `duckdns`.
 
-**Aktualizacja:** Stack → Editor → *Update the stack* z włączonym *Re-pull image and redeploy*. **Kopie zapasowe:** Portainer sam nie tworzy kopii woluminów – regularnie kopiuj woluminy `data` i `konfig` (np. migawka NAS lub narzędzie do kopii woluminów). W aplikacji „Kopie i aktualizacje” pokazuje wskazówkę zamiast przycisków. Nie ma w stosie: Traccara (lokalizatory GPS z kartą SIM) i objazdu do Home Assistanta – telefony nie potrzebują żadnego z nich.
+**Aktualizacja:** Stack → Editor → *Update the stack* z włączonym *Re-pull image and redeploy*. **Kopie zapasowe:** blok `wartung` stosu robi kopię co noc (zachowywane 7 dni + 4 tygodnie) i stoi za przyciskami „Zrób kopię teraz” i „Przywróć” w pinn. → Ustawienia → System. Kopie trafiają do woluminu `backups` – albo do folderu na NAS, jeśli ustawisz `PINN_BACKUP_DIR` (np. `/volume1/docker/pinn-backups`). Do przywracania potrzebuje dostępu do Dockera, by na chwilę zatrzymać pinn.; jeśli kopiujesz woluminy sam, usuń ten blok. Aktualizacje robisz w Portainerze, nie przyciskiem. Opcjonalnie, zakomentowane na końcu pliku (usuń `#`, aby włączyć): Traccar (lokalizatory GPS z kartą SIM) i objazd do Home Assistanta – telefony nie potrzebują żadnego z nich.
+
+### Dostęp z internetu przez własny reverse proxy
+
+Twoja rodzina nie chce używać Tailscale? Wtedy postaw pinn. za reverse proxy: przyjmuje on zapytania z internetu, zapewnia HTTPS dla Twojej domeny i przekazuje je do pinn.
+
+1. Skieruj proxy na `http://<NAS-IP>:8090` (stos Portainera: port `PINN_PORT`). Aktualizacje na żywo idą zwykłym HTTP – websockety nie są potrzebne, wystarczy nie włączać buforowania odpowiedzi. Zezwól na przesyłanie do 70 MB (filmy z czatu).
+   - **Nginx Proxy Manager:** *Hosts → Proxy Hosts → Add*: Twoja domena, schemat `http`, IP NAS, port `8090`; karta *SSL*: nowy certyfikat, *Force SSL* włączone.
+   - **Cloudflare Tunnel:** bez przekierowania portów – *Public hostname* → usługa `http://<NAS-IP>:8090`.
+   - **Traefik, Caddy i inne:** router/strona dla Twojej domeny przekazująca do `http://<NAS-IP>:8090`.
+2. Na każdym telefonie otwórz `https://<domain>`, zaloguj się, ponownie dodaj do ekranu głównego i znów włącz powiadomienia (aplikacja należy do swojego adresu).
+3. Kalendarze Google (opcjonalnie): dodaj `https://<domain>/api/pinn/google/callback` jako autoryzowany URI przekierowania w konsoli Google Cloud.
+
+Co pinn. robi sam: wierzy adresowi odwiedzającego przekazanemu przez proxy (`X-Forwarded-For`) tylko wtedy, gdy zapytanie przychodzi z sieci domowej, sieci Dockera lub Tailscale – dzięki temu blokady po błędnych hasłach nie da się obejść. Z internetu panel PocketBase (`/_/`) jest zablokowany, a hasło startowe `Admin` nie działa. Twój proxy stoi gdzie indziej (wynajęty serwer albo pomarańczowa chmura Cloudflare przed Twoim proxy)? Ustaw wtedy `PINN_PROXY_NETZE` (w `.env` lub zmiennych środowiskowych stosu), np. `privat, cloudflare` albo `privat, 203.0.113.5`.
+
+**Ważne:** pinn. jest wtedy dostępny dla całego internetu. Daj każdemu profilowi długie, własne hasło, aktualizuj proxy i nigdy nie otwieraj portu 8090 bezpośrednio w routerze – zawsze przez proxy z HTTPS.
 
 ## Prywatność
 

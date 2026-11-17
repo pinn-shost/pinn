@@ -35,6 +35,9 @@ routerAdd("GET", "/api/pinn/smart/automatik", (e) => {
         const token = e.request.url.query().get("token") || "";
         return e.json(200, require(`${__hooks}/pinn-smarthome.js`).automatik(token));
     } catch (err) {
+        if (/^Unbekannter/.test(String(err.message || ""))) {
+            try { require(`${__hooks}/pinn-alarm.js`).zaehleUndMelde(e, "schluessel", 20, 15 * 60 * 1000); } catch (err2) { /* ignore */ }
+        }
         return e.json(403, { aktionen: [], anzahl: 0, error: err.message });
     }
 });

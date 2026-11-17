@@ -133,12 +133,19 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski、🇺🇦 Українська** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.152.0の新機能
+
+**Tailscale の代わりに自分のリバースプロキシ**
+
+- 新機能：自分のリバースプロキシ（Nginx Proxy Manager、Traefik、Cloudflare Tunnel など）でインターネットからアクセスできます。インストールの「自分のリバースプロキシでインターネットからアクセス」を参照してください。pinn. は信頼できるプロキシ（`PINN_PROXY_NETZE`）からの訪問者アドレスだけを信用するため、パスワード誤り後のロックを回避できません（IPv6 は /64 単位）。インターネットからは PocketBase の管理画面と独自のサインイン方法がブロックされ、初期パスワード `Admin` は使えず、トラッカー ID の推測は減速されます。こうした試行があると、管理者に「🚨 セキュリティ警告」のプッシュ通知（アドレス、自宅ネットワークかインターネットか、デバイス）が届き、詳細はエラーログの「セキュリティ」にあります。自宅ネットワークでは何も変わりません。
+- 変更: `pb_hooks/pinn-netz.js` (new), `pb_hooks/netz.pb.js` (new), `pb_hooks/pinn-alarm.js` (new), `pb_hooks/pinn-sitzungen.js`, `pb_hooks/benutzer.pb.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/zuhause.pb.js`, `pb_hooks/sprache.pb.js`, `pb_hooks/smarthome.pb.js`, `pb_hooks/pinn-ortung.js`, `pb_hooks/pinn-protokoll.js`, `pb_hooks/pinn-pushtext.js`, `js/anmeldemaske.js`, `js/fehlerprotokoll.js`, `js/hinweise.js`, `js/appstart.js`, `i18n/`, `docker/docker-compose.portainer.yaml`, `env.txt`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
+
 ## 1.151.0の新機能
 
 **Portainer スタックと出来合いのイメージ**
 
-- 新機能：SSH もセットアップスクリプトも使わず、Portainer のスタック画面から pinn. をインストールできます。リリースごとに出来合いのイメージ（amd64、arm64）が作られ、`ghcr.io/pinn-shost/pinn` に公開されます。新しいファイル `docker/docker-compose.portainer.yaml` はこれをボリュームと固定名なしのコンテナで利用します（既存の Tailscale コンテナと衝突しません）。イメージとして動作中は、アプリの「バックアップと更新」が Portainer を案内します。インストールの「Portainer スタック（スクリプト不要）」を参照してください。
-- 変更: `docker/` (new), `.github/workflows/image.yml` (new), `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
+- 新機能：SSH もセットアップスクリプトも使わず、Portainer のスタック画面から pinn. をインストールできます。リリースごとに出来合いのイメージ（amd64、arm64）が作られ、`ghcr.io/pinn-shost/pinn` に公開されます。新しいファイル `docker/docker-compose.portainer.yaml` はこれをボリュームと固定名なしのコンテナで利用します（既存の Tailscale コンテナと衝突しません）。スタックにはバックアップサービス（毎晩のバックアップ、アプリの「今すぐバックアップ」「復元」。アップデートは引き続き Portainer）と、コメントアウトされた任意ブロック（Traccar、Home Assistant への迂回）も含まれます。インストールの「Portainer スタック（スクリプト不要）」を参照してください。
+- 変更: `docker/` (new), `.github/workflows/image.yml` (new), `pinn-wartung.sh`, `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
 
 ## 1.150.11の新機能
 
@@ -219,15 +226,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - **1行または複数行。** 「設定 → ショートカット」で、スマートフォンとタブレット・パソコンそれぞれに選べます：1行（横にスワイプして残りを表示）または複数行（すべてのショートカットを下へ並べる）。
 - 変更: `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/design.js`, `js/ansichten.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.1).
 
-## 1.150.1の新機能
-
-**ショートカットが独立したメニュー項目に**
-
-- **独立した項目。** アプリの選択は「設定 → ショートカット」に移りました。以前は「ショートカット」を開くと「概要」の設定が閉じ、ページをスクロールできなくなっていました。
-- **「概要」でオン/オフ。** ショートカットのタイルは他のタイルと同じようにオン/オフできます。「アプリを選ぶ」から直接選択画面へ移動します。
-- **すぐに表示。** 自分で選ぶまでは、タイルに標準のセット（水分補給、買い物、タスク、予定、今日の料理、メモ、支出、掃除プラン）が表示されます。アプリが一つも選ばれていないときは、消える代わりに「アプリを選ぶ」を表示します。
-- 変更: `js/kurzbefehle.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README.
-
 ## しくみ
 
 ```mermaid
@@ -256,7 +254,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.151.0`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.152.0`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -287,7 +285,22 @@ Portainer のほうがお好みですか？ SSH もセットアップスクリ�
 
 イメージは `ghcr.io/pinn-shost/pinn`（amd64 と arm64）から出来合いで提供されます。データはボリュームに保存されるのでフォルダは不要です。スタックは固定のコンテナ名を使わないため、既存のコンテナと衝突しません。NAS で Tailscale がすでに動いている場合は `tailscale` ブロックを削除し、独自の HTTPS アドレスやリバースプロキシを使う場合は `caddy` と `duckdns` も削除してください。
 
-**更新：** Stack → Editor → *Update the stack* で *Re-pull image and redeploy* をオンにします。**バックアップ：** Portainer はボリュームを自動ではバックアップしません。ボリューム `data` と `konfig` を定期的にコピーしてください（NAS のスナップショットやボリュームバックアップツールなど）。アプリの「バックアップと更新」にはボタンの代わりに案内が表示されます。このスタックに含まれないもの：Traccar（SIM 付き GPS トラッカー）と Home Assistant への迂回。スマートフォンには不要です。
+**更新：** Stack → Editor → *Update the stack* で *Re-pull image and redeploy* をオンにします。**バックアップ：** スタックの `wartung` ブロックが毎晩バックアップを作成し（7 日分 + 4 週分を保持）、pinn. →設定→システムの「今すぐバックアップ」「復元」ボタンの裏側で動きます。バックアップはボリューム `backups` に保存されます（`PINN_BACKUP_DIR` を設定すると NAS のフォルダ、例：`/volume1/docker/pinn-backups`）。復元時に pinn. を一時停止するため Docker へのアクセスが必要です。ボリュームを自分でバックアップする場合はこのブロックを削除してください。アップデートはボタンではなく Portainer で行います。任意（ファイル末尾にコメントアウト、`#` を外すと有効）：Traccar（SIM 付き GPS トラッカー）と Home Assistant への迂回。スマートフォンには不要です。
+
+### 自分のリバースプロキシでインターネットからアクセス
+
+家族が Tailscale を使いたくない場合は、pinn. をリバースプロキシの後ろに置きます。プロキシがインターネットからのリクエストを受け取り、自分のドメインで HTTPS を提供し、pinn. へ転送します。
+
+1. プロキシの転送先を `http://<NAS-IP>:8090` にします（Portainer スタックではポート `PINN_PORT`）。ライブ更新は通常の HTTP を使うため websocket は不要です。レスポンスのバッファリングだけはオンにしないでください。最大 70 MB のアップロードを許可します（チャットの動画）。
+   - **Nginx Proxy Manager：** *Hosts → Proxy Hosts → Add*：自分のドメイン、スキーム `http`、NAS の IP、ポート `8090`。*SSL* タブで新しい証明書、*Force SSL* をオン。
+   - **Cloudflare Tunnel：** ポート開放は不要 – *Public hostname* → サービス `http://<NAS-IP>:8090`。
+   - **Traefik、Caddy など：** 自分のドメイン用に `http://<NAS-IP>:8090` へ転送するルーター/サイトを作成。
+2. 各スマートフォンで `https://<domain>` を開いてサインインし、ホーム画面にもう一度追加して通知を再度オンにします（アプリはアドレスごとに別扱いです）。
+3. Google カレンダー（任意）：Google Cloud コンソールで `https://<domain>/api/pinn/google/callback` を承認済みのリダイレクト URI に追加します。
+
+pinn. が自動で行うこと：プロキシが渡す訪問者アドレス（`X-Forwarded-For`）は、リクエストが自宅ネットワーク、Docker ネットワーク、Tailscale から来た場合にのみ信用します。これによりパスワード誤り後のロックを回避できません。インターネットからは PocketBase の管理画面（`/_/`）がブロックされ、初期パスワード `Admin` は使えません。プロキシが別の場所にある場合（レンタルサーバー、またはプロキシの前に Cloudflare のオレンジの雲）は、`PINN_PROXY_NETZE` を設定してください（`.env` またはスタックの環境変数）。例：`privat, cloudflare` や `privat, 203.0.113.5`。
+
+**重要：** pinn. はインターネット全体からアクセス可能になります。各プロフィールに長い固有のパスワードを設定し、プロキシを最新に保ち、ルーターでポート 8090 を直接開放しないでください。必ず HTTPS 付きのプロキシ経由にします。
 
 ## プライバシー
 

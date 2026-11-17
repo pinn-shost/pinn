@@ -129,12 +129,19 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski and 🇺🇦 Українська**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.152.0
+
+**Your own reverse proxy instead of Tailscale**
+
+- New: access from the internet through your own reverse proxy (Nginx Proxy Manager, Traefik, Cloudflare Tunnel …) – see “Access from the internet with your own reverse proxy” under Installation. pinn. now only believes the visitor address from trusted proxies (`PINN_PROXY_NETZE`), so the lock after wrong passwords cannot be dodged (IPv6: per /64). From the internet the PocketBase administration and PocketBase's own sign-in ways are blocked, the start password `Admin` does not work, and guessing tracker IDs is slowed down. Admins get a push “🚨 Security warning” for such attempts (address, home network or internet, device); all details are in the error log under “Security”. Nothing changes in the home network.
+- Changed: `pb_hooks/pinn-netz.js` (new), `pb_hooks/netz.pb.js` (new), `pb_hooks/pinn-alarm.js` (new), `pb_hooks/pinn-sitzungen.js`, `pb_hooks/benutzer.pb.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/zuhause.pb.js`, `pb_hooks/sprache.pb.js`, `pb_hooks/smarthome.pb.js`, `pb_hooks/pinn-ortung.js`, `pb_hooks/pinn-protokoll.js`, `pb_hooks/pinn-pushtext.js`, `js/anmeldemaske.js`, `js/fehlerprotokoll.js`, `js/hinweise.js`, `js/appstart.js`, `i18n/`, `docker/docker-compose.portainer.yaml`, `env.txt`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
+
 ## What's new in 1.151.0
 
 **Portainer stack, ready-made image**
 
-- New: pinn. can be installed from the Portainer Stack UI without SSH and without the setup script. A ready-made image (amd64, arm64) is built on every release and published at `ghcr.io/pinn-shost/pinn`; the new file `docker/docker-compose.portainer.yaml` uses it with volumes and no fixed container names (no more clash with an existing Tailscale container). In the app, “Backups & updates” points to Portainer when it runs as an image. See “Portainer stack (no script)” under Installation.
-- Changed: `docker/` (new), `.github/workflows/image.yml` (new), `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
+- New: pinn. can be installed from the Portainer Stack UI without SSH and without the setup script. A ready-made image (amd64, arm64) is built on every release and published at `ghcr.io/pinn-shost/pinn`; the new file `docker/docker-compose.portainer.yaml` uses it with volumes and no fixed container names (no more clash with an existing Tailscale container). The stack also has a backup service (nightly backups, “Back up now” and “Restore” in the app; updates stay in Portainer) and optional, commented-out blocks for Traccar and the Home Assistant detour. See “Portainer stack (no script)” under Installation.
+- Changed: `docker/` (new), `.github/workflows/image.yml` (new), `pinn-wartung.sh`, `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
 
 ## What's new in 1.150.11
 
@@ -254,14 +261,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Private.** Health data is seen only by the person themself, for children also by the adults. Push reminders follow in 1.149.1.
 - Changed: `js/gesundheit.js`, `css/gesundheit.css`, `pb_hooks/gesundheit.pb.js`, `pb_hooks/pinn-gesundheit.js`, `pb_hooks/pinn-schema.js`, `js/familie.js`, `js/serverzugriff.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, all READMEs. With a server part (new collection “gesundheit”). Includes 1.148.2.
 
-## What's new in 1.148.2
-
-**Another family on the dashboard device**
-
-- **Signing in as another family.** If you use “Log in with password” on a dashboard device to sign in as a profile of another family, that is now a normal session: the dashboard button is gone and “Log out” ends it. Before, the button led back to the dashboard of the first family.
-- **Clear note in Settings.** The dashboard section now says that this device is the dashboard of another family – a device can only be one dashboard.
-- Changed: `js/dashboard.js`, `js/anmeldung.js`, `js/profilauswahl.js`, `js/dashboardkonto.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, all READMEs. No server part.
-
 ## How it works
 
 ```mermaid
@@ -288,7 +287,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.151.0` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.152.0` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -317,7 +316,22 @@ Prefer Portainer? Then you need neither SSH nor the setup script:
 
 The image comes ready-made from `ghcr.io/pinn-shost/pinn` (amd64 and arm64). Data lives in volumes, no folders needed. The stack uses no fixed container names, so it does not clash with containers you already have. If Tailscale already runs on your NAS, delete the `tailscale` block; if you use your own HTTPS address or reverse proxy, delete `caddy` and `duckdns` as well.
 
-**Updating:** Stack → Editor → *Update the stack* with *Re-pull image and redeploy*. **Backups:** Portainer does not back up your volumes by itself – copy the volumes `data` and `konfig` regularly (e.g. NAS snapshot or a volume-backup tool). In the app, “Backups & updates” shows a hint instead of buttons. Not included in this stack: Traccar (GPS trackers with a SIM card) and the Home Assistant detour – phones need neither.
+**Updating:** Stack → Editor → *Update the stack* with *Re-pull image and redeploy*. **Backups:** the `wartung` block of the stack makes a backup every night (7 days + 4 weeks kept) and powers the buttons “Back up now” and “Restore” in pinn. → Settings → System. The backups land in the volume `backups` – or in a NAS folder if you set `PINN_BACKUP_DIR` (e.g. `/volume1/docker/pinn-backups`). It needs the Docker socket to stop pinn. briefly for a restore; delete the block if you back up the volumes yourself. Updates are done in Portainer, not by button. Optional, commented out at the end of the file (remove the `#` to switch on): Traccar (GPS trackers with a SIM card) and the Home Assistant detour – phones need neither.
+
+### Access from the internet with your own reverse proxy
+
+Your family does not want to use Tailscale? Then put pinn. behind a reverse proxy: it takes the requests from the internet, provides HTTPS for your own domain and passes them on to pinn.
+
+1. Point the proxy to `http://<NAS-IP>:8090` (Portainer stack: the port `PINN_PORT`). Live updates use normal HTTP – no websockets needed, just leave response buffering off. Allow uploads of up to 70 MB (chat videos).
+   - **Nginx Proxy Manager:** *Hosts → Proxy Hosts → Add*: your domain, scheme `http`, NAS IP, port `8090`; tab *SSL*: new certificate, *Force SSL* on.
+   - **Cloudflare Tunnel:** no port forwarding needed – *Public hostname* → service `http://<NAS-IP>:8090`.
+   - **Traefik, Caddy and others:** a router/site for your domain that forwards to `http://<NAS-IP>:8090`.
+2. Open `https://<domain>` on every phone, sign in, add it to the home screen again and turn notifications on again (the app belongs to its address).
+3. Google calendars (optional): add `https://<domain>/api/pinn/google/callback` as an authorized redirect URI in the Google Cloud console.
+
+What pinn. does by itself: it only believes the visitor address passed on by the proxy (`X-Forwarded-For`) if the request comes from the home network, a Docker network or Tailscale – so the lock after wrong passwords cannot be dodged. From the internet, the PocketBase administration (`/_/`) is blocked and the start password `Admin` does not work. Is your proxy somewhere else (a rented server, or Cloudflare's orange cloud in front of your proxy)? Then set `PINN_PROXY_NETZE` (in `.env` or the stack's environment variables), e.g. `privat, cloudflare` or `privat, 203.0.113.5`.
+
+**Important:** pinn. is then reachable for everyone on the internet. Give every profile a long password of its own, keep the proxy up to date and never forward port 8090 directly in the router – always go through the proxy with HTTPS.
 
 ## Privacy
 
@@ -396,11 +410,10 @@ pinn/
 │   ├── einrichtung.js   setup assistant · datenexport.js  data export
 │   ├── i18n/            texts by key (de, en, fr, es, it, pt, zh, ja, ko) – English is the reference
 │   └── vendor/          pinn.css, pocketbase/ (pdf.js and Tesseract are downloaded by the setup)
-├── .github/             GitHub Actions (workflows/check.yml, image.yml), checks (scripts/), CONTRIBUTING.md, SECURITY.md, images – not installed
+├── .github/             GitHub Actions (workflows/check.yml), checks (scripts/), CONTRIBUTING.md, SECURITY.md, images – not installed
 ├── src/                 sources of index.html (build.js, rahmen.html, teile/) – not installed
 ├── caddy/Caddyfile      HTTPS reverse proxy
 ├── docker-compose.yaml  all containers
-├── docker/              ready-made image for Portainer: Dockerfile, docker-compose.portainer.yaml (stack) – not installed
 ├── env.txt              template for .env
 ├── pinn-setup.sh        install & update
 ├── pinn-wartung.sh      backups & updates (container "wartung")

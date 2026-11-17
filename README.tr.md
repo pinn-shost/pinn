@@ -110,12 +110,19 @@ Tam boyutta açmak için bir resme dokun.
 
 pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski ve 🇺🇦 Українська**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
 
+## 1.152.0 sürümündeki yenilikler
+
+**Tailscale yerine kendi ters proxy’n**
+
+- Yeni: kendi ters proxy’n üzerinden internetten erişim (Nginx Proxy Manager, Traefik, Cloudflare Tunnel …) – Kurulum altındaki “Kendi ters proxy’nle internetten erişim” bölümüne bak. pinn. ziyaretçi adresine yalnızca güvenilen proxy’lerden (`PINN_PROXY_NETZE`) inanır; böylece yanlış parolalardan sonraki kilit atlatılamaz (IPv6: /64 başına). İnternetten PocketBase yönetimi ve PocketBase’in kendi giriş yolları engellenir, başlangıç parolası `Admin` çalışmaz ve izleyici kimliklerini tahmin etmek yavaşlatılır. Böyle denemelerde yöneticiler “🚨 Güvenlik uyarısı” bildirimi alır (adres, ev ağı veya internet, cihaz); tüm ayrıntılar hata günlüğünde “Güvenlik” altında. Ev ağında hiçbir şey değişmez.
+- Değişenler: `pb_hooks/pinn-netz.js` (new), `pb_hooks/netz.pb.js` (new), `pb_hooks/pinn-alarm.js` (new), `pb_hooks/pinn-sitzungen.js`, `pb_hooks/benutzer.pb.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/zuhause.pb.js`, `pb_hooks/sprache.pb.js`, `pb_hooks/smarthome.pb.js`, `pb_hooks/pinn-ortung.js`, `pb_hooks/pinn-protokoll.js`, `pb_hooks/pinn-pushtext.js`, `js/anmeldemaske.js`, `js/fehlerprotokoll.js`, `js/hinweise.js`, `js/appstart.js`, `i18n/`, `docker/docker-compose.portainer.yaml`, `env.txt`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
+
 ## 1.151.0 sürümündeki yenilikler
 
 **Portainer yığını, hazır imaj**
 
-- Yeni: pinn., SSH ve kurulum betiği olmadan Portainer’ın yığın arayüzünden kurulabilir. Her sürümde hazır bir imaj (amd64, arm64) oluşturulur ve `ghcr.io/pinn-shost/pinn` adresinde yayımlanır; yeni `docker/docker-compose.portainer.yaml` dosyası bunu birimlerle ve sabit kapsayıcı adı olmadan kullanır (mevcut bir Tailscale kapsayıcısıyla çakışma yok). İmaj olarak çalışırken uygulamadaki “Yedekler ve güncellemeler” Portainer’a yönlendirir. Kurulum bölümündeki “Portainer yığını (betiksiz)” konusuna bak.
-- Değiştirildi: `docker/` (new), `.github/workflows/image.yml` (new), `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
+- Yeni: pinn., SSH ve kurulum betiği olmadan Portainer’ın yığın arayüzünden kurulabilir. Her sürümde hazır bir imaj (amd64, arm64) oluşturulur ve `ghcr.io/pinn-shost/pinn` adresinde yayımlanır; yeni `docker/docker-compose.portainer.yaml` dosyası bunu birimlerle ve sabit kapsayıcı adı olmadan kullanır (mevcut bir Tailscale kapsayıcısıyla çakışma yok). Yığın ayrıca bir yedekleme hizmeti (gece yedeği, uygulamada “Şimdi yedekle” ve “Geri yükle”; güncellemeler Portainer’da kalır) ile Traccar ve Home Assistant dolambaçlı yolu için yorum satırı hâlindeki isteğe bağlı bloklar içerir. Kurulum bölümündeki “Portainer yığını (betiksiz)” konusuna bak.
+- Değiştirildi: `docker/` (new), `.github/workflows/image.yml` (new), `pinn-wartung.sh`, `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
 
 ## 1.150.11 sürümündeki yenilikler
 
@@ -160,15 +167,6 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 - **Face ID.** pinn. açılırken Face ID’yi yine kendiliğinden ister, tıpkı 1.150.5’ten önceki gibi. iOS her zaman önce kendi „Geçiş anahtarını kullan” penceresini gösterir – ona bir dokunuş, sonra Face ID; web bunu atlayamaz ve ek düğme yalnızca ikinci bir dokunuş demekti. Pencereyi kapatırsan diye alttaki büyük düğme kalıyor.
 - Değişenler: `js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
 
-## 1.150.5 sürümündeki yenilikler
-
-**Yeni sağlık afişi · içecekler düzenlendi**
-
-- **Sağlık afişi.** Sağlık sayfası ve her kişinin sayfası yeniden bir afişe sahip: bugün içilenlerle yükselen su, kabarcıklar, kalp atışı çizgisi ve süzülen nesneler – gece yıldızlar.
-- **İçmek.** Hedef, bugünkü içecekler ve hatırlatma artık düğmenin altındaki açılır „Ayarlar” bölümünde.
-- **Face ID.** Kilit açma artık yalnızca düğmeyle başlar („Geçiş anahtarını kullan” penceresi yok); düğme altta, başparmakla kolayca ulaşılır.
-- Değişenler: `js/gesundheit.js`, `css/gesundheit.css`, `js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -178,7 +176,7 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.151.0` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.152.0` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -202,7 +200,22 @@ Portainer’ı mı tercih ediyorsun? O zaman ne SSH ne de kurulum betiği gereki
 
 İmaj `ghcr.io/pinn-shost/pinn` adresinden hazır gelir (amd64 ve arm64). Veriler birimlerde durur, klasör gerekmez. Yığın sabit kapsayıcı adları kullanmaz, bu yüzden mevcut kapsayıcılarınla çakışmaz. NAS’ında Tailscale zaten çalışıyorsa `tailscale` bloğunu sil; kendi HTTPS adresin veya ters proxy’n varsa `caddy` ve `duckdns` bloklarını da sil.
 
-**Güncelleme:** Stack → Editor → *Update the stack*, *Re-pull image and redeploy* açık olsun. **Yedekler:** Portainer birimlerini kendiliğinden yedeklemez – `data` ve `konfig` birimlerini düzenli kopyala (örn. NAS anlık görüntüsü veya birim yedekleme aracı). Uygulamada “Yedekler ve güncellemeler” düğmeler yerine bir not gösterir. Yığına dahil değil: Traccar (SIM kartlı GPS izleyiciler) ve Home Assistant’a dolambaçlı yol – telefonlar ikisine de ihtiyaç duymaz.
+**Güncelleme:** Stack → Editor → *Update the stack*, *Re-pull image and redeploy* açık olsun. **Yedekler:** stack’in `wartung` bloğu her gece yedek alır (7 gün + 4 hafta saklanır) ve pinn. → Ayarlar → Sistem’deki “Şimdi yedekle” ve “Geri yükle” düğmelerinin arkasındadır. Yedekler `backups` biriminde durur – `PINN_BACKUP_DIR` ayarlarsan (örn. `/volume1/docker/pinn-backups`) bir NAS klasöründe. Geri yüklerken pinn.’i kısaca durdurmak için Docker erişimine ihtiyaç duyar; birimleri kendin yedekliyorsan bloğu sil. Güncellemeler düğmeyle değil Portainer’da yapılır. İsteğe bağlı, dosyanın sonunda yorum satırı (açmak için `#` işaretini kaldır): Traccar (SIM kartlı GPS izleyiciler) ve Home Assistant’a dolambaçlı yol – telefonların ikisine de ihtiyacı yok.
+
+### Kendi ters proxy’nle internetten erişim
+
+Ailen Tailscale kullanmak istemiyor mu? O zaman pinn.’i bir ters proxy’nin arkasına koy: internetten gelen istekleri alır, kendi alan adın için HTTPS sağlar ve pinn.’e iletir.
+
+1. Proxy’yi `http://<NAS-IP>:8090` adresine yönlendir (Portainer yığını: `PINN_PORT` portu). Canlı güncellemeler normal HTTP kullanır – websocket gerekmez, yalnızca yanıt arabelleğini kapalı bırak. 70 MB’a kadar yüklemelere izin ver (sohbet videoları).
+   - **Nginx Proxy Manager:** *Hosts → Proxy Hosts → Add*: alan adın, şema `http`, NAS IP’si, port `8090`; *SSL* sekmesi: yeni sertifika, *Force SSL* açık.
+   - **Cloudflare Tunnel:** port yönlendirme gerekmez – *Public hostname* → hizmet `http://<NAS-IP>:8090`.
+   - **Traefik, Caddy ve diğerleri:** alan adın için `http://<NAS-IP>:8090` adresine ileten bir router/site.
+2. Her telefonda `https://<domain>` adresini aç, giriş yap, yeniden ana ekrana ekle ve bildirimleri yeniden aç (uygulama kendi adresine bağlıdır).
+3. Google takvimleri (isteğe bağlı): Google Cloud konsolunda `https://<domain>/api/pinn/google/callback` adresini yetkili yönlendirme URI’si olarak ekle.
+
+pinn.’in kendiliğinden yaptığı: proxy’nin ilettiği ziyaretçi adresine (`X-Forwarded-For`) yalnızca istek ev ağından, bir Docker ağından veya Tailscale’den geliyorsa inanır – böylece yanlış parolalardan sonraki kilit atlatılamaz. İnternetten PocketBase yönetimi (`/_/`) engellidir ve başlangıç parolası `Admin` çalışmaz. Proxy’n başka bir yerde mi (kiralık sunucu ya da proxy’nin önünde Cloudflare’in turuncu bulutu)? O zaman `PINN_PROXY_NETZE` ayarla (`.env` içinde ya da yığının ortam değişkenlerinde), örn. `privat, cloudflare` veya `privat, 203.0.113.5`.
+
+**Önemli:** pinn. bu durumda tüm internetten erişilebilir. Her profile uzun ve kendine ait bir parola ver, proxy’yi güncel tut ve 8090 portunu yönlendiricide asla doğrudan açma – her zaman HTTPS ile proxy üzerinden.
 
 ## Gizlilik
 

@@ -82,6 +82,7 @@ async function bootApp() {
   pwAfterBoot(); // Pinboard: tidy the archive, upload the queued photos, open the note from a push message
   docOpenFromUrl(); // from a push reminder: open the document directly
   sysOpenFromUrl(); // from the update push message: Settings → System with the update popup
+  errLogOpenFromUrl(); // from a security warning: error log, area security
   famOpenFromUrl(); // from a location message: open Family with the person on the map
   sosStart(); // SOS from Traccar Client: check running alarms, open ?sos=<ID> from the push message
   googleReturnFromUrl(); // return from the Google login (Android calendar): open the calendar settings

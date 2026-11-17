@@ -18,7 +18,7 @@
 //  - An error while logging itself is only logged and never changes the actual flow.
 
 const COL = "protokoll";
-const BEREICHE = ["sync", "push", "muell", "anmeldung", "system"];
+const BEREICHE = ["sync", "push", "muell", "anmeldung", "sicherheit", "system"]; // "sicherheit" since 1.152.0 (pinn-alarm.js)
 const STUFEN = ["fehler", "warnung", "info"];
 const ZUSAMMENFASSEN_MS = 24 * 60 * 60 * 1000;
 const AUFBEWAHREN_TAGE = 30;

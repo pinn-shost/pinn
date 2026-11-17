@@ -1421,7 +1421,46 @@ function knownDevice(uid) {
     const fam = allCfgs().find(f => f.cfg.geraete.some(g => uidKey(g.uniqueId) === key));
     return fam ? { familyId: fam.familyId, g: fam.cfg.geraete.find(g => uidKey(g.uniqueId) === key) } : null;
 }
+// Since 1.152.0: reports from the internet with unknown device IDs are counted per visitor address. Whoever tries
+// FREMD_MAX different unknown IDs within FREMD_FENSTER_MS (someone guessing IDs to fake positions or an SOS) is
+// ignored for FREMD_SPERRE_MS. Reports from the home network are never slowed down.
+const FREMD_PREFIX = "pinnOsmandFremd:";
+const FREMD_MAX = 20;
+const FREMD_FENSTER_MS = 15 * 60 * 1000;
+const FREMD_SPERRE_MS = 60 * 60 * 1000;
+function fremdSchluessel(e) {
+    try {
+        const netz = require(`${__hooks}/pinn-netz.js`);
+        return netz.vonAussen(e) ? netz.sperrSchluessel(e) : "";
+    } catch (err) { return ""; }
+}
+function fremdLesen(key) {
+    try {
+        const p = String($app.store().get(FREMD_PREFIX + key) || "").split("|");
+        return { n: parseInt(p[0], 10) || 0, ab: parseInt(p[1], 10) || 0, bis: parseInt(p[2], 10) || 0 };
+    } catch (err) { return { n: 0, ab: 0, bis: 0 }; }
+}
+function fremdGesperrt(key) {
+    return !!key && fremdLesen(key).bis > Date.now();
+}
+function fremdZaehlen(key, e) {
+    if (!key) return;
+    const now = Date.now();
+    let f = fremdLesen(key);
+    if (now - f.ab > FREMD_FENSTER_MS) f = { n: 0, ab: now, bis: 0 };
+    f.n++;
+    if (f.n >= FREMD_MAX) {
+        f = { n: 0, ab: now, bis: now + FREMD_SPERRE_MS };
+        // Security warning to all admins with the visitor details (since 1.152.0)
+        try {
+            require(`${__hooks}/pinn-alarm.js`).melde(e, "ortung", { anzahl: FREMD_MAX });
+        } catch (err) { /* ignore */ }
+    }
+    try { $app.store().set(FREMD_PREFIX + key, f.n + "|" + f.ab + "|" + f.bis); } catch (err) { /* ignore */ }
+}
 function forwardOsmand(e) {
+    const fremd = fremdSchluessel(e);
+    if (fremdGesperrt(fremd)) return 200; // answered as "arrived" so that nobody learns anything, but not processed
     const info = e.requestInfo();
     const params = [];
     const flat = {}; // all passed values (for the SOS detection)
@@ -1501,6 +1540,7 @@ function forwardOsmand(e) {
     // Stored (or distress call detected) = arrived. Unknown devices: still 200, otherwise
     // the app buffers the report and sends it again endlessly (costs battery) - a note is written to the log.
     if (status >= 400 && ((sos && !sosFehler) || !bekannt || !traccarAn())) status = 200;
+    if (!bekannt) fremdZaehlen(fremd, e);
     logOsmand(merged, raw, sos, status, sosFehler || (!bekannt ? "Geräte-ID ist in pinn. nicht eingerichtet" : ""));
     return status;
 }

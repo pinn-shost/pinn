@@ -133,12 +133,19 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski和 🇺🇦 Українська**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.152.0 新功能
+
+**用自己的反向代理代替 Tailscale**
+
+- 新功能：通过自己的反向代理（Nginx Proxy Manager、Traefik、Cloudflare Tunnel 等）从互联网访问——见安装部分的“通过自己的反向代理从互联网访问”。pinn. 只相信来自受信任代理（`PINN_PROXY_NETZE`）的访客地址，因此无法绕过密码错误后的锁定（IPv6：按 /64 计算）。来自互联网时，PocketBase 管理界面及其自带的登录方式被屏蔽，初始密码 `Admin` 无效，猜测追踪器 ID 会被减速。遇到这类尝试时，管理员会收到“🚨 安全警告”推送（地址、家庭网络或互联网、设备）；完整信息在错误日志的“安全”分类中。家庭网络中一切照旧。
+- 已更改: `pb_hooks/pinn-netz.js` (new), `pb_hooks/netz.pb.js` (new), `pb_hooks/pinn-alarm.js` (new), `pb_hooks/pinn-sitzungen.js`, `pb_hooks/benutzer.pb.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/zuhause.pb.js`, `pb_hooks/sprache.pb.js`, `pb_hooks/smarthome.pb.js`, `pb_hooks/pinn-ortung.js`, `pb_hooks/pinn-protokoll.js`, `pb_hooks/pinn-pushtext.js`, `js/anmeldemaske.js`, `js/fehlerprotokoll.js`, `js/hinweise.js`, `js/appstart.js`, `i18n/`, `docker/docker-compose.portainer.yaml`, `env.txt`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
+
 ## 1.151.0 新功能
 
 **Portainer 堆栈，现成镜像**
 
-- 新功能：无需 SSH 和安装脚本，即可通过 Portainer 堆栈界面安装 pinn.。每次发布都会构建现成的镜像（amd64、arm64）并发布到 `ghcr.io/pinn-shost/pinn`；新文件 `docker/docker-compose.portainer.yaml` 使用该镜像，采用卷且不使用固定容器名（不再与已有的 Tailscale 容器冲突）。以镜像方式运行时，应用中的“备份与更新”会指向 Portainer。见安装部分的“Portainer 堆栈（无需脚本）”。
-- 已更改: `docker/` (new), `.github/workflows/image.yml` (new), `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
+- 新功能：无需 SSH 和安装脚本，即可通过 Portainer 堆栈界面安装 pinn.。每次发布都会构建现成的镜像（amd64、arm64）并发布到 `ghcr.io/pinn-shost/pinn`；新文件 `docker/docker-compose.portainer.yaml` 使用该镜像，采用卷且不使用固定容器名（不再与已有的 Tailscale 容器冲突）。堆栈还包含备份服务（每晚备份，应用中的“立即备份”和“恢复”；更新仍在 Portainer 中进行），以及已注释的可选块：Traccar 和通往 Home Assistant 的绕行。见安装部分的“Portainer 堆栈（无需脚本）”。
+- 已更改: `docker/` (new), `.github/workflows/image.yml` (new), `pinn-wartung.sh`, `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
 
 ## 1.150.11 新功能
 
@@ -219,15 +226,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 - **单行或多行。** 在“设置 → 快捷方式”中，可分别为手机和平板/电脑选择：单行（左右滑动查看其余）或多行（所有快捷方式向下排列）。
 - 已更改: `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/design.js`, `js/ansichten.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.1).
 
-## 1.150.1 新功能
-
-**快捷方式拥有独立菜单项**
-
-- **独立菜单项。** 现在在“设置 → 快捷方式”中选择应用。此前打开“快捷方式”时，“概览”设置会收起，页面也无法再滚动。
-- **在“概览”中开关。** “快捷方式”卡片像其他卡片一样开启或关闭；“选择应用”直接通往选择页面。
-- **立即可见。** 在您自行选择之前，卡片显示一组默认应用（喝水、购物、任务、日程、今天做饭、便签、支出、清洁计划）。未选择任何应用时，卡片会提供“选择应用”，而不是消失。
-- 已更改: `js/kurzbefehle.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README.
-
 ## 工作原理
 
 ```mermaid
@@ -256,7 +254,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.151.0` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.152.0` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -287,7 +285,22 @@ flowchart LR
 
 镜像由 `ghcr.io/pinn-shost/pinn` 现成提供（amd64 和 arm64）。数据保存在卷中，无需文件夹。堆栈不使用固定的容器名称，因此不会与你已有的容器冲突。如果 NAS 上已有 Tailscale，请删除 `tailscale` 块；如果使用自己的 HTTPS 地址或反向代理，也请删除 `caddy` 和 `duckdns`。
 
-**更新：** Stack → Editor → *Update the stack*，并打开 *Re-pull image and redeploy*。**备份：** Portainer 不会自动备份你的卷——请定期复制卷 `data` 和 `konfig`（例如 NAS 快照或卷备份工具）。应用中的“备份与更新”会显示提示而不是按钮。此堆栈不包含：Traccar（带 SIM 卡的 GPS 追踪器）和通往 Home Assistant 的绕行——手机不需要它们。
+**更新：** Stack → Editor → *Update the stack*，并打开 *Re-pull image and redeploy*。**备份：** 堆栈中的 `wartung` 块每晚自动备份（保留 7 天 + 4 周），也是 pinn. → 设置 → 系统 中“立即备份”和“恢复”按钮的后台。备份保存在卷 `backups` 中；如果设置了 `PINN_BACKUP_DIR`（例如 `/volume1/docker/pinn-backups`），则保存在 NAS 文件夹中。恢复时它需要 Docker 访问权限来短暂停止 pinn.；如果你自己备份卷，可删除该块。更新在 Portainer 中进行，而不是通过按钮。可选，已在文件末尾注释（去掉 `#` 即可启用）：Traccar（带 SIM 卡的 GPS 追踪器）和通往 Home Assistant 的绕行——手机不需要它们。
+
+### 通过自己的反向代理从互联网访问
+
+家人不想用 Tailscale？那就把 pinn. 放在反向代理后面：它接收来自互联网的请求，为你自己的域名提供 HTTPS，再转发给 pinn.。
+
+1. 让代理指向 `http://<NAS-IP>:8090`（Portainer 堆栈：端口 `PINN_PORT`）。实时更新使用普通 HTTP——不需要 websocket，只要不开启响应缓冲。允许最大 70 MB 的上传（聊天视频）。
+   - **Nginx Proxy Manager：** *Hosts → Proxy Hosts → Add*：你的域名，协议 `http`，NAS IP，端口 `8090`；*SSL* 选项卡：新证书，打开 *Force SSL*。
+   - **Cloudflare Tunnel：** 无需端口转发——*Public hostname* → 服务 `http://<NAS-IP>:8090`。
+   - **Traefik、Caddy 等：** 为你的域名建立一个转发到 `http://<NAS-IP>:8090` 的路由/站点。
+2. 在每部手机上打开 `https://<domain>`，登录，重新添加到主屏幕并重新开启通知（应用与其地址绑定）。
+3. Google 日历（可选）：在 Google Cloud 控制台中把 `https://<domain>/api/pinn/google/callback` 添加为已授权的重定向 URI。
+
+pinn. 自己会做的事：只有当请求来自家庭网络、Docker 网络或 Tailscale 时，它才相信代理传来的访客地址（`X-Forwarded-For`）——因此无法绕过密码错误后的锁定。来自互联网时，PocketBase 管理界面（`/_/`）被屏蔽，初始密码 `Admin` 无效。你的代理在别处（租用的服务器，或代理前面有 Cloudflare 的橙色云）？那就设置 `PINN_PROXY_NETZE`（在 `.env` 或堆栈的环境变量中），例如 `privat, cloudflare` 或 `privat, 203.0.113.5`。
+
+**重要：** 这样 pinn. 对整个互联网都可访问。请为每个档案设置一个长且独立的密码，保持代理为最新版本，并且绝不要在路由器中直接开放 8090 端口——始终通过带 HTTPS 的代理。
 
 ## 隐私
 

@@ -118,6 +118,7 @@ routerAdd("POST", "/api/pinn/zuhause/wetter", (e) => {
         const dev = require(`${__hooks}/pinn-dashboard.js`).findDevice(body.key);
         if (!dev) {
             sleep(300);
+            try { require(`${__hooks}/pinn-alarm.js`).zaehleUndMelde(e, "schluessel", 20, 15 * 60 * 1000); } catch (err) { /* ignore */ }
             return e.json(403, { error: "Nicht angemeldet." });
         }
         familyId = dev.getString("familie");

@@ -40,6 +40,8 @@ async function loginRequest(payload) {
     throw err;
   }
   const body = await res.json().catch(() => ({}));
+  // since 1.152.0: the start password is refused from the internet (pinn. behind an own reverse proxy)
+  if (body.code === 'startpasswort') throw new Error(tk('login.startPasswordOutside'));
   if (!res.ok || !body.token) throw new Error(body.error || tk('login.failed'));
   pb.authStore.save(body.token, body.record);
 }

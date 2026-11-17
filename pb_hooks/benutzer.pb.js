@@ -136,7 +136,7 @@ routerAdd("POST", "/api/pinn/login", (e) => {
             if (lock) {
                 console.log("[Anmeldung] Zu viele Fehlversuche – Profil für " + dash.waitText(lock) + " gesperrt.");
                 if (sitz) {
-                    try { sitz.meldeSperre(lockFamily, candidates[0].getString("username"), lock); } catch (err) { /* ignore */ }
+                    try { sitz.meldeSperre(lockFamily, candidates[0].getString("username"), lock, e); } catch (err) { /* ignore */ }
                 }
                 return e.json(429, { error: "Anmeldung fehlgeschlagen. Zu viele Fehlversuche – bitte in " + dash.waitText(lock) + " erneut versuchen.", sperre: lock });
             }
@@ -145,6 +145,16 @@ routerAdd("POST", "/api/pinn/login", (e) => {
             return e.json(429, { error: "Anmeldung fehlgeschlagen. Zu viele Fehlversuche von diesem Gerät bzw. Netzwerk – bitte in " + sitz.waitText(ipLock) + " erneut versuchen.", sperre: ipLock });
         }
         return e.json(400, { error: "Anmeldung fehlgeschlagen. Bitte Profil und Passwort prüfen." });
+    }
+    // Since 1.152.0: the well-known start password "Admin" never works from the internet (pinn. behind an own reverse
+    // proxy). It has to be changed in the home network first.
+    if (password === "Admin") {
+        let aussen = true;
+        try { aussen = require(`${__hooks}/pinn-netz.js`).vonAussen(e); } catch (err) { aussen = true; }
+        if (aussen) {
+            try { require(`${__hooks}/pinn-alarm.js`).melde(e, "startpasswort", { familie: rec.getString("familie"), profil: rec.getString("username") }); } catch (err) { /* ignore */ }
+            return e.json(403, { error: "Mit dem Start-Passwort ist keine Anmeldung aus dem Internet möglich. Bitte zuerst im Heimnetz (http://<NAS-IP>:8090) anmelden und ein eigenes Passwort wählen.", code: "startpasswort" });
+        }
     }
     dash.clearFails(lockId);
     // Reconcile the family's members with their profiles (e.g. creates the own member)

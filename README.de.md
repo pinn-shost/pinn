@@ -133,12 +133,19 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski und 🇺🇦 Українська**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.152.0
+
+**Eigener Reverse Proxy statt Tailscale**
+
+- Neu: Zugriff aus dem Internet über einen eigenen Reverse Proxy (Nginx Proxy Manager, Traefik, Cloudflare Tunnel …) – siehe „Zugriff aus dem Internet mit eigenem Reverse Proxy“ unter Installation. pinn. glaubt die Besucher-Adresse nur noch von vertrauten Proxys (`PINN_PROXY_NETZE`), die Sperre nach falschen Passwörtern lässt sich so nicht umgehen (IPv6: je /64). Aus dem Internet sind die PocketBase-Verwaltung und PocketBases eigene Anmeldewege gesperrt, das Start-Passwort `Admin` funktioniert nicht, und das Erraten von Tracker-IDs wird gebremst. Bei solchen Versuchen bekommen die Admins eine Push-Mitteilung „🚨 Sicherheitswarnung“ (Adresse, Heimnetz oder Internet, Gerät); alle Angaben stehen im Fehlerprotokoll unter „Sicherheit“. Im Heimnetz ändert sich nichts.
+- Geändert: `pb_hooks/pinn-netz.js` (new), `pb_hooks/netz.pb.js` (new), `pb_hooks/pinn-alarm.js` (new), `pb_hooks/pinn-sitzungen.js`, `pb_hooks/benutzer.pb.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/zuhause.pb.js`, `pb_hooks/sprache.pb.js`, `pb_hooks/smarthome.pb.js`, `pb_hooks/pinn-ortung.js`, `pb_hooks/pinn-protokoll.js`, `pb_hooks/pinn-pushtext.js`, `js/anmeldemaske.js`, `js/fehlerprotokoll.js`, `js/hinweise.js`, `js/appstart.js`, `i18n/`, `docker/docker-compose.portainer.yaml`, `env.txt`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
+
 ## Neu in 1.151.0
 
 **Portainer-Stack, fertiges Image**
 
-- Neu: pinn. lässt sich ohne SSH und ohne Setup-Skript über die Portainer-Stack-Oberfläche installieren. Bei jedem Release wird ein fertiges Image (amd64, arm64) gebaut und unter `ghcr.io/pinn-shost/pinn` veröffentlicht; die neue Datei `docker/docker-compose.portainer.yaml` nutzt es mit Volumes und ohne feste Container-Namen (kein Konflikt mehr mit einem vorhandenen Tailscale-Container). In der App verweist „Sicherungen & Updates“ auf Portainer, wenn pinn. als Image läuft. Siehe „Portainer-Stack (ohne Skript)“ unter Installation.
-- Geändert: `docker/` (new), `.github/workflows/image.yml` (new), `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
+- Neu: pinn. lässt sich ohne SSH und ohne Setup-Skript über die Portainer-Stack-Oberfläche installieren. Bei jedem Release wird ein fertiges Image (amd64, arm64) gebaut und unter `ghcr.io/pinn-shost/pinn` veröffentlicht; die neue Datei `docker/docker-compose.portainer.yaml` nutzt es mit Volumes und ohne feste Container-Namen (kein Konflikt mehr mit einem vorhandenen Tailscale-Container). Der Stack enthält außerdem einen Sicherungsdienst (nächtliche Sicherung, „Jetzt sichern“ und „Wiederherstellen“ in der App; Updates bleiben in Portainer) sowie auskommentierte, optionale Blöcke für Traccar und den Umweg zu Home Assistant. Siehe „Portainer-Stack (ohne Skript)“ unter Installation.
+- Geändert: `docker/` (new), `.github/workflows/image.yml` (new), `pinn-wartung.sh`, `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
 
 ## Neu in 1.150.11
 
@@ -228,18 +235,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Sofort sichtbar.** Solange du nichts selbst gewählt hast, zeigt die Kachel eine Standardauswahl (Trinken, Einkauf, Aufgabe, Termin, Heute kochen, Zettel, Ausgabe, Putzplan). Ist keine App gewählt, bietet sie „Apps wählen“ an, statt zu verschwinden.
 - Geändert: `js/kurzbefehle.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README.
 
-## Neu in 1.150.0
-
-**Zeiten in deiner Region · Shortcuts auf der Übersicht · Schnellfenster für die Shortcuts**
-
-- **Erinnerungen zur richtigen Uhrzeit.** pinn. rechnet Erinnerungen jetzt in der Zeitzone deines Geräts, mit Sommer- und Winterzeit deiner Region. Du musst nichts einstellen – das Gerät meldet dem Server still seine Zeitzone, auch nach einem Umzug oder auf Reisen.
-- **Zuerst die Gesundheits-Erinnerungen.** Medikamente, Trinken und Hände waschen folgen schon der eigenen Uhr jeder Person; alle künftigen Erinnerungen nutzen dieselbe Uhr. Ältere Erinnerungen (Geburtstage, Haustiere, Packliste, Vorrat, Verträge, Dokumente, Wochenvorschau) laufen noch nach mitteleuropäischer Zeit und folgen später.
-- **Kachel „Shortcuts“.** Eine neue Kachel auf der Übersicht zeigt App-Symbole, die direkt eine Funktion öffnen: Trinken, Hände waschen (+1 pro Tipp), Medikamente, Einkauf, neue Aufgabe, neuer Termin, Zettel, Chat, Putzplan, Pflanzen, Haustiere, Vorrat, Ausgabe erfassen, Einnahme erfassen, Finanzen, SOS und Unterwegs.
-- **Deine Auswahl.** Einstellungen → Übersicht → Shortcuts: die gewünschten Apps einschalten. Gilt pro Profil; ohne gewählte App bleibt die Kachel ausgeblendet. Gäste sehen keine Gesundheits-, SOS- und Finanz-Apps.
-- **Langes Drücken.** Ein langes Drücken auf einen Shortcut (am Computer Rechtsklick) öffnet ein kleines Fenster für genau diese Funktion: Trinken (Getränk, Menge, Rückgängig 10 Minuten lang), Hände waschen (+/−), Medikamente, Einkauf, Aufgaben, Putzplan, Termine, Kochen, Zettel, Haustiere, Vorrat, Ausgabe und Einnahme, SOS und Unterwegs. Ein kurzer Tipp wirkt wie bisher.
-- **Bleibt offen.** Das Fenster bleibt nach einer Aktion offen, mehrere Dinge nacheinander sind möglich; „Öffnen“ führt zur vollständigen Funktion.
-- Geändert: `pb_hooks/pinn-zeit.js`, `pb_hooks/zeit.pb.js`, `js/zeit.js`, `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `pb_hooks/pinn-gesundheit.js`, `js/appstart.js`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/ansichten.js`, `js/design.js`, `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, README (+ 1.149.1).
-
 ## So funktioniert’s
 
 ```mermaid
@@ -268,7 +263,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.151.0` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.152.0` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -299,7 +294,22 @@ Lieber Portainer? Dann brauchst du weder SSH noch das Setup-Skript:
 
 Das Image kommt fertig von `ghcr.io/pinn-shost/pinn` (amd64 und arm64). Die Daten liegen in Volumes, Ordner sind nicht nötig. Der Stack vergibt keine festen Container-Namen und kollidiert deshalb nicht mit vorhandenen Containern. Läuft Tailscale schon auf dem NAS, den Block `tailscale` löschen; bei eigener HTTPS-Adresse oder eigenem Reverse Proxy auch `caddy` und `duckdns`.
 
-**Update:** Stack → Editor → *Update the stack* mit eingeschaltetem *Re-pull image and redeploy*. **Sicherungen:** Portainer sichert deine Volumes nicht von selbst – kopiere die Volumes `data` und `konfig` regelmäßig (z. B. NAS-Snapshot oder ein Volume-Backup-Werkzeug). In der App zeigt „Sicherungen & Updates“ einen Hinweis statt der Knöpfe. Nicht im Stack enthalten: Traccar (GPS-Tracker mit SIM-Karte) und der Umweg zu Home Assistant – Handys brauchen beides nicht.
+**Update:** Stack → Editor → *Update the stack* mit eingeschaltetem *Re-pull image and redeploy*. **Sicherungen:** Der Block `wartung` im Stack sichert jede Nacht (7 Tage + 4 Wochen werden behalten) und steckt hinter den Knöpfen „Jetzt sichern“ und „Wiederherstellen“ in pinn. → Einstellungen → System. Die Sicherungen liegen im Volume `backups` – oder in einem NAS-Ordner, wenn du `PINN_BACKUP_DIR` setzt (z. B. `/volume1/docker/pinn-backups`). Für die Wiederherstellung braucht er den Docker-Zugriff, um pinn. kurz anzuhalten; sichere die Volumes lieber selbst, dann lösche den Block. Updates machst du in Portainer, nicht per Knopf. Optional, am Dateiende auskommentiert (zum Einschalten das `#` entfernen): Traccar (GPS-Tracker mit SIM-Karte) und der Umweg zu Home Assistant – Handys brauchen beides nicht.
+
+### Zugriff aus dem Internet mit eigenem Reverse Proxy
+
+Deine Familie möchte kein Tailscale nutzen? Dann stell pinn. hinter einen Reverse Proxy: Er nimmt die Anfragen aus dem Internet an, sorgt für HTTPS unter deiner eigenen Domain und reicht sie an pinn. weiter.
+
+1. Den Proxy auf `http://<NAS-IP>:8090` zeigen lassen (Portainer-Stack: der Port `PINN_PORT`). Live-Aktualisierungen laufen über normales HTTP – keine Websockets nötig, nur das Puffern der Antworten nicht einschalten. Uploads bis 70 MB erlauben (Chat-Videos).
+   - **Nginx Proxy Manager:** *Hosts → Proxy Hosts → Add*: deine Domain, Schema `http`, NAS-IP, Port `8090`; Reiter *SSL*: neues Zertifikat, *Force SSL* an.
+   - **Cloudflare Tunnel:** keine Portfreigabe nötig – *Public hostname* → Dienst `http://<NAS-IP>:8090`.
+   - **Traefik, Caddy und andere:** ein Router/eine Site für deine Domain, die an `http://<NAS-IP>:8090` weiterleitet.
+2. Auf jedem Handy `https://<domain>` öffnen, anmelden, erneut zum Home-Bildschirm hinzufügen und die Mitteilungen wieder einschalten (die App gehört zu ihrer Adresse).
+3. Google-Kalender (optional): `https://<domain>/api/pinn/google/callback` in der Google Cloud Console als autorisierte Weiterleitungs-URI eintragen.
+
+Was pinn. selbst macht: Es glaubt die vom Proxy weitergereichte Besucher-Adresse (`X-Forwarded-For`) nur, wenn die Anfrage aus dem Heimnetz, einem Docker-Netz oder Tailscale kommt – so lässt sich die Sperre nach falschen Passwörtern nicht umgehen. Aus dem Internet ist die PocketBase-Verwaltung (`/_/`) gesperrt und das Start-Passwort `Admin` funktioniert nicht. Steht dein Proxy woanders (gemieteter Server oder Cloudflares orange Wolke vor deinem Proxy)? Dann `PINN_PROXY_NETZE` setzen (in der `.env` oder den Umgebungsvariablen des Stacks), z. B. `privat, cloudflare` oder `privat, 203.0.113.5`.
+
+**Wichtig:** pinn. ist dann für alle im Internet erreichbar. Gib jedem Profil ein langes, eigenes Passwort, halte den Proxy aktuell und gib Port 8090 nie direkt im Router frei – immer über den Proxy mit HTTPS.
 
 ## Datenschutz
 

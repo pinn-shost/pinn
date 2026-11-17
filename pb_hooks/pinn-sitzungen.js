@@ -197,17 +197,13 @@ function sidOf(e) {
     const c = claimsOf(tokenOf(e));
     return c ? cleanSid(c.sid) : "";
 }
+// Visitor address (since 1.152.0 in pinn-netz.js: X-Forwarded-For only counts if it comes from a trusted proxy)
 function clientIp(e) {
-    let ip = "";
-    // Caddy sets X-Forwarded-For itself (it discards incoming values from outside) -> last entry
-    const xff = header(e, "X-Forwarded-For");
-    if (xff) {
-        const parts = xff.split(",").map(s => s.trim()).filter(Boolean);
-        ip = parts[parts.length - 1] || "";
-    }
-    if (!ip) { try { ip = String(e.realIP() || ""); } catch (err) { ip = ""; } }
-    if (!ip) { try { ip = String(e.remoteIP() || ""); } catch (err) { ip = ""; } }
-    return ip.replace(/[^0-9a-fA-F:.]/g, "").slice(0, 60);
+    try { return require(`${__hooks}/pinn-netz.js`).clientIp(e); } catch (err) { return ""; }
+}
+// Key for the lock per network address (IPv6: the whole /64 network)
+function ipKey(e) {
+    try { return require(`${__hooks}/pinn-netz.js`).sperrSchluessel(e); } catch (err) { return clientIp(e); }
 }
 function cleanDeviceId(v) {
     const s = String(v || "").trim();
@@ -891,7 +887,7 @@ function readIp(ip) {
 }
 // Remaining lock of the address in seconds (0 = free)
 function ipGesperrt(e) {
-    const ip = clientIp(e);
+    const ip = ipKey(e);
     if (!ip) return 0;
     const l = readIp(ip);
     const rest = l.until - Date.now();
@@ -899,7 +895,7 @@ function ipGesperrt(e) {
 }
 // Count a failed attempt of the address. Returns: new lock in seconds (0 = not locked yet)
 function ipFehlversuch(e) {
-    const ip = clientIp(e);
+    const ip = ipKey(e);
     if (!ip) return 0;
     const now = Date.now();
     const l = readIp(ip);
@@ -911,7 +907,12 @@ function ipFehlversuch(e) {
         until = now + seconds * 1000;
         locks++;
         n = 0; // after the lock expires it counts afresh - the next lock gets longer
-        protokoll().warnung("anmeldung", "Viele fehlgeschlagene Anmeldungen von der Adresse " + ip + " – für " + waitText(seconds) + " gesperrt.");
+        // Since 1.152.0: security warning to the admins (with the visitor details) instead of only a log entry
+        try {
+            require(`${__hooks}/pinn-alarm.js`).melde(e, "ipsperre", { anzahl: IP_MAX, extra: "Gesperrt für: " + waitText(seconds) });
+        } catch (err) {
+            protokoll().warnung("anmeldung", "Viele fehlgeschlagene Anmeldungen von der Adresse " + ip + " – für " + waitText(seconds) + " gesperrt.");
+        }
     }
     try { $app.store().set(IP_PREFIX + ip, n + "|" + until + "|" + now + "|" + locks); } catch (err) { /* ignore */ }
     return until ? Math.ceil((until - now) / 1000) : 0;
@@ -921,38 +922,19 @@ function waitText(seconds) {
     catch (e) { return Math.max(1, Math.round(seconds)) + " Sekunden"; }
 }
 
-// A profile was locked because of wrong passwords: error log + push to the admins
-// (at most once per 15 minutes and profile)
-function meldeSperre(familyId, username, seconds) {
+// A profile was locked because of wrong passwords: security warning to the admins of the family (main admin profile:
+// to all admins) with the visitor details - since 1.152.0 through pinn-alarm.js (error log area "sicherheit" + push,
+// at most once per hour per address). e = the request (optional, for the visitor details).
+function meldeSperre(familyId, username, seconds, e) {
     const fam = String(familyId || "");
     const who = String(username || "");
-    protokoll().warnung("anmeldung", "Zu viele falsche Passwörter für „" + who + "“ – Profil für " + waitText(seconds) + " gesperrt.", { familie: fam });
-    const key = MELDUNG_PREFIX + fam + ":" + who;
     try {
-        const last = parseInt(String($app.store().get(key) || "0"), 10) || 0;
-        if (Date.now() - last < 15 * 60 * 1000) return;
-        $app.store().set(key, String(Date.now()));
-    } catch (e) { /* ignore */ }
-    let admins = [];
-    try {
-        admins = fam
-            ? $app.findRecordsByFilter(USERS, "familie = {:f} && rolle = 'admin'", "", 0, 0, { f: fam })
-            : $app.findRecordsByFilter(USERS, "rolle = 'hauptadmin'", "", 0, 0);
-    } catch (e) { admins = []; }
-    if (!admins.length) return;
-    let push = null;
-    try { push = require(`${__hooks}/pinn-push.js`); } catch (e) { return; }
-    admins.forEach(a => {
-        try {
-            push.notifyUser(a.id, {
-                titel: "🔒 Anmeldung gesperrt",
-                text: "Zu viele falsche Passwörter für „" + who + "“. Das Profil ist vorübergehend gesperrt – die Sperre lässt sich unter Konto → Profile verwalten aufheben.",
-                url: "/?konto=1",
-                tag: "sicherheit-sperre-" + (fam || "hauptadmin"),
-                urgency: "high",
-            });
-        } catch (e) { /* ignore */ }
-    });
+        require(`${__hooks}/pinn-alarm.js`).melde(e || null, "profilsperre", {
+            familie: fam, profil: who, url: "/?konto=1", extra: "Gesperrt für: " + waitText(seconds),
+        });
+    } catch (err) {
+        protokoll().warnung("anmeldung", "Zu viele falsche Passwörter für „" + who + "“ – Profil für " + waitText(seconds) + " gesperrt.", { familie: fam });
+    }
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -1041,6 +1023,6 @@ module.exports = {
     geraetKennung, merkmalOf, agentOhneVersion, msOf, doppelteZusammenfuehren, betterName, kurzId,
     liste, uebersicht, waisenPushEntfernen, abmelden, alleAbmelden, entferneAndere, entsperren, lockStatus, geraetMelden, umbenennen,
     merkePush, vergissPush, erneuerePush, hatPush, aboLebt,
-    ipGesperrt, ipFehlversuch, meldeSperre, waitText,
+    ipGesperrt, ipFehlversuch, meldeSperre, waitText, nameFromAgent,
     aufraeumen,
 };

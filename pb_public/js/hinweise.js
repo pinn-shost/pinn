@@ -1756,6 +1756,7 @@ function ntOpenLink(url) {
       return true;
     }
     if (g('system')) { ntUseQuery('system', g('system')); sysOpenFromUrl(); return true; }
+    if (g('protokoll')) { ntUseQuery('protokoll', g('protokoll')); errLogOpenFromUrl(); return true; }
     if (g('dokument')) { ntUseQuery('dokument', g('dokument')); docOpenFromUrl(); return true; }
     if (g('pinnwand')) { ntUseQuery('pinnwand', g('pinnwand')); pwOpenFromUrl(); return true; }
     if (g('familie')) { ntUseQuery('familie', g('familie')); famOpenFromUrl(); return true; }

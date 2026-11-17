@@ -19,6 +19,7 @@ const ERRLOG_BEREICHE = [
   { id: 'push', key: 'errorLog.area.push', ico: '🔔' },
   { id: 'muell', key: 'errorLog.area.waste', ico: '🗑️' },
   { id: 'anmeldung', key: 'errorLog.area.signIn', ico: '🔒' },
+  { id: 'sicherheit', key: 'errorLog.area.security', ico: '🚨' }, // since 1.152.0: security warnings (pinn-alarm.js)
   { id: 'system', key: 'errorLog.area.system', ico: '⚙️' },
 ].map(b => Object.defineProperty(b, 'label', { get() { return tk(this.key); }, enumerable: true }));
 const LS_ERRLOG_SEEN = 'pinn.protokollGesehen';
@@ -64,6 +65,21 @@ async function openErrLog() {
   pinnModalToTop('errLogModal').classList.remove('hidden');
   errLogOpenId = '';
   await errLogLoad();
+}
+// From a security push: /?protokoll=sicherheit opens the error log with that area (since 1.152.0)
+function errLogOpenFromUrl() {
+  let v = '';
+  try { v = new URLSearchParams(location.search).get('protokoll') || ''; } catch (e) { v = ''; }
+  if (!v) return false;
+  try {
+    const q = new URLSearchParams(location.search);
+    q.delete('protokoll');
+    history.replaceState(null, '', location.pathname + (q.toString() ? '?' + q.toString() : '') + location.hash);
+  } catch (e) { /* ignore */ }
+  if (!errLogCanUse()) return true;
+  if (ERRLOG_BEREICHE.some(b => b.id === v)) errLogFilter = v;
+  openErrLog();
+  return true;
 }
 function closeErrLog() {
   document.getElementById('errLogModal').classList.add('hidden');

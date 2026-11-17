@@ -133,12 +133,19 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.152.0의 새 소식
+
+**Tailscale 대신 직접 운영하는 리버스 프록시**
+
+- 새 기능: 직접 운영하는 리버스 프록시(Nginx Proxy Manager, Traefik, Cloudflare Tunnel 등)로 인터넷에서 접속 – 설치 항목의 “직접 운영하는 리버스 프록시로 인터넷에서 접속”을 참고하세요. pinn.은 신뢰하는 프록시(`PINN_PROXY_NETZE`)에서 온 방문자 주소만 믿으므로 잘못된 비밀번호 뒤의 잠금을 피할 수 없습니다(IPv6: /64 단위). 인터넷에서는 PocketBase 관리 화면과 자체 로그인 방법이 차단되고, 초기 비밀번호 `Admin`은 통하지 않으며, 추적기 ID 추측은 느려집니다. 이런 시도가 있으면 관리자에게 “🚨 보안 경고” 푸시(주소, 집 네트워크 또는 인터넷, 기기)가 가며, 자세한 내용은 오류 기록의 “보안”에 있습니다. 집 네트워크에서는 바뀌는 것이 없습니다.
+- 변경: `pb_hooks/pinn-netz.js` (new), `pb_hooks/netz.pb.js` (new), `pb_hooks/pinn-alarm.js` (new), `pb_hooks/pinn-sitzungen.js`, `pb_hooks/benutzer.pb.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/zuhause.pb.js`, `pb_hooks/sprache.pb.js`, `pb_hooks/smarthome.pb.js`, `pb_hooks/pinn-ortung.js`, `pb_hooks/pinn-protokoll.js`, `pb_hooks/pinn-pushtext.js`, `js/anmeldemaske.js`, `js/fehlerprotokoll.js`, `js/hinweise.js`, `js/appstart.js`, `i18n/`, `docker/docker-compose.portainer.yaml`, `env.txt`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
+
 ## 1.151.0의 새 소식
 
 **Portainer 스택, 완성된 이미지**
 
-- 새 기능: SSH와 설치 스크립트 없이 Portainer 스택 화면에서 pinn.을 설치할 수 있습니다. 릴리스마다 완성된 이미지(amd64, arm64)가 만들어져 `ghcr.io/pinn-shost/pinn`에 게시됩니다. 새 파일 `docker/docker-compose.portainer.yaml`은 이를 볼륨과 고정되지 않은 컨테이너 이름으로 사용합니다(기존 Tailscale 컨테이너와 더는 충돌하지 않음). 이미지로 실행 중이면 앱의 “백업 및 업데이트”가 Portainer를 안내합니다. 설치 항목의 “Portainer 스택 (스크립트 없이)”을 참고하세요.
-- 변경: `docker/` (new), `.github/workflows/image.yml` (new), `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
+- 새 기능: SSH와 설치 스크립트 없이 Portainer 스택 화면에서 pinn.을 설치할 수 있습니다. 릴리스마다 완성된 이미지(amd64, arm64)가 만들어져 `ghcr.io/pinn-shost/pinn`에 게시됩니다. 새 파일 `docker/docker-compose.portainer.yaml`은 이를 볼륨과 고정되지 않은 컨테이너 이름으로 사용합니다(기존 Tailscale 컨테이너와 더는 충돌하지 않음). 스택에는 백업 서비스(매일 밤 백업, 앱의 “지금 백업”과 “복원”. 업데이트는 계속 Portainer에서)와 주석 처리된 선택 블록(Traccar, Home Assistant 우회)도 들어 있습니다. 설치 항목의 “Portainer 스택 (스크립트 없이)”을 참고하세요.
+- 변경: `docker/` (new), `.github/workflows/image.yml` (new), `pinn-wartung.sh`, `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
 
 ## 1.150.11의 새 소식
 
@@ -219,15 +226,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - **한 줄 또는 여러 줄.** 설정 → 바로가기에서 휴대폰과 태블릿·컴퓨터를 따로 고릅니다: 한 줄(옆으로 밀어 나머지 보기) 또는 여러 줄(모든 바로가기를 아래로 채움).
 - 변경: `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/design.js`, `js/ansichten.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.1).
 
-## 1.150.1의 새 소식
-
-**바로가기가 별도 메뉴 항목으로**
-
-- **별도 항목.** 앱 선택은 이제 설정 → 바로가기에 있습니다. 이전에는 „바로가기”를 열면 개요 설정이 접히고 페이지를 더 이상 스크롤할 수 없었습니다.
-- **개요에서 켜기/끄기.** 바로가기 타일은 다른 타일처럼 켜고 끌 수 있으며, „앱 선택”을 누르면 바로 선택 화면으로 이동합니다.
-- **바로 표시.** 직접 고르기 전까지 타일에는 기본 앱(물 마시기, 장보기, 할 일, 일정, 오늘 요리, 메모, 지출, 청소 계획)이 표시됩니다. 선택한 앱이 없으면 사라지는 대신 „앱 선택”을 보여 줍니다.
-- 변경: `js/kurzbefehle.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README.
-
 ## 작동 방식
 
 ```mermaid
@@ -256,7 +254,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.151.0` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.152.0` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -287,7 +285,22 @@ Portainer가 더 편하신가요? 그렇다면 SSH도 설치 스크립트도 필
 
 이미지는 `ghcr.io/pinn-shost/pinn`(amd64, arm64)에서 완성된 상태로 제공됩니다. 데이터는 볼륨에 저장되므로 폴더가 필요 없습니다. 스택은 고정된 컨테이너 이름을 쓰지 않으므로 이미 있는 컨테이너와 충돌하지 않습니다. NAS에 Tailscale이 이미 있으면 `tailscale` 블록을 삭제하고, 자체 HTTPS 주소나 리버스 프록시를 쓰면 `caddy`와 `duckdns`도 삭제하세요.
 
-**업데이트:** Stack → Editor → *Update the stack*에서 *Re-pull image and redeploy*를 켭니다. **백업:** Portainer는 볼륨을 자동으로 백업하지 않습니다. 볼륨 `data`와 `konfig`를 정기적으로 복사하세요(예: NAS 스냅샷 또는 볼륨 백업 도구). 앱의 “백업 및 업데이트”에는 버튼 대신 안내가 표시됩니다. 이 스택에 포함되지 않은 것: Traccar(SIM 카드가 있는 GPS 추적기)와 Home Assistant 우회 — 휴대폰에는 둘 다 필요 없습니다.
+**업데이트:** Stack → Editor → *Update the stack*에서 *Re-pull image and redeploy*를 켭니다. **백업:** 스택의 `wartung` 블록이 매일 밤 백업하고(7일 + 4주 보관) pinn. → 설정 → 시스템의 “지금 백업”과 “복원” 버튼을 뒷받침합니다. 백업은 볼륨 `backups`에 저장되며, `PINN_BACKUP_DIR`(예: `/volume1/docker/pinn-backups`)를 지정하면 NAS 폴더에 저장됩니다. 복원 시 pinn.을 잠시 멈추기 위해 Docker 접근이 필요합니다. 볼륨을 직접 백업한다면 이 블록을 삭제하세요. 업데이트는 버튼이 아니라 Portainer에서 합니다. 선택 사항, 파일 끝에 주석 처리됨(`#`를 지우면 켜짐): Traccar(SIM 카드가 있는 GPS 추적기)와 Home Assistant 우회 — 휴대폰에는 둘 다 필요 없습니다.
+
+### 직접 운영하는 리버스 프록시로 인터넷에서 접속
+
+가족이 Tailscale을 쓰고 싶어 하지 않나요? 그렇다면 pinn.을 리버스 프록시 뒤에 두세요. 프록시가 인터넷에서 오는 요청을 받아 내 도메인으로 HTTPS를 제공하고 pinn.으로 전달합니다.
+
+1. 프록시가 `http://<NAS-IP>:8090`를 가리키게 합니다(Portainer 스택: 포트 `PINN_PORT`). 실시간 업데이트는 일반 HTTP를 사용하므로 websocket은 필요 없고, 응답 버퍼링만 켜지 마세요. 최대 70MB 업로드를 허용하세요(채팅 동영상).
+   - **Nginx Proxy Manager:** *Hosts → Proxy Hosts → Add*: 내 도메인, 스킴 `http`, NAS IP, 포트 `8090`; *SSL* 탭: 새 인증서, *Force SSL* 켜기.
+   - **Cloudflare Tunnel:** 포트 포워딩 불필요 – *Public hostname* → 서비스 `http://<NAS-IP>:8090`.
+   - **Traefik, Caddy 등:** 내 도메인을 `http://<NAS-IP>:8090`로 전달하는 라우터/사이트.
+2. 각 휴대폰에서 `https://<domain>`을 열고 로그인한 뒤 홈 화면에 다시 추가하고 알림을 다시 켭니다(앱은 주소별로 따로 동작합니다).
+3. Google 캘린더(선택): Google Cloud 콘솔에서 `https://<domain>/api/pinn/google/callback`를 승인된 리디렉션 URI로 추가합니다.
+
+pinn.이 스스로 하는 일: 프록시가 넘겨준 방문자 주소(`X-Forwarded-For`)는 요청이 집 네트워크, Docker 네트워크 또는 Tailscale에서 왔을 때만 믿습니다. 그래서 잘못된 비밀번호 뒤의 잠금을 피할 수 없습니다. 인터넷에서는 PocketBase 관리 화면(`/_/`)이 차단되고 초기 비밀번호 `Admin`은 통하지 않습니다. 프록시가 다른 곳에 있나요(임대 서버, 또는 프록시 앞에 Cloudflare 주황색 구름)? 그렇다면 `PINN_PROXY_NETZE`를 설정하세요(`.env` 또는 스택의 환경 변수). 예: `privat, cloudflare` 또는 `privat, 203.0.113.5`.
+
+**중요:** 그러면 pinn.은 인터넷 전체에서 접속할 수 있습니다. 모든 프로필에 길고 고유한 비밀번호를 주고, 프록시를 최신으로 유지하며, 라우터에서 8090 포트를 직접 열지 마세요. 항상 HTTPS 프록시를 거치게 하세요.
 
 ## 개인정보 보호
 

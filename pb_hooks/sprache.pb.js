@@ -58,6 +58,8 @@ routerAdd("GET", "/api/pinn/widget", (e) => {
     }
     const status = r.status || 200;
     delete r.status;
+    // invalid link from the internet: counted for the security warning (since 1.152.0)
+    if (status === 403 && /nicht \(mehr\) gültig/.test(String(r.error || r.antwort || ""))) { try { require(`${__hooks}/pinn-alarm.js`).zaehleUndMelde(e, "schluessel", 20, 15 * 60 * 1000); } catch (err) { /* ignore */ } }
     if (format === "text") {
         e.response.header().set("Content-Type", "text/plain; charset=utf-8");
         return e.string(status, String(r.ok ? r.text : (r.error || "")));
@@ -76,6 +78,8 @@ routerAdd("POST", "/api/pinn/widget/abhaken", (e) => {
     }
     const status = r.status || 200;
     delete r.status;
+    // invalid link from the internet: counted for the security warning (since 1.152.0)
+    if (status === 403 && /nicht \(mehr\) gültig/.test(String(r.error || r.antwort || ""))) { try { require(`${__hooks}/pinn-alarm.js`).zaehleUndMelde(e, "schluessel", 20, 15 * 60 * 1000); } catch (err) { /* ignore */ } }
     return e.json(status, r);
 });
 

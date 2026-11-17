@@ -110,12 +110,19 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski en 🇺🇦 Українська**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.152.0
+
+**Je eigen reverse proxy in plaats van Tailscale**
+
+- Nieuw: toegang vanaf internet via je eigen reverse proxy (Nginx Proxy Manager, Traefik, Cloudflare Tunnel …) – zie “Toegang vanaf internet met je eigen reverse proxy” onder Installatie. pinn. gelooft het bezoekersadres alleen nog van vertrouwde proxy’s (`PINN_PROXY_NETZE`), zo is de blokkade na verkeerde wachtwoorden niet te omzeilen (IPv6: per /64). Vanaf internet zijn het PocketBase-beheer en de eigen inlogwegen van PocketBase geblokkeerd, werkt het startwachtwoord `Admin` niet en wordt het raden van tracker-ID’s afgeremd. Bij zulke pogingen krijgen de beheerders een melding “🚨 Beveiligingswaarschuwing” (adres, thuisnetwerk of internet, apparaat); alle details staan in het foutenlogboek onder “Beveiliging”. In het thuisnetwerk verandert niets.
+- Gewijzigd: `pb_hooks/pinn-netz.js` (new), `pb_hooks/netz.pb.js` (new), `pb_hooks/pinn-alarm.js` (new), `pb_hooks/pinn-sitzungen.js`, `pb_hooks/benutzer.pb.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/zuhause.pb.js`, `pb_hooks/sprache.pb.js`, `pb_hooks/smarthome.pb.js`, `pb_hooks/pinn-ortung.js`, `pb_hooks/pinn-protokoll.js`, `pb_hooks/pinn-pushtext.js`, `js/anmeldemaske.js`, `js/fehlerprotokoll.js`, `js/hinweise.js`, `js/appstart.js`, `i18n/`, `docker/docker-compose.portainer.yaml`, `env.txt`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
+
 ## Nieuw in 1.151.0
 
 **Portainer-stack, kant-en-klare image**
 
-- Nieuw: pinn. is te installeren via de stack-omgeving van Portainer, zonder SSH en zonder installatiescript. Bij elke release wordt een kant-en-klare image (amd64, arm64) gebouwd en gepubliceerd op `ghcr.io/pinn-shost/pinn`; het nieuwe bestand `docker/docker-compose.portainer.yaml` gebruikt die met volumes en zonder vaste containernamen (geen botsing meer met een bestaande Tailscale-container). In de app verwijst “Back-ups & updates” naar Portainer als pinn. als image draait. Zie “Portainer-stack (zonder script)” onder Installatie.
-- Gewijzigd: `docker/` (new), `.github/workflows/image.yml` (new), `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
+- Nieuw: pinn. is te installeren via de stack-omgeving van Portainer, zonder SSH en zonder installatiescript. Bij elke release wordt een kant-en-klare image (amd64, arm64) gebouwd en gepubliceerd op `ghcr.io/pinn-shost/pinn`; het nieuwe bestand `docker/docker-compose.portainer.yaml` gebruikt die met volumes en zonder vaste containernamen (geen botsing meer met een bestaande Tailscale-container). De stack bevat ook een back-upservice (nachtelijke back-up, “Nu back-uppen” en “Herstellen” in de app; updates blijven in Portainer) en optionele, uitgecommentarieerde blokken voor Traccar en de omleiding naar Home Assistant. Zie “Portainer-stack (zonder script)” onder Installatie.
+- Gewijzigd: `docker/` (new), `.github/workflows/image.yml` (new), `pinn-wartung.sh`, `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
 
 ## Nieuw in 1.150.11
 
@@ -160,15 +167,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Face ID.** pinn. vraagt bij het openen weer vanzelf om Face ID, zoals vóór 1.150.5. iOS toont altijd eerst zijn eigen venster „Toegangssleutel gebruiken” – één tik erop, daarna Face ID; het web kan dat niet overslaan, en de extra knop betekende alleen een tweede tik. De grote knop onderaan blijft, voor als je het venster wegveegt.
 - Gewijzigd: `js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
 
-## Nieuw in 1.150.5
-
-**Nieuwe gezondheidsbanner · drinken opgeruimd**
-
-- **Gezondheidsbanner.** De gezondheidspagina en de pagina van elke persoon hebben weer een banner: water dat stijgt met wat je vandaag dronk, belletjes, een hartslaglijn en zwevende dingen – ’s nachts sterren.
-- **Drinken.** Doel, de drankjes van vandaag en de herinnering staan nu in een uitklapbaar veld „Instellingen” onder de knop.
-- **Face ID.** Ontgrendelen start alleen nog met de knop (geen venster „Toegangssleutel gebruiken” meer); de knop zit onderaan, binnen bereik van je duim.
-- Gewijzigd: `js/gesundheit.js`, `css/gesundheit.css`, `js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -178,7 +176,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.151.0` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.152.0` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -202,7 +200,22 @@ Liever Portainer? Dan heb je geen SSH en geen installatiescript nodig:
 
 De image komt kant-en-klaar van `ghcr.io/pinn-shost/pinn` (amd64 en arm64). De gegevens staan in volumes, mappen zijn niet nodig. De stack gebruikt geen vaste containernamen en botst dus niet met containers die je al hebt. Draait Tailscale al op je NAS, verwijder dan het blok `tailscale`; bij een eigen HTTPS-adres of reverse proxy ook `caddy` en `duckdns`.
 
-**Bijwerken:** Stack → Editor → *Update the stack* met *Re-pull image and redeploy* aan. **Back-ups:** Portainer maakt zelf geen back-up van je volumes – kopieer de volumes `data` en `konfig` regelmatig (bijv. NAS-snapshot of een volume-back-uptool). In de app toont “Back-ups & updates” een melding in plaats van knoppen. Niet inbegrepen: Traccar (gps-trackers met simkaart) en de omleiding naar Home Assistant – telefoons hebben geen van beide nodig.
+**Bijwerken:** Stack → Editor → *Update the stack* met *Re-pull image and redeploy* aan. **Back-ups:** het blok `wartung` van de stack maakt elke nacht een back-up (7 dagen + 4 weken bewaard) en zit achter de knoppen “Nu back-uppen” en “Herstellen” in pinn. → Instellingen → Systeem. De back-ups komen in het volume `backups` – of in een NAS-map als je `PINN_BACKUP_DIR` instelt (bijv. `/volume1/docker/pinn-backups`). Het heeft Docker-toegang nodig om pinn. bij een herstel kort te stoppen; back je de volumes zelf up, verwijder dan het blok. Updates doe je in Portainer, niet met een knop. Optioneel, onderaan het bestand in commentaar (haal de `#` weg om aan te zetten): Traccar (gps-trackers met simkaart) en de omleiding naar Home Assistant – telefoons hebben geen van beide nodig.
+
+### Toegang vanaf internet met je eigen reverse proxy
+
+Wil je gezin geen Tailscale gebruiken? Zet pinn. dan achter een reverse proxy: die neemt de verzoeken van internet aan, zorgt voor HTTPS op je eigen domein en geeft ze door aan pinn.
+
+1. Laat de proxy wijzen naar `http://<NAS-IP>:8090` (Portainer-stack: de poort `PINN_PORT`). Live-updates gaan via gewone HTTP – geen websockets nodig, laat alleen het bufferen van antwoorden uit. Sta uploads tot 70 MB toe (chatvideo’s).
+   - **Nginx Proxy Manager:** *Hosts → Proxy Hosts → Add*: je domein, schema `http`, NAS-IP, poort `8090`; tabblad *SSL*: nieuw certificaat, *Force SSL* aan.
+   - **Cloudflare Tunnel:** geen port forwarding nodig – *Public hostname* → service `http://<NAS-IP>:8090`.
+   - **Traefik, Caddy en andere:** een router/site voor je domein die doorstuurt naar `http://<NAS-IP>:8090`.
+2. Open op elke telefoon `https://<domain>`, log in, zet het opnieuw op het beginscherm en zet meldingen weer aan (de app hoort bij zijn adres).
+3. Google-agenda’s (optioneel): voeg `https://<domain>/api/pinn/google/callback` toe als geautoriseerde omleidings-URI in de Google Cloud-console.
+
+Wat pinn. zelf doet: het gelooft het bezoekersadres dat de proxy doorgeeft (`X-Forwarded-For`) alleen als het verzoek uit het thuisnetwerk, een Docker-netwerk of Tailscale komt – zo is de blokkade na verkeerde wachtwoorden niet te omzeilen. Vanaf internet is het PocketBase-beheer (`/_/`) geblokkeerd en werkt het startwachtwoord `Admin` niet. Staat je proxy ergens anders (gehuurde server, of Cloudflares oranje wolk vóór je proxy)? Stel dan `PINN_PROXY_NETZE` in (in `.env` of de omgevingsvariabelen van de stack), bijv. `privat, cloudflare` of `privat, 203.0.113.5`.
+
+**Belangrijk:** pinn. is dan voor iedereen op internet bereikbaar. Geef elk profiel een lang, eigen wachtwoord, houd de proxy up-to-date en zet poort 8090 nooit direct open in de router – altijd via de proxy met HTTPS.
 
 ## Privacy
 

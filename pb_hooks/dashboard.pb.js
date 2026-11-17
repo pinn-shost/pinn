@@ -50,6 +50,7 @@ routerAdd("POST", "/api/pinn/dashboard/profile", (e) => {
     const dev = dash.findDevice(body.key);
     if (!dev) {
         sleep(300);
+        try { require(`${__hooks}/pinn-alarm.js`).zaehleUndMelde(e, "schluessel", 20, 15 * 60 * 1000); } catch (err) { /* ignore */ }
         return e.json(404, { error: "Dieses Gerät ist nicht (mehr) als Familien-Dashboard eingerichtet.", ungueltig: true });
     }
     let fam = null;
@@ -77,6 +78,7 @@ routerAdd("POST", "/api/pinn/dashboard/hintergrund-bild", (e) => {
     const dev = dash.findDevice(body.key);
     if (!dev) {
         sleep(300);
+        try { require(`${__hooks}/pinn-alarm.js`).zaehleUndMelde(e, "schluessel", 20, 15 * 60 * 1000); } catch (err) { /* ignore */ }
         return e.json(404, { error: "Dieses Gerät ist nicht (mehr) als Familien-Dashboard eingerichtet.", ungueltig: true });
     }
     const bg = dash.backgroundFull(dev.getString("familie"));
@@ -90,6 +92,7 @@ routerAdd("POST", "/api/pinn/dashboard/login", (e) => {
     const dev = dash.findDevice(body.key);
     if (!dev) {
         sleep(300);
+        try { require(`${__hooks}/pinn-alarm.js`).zaehleUndMelde(e, "schluessel", 20, 15 * 60 * 1000); } catch (err) { /* ignore */ }
         return e.json(404, { error: "Dieses Gerät ist nicht (mehr) als Familien-Dashboard eingerichtet.", ungueltig: true });
     }
     let rec = null;
@@ -111,6 +114,7 @@ routerAdd("POST", "/api/pinn/dashboard/login", (e) => {
             sleep(400); // slows down trying out PINs
             const lock = dash.registerFail(rec.id);
             if (lock) {
+                try { require(`${__hooks}/pinn-alarm.js`).melde(e, "pinsperre", { familie: rec.getString("familie"), profil: rec.getString("username"), geraetName: dev.getString("name"), extra: "Gesperrt für: " + dash.waitText(lock) }); } catch (err) { /* ignore */ }
                 return e.json(429, { error: "Falsche PIN. Zu viele Fehlversuche – bitte in " + dash.waitText(lock) + " erneut versuchen.", sperre: lock });
             }
             return e.json(400, { error: "Falsche PIN.", falsch: true });
@@ -132,6 +136,7 @@ routerAdd("POST", "/api/pinn/dashboard/login", (e) => {
             sleep(400); // slows down trying out passwords
             const lock = dash.registerFail(rec.id);
             if (lock) {
+                try { require(`${__hooks}/pinn-alarm.js`).melde(e, "pinsperre", { familie: rec.getString("familie"), profil: rec.getString("username"), geraetName: dev.getString("name"), extra: "Gesperrt für: " + dash.waitText(lock) + " (Passwort)" }); } catch (err) { /* ignore */ }
                 return e.json(429, { error: "Falsches Passwort. Zu viele Fehlversuche – bitte in " + dash.waitText(lock) + " erneut versuchen.", sperre: lock });
             }
             return e.json(400, { error: "Falsches Passwort.", falsch: true, passwort: true });

@@ -545,6 +545,19 @@ const GROUPS = [
     { tag: /^sicherheit-/, rules: [
         [/^🔒 Anmeldung gesperrt$/, "push.security.locked", {}],
         [/^Zu viele falsche Passwörter für „(.+)“\. Das Profil ist vorübergehend gesperrt – die Sperre lässt sich unter Konto → Profile verwalten aufheben\.$/, "push.security.tooMany", { name: "<1>" }],
+        // since 1.152.0: security warnings with the visitor details (pinn-alarm.js)
+        [/^🚨 Sicherheitswarnung$/, "push.security.alertTitle", {}],
+        [/^Viele falsche Anmeldeversuche von einer Adresse – sie ist vorübergehend gesperrt\.$/, "push.security.ipLocked", {}],
+        [/^Zu viele falsche PINs für „(.+)“ am Familien-Dashboard – das Profil ist vorübergehend gesperrt\.$/, "push.security.pinLocked", { name: "<1>" }],
+        [/^Jemand hat versucht, sich aus dem Internet mit dem Start-Passwort anzumelden – abgewiesen\.$/, "push.security.startPassword", {}],
+        [/^Zugriffsversuche auf die PocketBase-Verwaltung aus dem Internet – abgewiesen\.$/, "push.security.adminAccess", {}],
+        [/^Viele Ortungsmeldungen mit unbekannten Geräte-IDs – die Adresse wird 1 Stunde ignoriert\.$/, "push.security.locationGuess", {}],
+        [/^Viele ungültige Zugangsschlüssel \(Familien-Dashboard, Widget oder Smart Home\) von einer Adresse – abgewiesen\.$/, "push.security.keyGuess", {}],
+        [/^Adresse: (.+) \(aus dem Internet\)$/, "push.security.addrOutside", { ip: "<1>" }],
+        [/^Adresse: (.+) \(Heimnetz\)$/, "push.security.addrInside", { ip: "<1>" }],
+        [/^Gerät: (.+)$/, "push.security.device", { name: "<1>" }],
+        [/^Versuche: (\d+)$/, "push.security.attempts", { n: "<1>" }],
+        [/^Alle Angaben im Fehlerprotokoll \(Sicherheit\)\.$/, "push.security.seeLog", {}],
     ] },
     // --- Funds: settlement recorded / added to a fund ---
     { tag: /^ausgleich-/, rules: [
