@@ -6,8 +6,8 @@
    and all views need no change: a MutationObserver replaces the emoji in text nodes when they are added or changed.
    The emoji stays in the page as visually hidden text (class "sym-t"), so textContent, copy & paste and every place that
    reads a picked emoji back from a button keep working.
-   NOT replaced: animals and people (member avatars, pet pictures), flags, push texts (the system shows them), chat message
-   texts, input fields, text areas, drop-down options, SVG and script/style. Since 1.150.8 food, household, vehicles, plants,
+   NOT replaced: flags, push texts (the system shows them), chat message
+   texts, input fields, text areas, SVG and script/style (drop-down options lose the emoji, since 1.150.10). Since 1.150.8 food, household, vehicles, plants,
    clothes, sports and toys are replaced as well (they are the category and room symbols). Elements can opt out with the attribute data-keep-emoji. */
 Object.assign(WX_ICON_PATHS, {
   alarm: '<circle cx="12" cy="13" r="7.5"/><path d="M12 9v4.2l2.6 1.6M4.6 4.6L2.8 6.4M19.4 4.6l1.8 1.8"/>',
@@ -570,7 +570,7 @@ var SYM_MAP = {
 
 // Places where emoji must stay emoji: user content, pickers, avatars, form fields
 var SYM_SKIP = 'script,style,textarea,input,select,option,svg,title,noscript,[contenteditable],[data-keep-emoji],'
-  + '.sym,.chat-text,.chat-quote-text,.avatar-option';
+  + '.sym,.chat-text,.chat-quote-text';
 // One emoji: pictograph + optional variation selector / skin tone, joined sequences (ZWJ) as one unit
 var SYM_RE = /\p{Extended_Pictographic}(?:\uFE0F|[\u{1F3FB}-\u{1F3FF}])?(?:\u200D\p{Extended_Pictographic}\uFE0F?)*/gu;
 var SYM_PRES = /^\p{Emoji_Presentation}/u;
@@ -594,6 +594,14 @@ function symHtml(emoji, name) {
   return '<span class="sym" data-e="' + name + '">' + wxIcon(name, 'sym-i') + '<span class="sym-t">' + emoji + '</span></span>';
 }
 
+// A drop-down option cannot hold an icon: the emoji that has an icon is dropped from the label (since 1.150.10), all others stay
+function symOption(node, s) {
+  var out = s.replace(SYM_RE, function (e) { return symName(e) ? '' : e; });
+  if (out === s || !out.trim()) return false; // an option that only holds the emoji stays as it is
+  node.nodeValue = out.replace(/^\s+/, '');
+  return true;
+}
+
 // Replace the emoji inside one text node (returns true when something changed)
 function symText(node) {
   var s = node.nodeValue;
@@ -601,6 +609,7 @@ function symText(node) {
   SYM_RE.lastIndex = 0;
   if (!SYM_RE.test(s)) return false;
   var par = node.parentElement;
+  if (par && par.nodeName === 'OPTION' && !par.closest('[data-keep-emoji]')) return symOption(node, s);
   if (!par || par.closest(SYM_SKIP)) return false;
   var html = '', last = 0, hit = false, m;
   SYM_RE.lastIndex = 0;
@@ -627,7 +636,7 @@ function symScan(root) {
   var w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
     acceptNode: function (n) {
       var p = n.parentNode;
-      return p && /^(SCRIPT|STYLE|TEXTAREA|OPTION|SVG|TITLE)$/i.test(p.nodeName) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
+      return p && /^(SCRIPT|STYLE|TEXTAREA|SVG|TITLE)$/i.test(p.nodeName) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
     }
   });
   var list = [], n;

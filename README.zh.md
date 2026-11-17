@@ -133,6 +133,13 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski和 🇺🇦 Українська**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.150.10 新功能
+
+**深色模式、更多图标、新的宠物横幅、宠物日记**
+
+- **深色模式。** 蓝色文字现在是金色（设备、清单、“规划购物”、宠物/健康/任务的勾选）；家务页面的条形使用房间颜色；聊天提示、合同提示和“一目了然”的文字清晰可读。**用图标取代更多 emoji：**头像（婴儿、男孩、女孩、男人、女人、爷爷、奶奶）、家庭和合租、动物（狗、猫、兔、仓鼠、鸟、小鸡、鱼、马、乌龟、蛇）；下拉列表只显示文字。**新的宠物横幅**，带彩色动物。**宠物日记：**已勾选的体检会出现在日记中，点 × 可撤销误勾。
+- 更改： `css/dunkelfarbe.css` (new), `js/symbole3.js` (new), `js/symbole.js`, `js/szenen.js`, `js/familie.js`, `js/haushalt.js`, `css/symbolfarbe.css`, `css/haustierewetter.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
+
 ## 1.150.9 新功能
 
 **图标上色，车辆和植物图标**
@@ -227,16 +234,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 - **只发给本人。** 提醒只会发到本人的设备，不会发给其他家庭成员。点按消息会打开健康页；喝水则直接打开饮品窗口。
 - 更改： `pb_hooks/pinn-gesundheit.js`, `pb_hooks/gesundheit.pb.js`, `js/gesundheit.js`, `css/gesundheit.css`, `js/hinweise.js`, `js/fortsetzen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`、所有 README。包含 1.149.0。
 
-## 1.149.0 新功能
-
-**健康**
-
-- **“家庭”中的健康。** “紧急”标签现在叫“健康”，家庭概览中的按钮也一样。每个人都有自己的健康页，像“家居”一样由模块组成：喝水、药物和维生素、洗手、数值、疫苗接种和就诊预约。
-- **喝水。** 设定每日目标，点“记录饮水”：先选饮品（水、果汁、咖啡、茶、牛奶、汽水），再以杯子的满度选择分量。pinn. 自动累计，并提示还差多少、进度是否正常。
-- **整合急救卡。** 在健康页勾选即可启用；空白的急救卡会立即打开填写表单。已有的急救卡全部保留，全家可见，离线也可用。
-- **私密。** 健康数据只有本人可见，儿童的数据成年人也可见。推送提醒将在 1.149.1 中推出。
-- 更改：`js/gesundheit.js`, `css/gesundheit.css`, `pb_hooks/gesundheit.pb.js`, `pb_hooks/pinn-gesundheit.js`, `pb_hooks/pinn-schema.js`, `js/familie.js`, `js/serverzugriff.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`、所有 README。含服务器部分（新数据集“gesundheit”）。包含 1.148.2。
-
 ## 工作原理
 
 ```mermaid
@@ -265,7 +262,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.150.9` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.150.10` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

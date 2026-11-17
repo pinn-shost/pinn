@@ -110,6 +110,13 @@ Tam boyutta açmak için bir resme dokun.
 
 pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski ve 🇺🇦 Українська**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
 
+## 1.150.10 sürümündeki yenilikler
+
+**Koyu mod, daha fazla simge, yeni evcil hayvan bannerı, evcil hayvan günlüğü**
+
+- **Koyu mod.** Mavi yazı artık altın rengi (cihazlar, listeler, “Alışverişi planla”, evcil hayvan, sağlık ve görevlerdeki onay işaretleri); Ev işleri çubukları odanın rengini taşır; sohbet, sözleşme ve “Bir bakışta” notları okunaklı. **Emoji yerine daha fazla simge:** profil resimleri (bebek, erkek çocuk, kız çocuk, erkek, kadın, dede, nine), aile ve ev arkadaşlığı, hayvanlar (köpek, kedi, tavşan, hamster, kuş, civciv, balık, at, kaplumbağa, yılan); açılır listeler yalnızca metni gösterir. **Renkli hayvanlı yeni banner.** **Evcil hayvan günlüğü:** işaretlenen kontrol günlükte görünür, × yanlışlıkla yapılan işareti geri alır.
+- Değişenler: `css/dunkelfarbe.css` (new), `js/symbole3.js` (new), `js/symbole.js`, `js/szenen.js`, `js/familie.js`, `js/haushalt.js`, `css/symbolfarbe.css`, `css/haustierewetter.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
+
 ## 1.150.9 sürümündeki yenilikler
 
 **Simgelere renk, taşıt ve bitki simgeleri**
@@ -165,16 +172,6 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 - **Başlıksız Shortcuts.** Genel bakıştaki kutu yalnızca uygulamaları gösterir, çizgiyle ayrılmış olarak.
 - Değişenler: `pb_hooks/` içindeki tüm hatırlatma modülleri (`pinn-zeit.js` ve 13 tane daha), `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.2).
 
-## 1.150.2 sürümündeki yenilikler
-
-**Kısayollar genel bakışta kalır**
-
-- **Atlamak yerine pencere.** Su içme, ilaçlar, alışveriş, bugün yemek, temizlik planı, evcil hayvanlar, kiler, SOS veya yoldayım'a dokunmak alttaki pencereyi açar; orada adım adım ilerlersiniz ve kısa bir bildirim ne olduğunu söyler.
-- **Pencereler ve bağlantılar.** Görev, randevu, not, gider ve gelir alışılmış pencerelerini açar, el yıkama +1 sayar. Sohbet, finans ve bitkiler basit bağlantılardır; penceredeki „Aç ›” tam sayfaya götürür.
-- **Düzeltildi.** Başka bir sayfaya geçince (ör. tarifler veya alışveriş) Kısayollar kutucuğu artık altta kalmıyor.
-- **Tek veya birden çok sıra.** Ayarlar → Kısayollar altında telefon ve tablet/bilgisayar için ayrı ayrı seçersiniz: tek sıra (geri kalanlar için yana kaydırın) veya birden çok sıra (tüm kısayollar aşağıya doğru).
-- Değişenler: `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/design.js`, `js/ansichten.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.1).
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -184,7 +181,7 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.150.9` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.150.10` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -87,14 +87,14 @@ function renderRoomList() {
         </div>
         <div class="pl-4 flex flex-col gap-1.5">
           ${schedules.map(s => `
-            <button class="edit-schedule-btn flex items-center justify-between gap-2 text-xs px-2 py-1.5 rounded-lg bg-white/70 hover:bg-white transition text-left w-full" data-id="${s.id}">
+            <button class="edit-schedule-btn hh-row flex items-center justify-between gap-2 text-xs px-2 py-1.5 rounded-lg bg-white/70 hover:bg-white transition text-left w-full" style="--rc:${room.color}" data-id="${s.id}">
               <span>🧹 ${escapeHtml((cleaningCategoryById(s.category) || {}).label || s.category)} · ${escapeHtml(scheduleSummary(s))}${s.rotate ? ' · 🔄' : ''}</span>
               <span class="text-ink/30">›</span>
             </button>`).join('')}
           ${bins.map(b => {
             const waste = wasteTypeById(b.wasteType);
             const scheduleLabel = b.schedule ? ' · ' + scheduleSummary(b.schedule) : '';
-            return `<button class="edit-bin-btn flex items-center justify-between gap-2 text-xs px-2 py-1.5 rounded-lg bg-white/70 hover:bg-white transition text-left w-full" data-id="${b.id}">
+            return `<button class="edit-bin-btn hh-row flex items-center justify-between gap-2 text-xs px-2 py-1.5 rounded-lg bg-white/70 hover:bg-white transition text-left w-full" style="--rc:${room.color}" data-id="${b.id}">
               <span>${waste ? waste.icon : '🗑️'} ${escapeHtml(waste ? waste.label : tk('household.unknown'))}${escapeHtml(scheduleLabel)}${b.rotate ? ' · 🔄' : ''}</span>
               <span class="text-ink/30">›</span>
             </button>`;

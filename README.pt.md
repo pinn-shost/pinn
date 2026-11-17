@@ -133,6 +133,13 @@ Toque em qualquer imagem para abri-la em tamanho real.
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.150.10
+
+**Modo escuro, mais ícones, novo banner dos animais, diário dos animais**
+
+- **Modo escuro.** O texto azul agora é dourado (dispositivos, listas, «Planear compras», visto em animais, saúde e tarefas); as barras de Casa têm a cor da divisão; avisos do chat, dos contratos e «Em destaque» ficam legíveis. **Mais ícones em vez de emojis:** fotos de perfil (bebé, rapaz, rapariga, homem, mulher, avô, avó), família e casa partilhada, animais (cão, gato, coelho, hamster, pássaro, pintainho, peixe, cavalo, tartaruga, cobra); as listas de seleção mostram só o texto. **Novo banner dos animais** com animais coloridos. **Diário dos animais:** uma consulta marcada aparece no diário e com o × desfaz-se um visto acidental.
+- Alterado: `css/dunkelfarbe.css` (new), `js/symbole3.js` (new), `js/symbole.js`, `js/szenen.js`, `js/familie.js`, `js/haushalt.js`, `css/symbolfarbe.css`, `css/haustierewetter.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
+
 ## Novidades da 1.150.9
 
 **Cor nos ícones, ícones de veículos e plantas**
@@ -227,16 +234,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Só para a própria pessoa.** Os lembretes vão para os dispositivos dessa pessoa; nada é enviado a outros membros da família. Ao tocar na mensagem abre-se a página de saúde; ao beber, diretamente a janela da bebida.
 - Alterado: `pb_hooks/pinn-gesundheit.js`, `pb_hooks/gesundheit.pb.js`, `js/gesundheit.js`, `css/gesundheit.css`, `js/hinweise.js`, `js/fortsetzen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, todos os README. Inclui 1.149.0.
 
-## Novidades da 1.149.0
-
-**Saúde**
-
-- **Saúde em Família.** O separador «Emergência» chama-se agora «Saúde», tal como o botão do resumo familiar. Cada pessoa tem a sua página de saúde feita de blocos, como em Casa: beber, medicamentos e vitaminas, lavar as mãos, valores, vacinas e consultas médicas.
-- **Beber.** Escolhe um objetivo diário e toca em «Bebi»: a bebida (água, sumo, café, chá, leite, refrigerante) e a quantidade como um copo mais ou menos cheio. O pinn. soma e diz quanto falta e se estás no bom caminho.
-- **Ficha de emergência integrada.** Ativa-se com um visto na página de saúde; uma ficha vazia abre logo o formulário. As fichas existentes mantêm-se e continuam visíveis para toda a família, também offline.
-- **Privado.** Os dados de saúde só são vistos pela própria pessoa e, nas crianças, também pelos adultos. Os lembretes push chegam com a 1.149.1.
-- Alterado: `js/gesundheit.js`, `css/gesundheit.css`, `pb_hooks/gesundheit.pb.js`, `pb_hooks/pinn-gesundheit.js`, `pb_hooks/pinn-schema.js`, `js/familie.js`, `js/serverzugriff.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, todos os README. Com parte de servidor (nova coleção «gesundheit»). Inclui 1.148.2.
-
 ## Como funciona
 
 ```mermaid
@@ -265,7 +262,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.150.9` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.150.10` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

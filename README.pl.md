@@ -110,6 +110,13 @@ Dotknij obrazu, aby otworzyć go w pełnym rozmiarze.
 
 pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski i 🇺🇦 Українська**; dostosowuje walutę i numery alarmowe do twojego regionu i przełącza się między określeniami **rodzina** i **wspólne mieszkanie**. Jeden serwer może obsługiwać wiele rodzin, każdą z własnymi administratorami.
 
+## Nowości w 1.150.10
+
+**Tryb ciemny, więcej ikon, nowy baner zwierząt, dziennik zwierząt**
+
+- **Tryb ciemny.** Niebieski tekst jest teraz złoty (urządzenia, listy, „Zaplanuj zakupy”, ptaszki przy zwierzętach, zdrowiu i zadaniach); paski w Gospodarstwie mają kolor pokoju; komunikaty w czacie, przy umowach i „W skrócie” są czytelne. **Więcej ikon zamiast emoji:** zdjęcia profilowe (niemowlę, chłopiec, dziewczynka, mężczyzna, kobieta, dziadek, babcia), rodzina i wspólne mieszkanie, zwierzęta (pies, kot, królik, chomik, ptak, kurczak, ryba, koń, żółw, wąż); listy rozwijane pokazują tylko tekst. **Nowy baner zwierząt** z kolorowymi zwierzętami. **Dziennik zwierząt:** odhaczona kontrola pojawia się w dzienniku, a × cofa przypadkowe odhaczenie.
+- Zmieniono: `css/dunkelfarbe.css` (new), `js/symbole3.js` (new), `js/symbole.js`, `js/szenen.js`, `js/familie.js`, `js/haushalt.js`, `css/symbolfarbe.css`, `css/haustierewetter.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
+
 ## Nowości w 1.150.9
 
 **Kolor ikon, ikony pojazdów i roślin**
@@ -165,16 +172,6 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 - **Shortcuts bez nagłówka.** Kafelek na przeglądzie pokazuje tylko aplikacje, oddzielone linią.
 - Zmieniono: wszystkie moduły przypomnień w `pb_hooks/` (`pinn-zeit.js` i 13 kolejnych), `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.2).
 
-## Nowości w 1.150.2
-
-**Skróty zostają na przeglądzie**
-
-- **Okno zamiast przeskoku.** Stuknięcie w picie, leki, zakupy, gotowanie dziś, plan sprzątania, zwierzęta, zapasy, SOS lub w drodze otwiera okno na dole; tam przechodzisz dalej, a krótki komunikat mówi, co się stało.
-- **Okna i linki.** Zadanie, termin, notatka, wydatek i przychód otwierają swoje zwykłe okno, mycie rąk liczy +1. Czat, finanse i rośliny to zwykłe linki; „Otwórz ›” w oknie prowadzi do całej strony.
-- **Naprawiono.** Po przejściu na inną stronę (np. przepisy lub zakupy) kafelek Skróty nie zostaje już na dole.
-- **Jeden lub kilka rzędów.** W Ustawienia → Skróty wybierasz osobno dla telefonu oraz dla tabletu i komputera: jeden rząd (przesuń w bok, by zobaczyć resztę) lub kilka rzędów (wszystkie skróty wypełniane w dół).
-- Zmieniono: `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/design.js`, `js/ansichten.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.1).
-
 ## Wymagania
 
 - NAS lub mini PC z zainstalowanym **Dockerem** i **Docker Compose** (np. Synology, UGREEN, QNAP albo zwykły serwer z Linuksem)
@@ -184,7 +181,7 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 ## Instalacja
 
 1. Pobierz i rozpakuj plik ZIP [najnowszej wersji](https://github.com/pinn-shost/pinn/releases/latest).
-2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.150.9` lub `pinn-main`) bez zmian.
+2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.150.10` lub `pinn-main`) bez zmian.
 3. Połącz się przez SSH i uruchom:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

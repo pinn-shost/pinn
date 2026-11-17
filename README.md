@@ -129,6 +129,13 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski and 🇺🇦 Українська**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.150.10
+
+**Dark mode, more icons, new pets banner, pet diary**
+
+- **Dark mode.** Blue text is now gold (devices, lists, “Plan shopping”, ticks for pets, health and tasks); the bars in Household have the colour of the room; chat banner and notes, contract hints and “In view” texts are readable. **More icons instead of emoji:** profile pictures (baby, boy, girl, man, woman, grandpa, grandma), family and flat share, animals (dog, cat, rabbit, hamster, bird, chick, fish, horse, turtle, snake) – also for the hospital bag, the gift list “Easter”, checklists and finance categories; drop-down lists show the text only. **New pets banner** with colourful animals. **Pet diary:** a ticked-off check-up appears in the diary, a × undoes an accidental tick.
+- Changed: `css/dunkelfarbe.css` (new), `js/symbole3.js` (new), `js/symbole.js`, `js/szenen.js`, `js/familie.js`, `js/haushalt.js`, `css/symbolfarbe.css`, `css/haustierewetter.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
+
 ## What's new in 1.150.9
 
 **Colour for the icons, vehicle and plant icons**
@@ -259,15 +266,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **How long.** While the app stays open (also in the background), 12 hours at most. After closing the app, after “Log out” on your own device or when coming from a link in a notification you start as usual. On your own device the page is also kept when the app reloads, e.g. after an update.
 - Changed: `js/fortsetzen.js` (new), `js/appstart.js`, `js/dashboard.js`, `js/anmeldung.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`, `pinn-setup.sh`, all READMEs. No server part.
 
-## What's new in 1.147.1
-
-**Devices listed once, link inside the guides**
-
-- **Signed-in devices.** A device that signed in twice at the same moment (e.g. the family dashboard on a Mac) showed up twice with the same ID. It is now listed once, counted once, and “Sign out” removes it completely.
-- **No more “Notifications only”.** A leftover notification address of a device that is already signed in is removed automatically, so nothing arrives twice.
-- **Voice control & widgets.** The personal link now sits inside the fields “Siri shortcut” and “Android” (with its copy button) instead of the general overview.
-- Changed: `js/geraete.js`, `js/sprachsteuerung.js`, `js/sprachen.js`, `pb_hooks/pinn-sitzungen.js`, `src/`, `index.html`, `i18n/`, all READMEs. Server part: install the hooks, PocketBase restarts.
-
 ## How it works
 
 ```mermaid
@@ -294,7 +292,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.150.9` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.150.10` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

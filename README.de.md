@@ -133,6 +133,13 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski und 🇺🇦 Українська**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.150.10
+
+**Dunkelmodus, mehr Symbole, neuer Haustiere-Banner, Tier-Tagebuch**
+
+- **Dunkelmodus.** Blaue Schrift ist jetzt Gold (Geräte, Listen, „Einkauf planen“, Haken bei Tieren, Gesundheit und Aufgaben); die Balken bei Haushalt haben die Raumfarbe; Chat-Hinweise, Vertrags-Hinweise und „Im Blick“-Texte sind lesbar. **Mehr Symbole statt Emoji:** Profilbilder (Baby, Junge, Mädchen, Mann, Frau, Opa, Oma), Familie und WG, Tiere (Hund, Katze, Kaninchen, Hamster, Vogel, Küken, Fisch, Pferd, Schildkröte, Schlange) – auch bei Kliniktasche, Geschenkliste „Ostern“, Checklisten und Finanz-Kategorien; Auswahllisten zeigen nur den Text. **Neuer Haustiere-Banner** mit bunten Tieren. **Tier-Tagebuch:** Eine abgehakte Vorsorge steht im Tagebuch, mit dem × nimmst du ein versehentliches Abhaken zurück.
+- Geändert: `css/dunkelfarbe.css` (new), `js/symbole3.js` (new), `js/symbole.js`, `js/szenen.js`, `js/familie.js`, `js/haushalt.js`, `css/symbolfarbe.css`, `css/haustierewetter.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
+
 ## Neu in 1.150.9
 
 **Farbe bei den Symbolen, Fahrzeug- und Pflanzen-Symbole**
@@ -237,14 +244,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Privat.** Gesundheitsdaten sieht nur die Person selbst, bei Kindern auch die Erwachsenen. Push-Erinnerungen folgen mit 1.149.1.
 - Geändert: `js/gesundheit.js`, `css/gesundheit.css`, `pb_hooks/gesundheit.pb.js`, `pb_hooks/pinn-gesundheit.js`, `pb_hooks/pinn-schema.js`, `js/familie.js`, `js/serverzugriff.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, alle READMEs. Mit Server-Teil (neue Sammlung „gesundheit“). Enthält 1.148.2.
 
-## Neu in 1.148.2
-
-**Andere Familie am Dashboard-Gerät**
-
-- **Anmeldung mit einer anderen Familie.** Meldest du dich auf einem Dashboard-Gerät über „Mit Passwort anmelden“ mit einem Profil einer anderen Familie an, ist das jetzt eine ganz normale Sitzung: Der Dashboard-Knopf fehlt und „Abmelden“ beendet sie. Vorher führte der Knopf zurück zum Dashboard der ersten Familie.
-- **Klarer Hinweis in den Einstellungen.** Der Dashboard-Bereich sagt jetzt, dass dieses Gerät das Dashboard einer anderen Familie ist – ein Gerät kann nur ein Dashboard sein.
-- Geändert: `js/dashboard.js`, `js/anmeldung.js`, `js/profilauswahl.js`, `js/dashboardkonto.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, alle READMEs. Kein Server-Teil.
-
 ## So funktioniert’s
 
 ```mermaid
@@ -273,7 +272,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.150.9` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.150.10` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

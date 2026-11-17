@@ -3526,7 +3526,7 @@ function skModalChange(e) {
        trackerId (device from the location), push (reminders), meds: [{ id, name, dose, times }],
        care: [{ id, type, title, last, every (days, 0 = once), next, note }],
        weights: [{ id, date, kg }], gone (date, rainbow bridge), created, updated }]
-   - petLog: [{ id, pet, kind: 'gassi'|'futter'|'med'|'notiz', day, at, by (member ID), min, slot, note }]
+   - petLog: [{ id, pet, kind: 'gassi'|'futter'|'med'|'notiz'|'vorsorge', day, at, by (member ID), min, slot, note, careId + prev (vorsorge) }]
      (only the last 60 days are kept)
    Push reminders (care due, birthday, pet feeder): pb_hooks/haustiere.pb.js + pinn-haustiere.js.
    ========================================================== */
@@ -3710,12 +3710,14 @@ function ptSceneHtml(list) {
   const sky = night
     ? [[8, 12], [22, 30], [35, 8], [48, 22], [62, 14], [74, 36], [86, 10], [93, 26], [15, 40], [55, 38]].map(([x, y], i) => `<span class="hs-star${i % 3 === 0 ? ' tw hs-anim' : ''}" style="left:${x}%;top:${y}px;animation-delay:-${i * 0.7}s"></span>`).join('')
     : '<span class="hs-sun"></span><div class="hs-cloud hs-anim"><i></i></div><div class="hs-cloud c2 hs-anim"><i></i></div>';
-  const animals = [...new Set((list || []).map(p => ptSpecies(p.species).emoji))].slice(0, 5);
-  ['🐕', '🐈', '🐇'].forEach(e => { if (animals.length < 3 && !animals.includes(e)) animals.push(e); });
-  const flyers = night ? [['🦉', 17, 4]] : [['🦋', 15, 3], ['🐦', 21, 11]];
-  const fly = ([emoji, dur, delay], i) => `<div class="hs-mover pt-fly ${i % 2 ? '' : 'ltr '}hs-anim" style="top:${14 + i * 18}px;animation-duration:${dur}s;animation-delay:-${delay}s"><span>${emoji}</span></div>`;
+  // Walking figures by species (flat, coloured, see js/szenen.js); the species without a figure walk as a hamster
+  const FIG = { hund: 'dog', katze: 'cat', kaninchen: 'rabbit', meerschweinchen: 'hamster', hamster: 'hamster', vogel: 'bird', fisch: 'turtle', reptil: 'turtle', pferd: 'horse' };
+  const animals = [...new Set((list || []).map(p => FIG[p.species] || 'hamster'))].slice(0, 5);
+  ['dog', 'cat', 'rabbit'].forEach(k => { if (animals.length < 3 && !animals.includes(k)) animals.push(k); });
+  const flyers = night ? [['owl', 17, 4]] : [['butterfly', 15, 3], ['flybird', 21, 11]];
+  const fly = ([kind, dur, delay], i) => `<div class="hs-mover pt-fly ${i % 2 ? '' : 'ltr '}hs-anim" style="top:${14 + i * 18}px;animation-duration:${dur}s;animation-delay:-${delay}s"><span>${scPet(kind, i)}</span></div>`;
   // far lane walks to the right, near lane to the left
-  const walk = (emoji, i) => `<div class="hs-mover pt-walk ${i % 2 ? 'near' : 'far ltr'} hs-anim" style="animation-duration:${9 + i * 3}s;animation-delay:-${i * 4}s"><span>${emoji}</span></div>`;
+  const walk = (kind, i) => `<div class="hs-mover pt-walk ${i % 2 ? 'near' : 'far ltr'} hs-anim" style="animation-duration:${9 + i * 3}s;animation-delay:-${i * 4}s"><span>${scPet(kind, i)}</span></div>`;
   return `<div class="fz-hero-band hs-scene pt-scene${night ? ' is-night' : ''}" aria-hidden="true">
       ${sky}
       <svg class="pt-hills" viewBox="0 0 400 34" preserveAspectRatio="none" aria-hidden="true"><path d="M0 34 V18 Q50 4 110 14 T230 10 T400 14 V34Z" class="pt-hill-far"/><path d="M0 34 V26 Q70 14 150 24 T300 20 T400 24 V34Z" class="pt-hill-near"/></svg>
@@ -3929,8 +3931,8 @@ function ptProfileHtml(p) {
   return out.join('');
 }
 function ptLogRowHtml(p, x) {
-  const ic = { gassi: '🦮', futter: '🍖', med: '💊', notiz: '📝' }[x.kind] || '•';
-  const label = x.kind === 'gassi' ? tk('pet.walk') : x.kind === 'futter' ? tk('pet.fed') : x.kind === 'med' ? (x.note || tk('family.medication')) : (x.note || tk('fin.csv.note'));
+  const ic = { gassi: '🦮', futter: '🍖', med: '💊', notiz: '📝', vorsorge: '💉' }[x.kind] || '•';
+  const label = x.kind === 'gassi' ? tk('pet.walk') : x.kind === 'futter' ? tk('pet.fed') : x.kind === 'med' ? (x.note || tk('family.medication')) : x.kind === 'vorsorge' ? tk('pet.careDoneLog', { title: x.note || '–' }) : (x.note || tk('fin.csv.note'));
   const day = x.day === ptToday() ? tk('contract.today') : x.day === addDaysToDateStr(ptToday(), -1) ? tk('pet.yesterday') : new Date(x.day + 'T12:00:00').toLocaleDateString(sysLocale(), { weekday: 'short', day: 'numeric', month: 'short' });
   const can = ptCanEdit();
   return `<div class="pt-log-row"><span class="pt-log-ic">${ic}</span><span class="min-w-0 flex-1"><span class="block text-sm"><span>${escapeHtml(label)}</span>${x.kind === 'gassi' && x.min ? ` <span class="text-ink/50">· ${tk('loc.durMin', { n: escapeHtml(String(x.min)) })}</span>` : ''}${x.kind === 'gassi' && x.note ? ` <span class="text-ink/50">· ${escapeHtml(x.note)}</span>` : ''}</span>
@@ -4473,6 +4475,8 @@ function ptCareDone(petId, careId) {
   if (!c || !ptCanEdit()) return;
   const today = ptToday();
   const every = Number(c.every) || 0;
+  // Diary entry (since 1.150.10): remembers the state before, so a mistaken tap can be undone from the diary
+  ptAddLog({ pet: petId, kind: 'vorsorge', note: c.title || '', careId: careId, prev: { last: c.last || '', next: c.next || '' } });
   ptUpdate(petId, x => ({ ...x, care: (x.care || []).map(y => {
     if (y.id !== careId) return y;
     const n = { ...y, last: today };
@@ -4481,6 +4485,17 @@ function ptCareDone(petId, careId) {
   }) }));
   ptRefresh();
   finShowToast(every ? tk('pet.doneNextOn', { date: famFmtDate(addDaysToDateStr(today, every)) }) : tk('pet.done'));
+}
+// Takes a "done" back: the care task gets its old dates again (only while nobody has ticked it off again since)
+function ptUndoCare(entry) {
+  const prev = entry.prev || {};
+  ptUpdate(entry.pet, x => ({ ...x, care: (x.care || []).map(y => {
+    if (y.id !== entry.careId || y.last !== entry.day) return y;
+    const n = { ...y };
+    if (prev.last) n.last = prev.last; else delete n.last;
+    if (prev.next) n.next = prev.next; else delete n.next;
+    return n;
+  }) }));
 }
 function ptAddPresets(petId) {
   const p = ptById(petId);
@@ -4754,7 +4769,14 @@ function ptPaneClick(e) {
     case 'feednext': ptFeedNext(id); break;
     case 'medgiven': ptMedGiven(id, b.dataset.name); break;
     case 'roster': ptOpenRoster(id); break;
-    case 'logdel': if (confirm(tk('pet.removeEntry'))) { ptRemoveLog(id); ptRefresh(); } break;
+    case 'logdel': {
+      const entry = ptLog().find(x => x.id === id);
+      const undo = !!(entry && entry.kind === 'vorsorge' && entry.careId);
+      if (!confirm(tk(undo ? 'pet.undoCare' : 'pet.removeEntry'))) break;
+      if (undo) ptUndoCare(entry);
+      ptRemoveLog(id); ptRefresh();
+      break;
+    }
     case 'sitter': ptOpenSitter(id); break;
     case 'poster': ptOpenPoster(id); break;
     case 'docs': docFilterCategory = 'haustiere'; setView('dokumente'); break;

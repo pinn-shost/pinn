@@ -110,6 +110,13 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski en 🇺🇦 Українська**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.150.10
+
+**Donkere modus, meer pictogrammen, nieuwe dierenbanner, dierendagboek**
+
+- **Donkere modus.** Blauwe tekst is nu goud (apparaten, lijsten, “Boodschappen plannen”, vinkjes bij dieren, gezondheid en taken); de balken bij Huishouden hebben de kleur van de kamer; meldingen in de chat, bij contracten en “In één oogopslag” zijn leesbaar. **Meer pictogrammen i.p.v. emoji:** profielfoto’s (baby, jongen, meisje, man, vrouw, opa, oma), gezin en woongroep, dieren (hond, kat, konijn, hamster, vogel, kuiken, vis, paard, schildpad, slang); keuzelijsten tonen alleen tekst. **Nieuwe dierenbanner** met kleurrijke dieren. **Dierendagboek:** een afgevinkte controle staat in het dagboek, met de × maak je een per ongeluk vinkje ongedaan.
+- Gewijzigd: `css/dunkelfarbe.css` (new), `js/symbole3.js` (new), `js/symbole.js`, `js/szenen.js`, `js/familie.js`, `js/haushalt.js`, `css/symbolfarbe.css`, `css/haustierewetter.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
+
 ## Nieuw in 1.150.9
 
 **Kleur in de pictogrammen, voertuig- en plantenpictogrammen**
@@ -165,16 +172,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Shortcuts zonder kop.** De tegel op het overzicht toont alleen de apps, gescheiden door de lijn.
 - Gewijzigd: alle herinneringsmodules in `pb_hooks/` (`pinn-zeit.js` en 13 andere), `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.2).
 
-## Nieuw in 1.150.2
-
-**Snelkoppelingen blijven op het overzicht**
-
-- **Venster in plaats van springen.** Tikken op drinken, medicijnen, boodschappen, vandaag koken, schoonmaakplan, huisdieren, voorraad, SOS of onderweg opent het venster onderaan; daar klik je verder en een korte melding zegt wat er gebeurd is.
-- **Vensters en links.** Taak, afspraak, notitie, uitgave en inkomsten openen hun vertrouwde venster, handen wassen telt +1. Chat, financiën en planten zijn gewone links; „Openen ›” in het venster gaat naar de hele pagina.
-- **Opgelost.** Na het wisselen naar een andere pagina (bv. recepten of boodschappen) staat de tegel Snelkoppelingen niet meer onderaan.
-- **Eén of meerdere rijen.** Onder Instellingen → Snelkoppelingen kies je apart voor de telefoon en voor tablet & computer: één rij (opzij vegen voor de rest) of meerdere rijen (alle snelkoppelingen naar beneden aangevuld).
-- Gewijzigd: `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/design.js`, `js/ansichten.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.1).
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -184,7 +181,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.150.9` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.150.10` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

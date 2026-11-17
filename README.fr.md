@@ -129,6 +129,13 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski et 🇺🇦 Українська**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.150.10
+
+**Mode sombre, plus d’icônes, nouvelle bannière des animaux, journal des animaux**
+
+- **Mode sombre.** Le texte bleu devient doré (appareils, listes, « Planifier les courses », coches pour les animaux, la santé et les tâches) ; les barres du Ménage ont la couleur de la pièce ; les messages du chat, des contrats et « En un coup d’œil » sont lisibles. **Plus d’icônes à la place des émojis :** photos de profil (bébé, garçon, fille, homme, femme, grand-père, grand-mère), famille et colocation, animaux (chien, chat, lapin, hamster, oiseau, poussin, poisson, cheval, tortue, serpent) ; les listes déroulantes n’affichent que le texte. **Nouvelle bannière des animaux** avec des animaux colorés. **Journal des animaux :** un suivi coché apparaît dans le journal, la × annule une coche accidentelle.
+- Modifié : `css/dunkelfarbe.css` (new), `js/symbole3.js` (new), `js/symbole.js`, `js/szenen.js`, `js/familie.js`, `js/haushalt.js`, `css/symbolfarbe.css`, `css/haustierewetter.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
+
 ## Nouveautés de la 1.150.9
 
 **De la couleur pour les icônes, icônes de véhicules et de plantes**
@@ -259,15 +266,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Combien de temps.** Tant que l'app reste ouverte (aussi en arrière-plan), 12 heures au maximum. Après la fermeture de l'app, après « Se déconnecter » sur ton propre appareil ou en arrivant par un lien d'une notification, tu démarres comme d'habitude. Sur ton propre appareil, la page est aussi conservée quand l'app se recharge, p. ex. après une mise à jour.
 - Modifié : `js/fortsetzen.js` (nouveau), `js/appstart.js`, `js/dashboard.js`, `js/anmeldung.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`, `pinn-setup.sh`, tous les README. Pas de partie serveur.
 
-## Nouveautés de la 1.147.1
-
-**Appareils listés une seule fois, lien dans les guides**
-
-- **Appareils connectés.** Un appareil connecté deux fois au même moment (p. ex. le tableau de bord familial sur un Mac) apparaissait deux fois avec le même ID. Il est désormais listé une fois, compté une fois, et « Se déconnecter » le supprime entièrement.
-- **Plus de « Notifications uniquement ».** Une adresse de notification restante d'un appareil déjà connecté est supprimée automatiquement, pour que rien n'arrive en double.
-- **Commande vocale et widgets.** Le lien personnel se trouve maintenant dans les champs « Raccourci Siri » et « Android » (avec son bouton de copie) et plus dans la vue d'ensemble.
-- Modifié : `js/geraete.js`, `js/sprachsteuerung.js`, `js/sprachen.js`, `pb_hooks/pinn-sitzungen.js`, `src/`, `index.html`, `i18n/`, tous les README. Partie serveur : installer les hooks, PocketBase redémarre.
-
 ## Comment ça marche
 
 ```mermaid
@@ -294,7 +292,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.150.9` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.150.10` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

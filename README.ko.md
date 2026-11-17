@@ -133,6 +133,13 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.150.10의 새 소식
+
+**다크 모드, 더 많은 아이콘, 새 반려동물 배너, 반려동물 일기**
+
+- **다크 모드.** 파란 글씨가 이제 금색입니다(기기, 목록, ‘장보기 계획’, 반려동물·건강·할 일 체크). 집안일의 막대는 방 색상을 따르고, 채팅·계약·‘한눈에’ 안내도 읽기 쉬워졌습니다. **이모지 대신 더 많은 아이콘:** 프로필 사진(아기, 남자아이, 여자아이, 남자, 여자, 할아버지, 할머니), 가족과 쉐어하우스, 동물(개, 고양이, 토끼, 햄스터, 새, 병아리, 물고기, 말, 거북이, 뱀). 드롭다운 목록에는 글자만 표시됩니다. **다채로운 동물이 나오는 새 반려동물 배너.** **반려동물 일기:** 체크한 검진이 일기에 나타나고, ×로 실수로 한 체크를 되돌릴 수 있습니다.
+- 변경: `css/dunkelfarbe.css` (new), `js/symbole3.js` (new), `js/symbole.js`, `js/szenen.js`, `js/familie.js`, `js/haushalt.js`, `css/symbolfarbe.css`, `css/haustierewetter.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
+
 ## 1.150.9의 새 소식
 
 **아이콘에 색, 탈것·식물 아이콘**
@@ -227,16 +234,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - **본인에게만.** 알림은 그 사람의 기기로만 가고, 다른 가족에게는 아무것도 보내지 않습니다. 알림을 누르면 건강 페이지가 열리고, 수분 섭취는 바로 음료 화면이 열립니다.
 - 변경: `pb_hooks/pinn-gesundheit.js`, `pb_hooks/gesundheit.pb.js`, `js/gesundheit.js`, `css/gesundheit.css`, `js/hinweise.js`, `js/fortsetzen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, 모든 README. 1.149.0 포함.
 
-## 1.149.0의 새 소식
-
-**건강**
-
-- **가족 메뉴의 건강.** “응급” 탭이 이제 “건강”이 되었고, 가족 개요의 버튼도 마찬가지입니다. 사람마다 “집”처럼 구성 요소로 된 건강 페이지가 있습니다: 수분 섭취, 약과 비타민, 손 씻기, 수치, 예방접종, 진료 예약.
-- **수분 섭취.** 하루 목표를 정하고 “마셨어요”를 누르세요: 음료(물, 주스, 커피, 차, 우유, 탄산음료)와 양을 컵이 찬 정도로 고릅니다. pinn.이 합산해 남은 양과 진행 상황을 알려 줍니다.
-- **응급 카드 통합.** 건강 페이지에서 체크하면 켜집니다. 비어 있으면 바로 입력 양식이 열립니다. 기존 응급 카드는 그대로 유지되며 가족 모두가 오프라인에서도 볼 수 있습니다.
-- **비공개.** 건강 데이터는 본인만 볼 수 있고, 아이의 경우 어른도 볼 수 있습니다. 푸시 알림은 1.149.1에서 제공됩니다.
-- 변경: `js/gesundheit.js`, `css/gesundheit.css`, `pb_hooks/gesundheit.pb.js`, `pb_hooks/pinn-gesundheit.js`, `pb_hooks/pinn-schema.js`, `js/familie.js`, `js/serverzugriff.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, 모든 README. 서버 부분 포함(새 컬렉션 “gesundheit”). 1.148.2 포함.
-
 ## 작동 방식
 
 ```mermaid
@@ -265,7 +262,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.150.9` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.150.10` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

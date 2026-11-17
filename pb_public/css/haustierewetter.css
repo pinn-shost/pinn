@@ -308,3 +308,8 @@ html.pinn-ruhe .pt-badge.bday, html.pinn-ruhe .pt-empty-paws span, html.pinn-ruh
 .pt-walk.near { bottom: 1px; font-size: 20px; }
 .pt-walk.ltr > span, .pt-fly.ltr > span { transform: scaleX(-1); }
 .pt-fly { font-size: 14px; line-height: 1; }
+/* Coloured figures of the banner (js/szenen.js, scPet; since 1.150.10) */
+.pt-walk .sc-pet { display: block; width: auto; }
+.pt-walk.far .sc-pet { height: 14px; }
+.pt-walk.near .sc-pet { height: 21px; }
+.pt-fly .sc-pet { display: block; width: auto; height: 13px; }

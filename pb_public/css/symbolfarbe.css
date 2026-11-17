@@ -158,3 +158,16 @@ svg.wi[data-i="wave"] { --m:#5B8DEF; --o:#3B82F6; }
 svg.wi[data-i="window"] { --m:#BFE3F7; }
 svg.wi[data-i="wine"] { --m:#E5534B; }
 svg.wi[data-i="wrench"] { --m:#9AA3AD; }
+/* People and animals (js/symbole3.js, since 1.150.10) */
+svg.wi[data-i="person"], svg.wi[data-i="man"], svg.wi[data-i="woman"], svg.wi[data-i="boy"], svg.wi[data-i="girl"],
+svg.wi[data-i="grandpa"], svg.wi[data-i="grandma"], svg.wi[data-i="family"], svg.wi[data-i="duo"] { --m:#FFD9B3; }
+svg.wi[data-i="dog"] { --m:#C99A6B; }
+svg.wi[data-i="cat"] { --m:#F2A65A; }
+svg.wi[data-i="rabbit"] { --m:#EFE6D8; }
+svg.wi[data-i="hamster"] { --m:#E6B87D; }
+svg.wi[data-i="bird"] { --m:#5B8DEF; }
+svg.wi[data-i="chick"] { --m:#FFD54A; }
+svg.wi[data-i="fish"] { --m:#5BB6E8; }
+svg.wi[data-i="horse"] { --m:#A8774C; }
+svg.wi[data-i="turtle"] { --m:#58B368; }
+svg.wi[data-i="snake"] { --m:#58B368; }

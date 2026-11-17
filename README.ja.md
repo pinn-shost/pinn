@@ -133,6 +133,13 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski、🇺🇦 Українська** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.150.10の新機能
+
+**ダークモード、アイコンの追加、新しいペットバナー、ペット日記**
+
+- **ダークモード。** 青い文字がゴールドになりました（端末、リスト、「買い物を計画」、ペット・健康・タスクのチェック）。家事のバーは部屋の色になり、チャット、契約、「ひと目で」の文字も読みやすくなりました。**絵文字の代わりにアイコンを追加：**プロフィール画像（赤ちゃん、男の子、女の子、男性、女性、おじいちゃん、おばあちゃん）、家族とシェアハウス、動物（犬、猫、うさぎ、ハムスター、鳥、ひよこ、魚、馬、カメ、ヘビ）。ドロップダウンは文字のみ表示。**カラフルな動物の新しいペットバナー。** **ペット日記：**チェックした健診が日記に載り、×で誤チェックを取り消せます。
+- 変更： `css/dunkelfarbe.css` (new), `js/symbole3.js` (new), `js/symbole.js`, `js/szenen.js`, `js/familie.js`, `js/haushalt.js`, `css/symbolfarbe.css`, `css/haustierewetter.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
+
 ## 1.150.9の新機能
 
 **アイコンに色、乗り物と植物のアイコン**
@@ -227,16 +234,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - **本人だけに届きます。** リマインダーはその人の端末に届き、他の家族には何も送られません。通知をタップすると健康ページが開き、水分補給ではすぐに飲み物の画面が開きます。
 - 変更： `pb_hooks/pinn-gesundheit.js`, `pb_hooks/gesundheit.pb.js`, `js/gesundheit.js`, `css/gesundheit.css`, `js/hinweise.js`, `js/fortsetzen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`、すべてのREADME。1.149.0 を含みます。
 
-## 1.149.0の新機能
-
-**健康**
-
-- **「家族」に健康ページ。** 「緊急」タブは「健康」になり、家族の概要のボタンも同様です。ひとりずつ、「住まい」と同じようにブロックで作る健康ページがあります：水分補給、薬とビタミン、手洗い、測定値、予防接種、通院予定。
-- **水分補給。** 1日の目標を決めて「飲んだ」をタップ：飲み物（水、ジュース、コーヒー、お茶、牛乳、ソーダ）を選び、量をコップの満ち具合で選びます。pinn. が合計し、あとどれくらいか、順調かを教えてくれます。
-- **緊急カードを統合。** 健康ページのチェックで有効にします。空のカードならすぐ入力フォームが開きます。これまでの緊急カードはそのまま残り、家族全員がオフラインでも見られます。
-- **プライベート。** 健康データは本人だけが見られ、子どもの場合は大人も見られます。プッシュ通知は 1.149.1 で追加予定です。
-- 変更：`js/gesundheit.js`, `css/gesundheit.css`, `pb_hooks/gesundheit.pb.js`, `pb_hooks/pinn-gesundheit.js`, `pb_hooks/pinn-schema.js`, `js/familie.js`, `js/serverzugriff.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`、すべてのREADME。サーバー側の変更あり（新しいコレクション「gesundheit」）。1.148.2 を含みます。
-
 ## しくみ
 
 ```mermaid
@@ -265,7 +262,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.150.9`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.150.10`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
