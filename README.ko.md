@@ -133,6 +133,13 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.150.11의 새 소식
+
+**아이콘과 작은 수정**
+
+- 어린이 페이지의 “머리 빗기”에 빗 아이콘; 예탁 계좌 이름 옆의 이모지 입력란 삭제; 금고 선택 목록에서 이모지 제거; 도구 아이콘을 스패너로 변경; “손님용 메뉴”에 두 사람 아이콘; 가족 이름 옆 로고를 누르면 개요로 이동; “알림” 카드를 먼저 채워 “이 기기에서 켜기”가 항상 표시; 다크 모드에서 바로가기 아이콘은 회색.
+- 변경: `js/symbole.js`, `js/symbole3.js`, `js/ansichten.js`, `js/konto.js`, `css/dunkelfarbe.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`.
+
 ## 1.150.10의 새 소식
 
 **다크 모드, 더 많은 아이콘, 새 반려동물 배너, 반려동물 일기**
@@ -226,14 +233,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - **계속 열려 있음.** 동작 후에도 창이 열려 있어 여러 작업을 이어서 할 수 있습니다. “열기”는 전체 기능으로 이동합니다.
 - 변경: `pb_hooks/pinn-zeit.js`, `pb_hooks/zeit.pb.js`, `js/zeit.js`, `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `pb_hooks/pinn-gesundheit.js`, `js/appstart.js`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/ansichten.js`, `js/design.js`, `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, README (+ 1.149.1).
 
-## 1.149.1의 새 소식
-
-**푸시 알림**
-
-- **건강 알림.** 건강 페이지에서 구성 요소별로 푸시 알림을 켤 수 있습니다: 약과 비타민은 정해 둔 시간에, 수분 섭취는 하루 중 두 시각 사이 일정한 간격으로(남은 양 포함), 손 씻기는 정해진 시간에 알려 줍니다.
-- **본인에게만.** 알림은 그 사람의 기기로만 가고, 다른 가족에게는 아무것도 보내지 않습니다. 알림을 누르면 건강 페이지가 열리고, 수분 섭취는 바로 음료 화면이 열립니다.
-- 변경: `pb_hooks/pinn-gesundheit.js`, `pb_hooks/gesundheit.pb.js`, `js/gesundheit.js`, `css/gesundheit.css`, `js/hinweise.js`, `js/fortsetzen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, 모든 README. 1.149.0 포함.
-
 ## 작동 방식
 
 ```mermaid
@@ -262,7 +261,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.150.10` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.150.11` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

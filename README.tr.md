@@ -110,6 +110,13 @@ Tam boyutta açmak için bir resme dokun.
 
 pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski ve 🇺🇦 Українська**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
 
+## 1.150.11 sürümündeki yenilikler
+
+**Simgeler ve küçük düzeltmeler**
+
+- Çocuk sayfasında “Saç tarama” için tarak simgesi; depo adının yanında artık emoji alanı yok; kasa seçim listelerinde emoji yok; alet simgesi artık açık ağızlı anahtar; “Misafir menüleri” iki kişi simgesiyle; aile adının yanındaki logoya dokunmak genel bakışa götürür; Bildirimler kartı ilk doldurulur, böylece “Bu cihazda etkinleştir” her zaman görünür; karanlık modda kısayol simgeleri gri.
+- Değiştirildi: `js/symbole.js`, `js/symbole3.js`, `js/ansichten.js`, `js/konto.js`, `css/dunkelfarbe.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`.
+
 ## 1.150.10 sürümündeki yenilikler
 
 **Koyu mod, daha fazla simge, yeni evcil hayvan bannerı, evcil hayvan günlüğü**
@@ -163,15 +170,6 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 - **Tek dokunuş yeter.** Bir cihaz kaydını yine de kaybederse (ör. iOS sıfırladıysa) pinn. onu kendiliğinden yeniden kaydeder – ya da altta „Yeniden aç” gösterir, ayarlara gitmeye gerek kalmaz.
 - Değişenler: `pb_hooks/pinn-push.js`, `pb_hooks/push.pb.js`, `pb_hooks/pinn-sitzungen.js`, `js/mitteilungen.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
 
-## 1.150.3 sürümündeki yenilikler
-
-**Tüm hatırlatmalar senin saatinle · ebeveynler de**
-
-- **Tüm hatırlatmalar senin saatinle.** Doğum günleri, evcil hayvanlar, bavul listesi, kiler, sözleşmeler, belgeler, haftalık önizleme, aylık görünüm ve yıllık özet, randevu hatırlatmaları, günlük özet, görev ve çöp hatırlatmaları, pano, sesli komut, akıllı ev ve konum mesajları artık yaz ve kış saati dahil cihazının saat dilimine göre çalışır. Ayarlanacak bir şey yok.
-- **Ebeveynler de.** Çocuklar için su içme, ilaç ve el yıkama hatırlatmaları ebeveynlere de gelir; başlığın önünde çocuğun adı olur. Çocuk başına “Ebeveynlere de hatırlat” anahtarı vardır (varsayılan: açık).
-- **Başlıksız Shortcuts.** Genel bakıştaki kutu yalnızca uygulamaları gösterir, çizgiyle ayrılmış olarak.
-- Değişenler: `pb_hooks/` içindeki tüm hatırlatma modülleri (`pinn-zeit.js` ve 13 tane daha), `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.2).
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -181,7 +179,7 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.150.10` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.150.11` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

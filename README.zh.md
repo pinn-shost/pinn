@@ -133,6 +133,13 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski和 🇺🇦 Українська**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.150.11 新功能
+
+**图标与小修复**
+
+- 儿童页面“梳头发”使用梳子图标；储蓄账户名称旁不再有表情符号输入框；资金账户下拉列表不再显示表情符号；工具图标改为开口扳手；“访客菜单”使用双人图标；点击家庭名称旁的标志可回到概览；“通知”卡片优先加载，确保始终显示“在此设备上启用”；深色模式下快捷方式图标为灰色。
+- 已更改: `js/symbole.js`, `js/symbole3.js`, `js/ansichten.js`, `js/konto.js`, `css/dunkelfarbe.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`.
+
 ## 1.150.10 新功能
 
 **深色模式、更多图标、新的宠物横幅、宠物日记**
@@ -226,14 +233,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 - **保持打开。** 操作后窗口保持打开，可以连续做多件事；“打开”进入完整功能。
 - 已更改: `pb_hooks/pinn-zeit.js`, `pb_hooks/zeit.pb.js`, `js/zeit.js`, `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `pb_hooks/pinn-gesundheit.js`, `js/appstart.js`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/ansichten.js`, `js/design.js`, `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, README (+ 1.149.1).
 
-## 1.149.1 新功能
-
-**推送提醒**
-
-- **健康提醒。** 在健康页可为每个模块开启推送提醒：药物和维生素按设定时间，喝水在每天两个时间点之间按间隔提醒（附上还差的量），洗手在固定时间提醒。
-- **只发给本人。** 提醒只会发到本人的设备，不会发给其他家庭成员。点按消息会打开健康页；喝水则直接打开饮品窗口。
-- 更改： `pb_hooks/pinn-gesundheit.js`, `pb_hooks/gesundheit.pb.js`, `js/gesundheit.js`, `css/gesundheit.css`, `js/hinweise.js`, `js/fortsetzen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`、所有 README。包含 1.149.0。
-
 ## 工作原理
 
 ```mermaid
@@ -262,7 +261,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.150.10` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.150.11` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

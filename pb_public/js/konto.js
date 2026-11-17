@@ -33,10 +33,14 @@ async function renderAccountSettings() {
   // No personal notifications on a dashboard device and for guests
   const noPush = guest || isDashboardDevice();
   document.getElementById('pushSection').classList.toggle('hidden', noPush);
-  renderDashDeviceSection();
-  renderDashPinSection();
-  renderDevicesSection();
-  if (typeof renderBioSection === 'function') renderBioSection(); // Face ID / fingerprint (js/entsperren.js)
+  // The notification card is filled first (since 1.150.11): an error in one of the other sections below or a slow profile
+  // list must never leave it empty without its "Activate" button
+  if (!noPush) renderPushSettings();
+  const safe = (fn) => { try { fn(); } catch (e) { console.error(e); } };
+  safe(renderDashDeviceSection);
+  safe(renderDashPinSection);
+  safe(renderDevicesSection);
+  if (typeof renderBioSection === 'function') safe(renderBioSection); // Face ID / fingerprint (js/entsperren.js)
   const pinsLoaded = guest ? Promise.resolve(dashPinInfo) : loadDashboardPins().then(info => { renderDashPinSection(); return info; });
   const famEl = document.getElementById('accountFamily');
   if (famEl && u && u.familie) {
@@ -47,7 +51,6 @@ async function renderAccountSettings() {
   const loaded = await loadFamilyProfiles();
   renderAccountAvatar();
   renderSettingsMemberList();
-  if (!noPush) renderPushSettings();
   if (!isCurrentUserAdmin()) return;
   const list = document.getElementById('profileList');
   if (!loaded) {

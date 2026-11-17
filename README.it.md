@@ -133,6 +133,13 @@ Tocca un’immagine per aprirla a dimensione intera.
 
 pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
 
+## Novità della 1.150.11
+
+**Icone e piccole correzioni**
+
+- Icona del pettine per «Pettinarsi» nella pagina dei bambini; niente più campo emoji accanto al nome del deposito; elenchi a discesa delle casse senza emoji; lo strumento ora è una chiave fissa; «Menu per gli ospiti» con l’icona di due persone; un tocco sul logo accanto al nome della famiglia porta alla panoramica; la scheda Notifiche viene riempita per prima, così «Attiva su questo dispositivo» compare sempre; icone dei collegamenti grigie in modalità scura.
+- Modificato: `js/symbole.js`, `js/symbole3.js`, `js/ansichten.js`, `js/konto.js`, `css/dunkelfarbe.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`.
+
 ## Novità della 1.150.10
 
 **Modalità scura, più icone, nuovo banner degli animali, diario degli animali**
@@ -226,14 +233,6 @@ pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Resta aperta.** La finestra resta aperta dopo un’azione, così si possono fare più cose di seguito; «Apri» porta alla funzione completa.
 - Modificato: `pb_hooks/pinn-zeit.js`, `pb_hooks/zeit.pb.js`, `js/zeit.js`, `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `pb_hooks/pinn-gesundheit.js`, `js/appstart.js`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/ansichten.js`, `js/design.js`, `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, README (+ 1.149.1).
 
-## Novità della 1.149.1
-
-**Promemoria push**
-
-- **Promemoria per la salute.** Nella pagina della salute si può attivare un promemoria push per blocco: farmaci e vitamine ai loro orari, bere a intervalli tra due orari del giorno (con la quantità che manca) e lavarsi le mani a orari fissi.
-- **Solo per la persona stessa.** I promemoria arrivano sui dispositivi di quella persona; ai altri familiari non viene inviato nulla. Toccando la notifica si apre la pagina della salute; per il bere, direttamente la finestra della bevanda.
-- Modificati: `pb_hooks/pinn-gesundheit.js`, `pb_hooks/gesundheit.pb.js`, `js/gesundheit.js`, `css/gesundheit.css`, `js/hinweise.js`, `js/fortsetzen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, tutti i README. Include 1.149.0.
-
 ## Come funziona
 
 ```mermaid
@@ -262,7 +261,7 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 ## Installazione
 
 1. Scarica lo ZIP dell’[ultima release](https://github.com/pinn-shost/pinn/releases/latest) e decomprimilo.
-2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.150.10` o `pinn-main`) così com’è.
+2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.150.11` o `pinn-main`) così com’è.
 3. Accedi via SSH ed esegui:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

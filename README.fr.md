@@ -129,6 +129,13 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski et 🇺🇦 Українська**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.150.11
+
+**Icônes et petites corrections**
+
+- Icône de peigne pour « Se coiffer » sur la page enfants ; plus de champ emoji à côté du nom du portefeuille ; listes déroulantes des caisses sans emoji ; l’outil est désormais une clé plate ; « Menus pour les invités » avec l’icône à deux personnes ; un appui sur le logo à côté du nom de la famille mène à l’aperçu ; la carte Notifications se remplit en premier pour que « Activer sur cet appareil » apparaisse toujours ; icônes des raccourcis en gris en mode sombre.
+- Modifié: `js/symbole.js`, `js/symbole3.js`, `js/ansichten.js`, `js/konto.js`, `css/dunkelfarbe.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`.
+
 ## Nouveautés de la 1.150.10
 
 **Mode sombre, plus d’icônes, nouvelle bannière des animaux, journal des animaux**
@@ -257,15 +264,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Tourner l’iPad** laisse la recette ouverte, avec le nombre de personnes et la position de lecture.
 - Modifié : `js/fortsetzen.js`, `js/ansichten.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`, tous les README. Pas de partie serveur.
 
-## Nouveautés de la 1.148.0
-
-**Reprends là où tu t'étais arrêté**
-
-- **Tableau de bord familial.** Quand tu rouvres ton profil avec le code PIN après une pause, tu arrives là où tu t'étais arrêté et non plus sur l'aperçu. Une recette ouverte est de nouveau ouverte, avec le nombre de portions choisi et à l'endroit où tu en étais.
-- **Pas seulement les recettes.** La page (p. ex. Listes, Tâches, Finances), la liste ouverte, l'onglet dans Maison et dans Véhicules et, sur le téléphone, l'onglet de l'aperçu sont aussi mémorisés. Chaque profil a sa propre place.
-- **Combien de temps.** Tant que l'app reste ouverte (aussi en arrière-plan), 12 heures au maximum. Après la fermeture de l'app, après « Se déconnecter » sur ton propre appareil ou en arrivant par un lien d'une notification, tu démarres comme d'habitude. Sur ton propre appareil, la page est aussi conservée quand l'app se recharge, p. ex. après une mise à jour.
-- Modifié : `js/fortsetzen.js` (nouveau), `js/appstart.js`, `js/dashboard.js`, `js/anmeldung.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`, `pinn-setup.sh`, tous les README. Pas de partie serveur.
-
 ## Comment ça marche
 
 ```mermaid
@@ -292,7 +290,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.150.10` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.150.11` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

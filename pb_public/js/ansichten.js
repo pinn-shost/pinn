@@ -74,6 +74,19 @@ document.addEventListener('click', (e) => {
   setSidebar(false);
 }, { capture: true });
 
+// Tap on the logo next to the family name in the top bar leads to the overview page (since 1.150.11; in winter the same tap also
+// starts the snow shower, see js/winterzeit.js). Not on the login page, which has its own logo.
+(function logoToOverview() {
+  var logo = document.querySelector('header .pinn-logo-wrap');
+  if (!logo) return;
+  logo.style.cursor = 'pointer';
+  logo.addEventListener('click', function () {
+    if (typeof currentUser === 'function' && !currentUser()) return;
+    if (typeof setView === 'function' && currentView !== 'uebersicht') setView('uebersicht');
+    if (typeof sidebarOpen !== 'undefined' && sidebarOpen && typeof setSidebar === 'function') setSidebar(false);
+  });
+})();
+
 function setView(view) {
   if (!isViewAllowed(view)) view = firstAllowedView(); // Guests: locked menus
   if (view !== 'pinnwand' && typeof pwArr !== 'undefined' && pwArr.on) pwArrangeEnd(); // Board: end arranging

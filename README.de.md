@@ -133,6 +133,13 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski und 🇺🇦 Українська**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.150.11
+
+**Symbole und Kleinigkeiten**
+
+- Kamm-Symbol bei „Haare kämmen“ auf der Kinderseite; kein Emoji-Feld mehr neben dem Depot-Namen; Kassen-Auswahllisten ohne Emoji; das Werkzeug ist jetzt ein Maulschlüssel; „Menüs für Gäste“ mit dem Zwei-Personen-Symbol; ein Tipp auf das Logo neben dem Familiennamen führt zur Übersicht; die Karte „Benachrichtigungen“ wird zuerst gefüllt, damit „Auf diesem Gerät aktivieren“ immer erscheint; Shortcut-Symbole sind im Dunkelmodus grau.
+- Geändert: `js/symbole.js`, `js/symbole3.js`, `js/ansichten.js`, `js/konto.js`, `css/dunkelfarbe.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`.
+
 ## Neu in 1.150.10
 
 **Dunkelmodus, mehr Symbole, neuer Haustiere-Banner, Tier-Tagebuch**
@@ -234,16 +241,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Nur für die Person selbst.** Die Erinnerungen gehen an die Geräte dieser Person; an andere Familienmitglieder wird nichts geschickt. Tippen auf die Meldung öffnet die Gesundheitsseite – beim Trinken gleich das Trink-Popup.
 - Geändert: `pb_hooks/pinn-gesundheit.js`, `pb_hooks/gesundheit.pb.js`, `js/gesundheit.js`, `css/gesundheit.css`, `js/hinweise.js`, `js/fortsetzen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, alle READMEs. Enthält 1.149.0.
 
-## Neu in 1.149.0
-
-**Gesundheit**
-
-- **Gesundheit unter Familie.** Der Reiter „Notfall“ heißt jetzt „Gesundheit“, ebenso der Knopf in der Familien-Übersicht. Jede Person bekommt eine eigene Gesundheitsseite aus Bausteinen wie bei Zuhause: Trinken, Medikamente & Vitamine, Hände waschen, Werte, Impfungen und Arzttermine.
-- **Trinken.** Tagesziel wählen, dann „Getrunken“ antippen: Getränk aussuchen (Wasser, Saft, Kaffee, Tee, Milch, Limo & Schorle) und die Menge als mehr oder weniger volles Glas. pinn. zählt mit und sagt, wie viel noch fehlt und ob du im Plan liegst.
-- **Notfallpass integriert.** Auf der Gesundheitsseite mit einem Haken einschalten; ein leerer Pass öffnet gleich das Formular. Bisherige Notfallpässe bleiben erhalten und für die ganze Familie sichtbar, auch offline.
-- **Privat.** Gesundheitsdaten sieht nur die Person selbst, bei Kindern auch die Erwachsenen. Push-Erinnerungen folgen mit 1.149.1.
-- Geändert: `js/gesundheit.js`, `css/gesundheit.css`, `pb_hooks/gesundheit.pb.js`, `pb_hooks/pinn-gesundheit.js`, `pb_hooks/pinn-schema.js`, `js/familie.js`, `js/serverzugriff.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, alle READMEs. Mit Server-Teil (neue Sammlung „gesundheit“). Enthält 1.148.2.
-
 ## So funktioniert’s
 
 ```mermaid
@@ -272,7 +269,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.150.10` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.150.11` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

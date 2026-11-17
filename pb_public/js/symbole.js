@@ -189,7 +189,7 @@ Object.assign(WX_ICON_PATHS, {
   wifi: '<path d="M3 9.500a13 13 0 0 1 18 0M6 13a8.5 8.5 0 0 1 12 0M9 16.5a4 4 0 0 1 6 0M12 20h.01" stroke-width="1.8"/>',
   window: '<rect x="4.5" y="3.5" width="15" height="17" rx="2.4"/><path d="M12 3.5v17M4.5 12h15"/>',
   wine: '<path d="M7 3.500h10l-.5 5a4.5 4.5 0 0 1-9 0zM12 13v7M8.5 20.500h7"/>',
-  wrench: '<path d="M14.8 6.3a4.6 4.6 0 0 0 5.6 5.6L21 11.4a6.2 6.2 0 0 1-8.7 5.6L6.5 21a2 2 0 0 1-3-3l4-5.8A6.2 6.2 0 0 1 12.6 3.5l-2.3 2.3 2.4 2.4z"/>',
+  wrench: '<g transform="rotate(45 12 12)"><path d="M9.500 2.600v4h5v-4M14.500 2.600A5.200 5.200 0 0 1 14 10.500L13.400 20A1.400 1.400 0 0 1 10.600 20L10 10.500A5.200 5.200 0 0 1 9.500 2.600"/><path d="M12 17.500v.01" stroke-width="2"/></g>',
 });
 
 // Emoji (without variation selector / skin tone) -> icon name
@@ -632,7 +632,10 @@ function symText(node) {
 function symScan(root) {
   if (!root) return;
   if (root.nodeType === 3) { symText(root); return; }
-  if (root.nodeType !== 1 || root.closest(SYM_SKIP)) return;
+  if (root.nodeType !== 1) return;
+  // Options that are added later (select.innerHTML = ...) have to be visited as well: symText drops their emoji (since 1.150.11)
+  var inSelect = /^(SELECT|OPTION|OPTGROUP)$/.test(root.nodeName) || (root.parentElement && root.parentElement.closest('select'));
+  if (root.closest(SYM_SKIP) && !(inSelect && !root.closest('[data-keep-emoji]'))) return;
   var w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
     acceptNode: function (n) {
       var p = n.parentNode;

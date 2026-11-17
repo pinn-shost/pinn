@@ -110,6 +110,13 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski en 🇺🇦 Українська**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.150.11
+
+**Pictogrammen en kleine verbeteringen**
+
+- Kam-pictogram bij “Haren kammen” op de kinderpagina; geen emoji-veld meer naast de naam van het depot; kas-keuzelijsten zonder emoji; het gereedschap is nu een steeksleutel; “Menu’s voor gasten” met het pictogram van twee personen; een tik op het logo naast de familienaam leidt naar het overzicht; de kaart Meldingen wordt eerst gevuld, zodat “Op dit apparaat activeren” altijd verschijnt; snelkoppelingspictogrammen zijn grijs in de donkere modus.
+- Gewijzigd: `js/symbole.js`, `js/symbole3.js`, `js/ansichten.js`, `js/konto.js`, `css/dunkelfarbe.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`.
+
 ## Nieuw in 1.150.10
 
 **Donkere modus, meer pictogrammen, nieuwe dierenbanner, dierendagboek**
@@ -163,15 +170,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Eén tik is genoeg.** Raakt een apparaat zijn aanmelding toch kwijt (bijv. omdat iOS die heeft teruggezet), dan meldt pinn. het zelf opnieuw aan – of toont onderaan „Weer inschakelen”, zonder omweg via de instellingen.
 - Gewijzigd: `pb_hooks/pinn-push.js`, `pb_hooks/push.pb.js`, `pb_hooks/pinn-sitzungen.js`, `js/mitteilungen.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
 
-## Nieuw in 1.150.3
-
-**Alle herinneringen op jouw tijd · ouders herinneren mee**
-
-- **Alle herinneringen op jouw tijd.** Verjaardagen, huisdieren, paklijst, voorraad, contracten, documenten, weekoverzicht, maandvooruitblik en jaaroverzicht, afspraakherinneringen, dagoverzicht, taak- en afvalherinneringen, prikbord, spraakbesturing, smarthome en locatiemeldingen volgen nu de tijdzone van je apparaat, inclusief zomer- en wintertijd. Niets in te stellen.
-- **Ouders herinneren mee.** Bij kinderen krijgen ook de ouders de herinneringen voor drinken, medicijnen en handen wassen, met de naam van het kind ervoor. Schakelaar “Ook de ouders herinneren” per kind (standaard: aan).
-- **Shortcuts zonder kop.** De tegel op het overzicht toont alleen de apps, gescheiden door de lijn.
-- Gewijzigd: alle herinneringsmodules in `pb_hooks/` (`pinn-zeit.js` en 13 andere), `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.2).
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -181,7 +179,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.150.10` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.150.11` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

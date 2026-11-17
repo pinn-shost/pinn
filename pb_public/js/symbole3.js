@@ -1,4 +1,4 @@
-/* pinn. – More symbols: people, family and animals (js/symbole3.js, since 1.150.10)
+/* pinn. – More symbols: people, family and animals (js/symbole3.js, since 1.150.10; comb for hair care since 1.150.11)
    Classic script, no build step: loaded after js/symbole2.js and before js/symbolwahl.js; the load order is listed in
    src/rahmen.html and pinn-setup.sh.
    Adds line icons (24 x 24 grid, stroke 1.8, same look as js/symbole.js) for the profile pictures (baby, boy, girl, man, woman,
@@ -16,6 +16,7 @@ Object.assign(WX_ICON_PATHS, {
   grandpa: '<circle cx="12" cy="8.500" r="3.800"/><circle cx="10.200" cy="8.800" r="1.100"/><circle cx="13.800" cy="8.800" r="1.100"/><path d="M11.300 8.800h1.400M8.200 8.500v-.4M15.800 8.500v-.4"/><path d="M4.500 20.500c.7-4.200 3.700-6.300 7.500-6.300s6.800 2.100 7.500 6.300z"/>',
   grandma: '<circle cx="12" cy="9" r="3.800"/><circle cx="12" cy="3.600" r="1.700"/><circle cx="10.200" cy="9.300" r="1.100"/><circle cx="13.800" cy="9.300" r="1.100"/><path d="M11.300 9.300h1.400"/><path d="M4.500 20.500c.7-4.200 3.700-6 7.500-6s6.800 1.800 7.500 6z"/>',
   family: '<circle cx="7.500" cy="6.500" r="2.500"/><circle cx="16.500" cy="6.500" r="2.500"/><circle cx="12" cy="14" r="1.900"/><path d="M2.800 17.500c.4-3.200 2-4.800 4.700-4.800 1.200 0 2.200.4 3 1.100M21.200 17.500c-.4-3.200-2-4.800-4.700-4.800-1.200 0-2.200.4-3 1.100"/><path d="M8.800 21.500c.3-2.600 1.400-3.800 3.200-3.800s2.900 1.200 3.200 3.800z"/>',
+  comb: '<path d="M3.500 9.500h17v3h-17z"/><path d="M6 12.500v5M9 12.500v5M12 12.500v5M15 12.500v5M18 12.500v5"/>',
   duo: '<circle cx="7.500" cy="7.500" r="2.900"/><circle cx="16.500" cy="7.500" r="2.900"/><path d="M2.500 19.500c.4-3.800 2.300-5.600 5-5.600s4.600 1.800 5 5.600zM11.500 19.500c.4-3.800 2.300-5.600 5-5.600s4.600 1.800 5 5.600z"/>',
   // ---- animals (front views, the walking figures of the banners are in js/szenen.js) ----
   dog: '<path d="M7.500 5.500h9c1.700 0 2.500 1.500 2.500 3.500v3.500c0 4.200-2.700 7-7 7s-7-2.800-7-7V9c0-2 .8-3.500 2.500-3.500z"/><path d="M7.500 6.500C5 6 3.500 8 3.800 12c.2 2 1.300 2.800 2.500 2.300M16.500 6.500c2.500-.5 4 1.500 3.700 5.500-.2 2-1.300 2.800-2.500 2.300"/><path d="M9.300 10.500h.01M14.700 10.500h.01" stroke-width="2.400"/><path class="wi-a" d="M10.300 13.800h3.400l-1.700 2z"/><path d="M12 15.800v1c0 1-1.300 1.500-2 .8M12 16.800c0 1 1.300 1.500 2 .8"/>',
@@ -31,7 +32,8 @@ Object.assign(WX_ICON_PATHS, {
 });
 Object.assign(SYM_MAP, {
   '🧑': 'person', '🧒': 'boy', '👦': 'boy', '👧': 'girl', '👨': 'man', '👩': 'woman', '👴': 'grandpa', '👵': 'grandma', '👶': 'baby',
-  '👨‍👩‍👧': 'family', '👨‍👩‍👦': 'family', '👨‍👩‍👧‍👦': 'family', '👪': 'family', '🧑‍🤝‍🧑': 'duo', '👫': 'duo',
+  '👨‍👩‍👧': 'family', '👨‍👩‍👦': 'family', '👨‍👩‍👧‍👦': 'family', '👪': 'family', '🧑‍🤝‍🧑': 'duo', '👫': 'duo', '💑': 'duo', '🧑‍🍼': 'person',
+  '💇': 'comb', '💇‍♀': 'comb', '💇‍♂': 'comb',
   '🐶': 'dog', '🐕': 'dog', '🦮': 'dog', '🐩': 'dog', '🐕‍🦺': 'dog',
   '🐱': 'cat', '🐈': 'cat', '🐈‍⬛': 'cat',
   '🐰': 'rabbit', '🐇': 'rabbit',

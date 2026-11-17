@@ -133,6 +133,13 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski、🇺🇦 Українська** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.150.11の新機能
+
+**アイコンと小さな修正**
+
+- 子どもページの「髪をとかす」に櫛のアイコン。デポ名の横の絵文字欄を廃止。財布の選択リストから絵文字を削除。工具アイコンをスパナに変更。「ゲスト用メニュー」に2人のアイコン。家族名の横のロゴをタップすると概要へ移動。「通知」カードを最初に表示し、「この端末で有効にする」が必ず表示されるように。ダークモードではショートカットのアイコンがグレーに。
+- 変更: `js/symbole.js`, `js/symbole3.js`, `js/ansichten.js`, `js/konto.js`, `css/dunkelfarbe.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`.
+
 ## 1.150.10の新機能
 
 **ダークモード、アイコンの追加、新しいペットバナー、ペット日記**
@@ -226,14 +233,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - **開いたまま。** 操作後もウィンドウは開いたままなので続けて操作できます。「開く」で完全な機能に進みます。
 - 変更: `pb_hooks/pinn-zeit.js`, `pb_hooks/zeit.pb.js`, `js/zeit.js`, `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `pb_hooks/pinn-gesundheit.js`, `js/appstart.js`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/ansichten.js`, `js/design.js`, `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, README (+ 1.149.1).
 
-## 1.149.1の新機能
-
-**プッシュ通知のリマインダー**
-
-- **健康のリマインダー。** 健康ページで、ブロックごとにプッシュ通知を有効にできます：薬とビタミンは設定した時刻に、水分補給は2つの時刻の間を一定の間隔で（不足している量つき）、手洗いは決めた時刻に届きます。
-- **本人だけに届きます。** リマインダーはその人の端末に届き、他の家族には何も送られません。通知をタップすると健康ページが開き、水分補給ではすぐに飲み物の画面が開きます。
-- 変更： `pb_hooks/pinn-gesundheit.js`, `pb_hooks/gesundheit.pb.js`, `js/gesundheit.js`, `css/gesundheit.css`, `js/hinweise.js`, `js/fortsetzen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`、すべてのREADME。1.149.0 を含みます。
-
 ## しくみ
 
 ```mermaid
@@ -262,7 +261,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.150.10`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.150.11`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

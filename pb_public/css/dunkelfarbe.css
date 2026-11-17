@@ -121,3 +121,7 @@ html.dark .chat-row.mine .chat-text.chat-muted { color: #E9D9A6; }
 
 /* ---------- Pantry: "on the list" tag ---------- */
 html.dark .bg-pine\/10.text-pine { background: var(--dk-gold-soft) !important; color: var(--dk-gold) !important; }
+
+/* ---------- Shortcut app icons: grey only in dark mode (since 1.150.11), light mode keeps its colours ---------- */
+html.dark .kz-ico,
+html.dark .kz-set-row.is-off .kz-ico { filter: grayscale(1); }
