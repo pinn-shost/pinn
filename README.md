@@ -129,6 +129,14 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski and 🇺🇦 Українська**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.152.1
+
+**Restoring backups works again**
+
+- Fixed: restoring a backup (Settings → System → Backups & updates) always stopped at “Check backup”, no matter whether only data or everything was chosen. The backup of the current state made just before cleaned up old backups and in doing so overwrote the name of the chosen backup, which was then not found. Each failed attempt left a backup “Before a restore” behind – these are harmless and are cleaned up by themselves (the last 3 are kept). Needs an update of `pinn-wartung.sh`; the container “wartung” restarts by itself.
+- Portainer stack: backups really work now. The service “wartung” of the stack had nothing to start, because part of 1.151.0 was missing in the repository. Now the image contains the backup script, which finds the pinn container of the stack by itself – nightly backups, “Back up now” and “Restore” (data and set-up) work as in the script installation. Updates stay in Portainer. After the update: in Portainer “Update the stack” with “Re-pull image and redeploy”.
+- Changed: `pinn-wartung.sh`, `docker/Dockerfile`, `.github/workflows/image.yml`, `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `js/serverzugriff.js`, `i18n/`, `js/versionslog.js`, `js/sprachen.js`, `src/`, `index.html`.
+
 ## What's new in 1.152.0
 
 **Your own reverse proxy instead of Tailscale**
@@ -251,16 +259,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Only for the person themself.** Reminders go to the devices of that person; nothing is sent to other family members. Tapping the message opens the health page – for drinking, directly the drink popup.
 - Changed: `pb_hooks/pinn-gesundheit.js`, `pb_hooks/gesundheit.pb.js`, `js/gesundheit.js`, `css/gesundheit.css`, `js/hinweise.js`, `js/fortsetzen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, all READMEs. Includes 1.149.0.
 
-## What's new in 1.149.0
-
-**Health**
-
-- **Health under Family.** The tab “Emergency” is now “Health”, and so is the button in the family overview. Every person gets their own health page built from blocks, like Home: drinking, medication & vitamins, hand washing, values, vaccinations and doctor’s appointments.
-- **Drinking.** Daily goal, then tap “I had a drink”: pick the drink (water, juice, coffee, tea, milk, soda) and the amount as a more or less full glass. pinn. adds it up and tells you how much is left and whether you are on track.
-- **Emergency card inside.** Switched on with a tick on the health page; an empty card opens the form right away. Existing emergency cards are kept and stay visible to the whole family, also offline.
-- **Private.** Health data is seen only by the person themself, for children also by the adults. Push reminders follow in 1.149.1.
-- Changed: `js/gesundheit.js`, `css/gesundheit.css`, `pb_hooks/gesundheit.pb.js`, `pb_hooks/pinn-gesundheit.js`, `pb_hooks/pinn-schema.js`, `js/familie.js`, `js/serverzugriff.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, all READMEs. With a server part (new collection “gesundheit”). Includes 1.148.2.
-
 ## How it works
 
 ```mermaid
@@ -287,7 +285,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.152.0` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.152.1` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

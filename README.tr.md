@@ -110,6 +110,14 @@ Tam boyutta açmak için bir resme dokun.
 
 pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski ve 🇺🇦 Українська**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
 
+## 1.152.1 sürümündeki yenilikler
+
+**Yedekten geri yükleme yeniden çalışıyor**
+
+- Düzeltildi: Bir yedeği geri yükleme (Ayarlar → Sistem → Yedekler ve güncellemeler), yalnızca veriler de seçilse her şey de seçilse hep „Yedeği kontrol et” adımında duruyordu. Hemen öncesinde alınan mevcut durum yedeği eski yedekleri temizlerken seçilen yedeğin adının üzerine yazıyordu, bu yüzden yedek bulunamıyordu. Her başarısız deneme „Geri yüklemeden önce” yedeği bırakıyordu – zararsızdır ve kendiliğinden temizlenir (son 3 tanesi kalır). Güncelleme `pinn-wartung.sh` dosyasını yeniler; „wartung” konteyneri kendiliğinden yeniden başlar.
+- Portainer yığını: yedekler artık gerçekten çalışıyor. Depoda 1.151.0'ın bir kısmı eksik olduğu için yığının „wartung” hizmetinin başlatacağı bir şey yoktu. Artık yedekleme betiği imajın içinde ve yığındaki pinn konteynerini kendisi buluyor – gece yedeği, „Şimdi yedekle” ve „Geri yükle” (veriler ve kurulum) betikle kurulumdaki gibi çalışıyor. Güncellemeler Portainer'da kalıyor. Sonrasında: Portainer'da „Re-pull image and redeploy” açıkken „Update the stack”.
+- Değiştirildi: `pinn-wartung.sh`, `docker/Dockerfile`, `.github/workflows/image.yml`, `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `js/serverzugriff.js`, `i18n/`, `js/versionslog.js`, `js/sprachen.js`, `src/`, `index.html`.
+
 ## 1.152.0 sürümündeki yenilikler
 
 **Tailscale yerine kendi ters proxy’n**
@@ -160,13 +168,6 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 - **Her yerde kendi simgeler.** Yaklaşık 150 sade çizgi simgesi artık uygulamanın her yerinde Apple emojilerinin yerini alıyor (yıldızlar, onay işaretleri, uyarılar, yerler, hediyeler, saat, takvim, kilit, posta, aletler, sağlık, ev, para ve daha fazlası). Hayvanlar, yiyecekler, giysiler, bitkiler, taşıtlar, spor ve oyuncaklar, kendi seçtiğiniz veya yazdığınız emojiler (üye resimleri, sohbet metinleri, giriş alanları) ve push bildirimleri emoji olarak kalır.
 - Değişenler: `js/symbole.js` (new), `js/wetterlogos.js`, `css/wetterlogos.css` (new), `js/familie.js`, `js/grundlagen.js`, `js/profilauswahl.js`, `js/wetterkachel.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
 
-## 1.150.6 sürümündeki yenilikler
-
-**Face ID yine kendiliğinden açıyor**
-
-- **Face ID.** pinn. açılırken Face ID’yi yine kendiliğinden ister, tıpkı 1.150.5’ten önceki gibi. iOS her zaman önce kendi „Geçiş anahtarını kullan” penceresini gösterir – ona bir dokunuş, sonra Face ID; web bunu atlayamaz ve ek düğme yalnızca ikinci bir dokunuş demekti. Pencereyi kapatırsan diye alttaki büyük düğme kalıyor.
-- Değişenler: `js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -176,7 +177,7 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.152.0` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.152.1` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

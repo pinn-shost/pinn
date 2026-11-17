@@ -133,6 +133,14 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski und 🇺🇦 Українська**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.152.1
+
+**Wiederherstellen von Sicherungen geht wieder**
+
+- Behoben: Das Wiederherstellen einer Sicherung (Einstellungen → System → Sicherungen & Updates) brach immer bei „Sicherung prüfen“ ab – egal ob nur Daten oder alles gewählt war. Die Sicherung des jetzigen Stands direkt davor räumte alte Sicherungen auf und überschrieb dabei den Namen der gewählten Sicherung, die dann nicht gefunden wurde. Jeder Fehlversuch hinterließ eine Sicherung „Vor einer Wiederherstellung“ – die sind harmlos und werden von selbst aufgeräumt (die letzten 3 bleiben). Mit dem Update wird `pinn-wartung.sh` erneuert; der Container „wartung“ startet von selbst neu.
+- Portainer-Stack: Sicherungen gehen jetzt wirklich. Der Dienst „wartung“ des Stacks hatte nichts zum Starten, weil ein Teil von 1.151.0 im Repository fehlte. Jetzt steckt das Sicherungs-Skript im Image und findet den pinn-Container des Stacks selbst – nächtliche Sicherung, „Jetzt sichern“ und „Wiederherstellen“ (Daten und Einrichtung) gehen wie bei der Skript-Installation. Updates bleiben in Portainer. Nach dem Update: in Portainer „Update the stack“ mit „Re-pull image and redeploy“.
+- Geändert: `pinn-wartung.sh`, `docker/Dockerfile`, `.github/workflows/image.yml`, `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `js/serverzugriff.js`, `i18n/`, `js/versionslog.js`, `js/sprachen.js`, `src/`, `index.html`.
+
 ## Neu in 1.152.0
 
 **Eigener Reverse Proxy statt Tailscale**
@@ -226,15 +234,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Eine oder mehrere Reihen.** Unter Einstellungen → Shortcuts wählst du getrennt für das Handy und für Tablet & Computer: eine Reihe (zur Seite wischen für die übrigen) oder mehrere Reihen (alle Shortcuts nach unten aufgefüllt).
 - Geändert: `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/design.js`, `js/ansichten.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.1).
 
-## Neu in 1.150.1
-
-**Shortcuts im eigenen Menüpunkt**
-
-- **Eigener Menüpunkt.** Die Auswahl der Apps steht jetzt unter Einstellungen → Shortcuts. Vorher klappte beim Öffnen von „Shortcuts“ die Übersicht-Einstellung zu, und die Seite ließ sich nicht mehr scrollen.
-- **Ein/Aus unter Übersicht.** Die Kachel „Shortcuts“ schaltest du wie jede andere Kachel ein oder aus; „Apps wählen“ führt direkt zur Auswahl.
-- **Sofort sichtbar.** Solange du nichts selbst gewählt hast, zeigt die Kachel eine Standardauswahl (Trinken, Einkauf, Aufgabe, Termin, Heute kochen, Zettel, Ausgabe, Putzplan). Ist keine App gewählt, bietet sie „Apps wählen“ an, statt zu verschwinden.
-- Geändert: `js/kurzbefehle.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README.
-
 ## So funktioniert’s
 
 ```mermaid
@@ -263,7 +262,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.152.0` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.152.1` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

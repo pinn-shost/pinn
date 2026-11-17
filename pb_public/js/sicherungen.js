@@ -103,7 +103,8 @@ async function sysRefreshSummary() {
 }
 function sysSummaryText(info) {
   const w = info.wartung || {};
-  if (w.image) return tk('maint.imageShort');
+  // Image (Portainer stack): without the "wartung" service only the short note; with it the backups as usual
+  if (w.image && !(w.eingerichtet && w.aktiv)) return tk('maint.imageShort');
   if (!w.eingerichtet || !w.aktiv) return tk('maint.notRunningShort');
   const list = info.backups || [];
   if (!list.length) return tk('maint.noBackupYet');
@@ -166,12 +167,15 @@ function sysRender() {
 
   // Notes about the setup or the permissions
   let notice = '';
-  if (w.image) notice = tk('maint.imageMode');
+  if (w.image && !(w.eingerichtet && w.aktiv)) notice = tk('maint.imageMode');
   else if (!w.eingerichtet || !w.aktiv) notice = tk('maint.notRunning');
   else if (!w.docker) notice = tk('maint.noDocker');
   else if (!info.darf) notice = tk('maint.noPermission');
+  else if (w.image) notice = tk('maint.imageMode');
   sysNotice(notice);
   const kannAktion = !!(info.darf && w.aktiv && w.docker);
+  // Image (Portainer stack): backups and restore work, updates are done in Portainer
+  const kannUpdate = kannAktion && !w.image;
 
   // Updates
   const u = info.update || {};
@@ -200,7 +204,7 @@ function sysRender() {
     rel.classList.add('hidden');
   }
   inst.classList.toggle('hidden', !u.neuer);
-  inst.disabled = !kannAktion;
+  inst.disabled = !kannUpdate;
   if (u.neuer) inst.textContent = tk('maint.installVersion', { version: u.version });
 
   // Pre-release running on this server? Then say so and point to the bug report
@@ -212,7 +216,7 @@ function sysRender() {
     document.getElementById('sysVorabActiveIssue').href = sysIssueUrl(info, vs.version);
   }
   sysRenderDev();
-  sysRenderAuto(info, kannAktion);
+  sysRenderAuto(info, kannUpdate);
 
   // Backups
   document.getElementById('sysBackupNowBtn').disabled = !w.aktiv;
@@ -412,7 +416,8 @@ function sysDevReset() {
 function sysRenderDev() {
   const info = sysInfo || {};
   const w = info.wartung || {};
-  const kannAktion = !!(info.darf && w.aktiv && w.docker);
+  // No pre-releases in the image (Portainer stack) – updates are done there
+  const kannAktion = !!(info.darf && w.aktiv && w.docker && !w.image);
   const v = sysDevInfo;
   const st = document.getElementById('sysDevState');
   const rel = document.getElementById('sysDevRelease');
@@ -575,6 +580,7 @@ const SYS_FEHLER = {
   abbruch: 'maint.err.aborted',
   beschaeftigt: 'maint.err.busy',
   wartung: 'maint.err.container',
+  image: 'srv.maintImage',
 };
 function sysRenderProgress(art, version, step, state) {
   const titles = {

@@ -37,6 +37,7 @@ const SERVER_MESSAGE_KEYS = {
   "Der Ordner „wartung“ ist schreibgeschützt.": 'srv.maintReadOnly',
   "Es läuft gerade schon eine Sicherung oder ein Update.": 'srv.maintBusy',
   "Der Container „wartung“ läuft nicht – bitte einmal sudo sh pinn-setup.sh ausführen.": 'srv.maintNotRunning',
+  "pinn. läuft als fertiges Image – Updates bitte in Portainer.": 'srv.maintImage',
   "Der Container „wartung“ hat keinen Zugriff auf Docker.": 'srv.maintNoDocker',
   "Diese Sicherung gibt es nicht (mehr).": 'srv.backupGone',
   "GitHub ist gerade nicht erreichbar.": 'srv.githubDown',

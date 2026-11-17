@@ -129,6 +129,14 @@ Pulsa cualquier imagen para verla en tamaño completo.
 
 pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski y 🇺🇦 Українська**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades de la 1.152.1
+
+**Restaurar copias de seguridad vuelve a funcionar**
+
+- Corregido: restaurar una copia de seguridad (Ajustes → Sistema → Copias y actualizaciones) siempre se detenía en «Comprobar copia», tanto con solo datos como con todo. La copia del estado actual hecha justo antes limpiaba copias antiguas y sobrescribía el nombre de la copia elegida, que luego no se encontraba. Cada intento fallido dejaba una copia «Antes de una restauración»; son inofensivas y se eliminan solas (se guardan las 3 últimas). Con la actualización se renueva `pinn-wartung.sh`; el contenedor «wartung» se reinicia solo.
+- Stack de Portainer: las copias de seguridad ya funcionan de verdad. El servicio «wartung» del stack no tenía nada que arrancar, porque faltaba una parte de la 1.151.0 en el repositorio. Ahora la imagen incluye el script de copias, que encuentra solo el contenedor pinn del stack: copia nocturna, «Hacer copia ahora» y «Restaurar» (datos y configuración) funcionan como en la instalación con script. Las actualizaciones siguen en Portainer. Después: en Portainer «Update the stack» con «Re-pull image and redeploy».
+- Cambiado: `pinn-wartung.sh`, `docker/Dockerfile`, `.github/workflows/image.yml`, `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `js/serverzugriff.js`, `i18n/`, `js/versionslog.js`, `js/sprachen.js`, `src/`, `index.html`.
+
 ## Novedades de la 1.152.0
 
 **Tu propio proxy inverso en lugar de Tailscale**
@@ -251,16 +259,6 @@ pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Solo para la propia persona.** Los recordatorios van a los dispositivos de esa persona; no se envía nada a otros miembros de la familia. Al tocar el aviso se abre la página de salud; al beber, directamente la ventana de bebida.
 - Cambios: `pb_hooks/pinn-gesundheit.js`, `pb_hooks/gesundheit.pb.js`, `js/gesundheit.js`, `css/gesundheit.css`, `js/hinweise.js`, `js/fortsetzen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, todos los README. Incluye 1.149.0.
 
-## Novedades de la 1.149.0
-
-**Salud**
-
-- **Salud en Familia.** La pestaña «Emergencia» ahora se llama «Salud», igual que el botón del resumen familiar. Cada persona tiene su propia página de salud por bloques, como en Hogar: bebida, medicamentos y vitaminas, lavado de manos, valores, vacunas y citas médicas.
-- **Bebida.** Elige un objetivo diario y toca «He bebido»: la bebida (agua, zumo, café, té, leche, refresco) y la cantidad como un vaso más o menos lleno. pinn. lo suma y te dice cuánto falta y si vas bien.
-- **Ficha de emergencia integrada.** Se activa con una casilla en la página de salud; si está vacía, se abre el formulario. Las fichas existentes se conservan y siguen visibles para toda la familia, también sin conexión.
-- **Privado.** Los datos de salud solo los ve la propia persona; en los niños, también los adultos. Los recordatorios push llegan con la 1.149.1.
-- Cambios: `js/gesundheit.js`, `css/gesundheit.css`, `pb_hooks/gesundheit.pb.js`, `pb_hooks/pinn-gesundheit.js`, `pb_hooks/pinn-schema.js`, `js/familie.js`, `js/serverzugriff.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, todos los README. Con parte de servidor (nueva colección «gesundheit»). Incluye 1.148.2.
-
 ## Cómo funciona
 
 ```mermaid
@@ -287,7 +285,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.152.0` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.152.1` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

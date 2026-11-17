@@ -133,6 +133,14 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski、🇺🇦 Українська** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.152.1の新機能
+
+**バックアップの復元が再び使えるように**
+
+- 修正：バックアップの復元（設定 → システム → バックアップと更新）が、データのみでもすべてでも、必ず「バックアップを確認」で止まっていました。直前に行う現在の状態のバックアップが古いバックアップを整理する際、選んだバックアップの名前を上書きしてしまい、見つからなくなっていたためです。失敗のたびに「復元の前」のバックアップが残りますが、害はなく自動で整理されます（最新3件を保持）。更新で `pinn-wartung.sh` が新しくなり、コンテナ「wartung」は自動で再起動します。
+- Portainer スタック：バックアップが本当に使えるようになりました。1.151.0 の一部がリポジトリに欠けていたため、スタックのサービス「wartung」は起動できませんでした。現在はイメージにバックアップスクリプトが入っていて、スタックの pinn コンテナを自動で見つけます。夜間バックアップ、「今すぐバックアップ」「復元」（データと設定）はスクリプト版と同じように使えます。更新は引き続き Portainer で行います。更新後は Portainer で「Update the stack」を「Re-pull image and redeploy」オンで実行してください。
+- 変更: `pinn-wartung.sh`, `docker/Dockerfile`, `.github/workflows/image.yml`, `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `js/serverzugriff.js`, `i18n/`, `js/versionslog.js`, `js/sprachen.js`, `src/`, `index.html`.
+
 ## 1.152.0の新機能
 
 **Tailscale の代わりに自分のリバースプロキシ**
@@ -216,16 +224,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - **Shortcuts の見出しなし。** 概要のタイルにはアプリだけが表示され、線で区切られます。
 - 変更: `pb_hooks/` のすべての通知モジュール（`pinn-zeit.js` ほか13個）、`js/gesundheit.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/`、`src/`、`index.html`、README（1.150.2を含む）。
 
-## 1.150.2の新機能
-
-**ショートカットは概要にとどまります**
-
-- **移動せずにウィンドウ。** 水分補給、薬、買い物、今日の料理、掃除プラン、ペット、ストック、SOS、外出中をタップすると下にウィンドウが開き、そこで操作を進められます。何が行われたかは短い通知でわかります。
-- **ウィンドウとリンク。** タスク、予定、メモ、支出、収入はいつものウィンドウを開き、手洗いは +1 します。チャット、家計、植物は通常のリンクです。ウィンドウの「開く ›」でページ全体へ移動します。
-- **修正。** 別のページ（レシピや買い物など）に移動したとき、ショートカットのタイルが下に残らなくなりました。
-- **1行または複数行。** 「設定 → ショートカット」で、スマートフォンとタブレット・パソコンそれぞれに選べます：1行（横にスワイプして残りを表示）または複数行（すべてのショートカットを下へ並べる）。
-- 変更: `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/design.js`, `js/ansichten.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.1).
-
 ## しくみ
 
 ```mermaid
@@ -254,7 +252,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.152.0`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.152.1`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

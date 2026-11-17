@@ -133,6 +133,14 @@ Tocca un’immagine per aprirla a dimensione intera.
 
 pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
 
+## Novità della 1.152.1
+
+**Il ripristino dei backup funziona di nuovo**
+
+- Corretto: il ripristino di un backup (Impostazioni → Sistema → Backup e aggiornamenti) si fermava sempre a «Controlla backup», sia con solo i dati sia con tutto. Il backup dello stato attuale fatto subito prima puliva i vecchi backup e sovrascriveva il nome del backup scelto, che poi non veniva trovato. Ogni tentativo fallito lasciava un backup «Prima di un ripristino»: sono innocui e vengono eliminati da soli (restano gli ultimi 3). L’aggiornamento rinnova `pinn-wartung.sh`; il container «wartung» si riavvia da solo.
+- Stack Portainer: i backup ora funzionano davvero. Il servizio «wartung» dello stack non aveva nulla da avviare, perché nel repository mancava una parte della 1.151.0. Ora l’immagine contiene lo script dei backup, che trova da solo il container pinn dello stack: backup notturno, «Esegui backup ora» e «Ripristina» (dati e configurazione) funzionano come nell’installazione con script. Gli aggiornamenti restano in Portainer. Dopo: in Portainer «Update the stack» con «Re-pull image and redeploy».
+- Modificato: `pinn-wartung.sh`, `docker/Dockerfile`, `.github/workflows/image.yml`, `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `js/serverzugriff.js`, `i18n/`, `js/versionslog.js`, `js/sprachen.js`, `src/`, `index.html`.
+
 ## Novità della 1.152.0
 
 **Un tuo reverse proxy al posto di Tailscale**
@@ -216,16 +224,6 @@ pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Shortcuts senza titolo.** Il riquadro nella panoramica mostra solo le app, separate dalla linea.
 - Modificato: tutti i moduli dei promemoria in `pb_hooks/` (`pinn-zeit.js` e altri 13), `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.2).
 
-## Novità della 1.150.2
-
-**Le scorciatoie restano nella panoramica**
-
-- **Finestra invece del salto.** Un tocco su bere, medicinali, spesa, cucinare oggi, piano pulizie, animali, dispensa, SOS o in giro apre la finestra in basso; lì si procede passo passo e un breve avviso dice cosa è successo.
-- **Finestre e link.** Attività, appuntamento, nota, uscita ed entrata aprono la solita finestra, lavarsi le mani conta +1. Chat, finanze e piante sono semplici link; «Apri ›» nella finestra porta alla pagina completa.
-- **Corretto.** Passando a un’altra pagina (ad es. ricette o spesa) il riquadro Scorciatoie non resta più in basso.
-- **Una o più righe.** In Impostazioni → Scorciatoie scegli separatamente per il telefono e per tablet e computer: una riga (scorri di lato per vedere le altre) o più righe (tutte le scorciatoie verso il basso).
-- Modificato: `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/design.js`, `js/ansichten.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.1).
-
 ## Come funziona
 
 ```mermaid
@@ -254,7 +252,7 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 ## Installazione
 
 1. Scarica lo ZIP dell’[ultima release](https://github.com/pinn-shost/pinn/releases/latest) e decomprimilo.
-2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.152.0` o `pinn-main`) così com’è.
+2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.152.1` o `pinn-main`) così com’è.
 3. Accedi via SSH ed esegui:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

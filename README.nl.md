@@ -110,6 +110,14 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski en 🇺🇦 Українська**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.152.1
+
+**Back-ups terugzetten werkt weer**
+
+- Opgelost: het terugzetten van een back-up (Instellingen → Systeem → Back-ups & updates) stopte altijd bij „Back-up controleren”, of je nu alleen gegevens of alles koos. De back-up van de huidige stand die vlak daarvoor wordt gemaakt, ruimde oude back-ups op en overschreef daarbij de naam van de gekozen back-up, die daarna niet meer werd gevonden. Elke mislukte poging liet een back-up „Vóór een herstel” achter – die zijn onschuldig en worden vanzelf opgeruimd (de laatste 3 blijven). De update vernieuwt `pinn-wartung.sh`; de container „wartung” start vanzelf opnieuw.
+- Portainer-stack: back-ups werken nu echt. De dienst „wartung” van de stack had niets om te starten, omdat een deel van 1.151.0 in de repository ontbrak. Nu zit het back-upscript in de image en vindt het de pinn-container van de stack zelf – nachtelijke back-up, „Nu back-up maken” en „Terugzetten” (gegevens en instellingen) werken zoals bij de installatie met het script. Updates blijven in Portainer. Daarna: in Portainer „Update the stack” met „Re-pull image and redeploy”.
+- Gewijzigd: `pinn-wartung.sh`, `docker/Dockerfile`, `.github/workflows/image.yml`, `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `js/serverzugriff.js`, `i18n/`, `js/versionslog.js`, `js/sprachen.js`, `src/`, `index.html`.
+
 ## Nieuw in 1.152.0
 
 **Je eigen reverse proxy in plaats van Tailscale**
@@ -160,13 +168,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Eigen pictogrammen overal.** Zo’n 150 eenvoudige lijnpictogrammen vervangen nu de Apple-emoji in de hele app (sterren, vinkjes, waarschuwingen, plaatsen, cadeaus, klok, agenda, slot, post, gereedschap, gezondheid, huis, geld en meer). Dieren, eten, kleding, planten, voertuigen, sport en speelgoed, zelf gekozen of getypte emoji (profielfoto’s, chatteksten, invoervelden) en pushberichten blijven emoji.
 - Gewijzigd: `js/symbole.js` (new), `js/wetterlogos.js`, `css/wetterlogos.css` (new), `js/familie.js`, `js/grundlagen.js`, `js/profilauswahl.js`, `js/wetterkachel.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
 
-## Nieuw in 1.150.6
-
-**Face ID ontgrendelt weer vanzelf**
-
-- **Face ID.** pinn. vraagt bij het openen weer vanzelf om Face ID, zoals vóór 1.150.5. iOS toont altijd eerst zijn eigen venster „Toegangssleutel gebruiken” – één tik erop, daarna Face ID; het web kan dat niet overslaan, en de extra knop betekende alleen een tweede tik. De grote knop onderaan blijft, voor als je het venster wegveegt.
-- Gewijzigd: `js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -176,7 +177,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.152.0` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.152.1` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

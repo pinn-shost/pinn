@@ -133,6 +133,14 @@ Toque em qualquer imagem para abri-la em tamanho real.
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.152.1
+
+**Restaurar backups voltou a funcionar**
+
+- Corrigido: restaurar um backup (Configurações → Sistema → Backups e atualizações) sempre parava em “Verificar backup”, fosse só dados ou tudo. O backup do estado atual feito logo antes limpava backups antigos e sobrescrevia o nome do backup escolhido, que depois não era encontrado. Cada tentativa falha deixava um backup “Antes de uma restauração” – são inofensivos e são apagados sozinhos (os 3 últimos ficam). A atualização renova o `pinn-wartung.sh`; o contêiner “wartung” reinicia sozinho.
+- Stack do Portainer: os backups agora funcionam de verdade. O serviço “wartung” do stack não tinha o que iniciar, porque faltava uma parte da 1.151.0 no repositório. Agora a imagem traz o script de backup, que encontra sozinho o contêiner pinn do stack – backup noturno, “Fazer backup agora” e “Restaurar” (dados e configuração) funcionam como na instalação por script. As atualizações continuam no Portainer. Depois: no Portainer “Update the stack” com “Re-pull image and redeploy”.
+- Alterado: `pinn-wartung.sh`, `docker/Dockerfile`, `.github/workflows/image.yml`, `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `js/serverzugriff.js`, `i18n/`, `js/versionslog.js`, `js/sprachen.js`, `src/`, `index.html`.
+
 ## Novidades da 1.152.0
 
 **O seu próprio proxy inverso em vez do Tailscale**
@@ -216,16 +224,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Shortcuts sem título.** O mosaico da visão geral mostra apenas as apps, separadas pela linha.
 - Alterado: todos os módulos de lembretes em `pb_hooks/` (`pinn-zeit.js` e mais 13), `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.2).
 
-## Novidades da 1.150.2
-
-**Os atalhos ficam na visão geral**
-
-- **Janela em vez de salto.** Um toque em beber, medicamentos, compras, cozinhar hoje, plano de limpeza, animais, despensa, SOS ou a caminho abre a janela embaixo; ali você avança passo a passo e um aviso curto diz o que aconteceu.
-- **Janelas e links.** Tarefa, compromisso, nota, despesa e receita abrem a janela de sempre, lavar as mãos conta +1. Chat, finanças e plantas são links simples; «Abrir ›» na janela leva à página completa.
-- **Corrigido.** Ao mudar para outra página (p. ex. receitas ou compras) o bloco Atalhos não fica mais embaixo.
-- **Uma ou várias linhas.** Em Configurações → Atalhos você escolhe separadamente para o celular e para tablet e computador: uma linha (deslize para o lado para ver o resto) ou várias linhas (todos os atalhos preenchidos para baixo).
-- Alterado: `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/design.js`, `js/ansichten.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.1).
-
 ## Como funciona
 
 ```mermaid
@@ -254,7 +252,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.152.0` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.152.1` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

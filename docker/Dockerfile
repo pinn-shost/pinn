@@ -40,9 +40,12 @@ RUN sh /tmp/fetch-libs.sh /pb_public/vendor && rm -f /tmp/fetch-libs.sh
 COPY pb_hooks /pb_hooks
 COPY pb_public /pb_public
 COPY docker/entrypoint.sh /usr/local/bin/pinn-start
-RUN chmod +x /usr/local/bin/pinn-start
+# Backup service: the stack starts this image a second time as the service "wartung" with
+# entrypoint ["/bin/sh", "/usr/local/bin/pinn-wartung.sh"] (sqlite, jq, docker-cli … are loaded on its first start)
+COPY pinn-wartung.sh /usr/local/bin/pinn-wartung.sh
+RUN chmod +x /usr/local/bin/pinn-start /usr/local/bin/pinn-wartung.sh
 
-# Tells the app that it runs as an image: "Backups & updates" then points to Portainer instead of the "wartung" container
+# Tells the app (and pinn-wartung.sh) that it runs as an image: updates are done in Portainer, backups by the service "wartung"
 ENV PINN_BETRIEB=image
 ENV TZ=Europe/Berlin
 

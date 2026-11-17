@@ -133,6 +133,14 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.152.1의 새 소식
+
+**백업 복원이 다시 돼요**
+
+- 수정: 백업 복원(설정 → 시스템 → 백업 및 업데이트)이 데이터만이든 전체든 항상 "백업 확인"에서 멈췄어요. 바로 전에 만드는 현재 상태 백업이 오래된 백업을 정리하면서 선택한 백업의 이름을 덮어써서 찾지 못했기 때문이에요. 실패할 때마다 "복원 전" 백업이 남았는데, 해가 없고 저절로 정리돼요(최근 3개 유지). 업데이트로 `pinn-wartung.sh`가 바뀌고, "wartung" 컨테이너는 저절로 다시 시작해요.
+- Portainer 스택: 이제 백업이 제대로 돼요. 저장소에 1.151.0의 일부가 빠져 있어서 스택의 "wartung" 서비스가 시작할 게 없었어요. 이제 이미지에 백업 스크립트가 들어 있고, 스택의 pinn 컨테이너를 스스로 찾아요. 야간 백업, "지금 백업", "복원"(데이터와 설정)이 스크립트 설치와 똑같이 돼요. 업데이트는 계속 Portainer에서 해요. 업데이트 후: Portainer에서 "Update the stack"을 "Re-pull image and redeploy"를 켜고 실행하세요.
+- 변경: `pinn-wartung.sh`, `docker/Dockerfile`, `.github/workflows/image.yml`, `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `js/serverzugriff.js`, `i18n/`, `js/versionslog.js`, `js/sprachen.js`, `src/`, `index.html`.
+
 ## 1.152.0의 새 소식
 
 **Tailscale 대신 직접 운영하는 리버스 프록시**
@@ -216,16 +224,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - **제목 없는 Shortcuts.** 개요의 타일에는 앱만 표시되고 선으로 구분됩니다.
 - 변경: `pb_hooks/`의 모든 알림 모듈(`pinn-zeit.js` 외 13개), `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (1.150.2 포함).
 
-## 1.150.2의 새 소식
-
-**바로가기가 개요에 머뭅니다**
-
-- **이동 대신 창.** 물 마시기, 약, 장보기, 오늘 요리, 청소 계획, 반려동물, 재고, SOS, 외출 중을 탭하면 아래에 창이 열립니다. 그곳에서 차례로 진행하고, 짧은 알림이 무엇이 처리됐는지 알려 줍니다.
-- **창과 링크.** 할 일, 일정, 메모, 지출, 수입은 평소처럼 창을 열고, 손 씻기는 +1을 셉니다. 채팅, 가계부, 식물은 일반 링크이며 창의 „열기 ›”는 전체 페이지로 이동합니다.
-- **수정.** 다른 페이지(예: 레시피, 장보기)로 이동한 뒤 바로가기 타일이 아래에 남지 않습니다.
-- **한 줄 또는 여러 줄.** 설정 → 바로가기에서 휴대폰과 태블릿·컴퓨터를 따로 고릅니다: 한 줄(옆으로 밀어 나머지 보기) 또는 여러 줄(모든 바로가기를 아래로 채움).
-- 변경: `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/design.js`, `js/ansichten.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.1).
-
 ## 작동 방식
 
 ```mermaid
@@ -254,7 +252,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.152.0` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.152.1` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -110,6 +110,14 @@ Dotknij obrazu, aby otworzyć go w pełnym rozmiarze.
 
 pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski i 🇺🇦 Українська**; dostosowuje walutę i numery alarmowe do twojego regionu i przełącza się między określeniami **rodzina** i **wspólne mieszkanie**. Jeden serwer może obsługiwać wiele rodzin, każdą z własnymi administratorami.
 
+## Nowości w 1.152.1
+
+**Przywracanie kopii zapasowych znów działa**
+
+- Naprawiono: przywracanie kopii zapasowej (Ustawienia → System → Kopie zapasowe i aktualizacje) zawsze zatrzymywało się na „Sprawdź kopię”, niezależnie od tego, czy wybrano tylko dane, czy wszystko. Kopia bieżącego stanu tworzona tuż przed tym sprzątała stare kopie i przy okazji nadpisywała nazwę wybranej kopii, której potem nie można było znaleźć. Każda nieudana próba zostawiała kopię „Przed przywróceniem” – są nieszkodliwe i usuwają się same (zostają 3 ostatnie). Aktualizacja odnawia `pinn-wartung.sh`; kontener „wartung” sam się uruchamia ponownie.
+- Stack Portainera: kopie zapasowe teraz naprawdę działają. Usługa „wartung” w stacku nie miała czego uruchomić, bo w repozytorium brakowało części wersji 1.151.0. Teraz obraz zawiera skrypt kopii i sam znajduje kontener pinn w stacku – nocna kopia, „Utwórz kopię teraz” i „Przywróć” (dane i konfiguracja) działają jak w instalacji skryptem. Aktualizacje pozostają w Portainerze. Potem: w Portainerze „Update the stack” z „Re-pull image and redeploy”.
+- Zmieniono: `pinn-wartung.sh`, `docker/Dockerfile`, `.github/workflows/image.yml`, `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `js/serverzugriff.js`, `i18n/`, `js/versionslog.js`, `js/sprachen.js`, `src/`, `index.html`.
+
 ## Nowości w 1.152.0
 
 **Własny reverse proxy zamiast Tailscale**
@@ -160,13 +168,6 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 - **Własne ikony wszędzie.** Około 150 prostych ikon liniowych zastępuje teraz emoji Apple w całej aplikacji (gwiazdki, ptaszki, ostrzeżenia, miejsca, prezenty, zegar, kalendarz, kłódka, poczta, narzędzia, zdrowie, dom, pieniądze i więcej). Zwierzęta, jedzenie, ubrania, rośliny, pojazdy, sport i zabawki, emoji wybrane lub wpisane samodzielnie (zdjęcia członków, teksty czatu, pola wpisywania) oraz powiadomienia push pozostają emoji.
 - Zmienione: `js/symbole.js` (new), `js/wetterlogos.js`, `css/wetterlogos.css` (new), `js/familie.js`, `js/grundlagen.js`, `js/profilauswahl.js`, `js/wetterkachel.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
 
-## Nowości w 1.150.6
-
-**Face ID znów odblokowuje samo**
-
-- **Face ID.** pinn. znów samo prosi o Face ID przy otwarciu, jak przed 1.150.5. iOS zawsze najpierw pokazuje własne okno „Użyj klucza dostępu” – jedno stuknięcie w nie, potem Face ID; aplikacja webowa nie może go pominąć, a dodatkowy przycisk oznaczał tylko drugie stuknięcie. Duży przycisk na dole zostaje, na wypadek gdybyś zamknął okno.
-- Zmienione: `js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
-
 ## Wymagania
 
 - NAS lub mini PC z zainstalowanym **Dockerem** i **Docker Compose** (np. Synology, UGREEN, QNAP albo zwykły serwer z Linuksem)
@@ -176,7 +177,7 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 ## Instalacja
 
 1. Pobierz i rozpakuj plik ZIP [najnowszej wersji](https://github.com/pinn-shost/pinn/releases/latest).
-2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.152.0` lub `pinn-main`) bez zmian.
+2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.152.1` lub `pinn-main`) bez zmian.
 3. Połącz się przez SSH i uruchom:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

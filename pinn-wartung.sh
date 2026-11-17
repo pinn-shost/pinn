@@ -25,6 +25,12 @@
 #     docker exec wartung sh /projekt/pinn-wartung.sh sichern          back up now
 #     docker logs wartung                                               view the log
 #  Restore without the app: docker compose down → tar -xzf backups/pinn_….tar.gz → docker compose up -d
+#
+#  Image operation (Portainer stack, since 1.151.0/1.152.1, PINN_BETRIEB=image): this script runs as the service
+#  "wartung" with the same pinn image (/usr/local/bin/pinn-wartung.sh). The volumes are mounted under /projekt
+#  (pb_data, konfig, wartung, backups). The pinn container has no fixed name – it is found through the Compose labels
+#  of the own stack (service PINN_PB_SERVICE, default "pinn"; or fixed with PINN_PB_CONTAINER). Restore covers only
+#  pb_data and konfig (the app lives in the image), updates are refused (they are done in Portainer).
 # ─────────────────────────────────────────────────────────────
 
 P=${PINN_PROJEKT:-/projekt}
@@ -35,7 +41,9 @@ UHRZEIT=${BACKUP_UHRZEIT:-03:30}
 TAGE=${BACKUP_TAGE:-7}
 WOCHEN=${BACKUP_WOCHEN:-4}
 VORHER_BEHALTEN=3
-PB=${PINN_PB_CONTAINER:-pocketbase}
+IMAGE=0
+[ "${PINN_BETRIEB:-}" = "image" ] && IMAGE=1
+if [ "$IMAGE" = 1 ]; then PB=${PINN_PB_CONTAINER:-}; else PB=${PINN_PB_CONTAINER:-pocketbase}; fi
 SELBST=${PINN_WARTUNG_CONTAINER:-wartung}
 SKRIPT="$0"
 
@@ -56,17 +64,42 @@ log_kuerzen() {
 }
 pakete() {
   if command -v jq >/dev/null 2>&1 && command -v sqlite3 >/dev/null 2>&1 && command -v curl >/dev/null 2>&1 \
-     && tar --version 2>/dev/null | grep -q GNU; then
+     && command -v docker >/dev/null 2>&1 && tar --version 2>/dev/null | grep -q GNU; then
     return 0
   fi
-  until apk add --no-cache sqlite tar tzdata jq curl gzip >/dev/null 2>&1; do
+  # The pinn image (image operation) has no Docker client – load it as well
+  EXTRA=""; [ "$IMAGE" = 1 ] && EXTRA="docker-cli"
+  # shellcheck disable=SC2086
+  until apk add --no-cache sqlite tar tzdata jq curl gzip $EXTRA >/dev/null 2>&1; do
     echo "$(jetzt) Pakete nicht ladbar – neuer Versuch in 60 s"
     sleep 60
   done
 }
 docker_ok() { docker info >/dev/null 2>&1; }
 version_installiert() {
-  grep -m1 "const APP_VERSION" "$P/pb_public/index.html" 2>/dev/null | sed -n "s/.*APP_VERSION = '\([^']*\)'.*/\1/p"
+  H="$P/pb_public/index.html"
+  # Image operation: the app is not in the project folder but in the image itself (same image as pinn)
+  [ -f "$H" ] || H=/pb_public/index.html
+  grep -m1 "const APP_VERSION" "$H" 2>/dev/null | sed -n "s/.*APP_VERSION = '\([^']*\)'.*/\1/p"
+}
+# Image operation: find the pinn container of the own stack (no fixed container names there)
+pb_suchen() {
+  [ "$IMAGE" = 1 ] || return 0
+  if [ -n "${PINN_PB_CONTAINER:-}" ]; then PB="$PINN_PB_CONTAINER"; return 0; fi
+  DIENST=${PINN_PB_SERVICE:-pinn}
+  PN=$(docker inspect -f '{{index .Config.Labels "com.docker.compose.project"}}' "$(hostname)" 2>/dev/null)
+  ID=""
+  if [ -n "$PN" ]; then
+    ID=$(docker ps -aq --filter "label=com.docker.compose.project=$PN" --filter "label=com.docker.compose.service=$DIENST" 2>/dev/null | head -n 1)
+  fi
+  if [ -z "$ID" ]; then
+    # Fallback: exactly one container of that service on the whole host
+    ALLE=$(docker ps -aq --filter "label=com.docker.compose.service=$DIENST" 2>/dev/null)
+    [ "$(echo "$ALLE" | grep -c .)" = "1" ] && ID="$ALLE"
+  fi
+  [ -n "$ID" ] || return 1
+  PB="$ID"
+  return 0
 }
 md5() { md5sum "$1" 2>/dev/null | cut -d' ' -f1; }
 
@@ -171,12 +204,12 @@ rotieren() {
   TAGE_LISTE=" "; NT=0; WOCHEN_LISTE=" "; NW=0
   for F in $(ls -1 "$B"/pinn_*.tar.gz 2>/dev/null | sort -r); do
     N=$(basename "$F")
-    D=$(echo "$N" | sed -n 's/^pinn_\([0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}\)_[0-9]\{4\}\(_manuell\)\{0,1\}\.tar\.gz$/\1/p')
-    [ -n "$D" ] || continue                       # backups before update/restore: see below
-    case "$TAGE_LISTE" in *" $D "*) continue ;; esac
-    if [ "$NT" -lt "$TAGE" ]; then TAGE_LISTE="$TAGE_LISTE$D "; NT=$((NT + 1)); continue; fi
-    WO=$(date -d "$D" +%G-%V 2>/dev/null)
-    [ -n "$WO" ] || WO="$D"
+    RD=$(echo "$N" | sed -n 's/^pinn_\([0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}\)_[0-9]\{4\}\(_manuell\)\{0,1\}\.tar\.gz$/\1/p')
+    [ -n "$RD" ] || continue                       # backups before update/restore: see below
+    case "$TAGE_LISTE" in *" $RD "*) continue ;; esac
+    if [ "$NT" -lt "$TAGE" ]; then TAGE_LISTE="$TAGE_LISTE$RD "; NT=$((NT + 1)); continue; fi
+    WO=$(date -d "$RD" +%G-%V 2>/dev/null)
+    [ -n "$WO" ] || WO="$RD"
     case "$WOCHEN_LISTE" in
       *" $WO "*) rm -f "$F"; log "Aufgeräumt: $N"; continue ;;
     esac
@@ -248,16 +281,17 @@ job_sichern() {
 
 # ── Job: restore ────────────────────────────────────────────
 job_wiederherstellen() {
-  D="$AUFTRAG_DATEI"
-  if ! echo "$D" | grep -qE '^pinn_[A-Za-z0-9_.-]+\.tar\.gz$' || [ ! -f "$B/$D" ]; then
+  # Own name: rotieren() (called below) uses D for its own purposes and would overwrite it
+  QDATEI="$AUFTRAG_DATEI"
+  if ! echo "$QDATEI" | grep -qE '^pinn_[A-Za-z0-9_.-]+\.tar\.gz$' || [ ! -f "$B/$QDATEI" ]; then
     status fehler start datei; return
   fi
   case "$AUFTRAG_UMFANG" in
-    alles) TEILE="pb_data pb_public pb_hooks konfig" ;;
+    alles) if [ "$IMAGE" = 1 ]; then TEILE="pb_data konfig"; else TEILE="pb_data pb_public pb_hooks konfig"; fi ;;
     *) AUFTRAG_UMFANG=daten; TEILE="pb_data" ;;
   esac
-  if ! docker_ok; then status fehler start docker; return; fi
-  log "Wiederherstellung von $D ($AUFTRAG_UMFANG)"
+  if ! docker_ok || ! pb_suchen; then status fehler start docker; return; fi
+  log "Wiederherstellung von $QDATEI ($AUFTRAG_UMFANG)"
 
   # 1. Back up the current state
   status laeuft sichern
@@ -268,13 +302,13 @@ job_wiederherstellen() {
   status laeuft entpacken
   WH="$W/.wiederherstellung"; ALT="$W/.vorher"
   rm -rf "$WH" "$ALT"; mkdir -p "$WH" "$ALT"
-  VORHANDEN=$(tar -tzf "$B/$D" 2>/dev/null | cut -d/ -f1 | sort -u)
+  VORHANDEN=$(tar -tzf "$B/$QDATEI" 2>/dev/null | cut -d/ -f1 | sort -u)
   AUSWAHL=""
   for T in $TEILE; do
     echo "$VORHANDEN" | grep -qx "$T" && AUSWAHL="$AUSWAHL $T"
   done
   # shellcheck disable=SC2086
-  if [ -z "$AUSWAHL" ] || ! tar -xzf "$B/$D" -C "$WH" $AUSWAHL; then
+  if [ -z "$AUSWAHL" ] || ! tar -xzf "$B/$QDATEI" -C "$WH" $AUSWAHL; then
     rm -rf "$WH" "$ALT"; status fehler entpacken entpacken; return
   fi
   if [ ! -s "$WH/pb_data/data.db" ] || [ "$(sqlite3 "$WH/pb_data/data.db" 'PRAGMA quick_check;' 2>/dev/null)" != "ok" ]; then
@@ -293,7 +327,7 @@ job_wiederherstellen() {
   docker start "$PB" >/dev/null 2>&1
   if warte_pb; then
     rm -rf "$WH" "$ALT"
-    log "Wiederherstellung fertig ($D)"
+    log "Wiederherstellung fertig ($QDATEI)"
     status fertig fertig
     return
   fi
@@ -318,6 +352,8 @@ job_update() {
   TAG="$AUFTRAG_TAG"
   if ! echo "$TAG" | grep -qE '^v?[0-9]+(\.[0-9]+){1,3}(-[0-9A-Za-z][0-9A-Za-z.]*)?$'; then status fehler start tag; return; fi
   AUFTRAG_VERSION=$(echo "$TAG" | sed 's/^v//')
+  # Image operation: updates are done in Portainer ("Update the stack" with "Re-pull image")
+  if [ "$IMAGE" = 1 ]; then status fehler start image; return; fi
   if ! docker_ok; then status fehler start docker; return; fi
   log "Update auf $AUFTRAG_VERSION ($REPO $TAG)"
 
@@ -443,6 +479,9 @@ dienst() {
   rm -rf "$W/.sperre" "$W/.sicherung" "$W/.update"
   rm -f "$B"/*.part "$B"/*.part.gz "$W"/*.neu
   chmod 600 "$B"/pinn_*.tar.gz 2>/dev/null
+  if [ "$IMAGE" = 1 ] && docker_ok && ! pb_suchen; then
+    log "Hinweis: pinn-Container des Stacks nicht gefunden (Dienst ${PINN_PB_SERVICE:-pinn}) – Wiederherstellen erst, wenn er läuft"
+  fi
   # Interrupted restore (container ended during the replacement): restore the old state
   if [ -d "$W/.vorher" ] && [ -n "$(ls -A "$W/.vorher" 2>/dev/null)" ]; then
     log "Unterbrochene Wiederherstellung gefunden – alter Stand wird zurückgeholt"
@@ -462,6 +501,7 @@ dienst() {
     AUFTRAG_ART=$(jq -r '.art // ""' "$W/status.json"); AUFTRAG_ID=$(jq -r '.id // ""' "$W/status.json")
     status fehler start abbruch
   fi
+  [ "$IMAGE" = 1 ] && log "Betrieb als Image (Portainer-Stack): Sicherungen und Wiederherstellen hier, Updates über Portainer"
   log "Wartung gestartet – Sicherung täglich um $UHRZEIT, aufbewahrt: $TAGE Tage + $WOCHEN Wochen"
   docker_ok || log "Hinweis: kein Zugriff auf Docker (/var/run/docker.sock) – Wiederherstellen und Updates aus der App sind aus"
   lebenszeichen

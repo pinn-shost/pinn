@@ -163,8 +163,8 @@ function wartung() {
     const arbeitet = !!(j && (j.zustand === "laeuft" || j.zustand === "wartet"));
     const aktiv = eingerichtet && ((zeit > 0 && nowSec() - zeit < LEBT_MAX) || arbeitet);
     return {
-        // Since 1.151.0: pinn. runs as a ready-made image (Portainer stack) – there is no "wartung" container; updates and
-        // backups are done in Portainer. The app then shows a note instead of "wartung is not running".
+        // Since 1.151.0: pinn. runs as a ready-made image (Portainer stack). Updates are done in Portainer; backups and
+        // restore run as usual through the "wartung" service of the stack (same image). Without it the app shows a note.
         image: env("PINN_BETRIEB") === "image",
         eingerichtet,
         aktiv,
@@ -410,6 +410,8 @@ function auftrag(daten) {
     if (beschaeftigt()) throw fehler("beschaeftigt", "Es läuft gerade schon eine Sicherung oder ein Update.");
     const w = wartung();
     if (!w.aktiv) throw fehler("wartung", "Der Container „wartung“ läuft nicht – bitte einmal sudo sh pinn-setup.sh ausführen.");
+    // Image (Portainer stack): updates only through Portainer ("Update the stack" with "Re-pull image")
+    if (daten.art === "update" && w.image) throw fehler("image", "pinn. läuft als fertiges Image – Updates bitte in Portainer.");
     if ((daten.art === "wiederherstellen" || daten.art === "update") && !w.docker) {
         throw fehler("docker", "Der Container „wartung“ hat keinen Zugriff auf Docker.");
     }
@@ -676,6 +678,8 @@ function autoPruefen(jetzt) {
     jetzt = jetzt || new Date();
     const cfg = autoLesen();
     autoAbschliessen(cfg);
+    // Image (Portainer stack): no automatic updates – they are done in Portainer
+    if (env("PINN_BETRIEB") === "image") return { aktion: "nichts" };
     if (!autoFaellig(cfg, jetzt)) return { aktion: "nichts" };
     const heute = datumKey(jetzt, cfg);
     const merke = (ergebnis, extra, endgueltig) => {
