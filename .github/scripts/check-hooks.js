@@ -455,6 +455,11 @@ if (exists(path.join(HOOKS, 'pinn-pushtext.js'))) {
       return eq([pt.translateFor('de', 'wg', m).text, pt.translateFor('en', 'wg', { tag: 'x', titel: 'Everything for the family' }).titel],
         ['Deine WG wurde alarmiert (2 Geräte) und sieht deinen Standort.', 'Everything for the flatshare']);
     });
+    test('security warning with visitor details (since 1.152.0) is translated line by line', () => {
+      const m = { tag: 'sicherheit-ipsperre-server', titel: '🚨 Sicherheitswarnung', text: 'Viele falsche Anmeldeversuche von einer Adresse – sie ist vorübergehend gesperrt.\nAdresse: 203.0.113.7 (aus dem Internet)\nGerät: iPhone · Safari\nVersuche: 20\nAlle Angaben im Fehlerprotokoll (Sicherheit).' };
+      const r = pt.translateFor('en', 'familie', m);
+      return eq([r.titel, r.text], ['🚨 Security warning', 'Many wrong sign-in attempts from one address – it is locked for now.\nAddress: 203.0.113.7 (from the internet)\nDevice: iPhone · Safari\nAttempts: 20\nAll details in the error log (Security).']);
+    });
     test('update notice for admins (since 1.118.1) is translated', () => {
       const m = { tag: 'update-1.119.0', titel: '🆕 pinn. 1.119.0 ist da', text: 'Installiert ist 1.118.1. Antippen, um das Update unter Einstellungen → System zu installieren.' };
       const r = pt.translateFor('en', 'familie', m);
