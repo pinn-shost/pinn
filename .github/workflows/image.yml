@@ -97,6 +97,8 @@ jobs:
           [ "$ok" = 1 ] || { echo "The image did not become healthy"; exit 1; }
           curl -fsS http://127.0.0.1:8090/ | grep -q "pinn" || { echo "The start page is missing"; exit 1; }
           docker exec pinn-test ls /pb_public/vendor/pdfjs/pdf.min.mjs /pb_public/vendor/tesseract/lang/deu.traineddata.gz
+          # backup service of the stack (service "wartung" runs this script with the same image)
+          docker exec pinn-test sh -n /usr/local/bin/pinn-wartung.sh
           docker rm -f pinn-test
 
       - name: Log in to ghcr.io
