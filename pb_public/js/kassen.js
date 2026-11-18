@@ -1079,7 +1079,7 @@ function saveKasseSettle() {
   const fm = kassePartById(from), tm = kassePartById(to);
   finQueueSave({
     id: newRecordId(), amount, date, category: FIN_SETTLE_CATEGORY,
-    title: tk('fund.settlement2', { name: fm ? memberLabel(fm) : '', name2: tm ? memberLabel(tm) : '' }).trim(),
+    title: tk('fund.settlement2', { name: fm ? memberLabelRaw(fm) : '', name2: tm ? memberLabelRaw(tm) : '' }).trim(),
     store: '', listId: '', items: [], paidBy: from, split: [to], link: '',
     note: document.getElementById('kasseSettleNote').value.trim(),
     kasse: activeKasseId,

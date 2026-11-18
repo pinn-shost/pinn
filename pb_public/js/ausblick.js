@@ -603,7 +603,7 @@ async function abFillWeekReview(mondayIso, can) {
     if (!t) return;
     t.insertAdjacentHTML('beforeend', `<div class="ab-tile"><small>🧹 ${abEsc(abT('r_haushalt'))}</small><b>${sum}</b></div>`);
     const note = document.getElementById('abRueckNote');
-    if (note && top && members.length > 1) note.textContent = abT('r_top', { name: memberLabel(top) });
+    if (note && top && members.length > 1) note.textContent = abT('r_top', { name: memberLabelRaw(top) });
   } catch (e) {
     const t = document.getElementById('abRueckTiles');
     if (t && !t.children.length) document.getElementById('abRueckNote').textContent = abT('r_leer');

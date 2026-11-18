@@ -110,6 +110,14 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski en 🇺🇦 Українська**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.153.1
+
+**Gezondheid: vijf nieuwe blokken, ‘Ik’ in je eigen profiel**
+
+- Nieuw op de gezondheidspagina: **zonnebrand** (uv-index van vandaag thuis, herinnering alleen op zonnige dagen), **slaap** (herinnering voor bedtijd, 's ochtends ‘Hoe heb je geslapen?’), **groente & fruit** (porties per dag), **tekencontrole** (april–oktober) en **controles** (tandarts, check-up … met interval; voor kinderen de Duitse U-onderzoeken naar leeftijd). Bij kinderen krijgen de ouders de herinneringen ook.
+- Nieuw: in je eigen profiel toont pinn. ‘Ik’ in plaats van je naam – agendafilter, taken, gezin en overal, passend verbogen in zinnen. Verder: lijnicoon voor de herstelpijl, nieuw velgicoon, hetzelfde goud voor gele hints in donkere modus.
+- Gewijzigd: `pb_hooks/pinn-gesundheit.js`, `js/gesundheit.js`, `css/gesundheit.css`, `js/mitglieder.js`, `js/symbole.js`, `css/dunkelfarbe.css`, `js/aufgaben.js`, `js/termine.js`, `js/listen.js`, `js/sparen.js`, `js/vertraege.js`, `js/familie.js`, `js/hinweise.js`, `js/kassen.js`, `js/zuhause.js`, `js/dokumente.js`, `js/fahrzeuge.js`, `js/ausblick.js`, `js/sterne.js`, `js/vorrat2.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `index.html`.
+
 ## Nieuw in 1.153.0
 
 **Beveiliging uit Home Assistant**
@@ -161,13 +169,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Kleur overdag.** De pictogrammen zijn nu licht ingekleurd (witte vlakken, zon geel, regen blauw, auto rood, gereedschap grijs, planten groen) in dezelfde lijnstijl; de donkere modus blijft zoals hij was. **Voertuigpictogrammen:** in plaats van de auto-emoji kies je een lijnpictogram (sedan, SUV, taxi, bestelbus, pick-up, tractor, caravan, fiets, e-bike …). Ook de **plantenpictogrammen** kies je in de app, met nieuwe pictogrammen voor cactus, palm, tulp, zonnebloem, roos en meer. In de banners van Voertuigen en Thuis lichten de auto’s alleen ’s nachts op: geelachtig voor, rood achter.
 - Gewijzigd: `js/symbole2.js`, `css/symbolfarbe.css` (new), `js/symbole.js`, `js/wetterlogos.js`, `js/symbolwahl.js`, `js/fahrzeuge.js`, `js/zuhause.js`, `js/dokumente.js`, `css/fahrzeuge.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
 
-## Nieuw in 1.150.8
-
-**Pictogrammen overal, te kiezen in de app**
-
-- **Eigen pictogrammen overal.** Ook eten, huishouden, voertuigen, planten, kleding, speelgoed en sport hebben nu eigen lijnpictogrammen (kamers, afvalsoorten, voertuigsoorten, tuin, wekker, kalenderschakelaar, aftelling). De **categoriepictogrammen** in Financiën, Contracten, Documenten en Voorraad kies je uit ongeveer 150 kant-en-klare pictogrammen in plaats van met het emoji-toetsenbord, en dezelfde soort categorie heeft overal hetzelfde pictogram. De scènes van Thuis en Voertuigen tonen nieuwe kleurrijke voertuigen. Kleinigheden: weer “Nu” zonder gestippelde rand, lettertype van de klok op het dashboard, pictogram van de maaltijdplanlijst, pictogrammen op de tekstregel.
-- Gewijzigd: `js/szenen.js`, `js/symbolwahl.js` (new), `js/symbole.js`, `css/wetterlogos.css`, `js/zustand.js`, `js/zuhause.js`, `js/fahrzeuge.js`, `js/gesundheit.js`, `js/finanzen.js`, `js/vertraege.js`, `js/dokumente.js`, `js/vorrat.js`, `js/vorrat2.js`, `js/einkauf.js`, `js/profilauswahl.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -177,7 +178,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.153.0` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.153.1` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -129,6 +129,14 @@ Pulsa cualquier imagen para verla en tamaño completo.
 
 pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski y 🇺🇦 Українська**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades de la 1.153.1
+
+**Salud: cinco bloques nuevos, «Yo» en tu propio perfil**
+
+- Nuevo en la página de salud: **protector solar** (índice UV de hoy en casa, aviso solo en días de sol), **sueño** (aviso antes de dormir, por la mañana «¿Qué tal has dormido?»), **fruta y verdura** (raciones al día), **revisión de garrapatas** (abril–octubre) y **revisiones** (dentista, chequeo … con intervalo; para niños los exámenes U alemanes por edad). En los niños, los avisos también llegan a los padres.
+- Nuevo: en tu propio perfil pinn. muestra «Yo» en vez de tu nombre – filtro del calendario, tareas, familia y en todas partes, adaptado dentro de las frases. Además: icono de línea para la flecha de restaurar, nuevo icono de llanta, el mismo dorado para avisos amarillos en modo oscuro.
+- Cambiado: `pb_hooks/pinn-gesundheit.js`, `js/gesundheit.js`, `css/gesundheit.css`, `js/mitglieder.js`, `js/symbole.js`, `css/dunkelfarbe.css`, `js/aufgaben.js`, `js/termine.js`, `js/listen.js`, `js/sparen.js`, `js/vertraege.js`, `js/familie.js`, `js/hinweise.js`, `js/kassen.js`, `js/zuhause.js`, `js/dokumente.js`, `js/fahrzeuge.js`, `js/ausblick.js`, `js/sterne.js`, `js/vorrat2.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `index.html`.
+
 ## Novedades de la 1.153.0
 
 **Seguridad desde Home Assistant**
@@ -247,18 +255,6 @@ pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Visible de inmediato.** Mientras no elijas nada, el mosaico muestra una selección estándar (beber, compra, tarea, cita, cocinar hoy, nota, gasto, plan de limpieza). Sin ninguna app elegida ofrece «Elegir apps» en lugar de desaparecer.
 - Modificado: `js/kurzbefehle.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README.
 
-## Novedades de la 1.150.0
-
-**Horas en tu región · Accesos directos en el resumen · Ventanas rápidas para los accesos directos**
-
-- **Recordatorios a la hora correcta.** pinn. calcula ahora los recordatorios en la zona horaria de tu dispositivo, con el horario de verano e invierno de tu región. No hay nada que configurar: el dispositivo comunica al servidor su zona horaria, también tras una mudanza o de viaje.
-- **Primero los recordatorios de salud.** Los de medicación, beber y lavarse las manos ya siguen el reloj de cada persona; todos los recordatorios futuros usarán el mismo reloj. Los recordatorios anteriores (cumpleaños, mascotas, lista de equipaje, despensa, contratos, documentos, avance semanal) siguen con la hora de Europa Central y se actualizarán más adelante.
-- **Mosaico de accesos directos.** Un nuevo mosaico del resumen muestra iconos de app que abren una función directamente: beber, lavarse las manos (+1 por toque), medicación, compras, nueva tarea, nuevo evento, nota, chat, limpieza, plantas, mascotas, despensa, anotar gasto, anotar ingreso, finanzas, SOS y de camino.
-- **Tu elección.** Ajustes → Resumen → Accesos directos: activa las apps que quieras. Vale por perfil; sin ninguna app el mosaico permanece oculto. Los invitados no ven apps de salud, SOS ni finanzas.
-- **Pulsación larga.** Mantener pulsado un acceso directo (clic derecho en el ordenador) abre una pequeña ventana para esa función: beber (bebida, cantidad, deshacer durante 10 minutos), lavarse las manos (+/−), medicación, compras, tareas, limpieza, eventos, cocinar, notas, mascotas, despensa, gasto e ingreso, SOS y de camino. Un toque corto funciona como antes.
-- **Se mantiene abierta.** La ventana sigue abierta tras una acción, así que se pueden hacer varias cosas seguidas; «Abrir» lleva a la función completa.
-- Modificado: `pb_hooks/pinn-zeit.js`, `pb_hooks/zeit.pb.js`, `js/zeit.js`, `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `pb_hooks/pinn-gesundheit.js`, `js/appstart.js`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/ansichten.js`, `js/design.js`, `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, README (+ 1.149.1).
-
 ## Cómo funciona
 
 ```mermaid
@@ -285,7 +281,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.153.0` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.153.1` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

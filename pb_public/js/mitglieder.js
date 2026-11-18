@@ -2,7 +2,7 @@
    Part of the app code that used to be a single block in index.html. Classic script, no build step:
    it is loaded right after the inline script of index.html and before the other files in js/
    (the load order is listed at the bottom of index.html and in pinn-setup.sh).
-   Contents: member lookup and labels (memberById, memberLabel, memberAvatarInnerHTML, memberBorderColor), people assigned to
+   Contents: member lookup and labels (memberById, memberLabel = "Me" for the own profile, memberLabelRaw, memberSelfTk, memberAvatarInnerHTML, memberBorderColor), people assigned to
    appointments ("Zugewiesen:" line, colour bar), the member chips and the member filter (passesMemberFilter,
    matchesActiveMemberFilter, memberFilterSortWeight, isEventVisibleAsCalendarEntry) and the emoji/avatar grids of the member
    popup. Profile pictures are in js/profilbild.js, the member popup in js/mitglied.js. */
@@ -21,16 +21,22 @@ function getAssignedMembersForEvent(ev) {
   if (!match) return [];
   const names = match[1].split(',').map(n => n.trim().toLowerCase()).filter(Boolean);
   if (names.includes('alle')) return members;
-  return members.filter(m => names.includes(memberLabel(m).toLowerCase()) || names.includes(m.name.toLowerCase()));
+  return members.filter(m => names.includes(memberLabelRaw(m).toLowerCase()) || names.includes(m.name.toLowerCase()));
 }
 // Notes for display in the app language (since 1.118): the "Zugewiesen: ..." line stays German in the
 // stored data (server, iCloud and older devices read it) and is only translated here; the same for the
 // "Aus pinn. → Fahrzeuge → ..." stamp of older vehicle tasks.
 function localizeNotes(text) {
   return String(text || '')
-    .replace(/^Zugewiesen:\s*(.+)$/m, (m, names) => tk('event.assignedLine', { names: names.split(',').map(n => n.trim()).map(n => n.toLowerCase() === 'alle' ? tk('tasks.everyone') : n).join(', ') }))
+    .replace(/^Zugewiesen:\s*(.+)$/m, (m, names) => tk('event.assignedLine', { names: names.split(',').map(n => n.trim()).map(n => n.toLowerCase() === 'alle' ? tk('tasks.everyone') : (localizeOwnName(n))).join(', ') }))
     .replace(/^Aus pinn\. → Fahrzeuge → (.+)$/m, (m, name) => tk('vehicle.task.fromStamp', { name }))
     .replace(/^Eingelagert:\s*(.+)$/m, (m, place) => tk('vehicle.task.storedAt', { place }));
+}
+// The own name in a stored "Zugewiesen:" line reads "Me" on the screen (since 1.153.1)
+function localizeOwnName(n) {
+  let me = null;
+  try { me = currentMember(); } catch (e) { me = null; }
+  return me && n.toLowerCase() === String(memberLabelRaw(me) || '').toLowerCase() ? tk('member.me') : n;
 }
 // Removes the "Zugewiesen: ..." line from a text again (for display/the edit form).
 function stripAssignedLine(text) {
@@ -46,7 +52,20 @@ function assignedMembersBarHtml(ev) {
   const segments = assigned.map(m => `<span class="flex-1" style="background:${escapeHtml(m.color)}"></span>`).join('');
   return `<div class="absolute left-0 top-0 bottom-0 w-1 flex flex-col overflow-hidden">${segments}</div>`;
 }
-function memberLabel(m) { return (m.displayMode === 'role' && m.role) ? m.role : m.name; }
+// Label as stored and as other members see it (name, or role when the member chose "show role")
+function memberLabelRaw(m) { return (m.displayMode === 'role' && m.role) ? m.role : m.name; }
+// true = this member is the signed-in profile
+function memberIsMe(m) {
+  try { const me = currentMember(); return !!(m && me && me.id === m.id); } catch (e) { return false; }
+}
+// Label for the screen (since 1.153.1): the own profile reads "Me" in the app language, everyone else by name/role.
+// Never store this or put it into data, notes, push texts or matching - use memberLabelRaw there.
+function memberLabel(m) { return memberIsMe(m) ? tk('member.me') : memberLabelRaw(m); }
+// Sentence with a person in it: the own profile gets its own, properly inflected text (key + "Me", e.g.
+// "von {name}" → "von mir"); everyone else the normal text with {name}.
+function memberSelfTk(m, key, vals) {
+  return memberIsMe(m) ? tk(key + 'Me', vals || {}) : tk(key, Object.assign({}, vals || {}, { name: memberLabelRaw(m) }));
+}
 
 function memberAvatarInnerHTML(m) {
   if (m.photo) return `<img src="${escapeHtml(m.photo)}" class="w-full h-full object-cover" alt="" />`;

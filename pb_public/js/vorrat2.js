@@ -1827,7 +1827,7 @@ function exportFinanceCsv(year) {
     const [y, mo, d] = e.date.split('-');
     rows.push([
       `${d}.${mo}.${y}`, finIsIncome(e) ? tk('fin.csv.income') : tk('fin.csv.expense'), numDec(Number(e.amount || 0).toFixed(2)), i18nT(finCategory(e.category).label),
-      finLinkLabel(e.link), e.title || '', e.store || '', m ? memberLabel(m) : '', e.note || '', (e.items || []).join(', '),
+      finLinkLabel(e.link), e.title || '', e.store || '', m ? memberLabelRaw(m) : '', e.note || '', (e.items || []).join(', '),
       e.recurringId ? (() => { const r = finance.recurring.find(x => x.id === e.recurringId); return r ? finIntervalInfo(finRecInterval(r)).label : tk('fin.csv.yes'); })() : '',
     ]);
   });

@@ -269,7 +269,7 @@ function kidDecide(m, entryId, ok) {
   if (kidShopView) kidRenderShop();
   if (kidPageMemberId === m.id) kidRefreshBank(m, 0);
   if (typeof currentView !== 'undefined' && currentView === 'finanzen') renderFinance();
-  if (typeof finShowToast === 'function') finShowToast(ok ? `${tk('stars.rewardConfirmed', { memberLabel: memberLabel(m) })}` : `${tk('stars.declinedGetsStarsBack', { memberLabel: memberLabel(m) })}`);
+  if (typeof finShowToast === 'function') finShowToast(ok ? `${tk('stars.rewardConfirmed', { memberLabel: memberLabelRaw(m) })}` : `${tk('stars.declinedGetsStarsBack', { memberLabel: memberLabelRaw(m) })}`);
 }
 // Booking in the fund where the child's pocket money is kept (otherwise in the default or active fund)
 function kidWithAllowanceFinance(m, fn) {

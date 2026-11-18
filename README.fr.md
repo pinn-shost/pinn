@@ -129,6 +129,14 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski et 🇺🇦 Українська**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.153.1
+
+**Santé : cinq nouveaux blocs, « Moi » dans ton propre profil**
+
+- Nouveau sur la page santé : **crème solaire** (indice UV du jour au domicile, rappel seulement les jours ensoleillés), **sommeil** (rappel avant le coucher, le matin « Comment as-tu dormi ? »), **fruits et légumes** (portions par jour), **contrôle des tiques** (avril–octobre) et **bilans de santé** (dentiste, bilan … avec intervalle ; pour les enfants les examens U allemands selon l'âge). Pour les enfants, les parents reçoivent aussi les rappels.
+- Nouveau : dans ton propre profil, pinn. affiche « Moi » au lieu de ton nom – filtre du calendrier, tâches, famille et partout ailleurs, accordé dans les phrases. En plus : icône linéaire pour la flèche de restauration, nouvelle icône de jante, même doré pour les textes jaunes en mode sombre.
+- Modifié: `pb_hooks/pinn-gesundheit.js`, `js/gesundheit.js`, `css/gesundheit.css`, `js/mitglieder.js`, `js/symbole.js`, `css/dunkelfarbe.css`, `js/aufgaben.js`, `js/termine.js`, `js/listen.js`, `js/sparen.js`, `js/vertraege.js`, `js/familie.js`, `js/hinweise.js`, `js/kassen.js`, `js/zuhause.js`, `js/dokumente.js`, `js/fahrzeuge.js`, `js/ausblick.js`, `js/sterne.js`, `js/vorrat2.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `index.html`.
+
 ## Nouveautés de la 1.153.0
 
 **Sécurité depuis Home Assistant**
@@ -247,18 +255,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Visible tout de suite.** Tant que vous n’avez rien choisi, la tuile affiche une sélection par défaut (boire, courses, tâche, rendez-vous, cuisiner aujourd’hui, note, dépense, plan de ménage). Sans appli choisie, elle propose « Choisir les applis » au lieu de disparaître.
 - Modifié: `js/kurzbefehle.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README.
 
-## Nouveautés de la 1.150.0
-
-**Les heures dans votre région · Raccourcis sur l’aperçu · Fenêtres rapides pour les raccourcis**
-
-- **Des rappels à la bonne heure.** pinn. calcule désormais les rappels dans le fuseau horaire de votre appareil, avec l’heure d’été et d’hiver de votre région. Rien à régler : l’appareil indique discrètement son fuseau au serveur, aussi après un déménagement ou en voyage.
-- **D’abord les rappels santé.** Médicaments, boisson et lavage des mains suivent déjà l’horloge de chaque personne ; tous les futurs rappels utiliseront la même horloge. Les anciens rappels (anniversaires, animaux, liste de bagages, réserves, contrats, documents, aperçu de la semaine) utilisent encore l’heure d’Europe centrale et suivront plus tard.
-- **Tuile Raccourcis.** Une nouvelle tuile de l’aperçu affiche des icônes d’applis qui ouvrent directement une fonction : boire, se laver les mains (+1 par appui), médicaments, courses, nouvelle tâche, nouvel événement, note, chat, ménage, plantes, animaux, réserves, saisir une dépense, saisir un revenu, finances, SOS et en route.
-- **Votre choix.** Réglages → Aperçu → Raccourcis : activez les applis souhaitées. Valable par profil ; sans appli choisie, la tuile reste masquée. Les invités ne voient ni santé, ni SOS, ni finances.
-- **Appui long.** Un appui long sur un raccourci (clic droit sur ordinateur) ouvre une petite fenêtre pour cette fonction : boire (boisson, quantité, annuler pendant 10 minutes), lavage des mains (+/−), médicaments, courses, tâches, ménage, événements, cuisine, notes, animaux, réserves, dépense et revenu, SOS et en route. Un appui court fonctionne comme avant.
-- **Reste ouverte.** La fenêtre reste ouverte après une action, on peut donc enchaîner plusieurs choses ; « Ouvrir » mène à la fonction complète.
-- Modifié: `pb_hooks/pinn-zeit.js`, `pb_hooks/zeit.pb.js`, `js/zeit.js`, `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `pb_hooks/pinn-gesundheit.js`, `js/appstart.js`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/ansichten.js`, `js/design.js`, `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, README (+ 1.149.1).
-
 ## Comment ça marche
 
 ```mermaid
@@ -285,7 +281,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.153.0` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.153.1` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

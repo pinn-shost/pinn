@@ -2407,7 +2407,7 @@ function hsOpenDefectLetter() {
     const picked = () => [...body.querySelectorAll('#hsLetterPick .active')].map(b => hsDefectById(b.dataset.id)).filter(Boolean);
     const build = () => {
       const lord = h.landlord || {};
-      const me = currentMember() ? memberLabel(currentMember()) : '';
+      const me = currentMember() ? memberLabelRaw(currentMember()) : '';
       const dl = fzVal('hsLetterDeadline');
       const lines = [];
       if (lord.name) lines.push(lord.name);

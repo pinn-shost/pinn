@@ -133,6 +133,14 @@ Tocca un’immagine per aprirla a dimensione intera.
 
 pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
 
+## Novità della 1.153.1
+
+**Salute: cinque nuovi blocchi, «Io» nel tuo profilo**
+
+- Novità nella pagina salute: **crema solare** (indice UV di oggi a casa, promemoria solo nei giorni di sole), **sonno** (promemoria prima di dormire, al mattino «Come hai dormito?»), **frutta e verdura** (porzioni al giorno), **controllo zecche** (aprile–ottobre) e **controlli** (dentista, check-up … con intervallo; per i bambini gli esami U tedeschi in base all'età). Per i bambini i promemoria arrivano anche ai genitori.
+- Novità: nel tuo profilo pinn. mostra «Io» invece del tuo nome – filtro del calendario, attività, famiglia e ovunque, adattato nelle frasi. Inoltre: icona a linee per la freccia di ripristino, nuova icona del cerchione, lo stesso oro per i testi gialli in modalità scura.
+- Modificato: `pb_hooks/pinn-gesundheit.js`, `js/gesundheit.js`, `css/gesundheit.css`, `js/mitglieder.js`, `js/symbole.js`, `css/dunkelfarbe.css`, `js/aufgaben.js`, `js/termine.js`, `js/listen.js`, `js/sparen.js`, `js/vertraege.js`, `js/familie.js`, `js/hinweise.js`, `js/kassen.js`, `js/zuhause.js`, `js/dokumente.js`, `js/fahrzeuge.js`, `js/ausblick.js`, `js/sterne.js`, `js/vorrat2.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `index.html`.
+
 ## Novità della 1.153.0
 
 **Sicurezza da Home Assistant**
@@ -215,14 +223,6 @@ pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Face ID.** Lo sblocco parte solo con il pulsante (niente più finestra «Usa passkey»); il pulsante è in basso, a portata di pollice.
 - Modificato: `js/gesundheit.js`, `css/gesundheit.css`, `js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
 
-## Novità della 1.150.4
-
-**Le notifiche restano attive dopo gli aggiornamenti**
-
-- **Il push sopravvive agli aggiornamenti.** Se durante un aggiornamento il server non riusciva per un attimo a leggere la sua chiave push, ne creava una nuova e tutti i dispositivi perdevano le notifiche. Ora la chiave non viene mai sostituita finché esiste, viene salvata in modo sicuro e conservata anche come copia di backup.
-- **Basta un tocco.** Se un dispositivo perde comunque la registrazione (ad es. perché iOS l’ha reimpostata), pinn. lo registra di nuovo da solo, oppure mostra in basso «Riattiva», senza passare dalle impostazioni.
-- Modificato: `pb_hooks/pinn-push.js`, `pb_hooks/push.pb.js`, `pb_hooks/pinn-sitzungen.js`, `js/mitteilungen.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
-
 ## Come funziona
 
 ```mermaid
@@ -251,7 +251,7 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 ## Installazione
 
 1. Scarica lo ZIP dell’[ultima release](https://github.com/pinn-shost/pinn/releases/latest) e decomprimilo.
-2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.153.0` o `pinn-main`) così com’è.
+2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.153.1` o `pinn-main`) così com’è.
 3. Accedi via SSH ed esegui:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

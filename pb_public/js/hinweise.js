@@ -143,7 +143,7 @@ function hwActive() { return hwList.filter(h => h.aktiv); }
 function hwDone() { return hwList.filter(h => !h.aktiv); }
 function hwIsMine(h) { const me = famMyMemberId(); return !!me && h.memberId === me; }
 function hwMember(h) { return memberById(h.memberId) || null; }
-function hwName(h) { const m = hwMember(h); return m ? memberLabel(m) : (h.name || tk('lists.someone')); }
+function hwName(h) { const m = hwMember(h); return m ? memberLabelRaw(m) : (h.name || tk('lists.someone')); }
 function hwPhone(memberId) { return String((famPass(memberId) || {}).phone || '').trim(); }
 function hwKm(m) {
   if (m == null || !isFinite(m)) return '';
@@ -1388,7 +1388,7 @@ async function ntActFetch(force) {
 }
 function ntActWho(a) {
   const m = a.mitglied && typeof memberById === 'function' ? memberById(a.mitglied) : null;
-  return { m, name: m ? memberLabel(m) : (a.name || tk('lists.someone')) };
+  return { m, name: m ? memberLabelRaw(m) : (a.name || tk('lists.someone')) };
 }
 function ntActDate(ymd) {
   const m = String(ymd || '').match(/^(\d{4})-(\d{2})-(\d{2})/);

@@ -239,7 +239,7 @@ function parseRawEventForEdit(icsText) {
   const assignMatch = result.notes.match(/Zugewiesen:\s*(.+)/);
   if (assignMatch) {
     const names = assignMatch[1].split(',').map(n => n.trim().toLowerCase()).filter(Boolean);
-    result.assigneeIds = members.filter(m => names.includes(memberLabel(m).toLowerCase()) || names.includes(m.name.toLowerCase())).map(m => m.id);
+    result.assigneeIds = members.filter(m => names.includes(memberLabelRaw(m).toLowerCase()) || names.includes(m.name.toLowerCase())).map(m => m.id);
     result.notes = result.notes.replace(/\n*Zugewiesen:\s*.+/, '').trim();
   }
   return result;
@@ -293,7 +293,7 @@ document.getElementById('saveAddEvent').addEventListener('click', async () => {
 
   let notes = document.getElementById('eventNotesInput').value.trim();
   if (pendingEventAssignees.length) {
-    const names = pendingEventAssignees.map(id => memberLabel(memberById(id))).filter(Boolean);
+    const names = pendingEventAssignees.map(id => memberLabelRaw(memberById(id))).filter(Boolean);
     if (names.length) notes = (notes ? notes + '\n\n' : '') + 'Zugewiesen: ' + names.join(', ');
   }
 

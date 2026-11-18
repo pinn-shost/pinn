@@ -1238,7 +1238,7 @@ function updateDocEditUi() {
   else if (!rem) remInfo.textContent = tk('doc.noPushReminder');
   else {
     const m = memberById(docVal('docMemberSelect'));
-    remInfo.textContent = m && !vtIsChildMember(m) ? tk('doc.remindsPerson', { name: memberLabel(m), n: rem }) : tk('doc.remindsAdults', { n: rem });
+    remInfo.textContent = m && !vtIsChildMember(m) ? tk('doc.remindsPerson', { name: memberLabelRaw(m), n: rem }) : tk('doc.remindsAdults', { n: rem });
   }
 }
 function onDocBuyDateChanged() {

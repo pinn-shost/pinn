@@ -837,7 +837,7 @@ function famDetailHtml(m) {
       <div class="fam-hero-ava"><span class="fam-ava big" style="--fam:${famAttr(color)}">${famAvatarInner(m)}<span id="famDetailPing" class="fam-ping${famIsLive(famDeviceForMember(m.id)) ? '' : ' hidden'}"></span></span></div>
       <div class="fam-hero-body">
         <div class="flex items-center gap-2 flex-wrap">
-          <div class="font-serif text-xl">${escapeHtml(memberLabel(m))}</div>
+          <div class="font-serif text-xl">${escapeHtml(memberLabelRaw(m))}</div>
           ${!pet && p.blood ? `<span class="fam-blood">🩸 ${escapeHtml(p.blood)}</span>` : ''}
         </div>
         <div class="text-xs text-ink/50 mt-0.5">${escapeHtml(sub || (pet ? tk('search.type.pet') : tk('family.emergencyCard2')))}</div>
@@ -938,7 +938,7 @@ function famOpenEdit(memberId) {
   if (!famModalState.contacts.length) famModalState.contacts.push({ name: '', relation: '', phone: '' });
   const r = famListRowsHtml();
   const html = `
-    <h3 class="font-serif text-lg mb-1">${tk('family.emergencyCard3', { memberLabel: escapeHtml(memberLabel(m)) })}</h3>
+    <h3 class="font-serif text-lg mb-1">${tk('family.emergencyCard3', { memberLabel: escapeHtml(memberLabelRaw(m)) })}</h3>
     <p class="text-xs text-ink/50 mb-4">${tk('family.onlyFillWhatCan')}</p>
     <div class="fz-h">${tk('family.emergencyContacts')}</div>
     ${famIn('famF_phone', pet ? tk('family.phoneNumberTrackerSim') : tk('family.ownMobileNumber'), p.phone, ('type="tel" inputmode="tel" autocomplete="off" maxlength="40" placeholder="' + escapeHtml(tk('family.callingFromSosPopup')) + '"'))}
@@ -1152,7 +1152,7 @@ async function famSaveDevice(btn) {
   const typ = btn.dataset.typ === 'tracker' ? 'tracker' : 'handy';
   btn.disabled = true;
   try {
-    const r = await famPost('geraet', { memberId, name: m ? memberLabel(m) : tk('devices.device'), emoji: (m && m.avatar) || '', typ, uniqueId: famVal('famD_uid') });
+    const r = await famPost('geraet', { memberId, name: m ? memberLabelRaw(m) : tk('devices.device'), emoji: (m && m.avatar) || '', typ, uniqueId: famVal('famD_uid') });
     famCloseModal2();
     await famLoadStatus();
     famOpenSetup();
@@ -1820,7 +1820,7 @@ function sosMarkSeen(a) {
   Object.keys(m).forEach(k => { if (k === a.id || sosAlarms.some(x => x.id === k)) keep[k] = m[k]; });
   try { localStorage.setItem(LS_SOS_SEEN, JSON.stringify(keep)); } catch (e) { /* ignore */ }
 }
-function sosName(a) { const m = memberById(a.memberId); return m ? memberLabel(m) : (a.name || tk('lists.someone')); }
+function sosName(a) { const m = memberById(a.memberId); return m ? memberLabelRaw(m) : (a.name || tk('lists.someone')); }
 function sosIsMine(a) { const me = famMyMemberId(); return !!me && a.memberId === me; }
 function sosClock(ms) {
   if (!ms) return '';
@@ -2070,7 +2070,7 @@ async function sosEnd(btn) {
     await postJson('/api/pinn/ortung/sos-ende', { id: a.id });
     finShowToast(tk('sos.allClearSent'));
     a.aktiv = false;
-    a.ende = { zeit: famNow(), wer: (currentMember() && memberLabel(currentMember())) || '' };
+    a.ende = { zeit: famNow(), wer: (currentMember() && memberLabelRaw(currentMember())) || '' };
     sosMarkSeen(a);
     sosRender(a);
     sosRenderBanner();
@@ -2909,7 +2909,7 @@ function skSaveProfile() {
 function skDeleteProfile() {
   const mid = skModal.memberId;
   const m = memberById(mid);
-  if (!m || !confirm(`${tk('school.removeSchoolDaycareTimetable', { memberLabel: memberLabel(m) })}`)) return;
+  if (!m || !confirm(`${tk('school.removeSchoolDaycareTimetable', { memberLabel: memberLabelRaw(m) })}`)) return;
   schoolProfiles = (schoolProfiles || []).filter(p => p.memberId !== mid);
   schoolHomework = (schoolHomework || []).filter(h => h.memberId !== mid);
   const letters = [];
@@ -3090,7 +3090,7 @@ function skOpenHomework(id, mid) {
   if (!p) return;
   const subjects = skSubjects(p);
   const html = `
-    <h3 class="font-serif text-lg mb-1">${tk('school.homeworkFor', { name: escapeHtml(memberLabel(memberById(kid))) })}</h3>
+    <h3 class="font-serif text-lg mb-1">${tk('school.homeworkFor', { name: escapeHtml(memberLabelRaw(memberById(kid))) })}</h3>
     <p class="text-xs text-ink/50 mb-4">${tk('school.alsoAppearsKidsPage')}</p>
     <div class="fz-field"><label class="fz-lbl" for="skH_subject">${tk('school.subject')}</label>
       <input id="skH_subject" class="fz-in" list="skHwSubjects" autocomplete="off" maxlength="60" value="${famAttr(h ? h.subject : '')}" placeholder="${escapeHtml(tk('school.eGMaths'))}" />
@@ -3317,7 +3317,7 @@ async function skKiTimetable(mid, file) {
   renderFamily();
   try {
     const part = await skFilePart(file);
-    const data = await skKiPost('/api/pinn/ki/stundenplan', { dateien: [part], kind: memberLabel(memberById(mid)), klasse: p.group || '' });
+    const data = await skKiPost('/api/pinn/ki/stundenplan', { dateien: [part], kind: memberLabelRaw(memberById(mid)), klasse: p.group || '' });
     const r = data.stundenplan || {};
     const stunden = Array.isArray(r.stunden) ? r.stunden : [];
     if (!stunden.length) throw new Error(tk('school.noTimetableRecognised'));
@@ -3368,7 +3368,7 @@ async function skKiLetter(file) {
     const part = await skFilePart(file);
     const data = await skKiPost('/api/pinn/ki/elternbrief', {
       dateien: [part], heute: skToday(),
-      kinder: st.kids.map(id => memberLabel(memberById(id))),
+      kinder: st.kids.map(id => memberLabelRaw(memberById(id))),
       einrichtungen: st.kids.map(id => skProfile(id)).filter(Boolean).map(skName),
     });
     const b = data.brief || {};
@@ -4651,7 +4651,7 @@ function ptSitterText(p) {
   if (p.emergencyVet || p.emergencyVetPhone) L.push('🚨 ' + tk('pet.emergencyVet') + ': ' + [p.emergencyVet, p.emergencyVetPhone].filter(Boolean).join(', '));
   if (p.chip) L.push('🔖 ' + tk('family.chipNumber') + ': ' + p.chip);
   const owners = (p.owners && p.owners.length ? p.owners : []).map(id => memberById(id)).filter(Boolean);
-  const phones = owners.map(m => { const ph = (famPass(m.id) || {}).phone; return ph ? memberLabel(m) + ' ' + ph : ''; }).filter(Boolean);
+  const phones = owners.map(m => { const ph = (famPass(m.id) || {}).phone; return ph ? memberLabelRaw(m) + ' ' + ph : ''; }).filter(Boolean);
   if (phones.length) L.push('📞 ' + phones.join(' · '));
   return L.join('\n').replace(/\n{3,}/g, '\n\n').trim();
 }
@@ -4672,7 +4672,7 @@ function ptOpenSitter(petId) {
 /* Missing poster */
 function ptPosterHtml(p) {
   const owners = (p.owners && p.owners.length ? p.owners.map(id => memberById(id)).filter(Boolean) : ptPeople());
-  const phones = owners.map(m => (famPass(m.id) || {}).phone ? { n: memberLabel(m), ph: famPass(m.id).phone } : null).filter(Boolean).slice(0, 3);
+  const phones = owners.map(m => (famPass(m.id) || {}).phone ? { n: memberLabelRaw(m), ph: famPass(m.id).phone } : null).filter(Boolean).slice(0, 3);
   const sex = p.sex === 'm' ? '♂' : p.sex === 'w' ? '♀' : '';
   return `<div class="pt-poster">
     <div class="pt-poster-h">${tk('pet.missing2')}</div>

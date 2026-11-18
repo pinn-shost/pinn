@@ -87,7 +87,7 @@ function finLinkLabel(link) {
   }
   if (l.type === 'fahrzeug') return fzLinkLabel(l.id);
   const m = memberById(l.id);
-  return m ? tk('depot.forName', { name: memberLabel(m) }) : '';
+  return m ? memberSelfTk(m, 'depot.forName') : '';
 }
 
 /* ---------- Savings: depots ----------
@@ -121,7 +121,7 @@ function finDepotSub(d) {
   const parts = [];
   if (d.type === 'junior') {
     const m = d.kid ? memberById(d.kid) : null;
-    parts.push(tk('depot.juniorDepot') + (m ? ' · ' + tk('depot.forName', { name: memberLabel(m) }) : ''));
+    parts.push(tk('depot.juniorDepot') + (m ? ' · ' + memberSelfTk(m, 'depot.forName') : ''));
   } else parts.push(tk('depot.mainName'));
   if (d.bank) parts.push(d.bank);
   return parts.join(' · ');
@@ -1937,7 +1937,7 @@ function updateDepotModalUi() {
   });
   document.getElementById('finDepotKidWrap').classList.toggle('hidden', !junior);
   const kid = junior ? memberById(document.getElementById('finDepotKid').value) : null;
-  document.getElementById('finDepotName').placeholder = junior ? (kid ? tk('depot.juniorPhKid', { name: memberLabel(kid) }) : tk('depot.juniorPh')) : tk('depot.eGMyDepot');
+  document.getElementById('finDepotName').placeholder = junior ? (kid ? tk('depot.juniorPhKid', { name: memberLabelRaw(kid) }) : tk('depot.juniorPh')) : tk('depot.eGMyDepot');
   renderDepotIconPicker();
 }
 function setDepotModalType(type) {
@@ -1968,7 +1968,7 @@ function saveDepotFromModal() {
   const kidId = junior ? document.getElementById('finDepotKid').value : '';
   const kid = kidId ? memberById(kidId) : null;
   let name = document.getElementById('finDepotName').value.replace(/\s+/g, ' ').trim().slice(0, 40);
-  if (!name && junior) name = (tk('depot.juniorDepot') + (kid ? ' ' + memberLabel(kid) : '')).slice(0, 40);
+  if (!name && junior) name = (tk('depot.juniorDepot') + (kid ? ' ' + memberLabelRaw(kid) : '')).slice(0, 40);
   if (!name) return showErr(tk('common.needName'));
   const color = document.getElementById('finDepotColor').value;
   const data = {
@@ -2204,7 +2204,7 @@ function openAllowanceModal(kidId) {
   const target = allowanceModalKid();
   const plan = target ? finCurrentAllowance(target.id, todayIso) : null;
   allowancePlanId = plan ? plan.id : null;
-  document.getElementById('finAllowanceTitle').textContent = kid ? tk('depot.pocketMoney2', { name: memberLabel(kid) }) : tk('depot.setPocketMoney');
+  document.getElementById('finAllowanceTitle').textContent = kid ? tk('depot.pocketMoney2', { name: memberLabelRaw(kid) }) : tk('depot.setPocketMoney');
   document.getElementById('finAllowanceAmount').value = plan ? euroInputValue(finRecurringAmountFor(plan, todayIso)) : '';
   document.getElementById('finAllowanceInterval').value = plan ? finRecInterval(plan) : 'weekly';
   document.getElementById('finAllowanceStart').value = plan ? (finRecStart(plan) || todayIso) : todayIso;
@@ -2233,7 +2233,7 @@ function setAllowanceShowCheckbox() {
   document.getElementById('finAllowanceShowWrap').classList.toggle('opacity-50', !enabled);
   hint.textContent = enabled
     ? tk('depot.childSeesAmountWhen')
-    : tk('depot.noKidsPageActivated2', { name: kid ? memberLabel(kid) : tk('depot.member') });
+    : tk('depot.noKidsPageActivated2', { name: kid ? memberLabelRaw(kid) : tk('depot.member') });
 }
 function updateAllowanceModalUi() {
   const start = document.getElementById('finAllowanceStart').value;
@@ -2273,7 +2273,7 @@ function saveAllowanceFromModal() {
   const todayIso = finTodayIso();
 
   const fields = {
-    title: (tk('depot.pocketMoney') + ' ') + (kid.name || memberLabel(kid)), amount, category: FIN_KIDS_CATEGORY,
+    title: (tk('depot.pocketMoney') + ' ') + (kid.name || memberLabelRaw(kid)), amount, category: FIN_KIDS_CATEGORY,
     paidBy: document.getElementById('finAllowancePaidBy').value, note: '', link: 'kind:' + kid.id,
     interval, start, allowanceFor: kid.id,
   };
@@ -2302,13 +2302,13 @@ function saveAllowanceFromModal() {
   closeAllowanceModal();
   renderFinance();
   if (kidPageMemberId) renderKidPage();
-  finShowToast(tk('depot.pocketMoneySaved', { name: memberLabel(kid) }));
+  finShowToast(tk('depot.pocketMoneySaved', { name: memberLabelRaw(kid) }));
 }
 function endAllowanceFromModal() {
   const kid = allowanceModalKid();
   const plan = allowancePlanId ? finance.recurring.find(r => r.id === allowancePlanId) : null;
   if (!kid || !plan) return;
-  if (!confirm(tk('depot.endPocketMoneyPrevious', { name: memberLabel(kid) }))) return;
+  if (!confirm(tk('depot.endPocketMoneyPrevious', { name: memberLabelRaw(kid) }))) return;
   finEndRecurring(plan.id);
   persistState();
   closeAllowanceModal();
@@ -2319,7 +2319,7 @@ function endAllowanceFromModal() {
 function deleteAllowanceFromModal() {
   const kid = allowanceModalKid();
   if (!kid) return;
-  if (!confirm(tk('depot.completelyDeletePocketMoney', { name: memberLabel(kid) }))) return;
+  if (!confirm(tk('depot.completelyDeletePocketMoney', { name: memberLabelRaw(kid) }))) return;
   finance.recurring = finance.recurring.filter(r => r.allowanceFor !== kid.id);
   finance.pocketMoney = finance.pocketMoney.filter(p => p.id !== kid.id);
   finance.pocketLedger = finance.pocketLedger.filter(l => l.kid !== kid.id);
@@ -2350,7 +2350,7 @@ function openPocketModal(kidId, kind) {
 }
 function updatePocketModalUi() {
   const kid = memberById(pocketKidId);
-  const name = kid ? memberLabel(kid) : '';
+  const name = kid ? memberLabelRaw(kid) : '';
   document.querySelectorAll('.fin-pocket-kind-btn').forEach(b => b.classList.toggle('active', b.dataset.kind === pocketKind));
   document.getElementById('finPocketTitle').textContent = pocketKind === 'out' ? tk('pocket.spentTitle', { name }) : tk('pocket.receivedTitle', { name });
   document.getElementById('finPocketBookWrap').classList.toggle('hidden', pocketKind !== 'in');
@@ -2374,7 +2374,7 @@ function savePocketFromModal() {
   if (pocketKind === 'in' && document.getElementById('finPocketBook').checked) {
     const expId = newRecordId();
     finQueueSave({
-      id: expId, amount, date, category: FIN_KIDS_CATEGORY, title: note || tk('pocket.extraFor', { name: kid.name || memberLabel(kid) }),
+      id: expId, amount, date, category: FIN_KIDS_CATEGORY, title: note || tk('pocket.extraFor', { name: kid.name || memberLabelRaw(kid) }),
       note: '', paidBy: currentMember() ? currentMember().id : '', link: 'kind:' + kid.id,
       store: '', listId: '', items: [], createdBy: (currentUser() && currentUser().id) || '', created: new Date().toISOString(),
     });

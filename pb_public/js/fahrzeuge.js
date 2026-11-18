@@ -1067,7 +1067,7 @@ function renderVehicleDetail(pane, v) {
   const dueHtml = due.length ? fzCard(`
     <div class="fz-h">${tk('vehicle.notificationsEvents')}</div>
     <div class="flex flex-col gap-1.5">${due.map(it => fzDueRowHtml(v, it, false)).join('')}</div>
-    ${!archived ? `<p class="text-[11px] text-ink/45 mt-2">${fzAutoSettings(v).on ? escapeHtml(fzTaskTargets(v).length ? tk('vehicle.autoTasksFor', { n: fzLead(v), names: fzTaskTargets(v).map(id => memberLabel(memberById(id))).join(', ') }) : tk('vehicle.autoTasks', { n: fzLead(v) })) : tk('vehicle.autoTasksOff')}</p>` : ''}`) : '';
+    ${!archived ? `<p class="text-[11px] text-ink/45 mt-2">${fzAutoSettings(v).on ? escapeHtml(fzTaskTargets(v).length ? tk('vehicle.autoTasksFor', { n: fzLead(v), names: fzTaskTargets(v).map(id => memberLabelRaw(memberById(id))).join(', ') }) : tk('vehicle.autoTasks', { n: fzLead(v) })) : tk('vehicle.autoTasksOff')}</p>` : ''}`) : '';
 
   // Key figures
   const consTile = cons.length

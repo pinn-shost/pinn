@@ -20,6 +20,11 @@
 // except guests and the main admin; switch "remindParents" in the health data of the child, default on) - with the
 // name of the child in front of the title. A child without an own profile only reaches the parents. The times are
 // those of the child's clock (own profile, otherwise the family clock), so the parents get the message at the same moment.
+// Since 1.153.1 also: sun.remind { on, time } (only if today's UV index at home is at least UV_MIN, weather from
+// pinn-zuhause.js), sleep.remind { on, morning, morningTime } (30 minutes before sleep.bed; in the morning "How did you
+// sleep?" unless rated), fruit.remind { on, times } (only below the goal), tick.remind { on, time } (April-October, unless
+// ticked off) and checkup.remind { on } (10:00 on the day a check-up or a child's U/J examination is due, then every
+// 7 days while it is still open; due = last + every months, without "last" the day it was added).
 // Never to other family members. Texts come from the key files (push.health.*) in the
 // language of the receiving profile. Markers against double sending: pb_data/pinn_gesundheit_push.json
 // (entries older than two days are discarded). Tapping the message opens /?gesundheit=<trinken|medikamente|haende>&person=<member ID>.
@@ -167,6 +172,33 @@ const STATUS_FILE = "/pb_data/pinn_gesundheit_push.json";
 const GRACE_MIN = 12;          // a due reminder is still sent up to 12 minutes late (the schedule runs every 5 minutes)
 const MED_WINDOW_MIN = 90;     // medication: made up for up to 90 minutes after the planned time (e.g. after a restart)
 const DRINK_EVERY = [30, 45, 60, 90, 120, 150, 180, 240];
+const UV_MIN = 3;                          // same as GH_UV_MIN in js/gesundheit.js
+const TICK_MONTHS = [4, 5, 6, 7, 8, 9, 10];
+const CHECKUP_AT = 10 * 60;                // check-up reminders at 10:00
+const CHECKUP_KINDS = ["dentist", "general", "eyes", "skin", "gyn"];
+// German children's examinations, window in days after birth (same as GH_U_EXAMS in js/gesundheit.js)
+const U_EXAMS = [
+    { id: "U2", from: 3, to: 10 }, { id: "U3", from: 21, to: 35 }, { id: "U4", from: 60, to: 120 },
+    { id: "U5", from: 150, to: 210 }, { id: "U6", from: 270, to: 365 }, { id: "U7", from: 600, to: 730 },
+    { id: "U7a", from: 990, to: 1095 }, { id: "U8", from: 1350, to: 1460 }, { id: "U9", from: 1770, to: 1945 },
+    { id: "J1", from: 4383, to: 5113 },
+];
+function dayNum(iso) {
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso || ""));
+    return m ? Math.round(Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3])) / 86400000) : null;
+}
+function isoOfDay(n) { return new Date(n * 86400000).toISOString().slice(0, 10); }
+function addMonthsIso(iso, months) {
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso || ""));
+    if (!m) return "";
+    const d = new Date(Date.UTC(Number(m[1]), Number(m[2]) - 1 + months, Math.min(Number(m[3]), 28)));
+    return d.toISOString().slice(0, 10);
+}
+// true on the due day and every 7 days after it (while still open)
+function dueToday(dueIso, todayIso) {
+    const a = dayNum(dueIso), b = dayNum(todayIso);
+    return a !== null && b !== null && b >= a && (b - a) % 7 === 0;
+}
 
 function pad2(n) { return (n < 10 ? "0" : "") + n; }
 function toMin(hhmm) {
@@ -191,6 +223,16 @@ function remindSettings(daten) {
     out.hands.on = hr.on === true;
     const times = Array.isArray(hr.times) ? hr.times : ["10:00", "14:00", "18:00"];
     out.hands.times = times.map(toMin).filter(v => v !== null).filter((v, i, a) => a.indexOf(v) === i).sort((a, b) => a - b).slice(0, 6);
+    // since 1.153.1
+    const rem = (k) => (d[k] && d[k].remind && typeof d[k].remind === "object") ? d[k].remind : {};
+    const minOr = (v, def) => (toMin(v) !== null ? toMin(v) : def);
+    out.sun = { on: rem("sun").on === true, at: minOr(rem("sun").time, 540) };
+    const bed = minOr(d.sleep && d.sleep.bed, 22 * 60 + 30);
+    out.sleep = { on: rem("sleep").on === true, at: (bed - 30 + 1440) % 1440, bed: bed, morning: rem("sleep").morning === true, morningAt: minOr(rem("sleep").morningTime, 450) };
+    const ft = Array.isArray(rem("fruit").times) ? rem("fruit").times : ["12:00", "17:00"];
+    out.fruit = { on: rem("fruit").on === true, times: ft.map(toMin).filter(v => v !== null).filter((v, i, a) => a.indexOf(v) === i).sort((a, b) => a - b).slice(0, 6) };
+    out.tick = { on: rem("tick").on === true, at: minOr(rem("tick").time, 1140) };
+    out.checkup = { on: rem("checkup").on === true };
     return out;
 }
 
@@ -220,7 +262,9 @@ function text(lang, key, vals) {
 }
 
 // Due reminders of one member: [{ key, kind, titel, text, url, tag }] - nothing is sent here
-function dueReminders(rec, daten, rs, w, lang) {
+// extra (since 1.153.1): { uv: () => today's highest UV index at home or null, birth: "YYYY-MM-DD" | "" }
+function dueReminders(rec, daten, rs, w, lang, extra) {
+    const ex = extra || {};
     const out = [];
     const memberId = rec.getString("mitglied");
     const person = encodeURIComponent(memberId);
@@ -282,6 +326,79 @@ function dueReminders(rec, daten, rs, w, lang) {
             });
         });
     }
+
+    // ----- since 1.153.1 -----
+    const inSlot = (t) => w.min >= t && w.min - t < GRACE_MIN;
+    const dayLog = (k) => (daten[k] && daten[k].log && typeof daten[k].log === "object") ? daten[k].log : {};
+    if (rs.sun && rs.sun.on && inSlot(rs.sun.at) && !dayLog("sun")[today]) {
+        const uv = typeof ex.uv === "function" ? ex.uv() : null;
+        if (uv !== null && uv >= UV_MIN) {
+            out.push({
+                key: "s|" + rec.id, kind: "sun", skip: false,
+                titel: text(lang, "push.health.sunTitle"), text: text(lang, "push.health.sunText", { uv: String(uv) }),
+                url: "/?gesundheit=sonne&person=" + person, tag: "gesundheit-sonne-" + today,
+            });
+        }
+    }
+    if (rs.sleep && rs.sleep.on) {
+        if (inSlot(rs.sleep.at)) {
+            out.push({
+                key: "b|" + rec.id, kind: "sleep", skip: false,
+                titel: text(lang, "push.health.bedTitle"), text: text(lang, "push.health.bedText", { time: hhmm(rs.sleep.bed) }),
+                url: "/?gesundheit=schlaf&person=" + person, tag: "gesundheit-schlaf-" + today,
+            });
+        }
+        if (rs.sleep.morning && inSlot(rs.sleep.morningAt) && !dayLog("sleep")[today]) {
+            out.push({
+                key: "w|" + rec.id, kind: "sleep", skip: false,
+                titel: text(lang, "push.health.morningTitle"), text: text(lang, "push.health.morningText"),
+                url: "/?gesundheit=schlaf&person=" + person, tag: "gesundheit-morgen-" + today,
+            });
+        }
+    }
+    if (rs.fruit && rs.fruit.on) {
+        const n = Number(dayLog("fruit")[today]) || 0;
+        const goal = Math.max(1, Math.min(10, Number(daten.fruit && daten.fruit.goal) || 5));
+        rs.fruit.times.forEach(t => {
+            if (!inSlot(t)) return;
+            out.push({
+                key: "f|" + rec.id + "|" + t, kind: "fruit", skip: n >= goal,
+                titel: text(lang, "push.health.fruitTitle"), text: text(lang, "push.health.fruitText", { n: String(n), goal: String(goal) }),
+                url: "/?gesundheit=obst&person=" + person, tag: "gesundheit-obst-" + today,
+            });
+        });
+    }
+    if (rs.tick && rs.tick.on && inSlot(rs.tick.at) && !dayLog("tick")[today] && TICK_MONTHS.indexOf(Number(today.slice(5, 7))) >= 0) {
+        out.push({
+            key: "z|" + rec.id, kind: "tick", skip: false,
+            titel: text(lang, "push.health.tickTitle"), text: text(lang, "push.health.tickText"),
+            url: "/?gesundheit=zecken&person=" + person, tag: "gesundheit-zecken-" + today,
+        });
+    }
+    if (rs.checkup && rs.checkup.on && inSlot(CHECKUP_AT)) {
+        const cu = daten.checkup && typeof daten.checkup === "object" ? daten.checkup : {};
+        const names = [];
+        (Array.isArray(cu.list) ? cu.list : []).forEach(c => {
+            if (!c || typeof c !== "object") return;
+            const due = c.last ? addMonthsIso(c.last, Number(c.every) || 12) : String(c.added || "");
+            if (!dueToday(due, today)) return;
+            const known = CHECKUP_KINDS.indexOf(c.kind) >= 0 && !c.name;
+            names.push(known ? (text(lang, "gh.checkup." + c.kind) || c.kind) : String(c.name || "").slice(0, 60));
+        });
+        if (cu.u === true && ex.birth) {
+            const done = Array.isArray(cu.uDone) ? cu.uDone : [];
+            const b = dayNum(ex.birth), t = dayNum(today);
+            const next = U_EXAMS.find(u => done.indexOf(u.id) < 0 && b !== null && t !== null && b + u.to >= t);
+            if (next && dueToday(isoOfDay(b + next.from), today)) names.push(next.id);
+        }
+        if (names.length) {
+            out.push({
+                key: "c|" + rec.id, kind: "checkup", skip: false,
+                titel: text(lang, "push.health.checkupTitle"), text: text(lang, "push.health.checkupText", { name: names.filter(Boolean).join(", ") }),
+                url: "/?gesundheit=vorsorge&person=" + person, tag: "gesundheit-vorsorge-" + today,
+            });
+        }
+    }
     return out;
 }
 
@@ -311,7 +428,7 @@ function runCron() {
     recs.forEach(rec => {
         const daten = parse(rec.get("daten"));
         const rs = remindSettings(daten);
-        if (!rs.drink.on && !rs.meds.on && !rs.hands.on) return;
+        if (!rs.drink.on && !rs.meds.on && !rs.hands.on && !rs.sun.on && !rs.sleep.on && !rs.fruit.on && !rs.tick.on && !rs.checkup.on) return;
         const familyId = rec.getString("familie");
         let own = [];
         try { own = $app.findRecordsByFilter("benutzer", "familie = {:f} && mitglied = {:m}", "", 5, 0, { f: familyId, m: rec.getString("mitglied") }); } catch (e) { own = []; }
@@ -335,10 +452,33 @@ function runCron() {
         // clock for the due times: the child's own profile, otherwise the family
         const refClock = own.length ? Z.clockOfUser(own[0].id, familyId) : Z.clockOfFamily(familyId);
         const w = refClock.wall();
+        // since 1.153.1: UV index of the home (only fetched when a sunscreen reminder is due) and the birthday (U/J examinations)
+        let uvCache;
+        const extra = {
+            uv: () => {
+                if (uvCache !== undefined) return uvCache;
+                uvCache = null;
+                try {
+                    const wx = require(`${__hooks}/pinn-zuhause.js`).weather(familyId);
+                    const day = wx && Array.isArray(wx.tage) ? wx.tage.find(x => x && x.date === w.iso) : null;
+                    if (day && day.uv !== null && isFinite(day.uv)) uvCache = Math.round(day.uv);
+                } catch (e) { uvCache = null; }
+                return uvCache;
+            },
+            birth: "",
+        };
+        if (rs.checkup.on && daten.checkup && daten.checkup.u === true) {
+            if (!ctxCache[familyId]) { const c = familyContext(familyId); c.parents = null; ctxCache[familyId] = c; }
+            const cx = ctxCache[familyId];
+            const mem = cx.members.find(m => m.id === rec.getString("mitglied"));
+            const pass = cx.passes[rec.getString("mitglied")];
+            const b = (mem && mem.birthday) || (pass && pass.birth) || "";
+            extra.birth = /^\d{4}-\d{2}-\d{2}$/.test(String(b)) ? String(b) : "";
+        }
         recipients.forEach(rcp => {
             const u = rcp.u;
             const lang = require(`${__hooks}/pinn-pushtext.js`).langOfUser(u);
-            dueReminders(rec, daten, rs, w, lang).forEach(r => {
+            dueReminders(rec, daten, rs, w, lang, extra).forEach(r => {
                 const key = w.iso + "|" + u.id + "|" + r.key;
                 if (status.gesendet[key]) return;
                 // remember first: even on an error along the way, a message never comes twice

@@ -178,7 +178,14 @@ Object.assign(WX_ICON_PATHS, {
   trophy: '<path d="M8 4h8v6a4 4 0 0 1-8 0z"/><path d="M8 6H5v1.5A3 3 0 0 0 8 10.5M16 6h3v1.5a3 3 0 0 1-3 3M12 14v3.5M8.5 20.5h7M10 17.5h4"/>',
   truck: '<path d="M2.5 6.5h11v10.5h-11zM13.5 10h4l3 3.2V17h-7M6.5 19.5a1.8 1.8 0 1 0 0-3.6 1.8 1.8 0 0 0 0 3.6zM16.5 19.5a1.8 1.8 0 1 0 0-3.6 1.8 1.8 0 0 0 0 3.6z"/>',
   tv: '<rect x="3" y="5.5" width="18" height="12" rx="2.5"/><path d="M9 21h6M12 17.500v3.5"/>',
-  tyre: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2"/><path d="M12 3v5.8M12 15.2V21M3 12h5.8M15.2 12H21"/>',
+  // rim (since 1.153.1): tyre, wide rim close to it, small hub with six spokes inside the rim
+  tyre: '<circle cx="12" cy="12" r="9.2"/><circle cx="12" cy="12" r="6.6"/><circle cx="12" cy="12" r="1.7"/><path d="M12 10.3V5.4M12 13.7v4.9M13.5 11.15l4.2-2.45M10.5 12.85l-4.2 2.45M13.5 12.85l4.2 2.45M10.5 11.15L6.3 8.7"/>',
+  // health page since 1.153.1: tick (tick check), neutral and sad face (sleep rating)
+  tick: '<ellipse cx="12" cy="14" rx="4" ry="5"/><circle cx="12" cy="7.3" r="1.8"/><path d="M8.3 11.5L5 9.5M8 14H4.5M8.3 16.5L5 18.5M15.7 11.5l3.3-2M16 14h3.5M15.7 16.5l3.3 2"/>',
+  meh: '<circle cx="12" cy="12" r="9"/><path d="M8.8 14.8h6.4M9 9.8h.01M15 9.8h.01" stroke-width="2"/>',
+  frown: '<circle cx="12" cy="12" r="9"/><path d="M8.5 16.2a4.2 4.2 0 0 1 7 0M9 9.8h.01M15 9.8h.01" stroke-width="2"/>',
+  // arrow turning back (backups "Before a restore", since 1.153.1)
+  undo: '<path d="M9 14L4.5 9.5 9 5"/><path d="M4.5 9.5H14a5.5 5.5 0 0 1 0 11h-3.5"/>',
   unlock: '<rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 7.6-1.8M12 14.8v2"/>',
   user: '<circle cx="12" cy="8.2" r="3.7"/><path d="M4.8 20a7.2 7.2 0 0 1 14.4 0"/>',
   users: '<circle cx="9" cy="8.5" r="3.3"/><path d="M2.8 19.5a6.2 6.2 0 0 1 12.4 0"/><path d="M15.5 5.4a3.3 3.3 0 0 1 0 6.2M17.5 14.2a6 6 0 0 1 3.7 5.3"/>',
@@ -544,6 +551,10 @@ var SYM_MAP = {
   '🚛': 'truck',
   '📺': 'tv',
   '🛞': 'tyre',
+  '↩': 'undo',
+  '🕷': 'tick',
+  '😐': 'meh',
+  '🙁': 'frown',
   '☔': 'umbrella',
   '🔓': 'unlock',
   '👤': 'user',

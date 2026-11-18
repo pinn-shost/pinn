@@ -143,7 +143,7 @@ function renderTasks() {
 // Builds the "Zugewiesen:" note line from the chosen people (as for events).
 function buildAssignedNotes(baseNotes, assigneeIds) {
   if (!assigneeIds || !assigneeIds.length) return baseNotes;
-  const label = assigneeIds.includes(TASK_ALL) ? 'Alle' : assigneeIds.map(id => memberLabel(memberById(id))).filter(Boolean).join(', ');
+  const label = assigneeIds.includes(TASK_ALL) ? 'Alle' : assigneeIds.map(id => memberLabelRaw(memberById(id))).filter(Boolean).join(', ');
   if (!label) return baseNotes;
   return (baseNotes ? baseNotes + '\n\n' : '') + 'Zugewiesen: ' + label;
 }
@@ -358,7 +358,7 @@ function assigneeIdsFromNotes(notes) {
   if (!match) return [];
   const names = match[1].split(',').map(n => n.trim().toLowerCase()).filter(Boolean);
   if (names.includes('alle')) return [TASK_ALL];
-  return members.filter(m => names.includes(memberLabel(m).toLowerCase()) || names.includes(m.name.toLowerCase())).map(m => m.id);
+  return members.filter(m => names.includes(memberLabelRaw(m).toLowerCase()) || names.includes(m.name.toLowerCase())).map(m => m.id);
 }
 
 function openEditTaskModal(task) {

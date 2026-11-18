@@ -100,3 +100,45 @@ html.dark .hp-fold-meta, html.dark .hp-fold-l, html.dark .hp-fold-arrow { color:
 /* the heart of the health banner is a filled heart; the floating things get a soft colour fill (1.150.8) */
 .gh-heart .sym-i { fill: currentColor; }
 .gh-float .sym-i { fill: color-mix(in srgb, currentColor 22%, transparent); }
+
+/* ---------- Blocks since 1.153.1: sunscreen, sleep, fruit & vegetables, tick check, check-ups ---------- */
+.hp-done { display: flex; align-items: center; gap: 10px; margin-top: 12px; padding: 10px 12px; border-radius: 14px; border: 1px solid rgba(37,35,31,0.12); font-size: 14px; cursor: pointer; }
+.hp-done input { width: 20px; height: 20px; accent-color: #2E9D6A; }
+.hp-done.on { background: rgba(46,157,106,0.10); border-color: rgba(46,157,106,0.35); }
+.hp-uv { font-family: var(--font-serif, Georgia, serif); font-size: 20px; line-height: 1; padding: 8px 10px; border-radius: 12px; white-space: nowrap; background: rgba(46,157,106,0.12); color: #2E7D58; }
+.hp-uv.lvl-mid { background: rgba(233,196,106,0.25); color: #9A6B00; }
+.hp-uv.lvl-high { background: rgba(231,111,81,0.18); color: #C2502F; }
+.hp-uv.lvl-very { background: rgba(214,69,69,0.18); color: #B3261E; }
+.hp-faces { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 6px; }
+.hp-face { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 6px; border-radius: 14px; border: 1px solid rgba(37,35,31,0.12); font-size: 12px; background: #fff; }
+.hp-face-ic { font-size: 26px; line-height: 1; }
+.hp-face.on { border-color: var(--c-pine); background: rgba(46,92,140,0.08); font-weight: 600; }
+.hp-face:disabled { opacity: .6; }
+.hp-nights { display: inline-flex; gap: 4px; }
+.hp-night { width: 12px; height: 12px; border-radius: 999px; background: rgba(37,35,31,0.12); }
+.hp-night.r1 { background: #E76F51; }
+.hp-night.r2 { background: #E9C46A; }
+.hp-night.r3 { background: #2E9D6A; }
+.hp-bed { width: auto; }
+.hp-count-of { font-size: 16px; opacity: .45; margin-left: 2px; }
+.hp-portions { display: flex; flex-wrap: wrap; gap: 5px; }
+.hp-portion { width: 16px; height: 16px; border-radius: 999px; border: 2px solid rgba(46,157,106,0.45); }
+.hp-portion.on { background: #2E9D6A; border-color: #2E9D6A; }
+.hp-portion.extra { border-style: dashed; }
+.hp-due { color: #C2502F; font-weight: 600; }
+.hp-u { display: flex; align-items: center; gap: 8px; padding: 10px 12px; margin-bottom: 8px; border-radius: 14px; background: rgba(233,196,106,0.16); }
+html.dark .hp-done { border-color: rgba(255,255,255,0.12); }
+html.dark .hp-done.on { background: rgba(76,195,138,0.12); border-color: rgba(76,195,138,0.35); }
+html.dark .hp-face { background: #2E2C28; border-color: rgba(255,255,255,0.12); }
+html.dark .hp-face.on { border-color: var(--dk-gold, #E9C46A); background: rgba(233,196,106,0.10); }
+html.dark .hp-night { background: rgba(255,255,255,0.12); }
+html.dark .hp-night.r1 { background: #E76F51; }
+html.dark .hp-night.r2 { background: #E9C46A; }
+html.dark .hp-night.r3 { background: #4CC38A; }
+html.dark .hp-uv { color: #4CC38A; }
+html.dark .hp-uv.lvl-mid { color: #F2C14E; }
+html.dark .hp-uv.lvl-high { color: #FF8A65; }
+html.dark .hp-uv.lvl-very { color: #FF6B6B; }
+html.dark .hp-due { color: #FF8A65; }
+html.dark .hp-u { background: rgba(233,196,106,0.10); }
+

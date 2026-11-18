@@ -10,6 +10,11 @@
      values       weight, blood pressure, pulse
      vaccines     vaccinations with the next due date
      appointments doctor's appointments
+     sun          sunscreen: today's UV index from the weather of the home, "applied" per day (since 1.153.1)
+     sleep        bedtime and "How did you sleep?" (three faces) per night (since 1.153.1)
+     fruit        fruit & vegetables: portions per day against a goal (default 5) (since 1.153.1)
+     tick         tick check in the evening, April to October (since 1.153.1)
+     checkup      check-ups that come back (dentist, check-up …) and for children the German U/J examinations by age (since 1.153.1)
    The emergency pass stays in the family data (famPass, visible to the whole family, offline). On the health page
    it is switched on with a tick ("pass": true/false in the health data; without a value it counts as on when the
    pass is already filled) – nothing that was entered is lost when it is switched off.
@@ -26,11 +31,17 @@
        hands: { log: { <date>: n } },
        values: [{ id, date, weight, sys, dia, pulse }],
        vaccines: [{ id, name, date, next }],
-       appointments: [{ id, date, time, who, note }] }
+       appointments: [{ id, date, time, who, note }],
+       sun: { log: { <date>: true }, remind },  sleep: { bed: 'HH:MM', log: { <date>: 1|2|3 }, remind },
+       fruit: { goal, log: { <date>: n }, remind },  tick: { log: { <date>: true }, remind },
+       checkup: { list: [{ id, kind, name, every (months), last: <date>, added: <date> }], u: true|false, uDone: ['U4', …], remind } }
    Day logs older than GH_KEEP_DAYS are dropped when saving.
 
    Push reminders (since 1.149.1, server: pinn-gesundheit.js#runCron; since 1.150.3 for a child the parents get them too unless remindParents is false): switched on per block in the health data
      drink.remind { on, every (minutes), from, to }   meds.remind { on }   hands.remind { on, times: ['10:00', …] }
+     since 1.153.1: sun.remind { on, time } (only on days with UV ≥ GH_UV_MIN at home)   sleep.remind { on, morning, morningTime }
+     (30 minutes before sleep.bed; in the morning "How did you sleep?")   fruit.remind { on, times }   tick.remind { on, time } (April–October)
+     checkup.remind { on } (10:00 on the day a check-up is due, then once a week while it is still open)
    They go to the profile of the person themself (for a child also to the parents). Tapping a message opens /?gesundheit=<trinken|medikamente|haende>
    &person=<member ID> (ghOpenFromLink): the health page of that person, for "trinken" also the drink popup. */
 
@@ -56,6 +67,29 @@ var GH_BLOCKS = [
   { id: 'values', icon: '⚖️', key: 'gh.block.values' },
   { id: 'vaccines', icon: '💉', key: 'gh.block.vaccines' },
   { id: 'appointments', icon: '🩺', key: 'gh.block.appointments' },
+  { id: 'sun', icon: '🧴', key: 'gh.block.sun' },
+  { id: 'sleep', icon: '😴', key: 'gh.block.sleep' },
+  { id: 'fruit', icon: '🍎', key: 'gh.block.fruit' },
+  { id: 'tick', icon: '🕷️', key: 'gh.block.tick' },
+  { id: 'checkup', icon: '📋', key: 'gh.block.checkup' },
+];
+var GH_UV_MIN = 3;                 // from this UV index on sun protection is advised (WHO)
+var GH_TICK_MONTHS = [4, 5, 6, 7, 8, 9, 10];
+var GH_SLEEP_FACES = [{ v: 1, icon: '🙁', key: 'gh.sleep.bad' }, { v: 2, icon: '😐', key: 'gh.sleep.ok' }, { v: 3, icon: '🙂', key: 'gh.sleep.good' }];
+// Check-ups to pick from (interval in months; the name is translated, own entries keep their name)
+var GH_CHECKUPS = [
+  { id: 'dentist', key: 'gh.checkup.dentist', every: 6 },
+  { id: 'general', key: 'gh.checkup.general', every: 36 },
+  { id: 'eyes', key: 'gh.checkup.eyes', every: 24 },
+  { id: 'skin', key: 'gh.checkup.skin', every: 24 },
+  { id: 'gyn', key: 'gh.checkup.gyn', every: 12 },
+];
+// German children's examinations: window in days after birth (approximate, as on the yellow booklet)
+var GH_U_EXAMS = [
+  { id: 'U2', from: 3, to: 10 }, { id: 'U3', from: 21, to: 35 }, { id: 'U4', from: 60, to: 120 },
+  { id: 'U5', from: 150, to: 210 }, { id: 'U6', from: 270, to: 365 }, { id: 'U7', from: 600, to: 730 },
+  { id: 'U7a', from: 990, to: 1095 }, { id: 'U8', from: 1350, to: 1460 }, { id: 'U9', from: 1770, to: 1945 },
+  { id: 'J1', from: 4383, to: 5113 },
 ];
 var ghState = { loaded: false, loading: false, at: 0, people: {}, me: '', error: '' };
 var ghPersonId = null;
@@ -93,7 +127,27 @@ function ghNorm(raw, child) {
   d.hands.remind = Object.assign({ on: false, times: ['10:00', '14:00', '18:00'] }, d.hands.remind || {});
   if (!Array.isArray(d.hands.remind.times)) d.hands.remind.times = [];
   ['values', 'vaccines', 'appointments'].forEach(k => { if (!Array.isArray(d[k])) d[k] = []; });
+  // since 1.153.1
+  const obj = (v) => (v && typeof v === 'object' && !Array.isArray(v)) ? v : {};
+  d.sun = Object.assign({ log: {} }, obj(d.sun)); d.sun.log = obj(d.sun.log);
+  d.sun.remind = Object.assign({ on: false, time: '09:00' }, obj(d.sun.remind));
+  d.sleep = Object.assign({ bed: child ? '19:30' : '22:30', log: {} }, obj(d.sleep)); d.sleep.log = obj(d.sleep.log);
+  d.sleep.remind = Object.assign({ on: false, morning: false, morningTime: '07:30' }, obj(d.sleep.remind));
+  d.fruit = Object.assign({ goal: 5, log: {} }, obj(d.fruit)); d.fruit.log = obj(d.fruit.log);
+  d.fruit.remind = Object.assign({ on: false, times: ['12:00', '17:00'] }, obj(d.fruit.remind));
+  if (!Array.isArray(d.fruit.remind.times)) d.fruit.remind.times = [];
+  d.tick = Object.assign({ log: {} }, obj(d.tick)); d.tick.log = obj(d.tick.log);
+  d.tick.remind = Object.assign({ on: false, time: '19:00' }, obj(d.tick.remind));
+  d.checkup = Object.assign({ list: [], uDone: [] }, obj(d.checkup));
+  if (!Array.isArray(d.checkup.list)) d.checkup.list = [];
+  if (!Array.isArray(d.checkup.uDone)) d.checkup.uDone = [];
+  if (typeof d.checkup.u !== 'boolean') d.checkup.u = !!child && ghUsesUExams();
+  d.checkup.remind = Object.assign({ on: false }, obj(d.checkup.remind));
   return d;
+}
+// The U/J examinations are German (also offered in Austria/Switzerland, where similar booklets exist)
+function ghUsesUExams() {
+  try { return ['DE', 'AT', 'CH'].includes((window.PINN_REGION && PINN_REGION.land) || 'DE'); } catch (e) { return true; }
 }
 function ghData(memberId) {
   const p = ghState.people[memberId];
@@ -102,7 +156,7 @@ function ghData(memberId) {
 function ghPrune(d) {
   const limit = new Date(); limit.setDate(limit.getDate() - GH_KEEP_DAYS);
   const min = isoDate(limit);
-  [d.drink.log, d.meds.taken, d.hands.log].forEach(log => Object.keys(log).forEach(k => { if (k < min) delete log[k]; }));
+  [d.drink.log, d.meds.taken, d.hands.log, d.sun.log, d.sleep.log, d.fruit.log, d.tick.log].forEach(log => Object.keys(log).forEach(k => { if (k < min) delete log[k]; }));
   return d;
 }
 function ghPassOn(memberId, d) {
@@ -353,6 +407,11 @@ function ghBlockHtml(id, m, d, edit) {
   if (id === 'values') return ghValuesHtml(m, d, edit);
   if (id === 'vaccines') return ghVaccinesHtml(m, d, edit);
   if (id === 'appointments') return ghAppointmentsHtml(m, d, edit);
+  if (id === 'sun') return ghSunHtml(m, d, edit);
+  if (id === 'sleep') return ghSleepHtml(m, d, edit);
+  if (id === 'fruit') return ghFruitHtml(m, d, edit);
+  if (id === 'tick') return ghTickHtml(m, d, edit);
+  if (id === 'checkup') return ghCheckupHtml(m, d, edit);
   return '';
 }
 
@@ -680,6 +739,228 @@ function ghSaveAppointment() {
   ghChange(st.memberId, (d) => { d.appointments.push(a); d.appointments = d.appointments.slice(-200); });
 }
 
+/* ---------- Reminder settings of the blocks since 1.153.1 ---------- */
+// fields: [{ f: 'time'|'times', label }]; switches: [{ f: 'morning', label, time?: 'morningTime', timeLabel? }] (inside d[kind].remind)
+function ghRemind2Html(kind, m, r, edit, onKey, fields, switches) {
+  if (!edit) return '';
+  const mem = `data-member="${famAttr(m.id)}" data-kind="${kind}"`;
+  let opts = '';
+  if (r.on) {
+    const inputs = [];
+    (fields || []).forEach(f => {
+      if (f.f === 'times') {
+        const times = (r.times || []).concat(['', '', '']).slice(0, 3);
+        times.forEach((t, i) => inputs.push(`<label class="hp-remind-f">${i === 0 ? f.label : '&nbsp;'}<input type="time" class="hp-in hp-times-${kind}" data-ghchange="r2-times" ${mem} value="${ghAttr(t)}" /></label>`));
+      } else {
+        inputs.push(`<label class="hp-remind-f">${f.label}<input type="time" class="hp-in" data-ghchange="r2-time" data-field="${f.f}" ${mem} value="${ghAttr(r[f.f])}" /></label>`);
+      }
+    });
+    if (inputs.length) opts += `<div class="hp-remind-opts">${inputs.join('')}</div>`;
+    (switches || []).forEach(sw => {
+      opts += `<label class="fz-check hp-remind-parents"><input type="checkbox" data-ghchange="r2-flag" data-field="${sw.f}" ${mem}${r[sw.f] ? ' checked' : ''} /><span>${sw.label}</span></label>`;
+      // a switch may bring its own time field, shown right below it while it is on
+      if (sw.time && r[sw.f]) opts += `<div class="hp-remind-opts"><label class="hp-remind-f">${sw.timeLabel}<input type="time" class="hp-in" data-ghchange="r2-time" data-field="${sw.time}" ${mem} value="${ghAttr(r[sw.time])}" /></label></div>`;
+    });
+    const person = ghState.people[m.id];
+    if (person && person.kind) {
+      const parentsOn = !person.daten || person.daten.remindParents !== false;
+      opts += `<label class="fz-check hp-remind-parents"><input type="checkbox" data-ghchange="rem-parents" ${mem}${parentsOn ? ' checked' : ''} /><span>👪 ${tk('gh.remind.parents')}</span></label>`;
+    }
+  }
+  return `<div class="hp-remind">
+    <label class="fz-check"><input type="checkbox" data-ghchange="r2-on" ${mem}${r.on ? ' checked' : ''} /><span>🔔 ${tk(onKey)}</span></label>
+    ${opts}
+    ${r.on ? `<p class="text-[11px] text-ink/45 mt-1">${tk('gh.remind.hint')}</p>` : ''}
+  </div>`;
+}
+function ghCheckRow(m, kind, on, label, edit) {
+  return `<label class="hp-done${on ? ' on' : ''}"><input type="checkbox" data-ghchange="day-done" data-member="${famAttr(m.id)}" data-kind="${kind}"${on ? ' checked' : ''}${edit ? '' : ' disabled'} /><span>${label}</span></label>`;
+}
+
+/* ---------- Block: sunscreen (since 1.153.1) ---------- */
+// Today's highest UV index at home (weather of the overview, js/wetter.js) – null if unknown
+function ghUvToday() {
+  try {
+    const day = (weatherDaily && Array.isArray(weatherDaily.days)) ? weatherDaily.days.find(x => x.date === ghToday()) : null;
+    if (day && day.uv != null && isFinite(day.uv)) return Math.round(day.uv);
+  } catch (e) { /* no weather yet */ }
+  return null;
+}
+function ghSunHtml(m, d, edit) {
+  const uv = ghUvToday();
+  const done = !!d.sun.log[ghToday()];
+  const need = uv != null && uv >= GH_UV_MIN;
+  const level = uv == null ? '' : (uv >= 8 ? 'very' : (uv >= 6 ? 'high' : (uv >= GH_UV_MIN ? 'mid' : 'low')));
+  const head = uv == null
+    ? `<p class="text-sm text-ink/55">${tk('gh.sun.noUv')}</p>`
+    : `<div class="flex items-center gap-3"><div class="hp-uv lvl-${level}">UV ${ghNum(uv)}</div><div class="flex-1 text-sm">${tk(need ? 'gh.sun.need' : 'gh.sun.noNeed')}</div></div>`;
+  const body = head
+    + ghCheckRow(m, 'sun', done, tk('gh.sun.applied'), edit)
+    + `<p class="text-[11px] text-ink/45 mt-2">${tk('gh.sun.tip', { uv: GH_UV_MIN })}</p>`
+    + ghRemind2Html('sun', m, d.sun.remind, edit, 'gh.sun.remindOn', [{ f: 'time', label: tk('gh.remind.at') }]);
+  return ghCard('🧴', tk('gh.block.sun'), body);
+}
+
+/* ---------- Block: sleep (since 1.153.1) ---------- */
+function ghSleepHtml(m, d, edit) {
+  const today = ghToday();
+  const mid = famAttr(m.id);
+  const v = Number(d.sleep.log[today]) || 0;
+  const faces = GH_SLEEP_FACES.map(f => `<button type="button" class="hp-face${v === f.v ? ' on' : ''}" data-ghact="sleep-rate" data-member="${mid}" data-v="${f.v}"${edit ? '' : ' disabled'} aria-pressed="${v === f.v ? 'true' : 'false'}"><span class="hp-face-ic">${f.icon}</span><span>${tk(f.key)}</span></button>`).join('');
+  // the last seven nights as small dots (oldest left)
+  const week = [];
+  for (let i = 6; i >= 0; i--) {
+    const dt = new Date(); dt.setDate(dt.getDate() - i);
+    const k = isoDate(dt);
+    const r = Number(d.sleep.log[k]) || 0;
+    week.push(`<span class="hp-night r${r}" title="${ghAttr(ghFmtDate(k))}"></span>`);
+  }
+  const bed = edit
+    ? `<input type="time" class="hp-in hp-bed" data-ghchange="sleep-bed" data-member="${mid}" value="${ghAttr(d.sleep.bed)}" aria-label="${ghAttr(tk('gh.sleep.bedtime'))}" />`
+    : `<b>${escapeHtml(d.sleep.bed)}</b>`;
+  const body = `
+    <div class="hp-fold-row"><span class="hp-fold-l">🌙 ${tk('gh.sleep.bedtime')}</span>${bed}</div>
+    <div class="hp-fold-l mt-3">${tk('gh.sleep.question')}</div>
+    <div class="hp-faces">${faces}</div>
+    <div class="flex items-center gap-2 mt-2"><span class="text-[11px] text-ink/45">${tk('gh.sleep.week')}</span><span class="hp-nights">${week.join('')}</span></div>
+    ${ghRemind2Html('sleep', m, d.sleep.remind, edit, 'gh.sleep.remindOn', [], [{ f: 'morning', label: '☀️ ' + tk('gh.sleep.morningOn'), time: 'morningTime', timeLabel: tk('gh.sleep.morningAt') }])}`;
+  return ghCard('😴', tk('gh.block.sleep'), body);
+}
+
+/* ---------- Block: fruit & vegetables (since 1.153.1) ---------- */
+function ghFruitHtml(m, d, edit) {
+  const n = Number(d.fruit.log[ghToday()]) || 0;
+  const goal = Math.max(1, Math.min(10, Number(d.fruit.goal) || 5));
+  const mid = famAttr(m.id);
+  const dots = [];
+  for (let i = 0; i < Math.max(goal, n); i++) dots.push(`<span class="hp-portion${i < n ? ' on' : ''}${i >= goal ? ' extra' : ''}"></span>`);
+  const goalSel = edit
+    ? `<select class="hp-goal" data-ghchange="fruit-goal" data-member="${mid}" aria-label="${ghAttr(tk('gh.fruit.goal'))}">${[3, 4, 5, 6, 7, 8].map(g => `<option value="${g}"${g === goal ? ' selected' : ''}>${tk('gh.fruit.goalOpt', { n: g })}</option>`).join('')}</select>`
+    : '';
+  const body = `<div class="flex items-center gap-3">
+      <div class="hp-count">${ghNum(n)}<span class="hp-count-of">/${ghNum(goal)}</span></div>
+      <div class="flex-1"><div class="hp-portions">${dots.join('')}</div><div class="text-xs text-ink/55 mt-1">${tk(n >= goal ? 'gh.fruit.done' : 'gh.fruit.today')}</div></div>
+      ${edit ? `<button type="button" class="fz-mini-btn" data-ghact="fruit-minus" data-member="${mid}"${n ? '' : ' disabled'} aria-label="−1">−</button>
+      <button type="button" class="fz-mini-btn primary" data-ghact="fruit-plus" data-member="${mid}">+1</button>` : ''}
+    </div>
+    ${goalSel ? `<div class="hp-fold-row mt-3"><span class="hp-fold-l">🎯 ${tk('gh.fruit.goal')}</span>${goalSel}</div>` : ''}
+    <p class="text-[11px] text-ink/45 mt-2">${tk('gh.fruit.tip')}</p>
+    ${ghRemind2Html('fruit', m, d.fruit.remind, edit, 'gh.fruit.remindOn', [{ f: 'times', label: tk('gh.remind.times') }])}`;
+  return ghCard('🍎', tk('gh.block.fruit'), body);
+}
+
+/* ---------- Block: tick check (since 1.153.1) ---------- */
+function ghTickSeason() { return GH_TICK_MONTHS.includes(new Date().getMonth() + 1); }
+function ghTickHtml(m, d, edit) {
+  const season = ghTickSeason();
+  const done = !!d.tick.log[ghToday()];
+  const body = (season
+    ? ghCheckRow(m, 'tick', done, tk('gh.tick.done'), edit)
+    : `<p class="text-sm text-ink/55">${tk('gh.tick.offSeason')}</p>`)
+    + `<p class="text-[11px] text-ink/45 mt-2">${tk('gh.tick.tip')}</p>`
+    + ghRemind2Html('tick', m, d.tick.remind, edit, 'gh.tick.remindOn', [{ f: 'time', label: tk('gh.remind.at') }]);
+  return ghCard('🕷️', tk('gh.block.tick'), body);
+}
+
+/* ---------- Block: check-ups (since 1.153.1) ---------- */
+function ghAddMonths(iso, months) {
+  const p = String(iso || '').split('-').map(Number);
+  if (p.length !== 3 || !p[0]) return '';
+  const dt = new Date(p[0], p[1] - 1 + months, Math.min(p[2], 28), 12);
+  return isoDate(dt);
+}
+function ghAddDays(iso, days) {
+  const p = String(iso || '').split('-').map(Number);
+  if (p.length !== 3 || !p[0]) return '';
+  return isoDate(new Date(p[0], p[1] - 1, p[2] + days, 12));
+}
+function ghCheckupName(c) {
+  const known = GH_CHECKUPS.find(x => x.id === c.kind);
+  return known && !c.name ? tk(known.key) : (c.name || (known ? tk(known.key) : ''));
+}
+// due = last + interval; without a last date the day it was added (the server reminds from there, pinn-gesundheit.js)
+function ghCheckupDue(c) { return c.last ? ghAddMonths(c.last, Number(c.every) || 12) : (c.added || ghToday()); }
+function ghBirthOf(memberId) {
+  const m = memberById(memberId);
+  if (m && /^\d{4}-\d{2}-\d{2}$/.test(m.birthday || '')) return m.birthday;
+  const p = famPass(memberId) || {};
+  return /^\d{4}-\d{2}-\d{2}$/.test(p.birth || '') ? p.birth : '';
+}
+// Next open U/J examination of a child: { id, from, to } (dates) or null
+function ghNextUExam(d, birth) {
+  if (!birth) return null;
+  const today = ghToday();
+  for (const u of GH_U_EXAMS) {
+    if (d.checkup.uDone.includes(u.id)) continue;
+    const to = ghAddDays(birth, u.to);
+    if (to < today) continue;      // window over without a tick: the next one counts
+    return { id: u.id, from: ghAddDays(birth, u.from), to };
+  }
+  return null;
+}
+function ghCheckupHtml(m, d, edit) {
+  const today = ghToday();
+  const mid = famAttr(m.id);
+  const person = ghState.people[m.id];
+  const child = !!(person && person.kind);
+  const rows = d.checkup.list.slice().sort((a, b) => ghCheckupDue(a).localeCompare(ghCheckupDue(b))).map(c => {
+    const due = ghCheckupDue(c);
+    const over = due <= today;
+    return `<div class="hp-row">
+      <span class="flex-1 text-sm"><b>${escapeHtml(ghCheckupName(c))}</b>
+        <span class="block text-[11px] ${over ? 'hp-due' : 'text-ink/50'}">${over ? tk('gh.checkup.dueNow') : tk('gh.checkup.dueOn', { date: ghFmtDate(due) })} · ${tk('gh.checkup.every', { n: Number(c.every) || 12 })}${c.last ? ' · ' + tk('gh.checkup.last', { date: ghFmtDate(c.last) }) : ''}</span></span>
+      ${edit ? `<button type="button" class="fz-mini-btn${over ? ' primary' : ''}" data-ghact="checkup-done" data-member="${mid}" data-id="${famAttr(c.id)}">✓ ${tk('gh.checkup.doneToday')}</button>
+      <button type="button" class="hp-x" data-ghact="checkup-del" data-member="${mid}" data-id="${famAttr(c.id)}" aria-label="${ghAttr(tk('common.delete'))}">×</button>` : ''}
+    </div>`;
+  }).join('');
+  let uHtml = '';
+  if (child && d.checkup.u) {
+    const birth = ghBirthOf(m.id);
+    const next = ghNextUExam(d, birth);
+    uHtml = `<div class="hp-u">${!birth ? `<span class="text-sm text-ink/55">${tk('gh.checkup.uNoBirth')}</span>`
+      : (next ? `<span class="flex-1 text-sm"><b>${escapeHtml(next.id)}</b> · ${tk('gh.checkup.uWindow', { from: ghFmtDate(next.from), to: ghFmtDate(next.to) })}${next.from <= today ? ` <span class="hp-due">· ${tk('gh.checkup.dueNow')}</span>` : ''}</span>
+        ${edit ? `<button type="button" class="fz-mini-btn${next.from <= today ? ' primary' : ''}" data-ghact="u-done" data-member="${mid}" data-id="${famAttr(next.id)}">✓ ${tk('gh.checkup.done')}</button>` : ''}`
+        : `<span class="text-sm text-ink/55">${tk('gh.checkup.uAllDone')}</span>`)}</div>`;
+  }
+  const uSwitch = child && edit && ghUsesUExams()
+    ? `<label class="fz-check mt-2"><input type="checkbox" data-ghchange="u-on" data-member="${mid}"${d.checkup.u ? ' checked' : ''} /><span>👶 ${tk('gh.checkup.uOn')}</span></label>` : '';
+  const body = uHtml
+    + (rows ? `<div class="hp-list">${rows}</div>` : (uHtml ? '' : `<p class="text-sm text-ink/50">${tk('gh.checkup.empty')}</p>`))
+    + uSwitch
+    + ghRemind2Html('checkup', m, d.checkup.remind, edit, 'gh.checkup.remindOn', []);
+  const add = edit ? `<button type="button" class="fz-mini-btn" data-ghact="checkup-new" data-member="${mid}">+ ${tk('gh.add')}</button>` : '';
+  return ghCard('📋', tk('gh.block.checkup'), body, add);
+}
+function ghCheckupForm(memberId) {
+  ghModal = { type: 'checkup', memberId, id: '' };
+  famOpenModal(`
+    <h3 class="font-serif text-lg mb-3">${tk('gh.checkup.new')}</h3>
+    <label class="hp-lbl">${tk('gh.checkup.which')}<select id="hpCuKind" class="hp-in">${GH_CHECKUPS.map(c => `<option value="${c.id}">${escapeHtml(tk(c.key))}</option>`).join('')}<option value="custom">${tk('gh.checkup.custom')}</option></select></label>
+    <label class="hp-lbl hidden" id="hpCuNameRow">${tk('gh.checkup.name')}<input id="hpCuName" type="text" maxlength="60" class="hp-in" /></label>
+    <div class="grid grid-cols-2 gap-2">
+      <label class="hp-lbl">${tk('gh.checkup.everyLabel')}<select id="hpCuEvery" class="hp-in">${[3, 6, 12, 24, 36, 60].map(n => `<option value="${n}"${n === 6 ? ' selected' : ''}>${tk('gh.checkup.every', { n })}</option>`).join('')}</select></label>
+      <label class="hp-lbl">${tk('gh.checkup.lastLabel')}<input id="hpCuLast" type="date" max="${ghToday()}" class="hp-in" /></label>
+    </div>
+    <p class="text-[11px] text-ink/45">${tk('gh.checkup.lastHint')}</p>
+    ${ghModalButtons(false)}`);
+  const kind = document.getElementById('hpCuKind');
+  kind.addEventListener('change', () => {
+    const c = GH_CHECKUPS.find(x => x.id === kind.value);
+    document.getElementById('hpCuNameRow').classList.toggle('hidden', !!c);
+    if (c) document.getElementById('hpCuEvery').value = String(c.every);
+  });
+}
+function ghSaveCheckup() {
+  const kind = document.getElementById('hpCuKind').value;
+  const known = GH_CHECKUPS.find(x => x.id === kind);
+  const name = known ? '' : document.getElementById('hpCuName').value.trim().slice(0, 60);
+  if (!known && !name) { document.getElementById('hpCuName').focus(); return; }
+  const c = { id: ghId(), kind: known ? kind : 'custom', name, every: Number(document.getElementById('hpCuEvery').value) || 12, last: document.getElementById('hpCuLast').value || '', added: ghToday() };
+  const st = ghModal;
+  famCloseModal();
+  ghChange(st.memberId, (d) => { d.checkup.list.push(c); d.checkup.list = d.checkup.list.slice(-30); });
+}
+
 /* ---------- Emergency pass inside the health page ---------- */
 function ghPassBlockHtml(m, d, see, edit) {
   const p = famPass(m.id) || {};
@@ -758,6 +1039,24 @@ async function ghOpenFromLink(kind, memberId) {
         ghChange(mid, (d) => { d.hands.log[day] = Math.max(0, (Number(d.hands.log[day]) || 0) + step); });
         break;
       }
+      case 'fruit-plus': case 'fruit-minus': {
+        const day = ghToday();
+        const step = act.dataset.ghact === 'fruit-plus' ? 1 : -1;
+        ghChange(mid, (d) => { d.fruit.log[day] = Math.max(0, Math.min(30, (Number(d.fruit.log[day]) || 0) + step)); });
+        break;
+      }
+      case 'sleep-rate': {
+        const day = ghToday();
+        const v = Number(act.dataset.v) || 0;
+        ghChange(mid, (d) => { if (Number(d.sleep.log[day]) === v) delete d.sleep.log[day]; else d.sleep.log[day] = v; });
+        break;
+      }
+      case 'checkup-new': ghCheckupForm(mid); break;
+      case 'checkup-done': { const day = ghToday(); ghChange(mid, (d) => { d.checkup.list.forEach(c => { if (c.id === id) c.last = day; }); }); break; }
+      case 'checkup-del':
+        if (confirm(tk('gh.checkup.deleteConfirm'))) ghChange(mid, (d) => { d.checkup.list = d.checkup.list.filter(c => c.id !== id); });
+        break;
+      case 'u-done': ghChange(mid, (d) => { if (!d.checkup.uDone.includes(id)) d.checkup.uDone.push(id); }); break;
       case 'value-new': ghValueForm(mid); break;
       case 'value-del': ghChange(mid, (d) => { d.values = d.values.filter(x => x.id !== id); }); break;
       case 'vaccine-new': ghVaccineForm(mid); break;
@@ -781,6 +1080,7 @@ async function ghOpenFromLink(kind, memberId) {
         else if (ghModal.type === 'value') ghSaveValue();
         else if (ghModal.type === 'vaccine') ghSaveVaccine();
         else if (ghModal.type === 'appt') ghSaveAppointment();
+        else if (ghModal.type === 'checkup') ghSaveCheckup();
         break;
       case 'modal-del':
         if (ghModal && ghModal.type === 'med' && ghModal.id && confirm(tk('gh.meds.deleteConfirm'))) {
@@ -810,6 +1110,35 @@ async function ghOpenFromLink(kind, memberId) {
         if (on) list.push(key);
         d.meds.taken[day] = list;
       });
+    } else if (el.dataset.ghchange === 'day-done') {
+      const kind = el.dataset.kind;
+      const on = el.checked;
+      const day = ghToday();
+      ghChange(mid, (d) => { if (on) d[kind].log[day] = true; else delete d[kind].log[day]; });
+    } else if (el.dataset.ghchange === 'fruit-goal') {
+      const goal = Number(el.value) || 5;
+      ghChange(mid, (d) => { d.fruit.goal = goal; });
+    } else if (el.dataset.ghchange === 'sleep-bed') {
+      const v = /^\d{2}:\d{2}$/.test(el.value) ? el.value : '';
+      if (v) ghChange(mid, (d) => { d.sleep.bed = v; });
+    } else if (el.dataset.ghchange === 'u-on') {
+      const on = el.checked;
+      ghChange(mid, (d) => { d.checkup.u = on; });
+    } else if (el.dataset.ghchange.indexOf('r2-') === 0) {
+      // reminders of the blocks since 1.153.1 (sun, sleep, fruit, tick, checkup)
+      const kind = el.dataset.kind;
+      const what = el.dataset.ghchange;
+      const field = el.dataset.field;
+      let apply = null;
+      if (what === 'r2-on') { const on = el.checked; apply = (r) => { r.on = on; }; }
+      else if (what === 'r2-flag') { const on = el.checked; apply = (r) => { r[field] = on; }; }
+      else if (what === 'r2-time') { const v = /^\d{2}:\d{2}$/.test(el.value) ? el.value : ''; if (v) apply = (r) => { r[field] = v; }; }
+      else if (what === 'r2-times') {
+        const all = Array.from(document.querySelectorAll('.hp-times-' + kind)).map(i => i.value).filter(v => /^\d{2}:\d{2}$/.test(v));
+        const times = Array.from(new Set(all)).sort();
+        apply = (r) => { r.times = times; };
+      }
+      if (apply && ghCanEdit(mid)) ghChange(mid, (d) => { apply(d[kind].remind); });
     } else if (el.dataset.ghchange === 'rem-parents') {
       const on = el.checked;
       if (ghCanEdit(mid)) ghChange(mid, (d) => { d.remindParents = on; });

@@ -133,6 +133,14 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski und 🇺🇦 Українська**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.153.1
+
+**Gesundheit: fünf neue Bausteine, „Ich“ im eigenen Profil**
+
+- Neu auf der Gesundheitsseite: **Sonnencreme** (heutiger UV-Wert am Wohnort, Erinnerung nur an Sonnentagen), **Schlaf** (Erinnerung vor der Schlafenszeit, morgens „Wie hast du geschlafen?“), **Obst & Gemüse** (Portionen pro Tag), **Zecken-Check** (April–Oktober) und **Vorsorge** (Zahnarzt, Check-up … mit Intervall; für Kinder die U-Untersuchungen nach Alter). Bei Kindern bekommen die Eltern die Erinnerungen mit.
+- Neu: Im eigenen Profil zeigt pinn. „Ich“ statt des eigenen Namens – Kalender-Filter, Aufgaben, Familie und überall sonst, in Sätzen passend gebeugt. Dazu: Linien-Symbol für den Wiederherstellen-Pfeil, neues Felgen-Symbol, im Dunkelmodus dasselbe Gold für gelbe Hinweise.
+- Geändert: `pb_hooks/pinn-gesundheit.js`, `js/gesundheit.js`, `css/gesundheit.css`, `js/mitglieder.js`, `js/symbole.js`, `css/dunkelfarbe.css`, `js/aufgaben.js`, `js/termine.js`, `js/listen.js`, `js/sparen.js`, `js/vertraege.js`, `js/familie.js`, `js/hinweise.js`, `js/kassen.js`, `js/zuhause.js`, `js/dokumente.js`, `js/fahrzeuge.js`, `js/ausblick.js`, `js/sterne.js`, `js/vorrat2.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `index.html`.
+
 ## Neu in 1.153.0
 
 **Sicherheit aus Home Assistant**
@@ -223,15 +231,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Ein Tipp genügt.** Verliert ein Gerät seine Anmeldung trotzdem (z. B. weil iOS sie zurückgesetzt hat), meldet pinn. es von selbst wieder an – oder zeigt unten „Wieder einschalten“, ohne Umweg über die Einstellungen.
 - Geändert: `pb_hooks/pinn-push.js`, `pb_hooks/push.pb.js`, `pb_hooks/pinn-sitzungen.js`, `js/mitteilungen.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
 
-## Neu in 1.150.3
-
-**Alle Erinnerungen nach deiner Uhr · Eltern erinnern mit**
-
-- **Alle Erinnerungen nach deiner Uhr.** Geburtstage, Haustiere, Packliste, Vorrat, Verträge, Dokumente, Wochenvorschau, Monatsausblick und Jahresrückblick, Termin-Erinnerungen, Tagesübersicht, Aufgaben- und Müll-Erinnerung, Pinnwand, Sprachsteuerung, Smarthome und Ortungs-Meldungen richten sich jetzt nach der Zeitzone deines Geräts, mit Sommer- und Winterzeit. Nichts einzustellen.
-- **Eltern erinnern mit.** Bei Kindern bekommen auch die Eltern die Erinnerungen zum Trinken, zu Medikamenten und zum Händewaschen – mit dem Namen des Kindes davor. Schalter „Eltern auch erinnern“ pro Kind (Standard: an).
-- **Shortcuts ohne Überschrift.** Die Kachel auf der Übersicht zeigt nur noch die Apps, getrennt durch die Linie.
-- Geändert: alle Erinnerungs-Module in `pb_hooks/` (`pinn-zeit.js` und 13 weitere), `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.2).
-
 ## So funktioniert’s
 
 ```mermaid
@@ -260,7 +259,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.153.0` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.153.1` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

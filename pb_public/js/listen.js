@@ -232,7 +232,7 @@ function lsType(id) { return LIST_TYPES.find(t => t.id === id) || LIST_TYPES[LIS
 function lsMyUserId() { const u = currentUser(); return (u && u.id) || ''; }
 function lsMyName() {
   const me = currentMember();
-  if (me) return memberLabel(me);
+  if (me) return memberLabelRaw(me);
   const u = currentUser();
   return (u && (u.name || u.benutzername || u.username)) || tk('lists.someone');
 }
@@ -437,7 +437,7 @@ function lsRenderOverview() {
     let badge = open.length;
     let sub = [];
     if (l.date) sub.push('🗓️ ' + lsDateText(l.date));
-    if (t.wish && l.memberId && memberById(l.memberId)) sub.push(tk('lists.ofPerson', { name: memberLabel(memberById(l.memberId)) }));
+    if (t.wish && l.memberId && memberById(l.memberId)) sub.push(memberSelfTk(memberById(l.memberId), 'lists.ofPerson'));
     if (t.gift && l.forName) sub.push(tk('lists.forPerson', { name: l.forName }));
     if (l.privateTo) sub.push(tk('lists.onlyYouSmall'));
     else if (t.gift && lsHiddenNames(l)) sub.push(tk('lists.hidden.small', { names: lsHiddenNames(l) }));
@@ -502,7 +502,7 @@ function lsRenderOverview() {
 // The person a gift is meant for never gets it here (lsView hides it, own wish lists are left out).
 function lsPlannerGroups() {
   const meM = currentMember();
-  const meKey = meM ? normalizeForGrouping(memberLabel(meM)) : '';
+  const meKey = meM ? normalizeForGrouping(memberLabelRaw(meM)) : '';
   const groups = new Map();
   const grp = name => {
     const key = normalizeForGrouping(name);
@@ -590,7 +590,7 @@ function lsRowHtml(l, it) {
     const st = LS_GIFT_STATUS.find(s => s.id === (it.status || 'idee')) || LS_GIFT_STATUS[0];
     sub.push(escapeHtml(st.label));
   }
-  if (t.gift && it.giverId && memberById(it.giverId)) sub.push(escapeHtml(tk('lists.giver.by', { name: memberLabel(memberById(it.giverId)) })));
+  if (t.gift && it.giverId && memberById(it.giverId)) sub.push(escapeHtml(memberSelfTk(memberById(it.giverId), 'lists.giver.by')));
   if (it.note) sub.push(escapeHtml(it.note));
   if (it.shopListId && !it.done) {
     const sl = getShoppingList(it.shopListId);
@@ -1027,7 +1027,7 @@ function lsShowListForm(l) {
     const autoName = id => {
       const m = memberById(id);
       if (!m) return '';
-      return tpl && tpl.occasion ? tk('lists.wishOccasionOf', { occasion: lsTplText(tpl.occasion), name: memberLabel(m) }) : tk('lists.wishOf', { name: memberLabel(m) });
+      return tpl && tpl.occasion ? tk('lists.wishOccasionOf', { occasion: lsTplText(tpl.occasion), name: memberLabelRaw(m) }) : tk('lists.wishOf', { name: memberLabelRaw(m) });
     };
     const drawOwner = () => {
       ownerEl.innerHTML = members.map(m => `<button type="button" class="ls-pick${ctx.owner === m.id ? ' active' : ''}" data-ow="${escapeHtml(m.id)}">${m.avatar ? escapeHtml(m.avatar) + ' ' : ''}${escapeHtml(memberLabel(m))}</button>`).join('')
@@ -1134,7 +1134,7 @@ function lsSaveListFromModal() {
   let name = document.getElementById('lsListName').value.trim();
   if (t.wish && !ctx.owner) { err.textContent = tk('lists.chooseOwner'); err.classList.remove('hidden'); return; }
   if (!name) {
-    if (t.wish) { const m = memberById(ctx.owner); name = tk('lists.wishOf', { name: m ? memberLabel(m) : '' }).trim(); }
+    if (t.wish) { const m = memberById(ctx.owner); name = tk('lists.wishOf', { name: m ? memberLabelRaw(m) : '' }).trim(); }
     else { err.textContent = tk('common.needName'); err.classList.remove('hidden'); return; }
   }
   let date = t.date ? (document.getElementById('lsListDate').value || '') : '';
