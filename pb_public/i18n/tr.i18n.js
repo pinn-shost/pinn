@@ -4197,6 +4197,8 @@ window.PINN_I18N && window.PINN_I18N.keys("tr", {
   "loc.sosTestNotPossible": "SOS testi yapılamıyor",
   "loc.sosTestSent": "SOS testi gönderildi",
   "loc.startSending": "Göndermeyi başlat",
+  "loc.statusLastSeen": "son konum",
+  "loc.statusOnTheWay": "yolda",
   "loc.streetTown": "Sokak, şehir",
   "loc.testSameProcessReal": "Test: gerçek bir yardım çağrısıyla aynı süreç (anlık bildirim, pencere, harita, adres) – ama yalnızca sana, aile hiçbir şey fark etmez.",
   "loc.testSameProcessReal#wg": "Test: gerçek bir yardım çağrısıyla aynı süreç (anlık bildirim, pencere, harita, adres) – ama yalnızca sana, ortak ev hiçbir şey fark etmez.",

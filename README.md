@@ -129,6 +129,15 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski and 🇺🇦 Українська**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.153.2
+
+**Gemini keys with “AQ.”, status texts, error log**
+
+- Fixed: the set-up wizard accepts the new Google Gemini keys that start with `AQ.` (they contain a dot). Before, “Check” said the key was valid but “Next” refused it.
+- Fixed: the status of a family member (“on the way”, “last seen”) was always German – now it is in every language.
+- Changed: the error log shows its messages in German for German and in English for every other language.
+- Changed: `pb_hooks/pinn-einrichtung.js`, `pb_hooks/pinn-protokoll.js`, `pb_hooks/protokoll.pb.js`, `einrichtung.js`, `js/fehlerprotokoll.js`, `js/familie.js`, `js/familienkachel.js`, `js/versionslog.js`, `js/sprachen.js`, `i18n/`, `src/`, `index.html`, README.
+
 ## What's new in 1.153.1
 
 **Health: five new blocks, “Me” in your own profile**
@@ -246,15 +255,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **One or several rows.** Under Settings → Shortcuts you choose separately for the phone and for tablet & computer: one row (swipe sideways to see the rest) or several rows (all shortcuts filled downwards).
 - Changed: `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/design.js`, `js/ansichten.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.1).
 
-## What's new in 1.150.1
-
-**Shortcuts in their own menu item**
-
-- **Own menu item.** Choosing the apps is now under Settings → Shortcuts. Before, opening “Shortcuts” collapsed the Overview settings and the page could no longer be scrolled.
-- **On or off under Overview.** The Shortcuts tile is switched on or off like every other tile; “Choose apps” leads straight to the selection.
-- **Visible right away.** Until you choose yourself, the tile shows a default set (drinking, shopping, task, event, cook today, note, expense, cleaning plan). With no app chosen it offers “Choose apps” instead of disappearing.
-- Changed: `js/kurzbefehle.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README.
-
 ## How it works
 
 ```mermaid
@@ -281,7 +281,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.153.1` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.153.2` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

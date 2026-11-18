@@ -37,7 +37,8 @@ const FELDER = {
     PINN_ADRESSE: { geheim: false, sauber: (v) => v.replace(/\s+/g, "").replace(/\/+$/, ""), pruef: (v) => /^https:\/\/[a-z0-9.-]+(:\d{2,5})?$/i.test(v) },
     PINN_GOOGLE_CLIENT_ID: { geheim: false, sauber: (v) => v.replace(/\s+/g, ""), pruef: (v) => /^[0-9a-z-]+\.apps\.googleusercontent\.com$/i.test(v) },
     PINN_GOOGLE_CLIENT_SECRET: { geheim: true, sauber: (v) => v.replace(/\s+/g, ""), pruef: (v) => /^[A-Za-z0-9_\-]{10,200}$/.test(v) },
-    PINN_GEMINI_KEY: { geheim: true, sauber: (v) => v.replace(/\s+/g, ""), pruef: (v) => /^[A-Za-z0-9_\-]{20,120}$/.test(v) },
+    // Google keys are "AIza…" (letters, digits, - and _) or, since 2026, "AQ.…" with a dot - so the dot (and ~) must be allowed
+    PINN_GEMINI_KEY: { geheim: true, sauber: (v) => v.replace(/\s+/g, ""), pruef: (v) => /^[A-Za-z0-9_.~\-]{20,300}$/.test(v) },
     PINN_GEMINI_MODELL: { geheim: false, sauber: (v) => v.replace(/\s+/g, "").toLowerCase(), pruef: (v) => /^[a-z0-9.\-]{3,80}$/.test(v) },
     PINN_TRACCAR_EMAIL: { geheim: false, pruef: (v) => v.length <= 200 && v.indexOf("@") > 0 },
     PINN_TRACCAR_PASSWORT: { geheim: true, pruef: (v) => v.length <= 200 },
@@ -288,6 +289,7 @@ function testDuckdns(st, werte) {
 function testGemini(st, werte) {
     const key = probe(st, werte, "PINN_GEMINI_KEY");
     if (!key) return { ok: false, code: "fehlt" };
+    if (!FELDER.PINN_GEMINI_KEY.pruef(key)) return { ok: false, code: "ungueltig", feld: "PINN_GEMINI_KEY" };
     let res;
     try {
         res = http({ url: "https://generativelanguage.googleapis.com/v1beta/models?pageSize=1", headers: { "x-goog-api-key": key } });

@@ -502,7 +502,7 @@ function famPersonHtml(m) {
   else if (g && !g.teilen) sub = tk('family.locationOff');
   else if (pos) {
     const pl = famPlace(pos.ort);
-    sub = (pl ? pl.emoji + ' ' + pl.name : (live ? 'unterwegs' : 'zuletzt')) + ' · ' + famAgo(pos.zeit);
+    sub = (pl ? pl.emoji + ' ' + pl.name : (live ? tk('loc.statusOnTheWay') : tk('loc.statusLastSeen'))) + ' · ' + famAgo(pos.zeit);
   } else if (famPass(m.id)) sub = tk('family.emergencyCard');
   const sosA = sosActiveFor(m.id);
   if (sosA) sub = tk('family.sosActive');
@@ -1041,7 +1041,7 @@ function famOpenSetup() {
       <span class="fam-ava sm" style="--fam:${famAttr(famColor(m))}">${m ? famAvatarInner(m) : `<span class="fam-ava-in">${escapeHtml(g.emoji || '📍')}</span>`}</span>
       <div class="min-w-0 flex-1">
         <div class="text-sm font-medium truncate">${escapeHtml(famDeviceName(g))} <span class="text-ink/45 font-normal">· ${g.typ === 'tracker' ? tk('loc.gpsTracker') : tk('settings.display.phone')}</span></div>
-        <div class="text-[11px] text-ink/50 truncate">ID ${escapeHtml(g.uniqueId || '')} · ${!g.teilen ? tk('loc.sharingOff') : p ? 'zuletzt ' + escapeHtml(famAgo(p.zeit)) : tk('loc.noLocationYet')}</div>
+        <div class="text-[11px] text-ink/50 truncate">ID ${escapeHtml(g.uniqueId || '')} · ${!g.teilen ? tk('loc.sharingOff') : p ? escapeHtml(tk('loc.statusLastSeen')) + ' ' + escapeHtml(famAgo(p.zeit)) : tk('loc.noLocationYet')}</div>
       </div>
       <button type="button" class="fz-mini-btn" data-famact="guide" data-id="${famAttr(g.id)}">${tk('loc.instructions')}</button>
       <button type="button" class="fam-x" data-famact="deldevice" data-id="${famAttr(g.id)}" aria-label="${escapeHtml(tk('loc.deleteDevice'))}">×</button>
@@ -3901,7 +3901,7 @@ function ptProfileHtml(p) {
     const pl = pos ? famPlace(pos.ort) : null;
     out.push(`<div class="fam-card"><div class="fz-h">${tk('pet.tracker')}</div>
       <div class="flex items-center gap-3"><span class="text-2xl">${famIsLive(g) ? '<span class="fam-dot"></span>' : ''}${escapeHtml(g.emoji || '📡')}</span>
-        <div class="min-w-0 flex-1"><div class="text-sm font-medium">${escapeHtml(pl ? pl.emoji + ' ' + pl.name : (pos ? (famIsLive(g) ? 'unterwegs' : 'zuletzt') : tk('pet.noLocation')))}</div>${pos ? `<div class="text-[11px] text-ink/50">${escapeHtml(famAgo(pos.zeit))}</div>` : ''}</div>
+        <div class="min-w-0 flex-1"><div class="text-sm font-medium">${escapeHtml(pl ? pl.emoji + ' ' + pl.name : (pos ? (famIsLive(g) ? tk('loc.statusOnTheWay') : tk('loc.statusLastSeen')) : tk('pet.noLocation')))}</div>${pos ? `<div class="text-[11px] text-ink/50">${escapeHtml(famAgo(pos.zeit))}</div>` : ''}</div>
         ${pos ? `<button type="button" class="fz-mini-btn" data-pt="map" data-id="${famAttr(g.id)}">🗺 <span>${tk('family.map')}</span></button>` : ''}</div></div>`);
   }
   // Profile sheet

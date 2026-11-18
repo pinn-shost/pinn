@@ -4194,6 +4194,8 @@ window.PINN_I18N && window.PINN_I18N.keys("es", {
   "loc.sosTestNotPossible": "Prueba SOS imposible",
   "loc.sosTestSent": "Prueba SOS enviada",
   "loc.startSending": "Empezar a enviar",
+  "loc.statusLastSeen": "última vez",
+  "loc.statusOnTheWay": "en camino",
   "loc.streetTown": "Calle, localidad",
   "loc.testSameProcessReal": "Prueba: el mismo proceso que una petición de ayuda real (push, ventana, mapa, dirección) – pero solo para ti, la familia no se entera.",
   "loc.testSameProcessReal#wg": "Prueba: el mismo proceso que una petición de ayuda real (push, ventana, mapa, dirección) – pero solo para ti, el piso compartido no se entera.",

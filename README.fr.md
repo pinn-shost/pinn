@@ -129,6 +129,15 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski et 🇺🇦 Українська**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.153.2
+
+**Clés Gemini avec « AQ. », textes d'état, journal d'erreurs**
+
+- Corrigé : l'assistant de configuration accepte les nouvelles clés Google Gemini qui commencent par `AQ.` (elles contiennent un point). Avant, « Vérifier » disait que la clé était valide, mais « Suivant » la refusait.
+- Corrigé : l'état d'un membre de la famille (« en route », « dernière position ») était toujours en allemand ; il est maintenant dans toutes les langues.
+- Modifié : le journal d'erreurs affiche ses messages en allemand pour l'allemand et en anglais pour toutes les autres langues.
+- Modifié: `pb_hooks/pinn-einrichtung.js`, `pb_hooks/pinn-protokoll.js`, `pb_hooks/protokoll.pb.js`, `einrichtung.js`, `js/fehlerprotokoll.js`, `js/familie.js`, `js/familienkachel.js`, `js/versionslog.js`, `js/sprachen.js`, `i18n/`, `src/`, `index.html`, README.
+
 ## Nouveautés de la 1.153.1
 
 **Santé : cinq nouveaux blocs, « Moi » dans ton propre profil**
@@ -246,15 +255,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Une ou plusieurs rangées.** Sous Réglages → Raccourcis, vous choisissez séparément pour le téléphone et pour tablette et ordinateur : une rangée (balayer sur le côté pour voir le reste) ou plusieurs rangées (tous les raccourcis remplis vers le bas).
 - Modifié: `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/design.js`, `js/ansichten.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.1).
 
-## Nouveautés de la 1.150.1
-
-**Raccourcis dans leur propre rubrique**
-
-- **Rubrique à part.** Le choix des applis se trouve désormais sous Réglages → Raccourcis. Avant, ouvrir « Raccourcis » refermait le réglage Aperçu et la page ne défilait plus.
-- **Activer ou masquer sous Aperçu.** La tuile Raccourcis s’active ou se masque comme toutes les autres ; « Choisir les applis » mène directement au choix.
-- **Visible tout de suite.** Tant que vous n’avez rien choisi, la tuile affiche une sélection par défaut (boire, courses, tâche, rendez-vous, cuisiner aujourd’hui, note, dépense, plan de ménage). Sans appli choisie, elle propose « Choisir les applis » au lieu de disparaître.
-- Modifié: `js/kurzbefehle.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README.
-
 ## Comment ça marche
 
 ```mermaid
@@ -281,7 +281,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.153.1` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.153.2` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

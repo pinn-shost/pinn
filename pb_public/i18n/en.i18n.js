@@ -4196,6 +4196,8 @@ window.PINN_I18N && window.PINN_I18N.keys("en", {
   "loc.sosTestNotPossible": "SOS test not possible",
   "loc.sosTestSent": "SOS test sent",
   "loc.startSending": "Start sending",
+  "loc.statusLastSeen": "last seen",
+  "loc.statusOnTheWay": "on the way",
   "loc.streetTown": "Street, town",
   "loc.testSameProcessReal": "Test: same process as a real call for help (push, popup, map, address) – but only to you, the family doesn't notice anything.",
   "loc.testSameProcessReal#wg": "Test: same process as a real call for help (push, popup, map, address) – but only to you, the flatshare doesn't notice anything.",

@@ -4178,6 +4178,8 @@ window.PINN_I18N && window.PINN_I18N.keys("zh", {
   "loc.sosTestNotPossible": "无法进行 SOS 测试",
   "loc.sosTestSent": "SOS 测试已发送",
   "loc.startSending": "开始发送",
+  "loc.statusLastSeen": "最后位置",
+  "loc.statusOnTheWay": "在路上",
   "loc.streetTown": "街道、城市",
   "loc.testSameProcessReal": "测试：与真实求救相同的流程（推送、弹窗、地图、地址）——但只发给你，家人不会察觉任何东西。",
   "loc.tipSetAddressUnder": "提示：在“设置 → 家”中设置你的地址——这样“家”这个地点就会自动存在，到达和离开时会推送。",

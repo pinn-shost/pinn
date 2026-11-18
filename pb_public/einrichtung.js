@@ -150,7 +150,7 @@
     g_ki: [
       "[aistudio.google.com/apikey](https://aistudio.google.com/apikey) öffnen und mit einem Google-Konto anmelden.",
       "„API-Schlüssel erstellen“ (Create API key) tippen. Fragt Google nach einem Projekt, das Projekt „pinn“ aus dem vorigen Schritt wählen oder ein neues anlegen.",
-      "Den Schlüssel (beginnt meist mit `AIza`) kopieren, hier einfügen und „Prüfen“ tippen.",
+      "Den Schlüssel (beginnt meist mit `AIza` oder `AQ.`) kopieren, hier einfügen und „Prüfen“ tippen.",
       "Gut zu wissen: Im kostenlosen Kontingent darf Google die übermittelten Rezepttexte zur Verbesserung seiner Dienste verwenden.",
     ],
     test_gemini_ok: "Schlüssel gültig ✓",
@@ -360,7 +360,7 @@
     g_ki: [
       "Open [aistudio.google.com/apikey](https://aistudio.google.com/apikey) and sign in with a Google account.",
       "Tap “Create API key”. If Google asks for a project, choose the project “pinn” from the previous step or create a new one.",
-      "Copy the key (usually starts with `AIza`), paste it here and tap “Check”.",
+      "Copy the key (usually starts with `AIza` or `AQ.`), paste it here and tap “Check”.",
       "Good to know: on the free tier, Google may use the submitted recipe texts to improve its services.",
     ],
     test_gemini_ok: "Key is valid ✓",
@@ -570,7 +570,7 @@
     g_ki: [
       "Ouvrez [aistudio.google.com/apikey](https://aistudio.google.com/apikey) et connectez-vous avec un compte Google.",
       "Touchez « Créer une clé API » (Create API key). Si Google demande un projet, choisissez le projet « pinn » de l'étape précédente ou créez-en un.",
-      "Copiez la clé (commence généralement par `AIza`), collez-la ici et touchez « Vérifier ».",
+      "Copiez la clé (commence généralement par `AIza` ou `AQ.`), collez-la ici et touchez « Vérifier ».",
       "Bon à savoir : avec l'offre gratuite, Google peut utiliser les textes de recettes transmis pour améliorer ses services.",
     ],
     test_gemini_ok: "Clé valide ✓",
@@ -780,7 +780,7 @@
     g_ki: [
       "Abre [aistudio.google.com/apikey](https://aistudio.google.com/apikey) e inicia sesión con una cuenta de Google.",
       "Pulsa «Crear clave de API» (Create API key). Si Google pide un proyecto, elige el proyecto «pinn» del paso anterior o crea uno nuevo.",
-      "Copia la clave (suele empezar por `AIza`), pégala aquí y pulsa «Comprobar».",
+      "Copia la clave (suele empezar por `AIza` o `AQ.`), pégala aquí y pulsa «Comprobar».",
       "Bueno saberlo: en el nivel gratuito, Google puede usar los textos de recetas enviados para mejorar sus servicios.",
     ],
     test_gemini_ok: "Clave válida ✓",
@@ -1016,7 +1016,7 @@
     g_ki: [
       "Apri [aistudio.google.com/apikey](https://aistudio.google.com/apikey) e accedi con un account Google.",
       "Tocca «Create API key». Se Google chiede un progetto, scegli il progetto «pinn» del passo precedente oppure creane uno nuovo.",
-      "Copia la chiave (di solito inizia con `AIza`), incollala qui e tocca «Verifica».",
+      "Copia la chiave (di solito inizia con `AIza` o `AQ.`), incollala qui e tocca «Verifica».",
       "Da sapere: nel piano gratuito Google può usare i testi delle ricette inviate per migliorare i propri servizi.",
     ],
     test_gemini_ok: "La chiave è valida ✓",
@@ -1263,7 +1263,7 @@
     g_ki: [
       "Abra [aistudio.google.com/apikey](https://aistudio.google.com/apikey) e entre com uma conta do Google.",
       "Toque em “Create API key”. Se o Google pedir um projeto, escolha o projeto “pinn” da etapa anterior ou crie um novo.",
-      "Copie a chave (geralmente começa com `AIza`), cole aqui e toque em “Verificar”.",
+      "Copie a chave (geralmente começa com `AIza` ou `AQ.`), cole aqui e toque em “Verificar”.",
       "Bom saber: no plano gratuito, o Google pode usar os textos de receitas enviados para melhorar seus serviços.",
     ],
     test_gemini_ok: "A chave é válida ✓",
@@ -1510,7 +1510,7 @@
     g_ki: [
       "打开 [aistudio.google.com/apikey](https://aistudio.google.com/apikey) 并用 Google 账号登录。",
       "点按“Create API key”。如果 Google 要求选择项目，请选择上一步的项目“pinn”或新建一个。",
-      "复制密钥（通常以 `AIza` 开头），粘贴到这里并点按“检查”。",
+      "复制密钥（通常以 `AIza` 或 `AQ.` 开头），粘贴到这里并点按“检查”。",
       "提示：在免费套餐中，Google 可能会使用提交的食谱文本来改进其服务。",
     ],
     test_gemini_ok: "密钥有效 ✓",
@@ -1731,7 +1731,7 @@
     g_ki: [
       "[aistudio.google.com/apikey](https://aistudio.google.com/apikey) を開き、Google アカウントでサインインします。",
       "「API キーを作成」をタップします。プロジェクトを聞かれたら、前のステップのプロジェクト「pinn」を選ぶか新しく作成します。",
-      "キー（たいてい `AIza` で始まる）をコピーしてここに貼り付け、「確認」をタップします。",
+      "キー（たいてい `AIza` または `AQ.` で始まる）をコピーしてここに貼り付け、「確認」をタップします。",
       "ご参考：無料枠では、送信したレシピのテキストが Google のサービス改善に使われることがあります。",
     ],
     test_gemini_ok: "キーは有効です ✓",
@@ -1941,7 +1941,7 @@
     g_ki: [
       "[aistudio.google.com/apikey](https://aistudio.google.com/apikey)를 열고 Google 계정으로 로그인하세요.",
       "“API 키 만들기”를 탭하세요. 프로젝트를 물으면 이전 단계의 프로젝트 “pinn”을 고르거나 새로 만드세요.",
-      "키(보통 `AIza`로 시작)를 복사해 여기에 붙여 넣고 “확인”을 탭하세요.",
+      "키(보통 `AIza` 또는 `AQ.`로 시작)를 복사해 여기에 붙여 넣고 “확인”을 탭하세요.",
       "참고: 무료 등급에서는 보낸 레시피 텍스트가 Google 서비스 개선에 쓰일 수 있어요.",
     ],
     test_gemini_ok: "키가 유효해요 ✓",
@@ -2151,7 +2151,7 @@
     g_ki: [
       "Откройте [aistudio.google.com/apikey](https://aistudio.google.com/apikey) и войдите с аккаунтом Google.",
       "Нажмите «Create API key». Если Google спросит проект, выберите проект «pinn» из предыдущего шага или создайте новый.",
-      "Скопируйте ключ (обычно начинается с `AIza`), вставьте его сюда и нажмите «Проверить».",
+      "Скопируйте ключ (обычно начинается с `AIza` или `AQ.`), вставьте его сюда и нажмите «Проверить».",
       "Полезно знать: в бесплатном тарифе Google может использовать отправленные тексты рецептов для улучшения своих сервисов.",
     ],
     test_gemini_ok: "Ключ действителен ✓",
@@ -2363,7 +2363,7 @@
     g_ki: [
       "Open [aistudio.google.com/apikey](https://aistudio.google.com/apikey) en log in met een Google-account.",
       "Tik op “Create API key”. Vraagt Google om een project, kies dan het project “pinn” uit de vorige stap of maak een nieuw project aan.",
-      "Kopieer de sleutel (begint meestal met `AIza`), plak die hier en tik op “Controleren”.",
+      "Kopieer de sleutel (begint meestal met `AIza` of `AQ.`), plak die hier en tik op “Controleren”.",
       "Goed om te weten: in de gratis variant mag Google de ingestuurde receptteksten gebruiken om zijn diensten te verbeteren.",
     ],
     test_gemini_ok: "Sleutel is geldig ✓",
@@ -2575,7 +2575,7 @@
     g_ki: [
       "[aistudio.google.com/apikey](https://aistudio.google.com/apikey) adresini aç ve bir Google hesabıyla giriş yap.",
       "“Create API key” düğmesine dokun. Google bir proje sorarsa önceki adımdaki “pinn” projesini seç veya yeni bir tane oluştur.",
-      "Anahtarı kopyala (genelde `AIza` ile başlar), buraya yapıştır ve “Kontrol et” düğmesine dokun.",
+      "Anahtarı kopyala (genelde `AIza` veya `AQ.` ile başlar), buraya yapıştır ve “Kontrol et” düğmesine dokun.",
       "Bilmekte fayda var: ücretsiz kullanımda Google, gönderilen tarif metinlerini hizmetlerini geliştirmek için kullanabilir.",
     ],
     test_gemini_ok: "Anahtar geçerli ✓",
@@ -2787,7 +2787,7 @@
     g_ki: [
       "Otwórz [aistudio.google.com/apikey](https://aistudio.google.com/apikey) i zaloguj się kontem Google.",
       "Dotknij „Create API key”. Jeśli Google zapyta o projekt, wybierz projekt „pinn” z poprzedniego kroku albo utwórz nowy.",
-      "Skopiuj klucz (zwykle zaczyna się od `AIza`), wklej go tutaj i dotknij „Sprawdź”.",
+      "Skopiuj klucz (zwykle zaczyna się od `AIza` lub `AQ.`), wklej go tutaj i dotknij „Sprawdź”.",
       "Warto wiedzieć: w bezpłatnym użyciu Google może wykorzystywać przesyłane teksty przepisów do ulepszania swoich usług.",
     ],
     test_gemini_ok: "Klucz jest ważny ✓",
@@ -2997,7 +2997,7 @@
     g_ki: [
       "Відкрий [aistudio.google.com/apikey](https://aistudio.google.com/apikey) і увійди з обліковим записом Google.",
       "Натисни «Створити ключ API». Якщо Google запитає проєкт, обери проєкт «pinn» з попереднього кроку або створи новий.",
-      "Скопіюй ключ (зазвичай починається з `AIza`), встав його сюди та натисни «Перевірити».",
+      "Скопіюй ключ (зазвичай починається з `AIza` або `AQ.`), встав його сюди та натисни «Перевірити».",
       "Корисно знати: на безкоштовному тарифі Google може використовувати надіслані тексти рецептів для вдосконалення своїх сервісів.",
     ],
     test_gemini_ok: "Ключ дійсний ✓",
@@ -3439,7 +3439,7 @@
   };
   R.ki = function () {
     var h = '<h2 class="ps-h">' + esc(t('t_ki')) + '</h2><p class="ps-p">' + esc(t('i_ki')) + '</p>';
-    h += field('PINN_GEMINI_KEY', { ph: 'AIza…' });
+    h += field('PINN_GEMINI_KEY', { ph: 'AIza… / AQ.…' });
     h += testBtn('gemini');
     h += '<details class="ps-adv"><summary>' + esc(t('erweitert')) + '</summary>' +
       field('PINN_GEMINI_MODELL', { ph: 'gemini-2.5-flash', optional: true, hint: esc(t('h_modell')) }) + '</details>';

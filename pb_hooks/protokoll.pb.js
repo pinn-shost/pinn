@@ -6,7 +6,7 @@
 //
 // Admins only (main admin: everything; family admins: their family, with only one family also the
 // general server entries):
-//   GET  /api/pinn/protokoll?bereich=&limit=   { eintraege[], alle, hauptadmin }
+//   GET  /api/pinn/protokoll?bereich=&limit=&sprache=   { eintraege[], alle, hauptadmin }
 //   GET  /api/pinn/protokoll/kurz              { darf, offen, warnungen, neueste }
 //   POST /api/pinn/protokoll/leeren            { art: "behoben" | "alle" } or { id }
 //
@@ -27,6 +27,7 @@ routerAdd("GET", "/api/pinn/protokoll", (e) => {
         return e.json(200, require(`${__hooks}/pinn-protokoll.js`).liste(e, {
             bereich: String(q.get("bereich") || ""),
             limit: String(q.get("limit") || ""),
+            sprache: String(q.get("sprache") || ""), // app language: German as stored, everything else in English
         }));
     } catch (err) {
         return e.json(403, { error: err.message });

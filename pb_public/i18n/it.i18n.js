@@ -4197,6 +4197,8 @@ window.PINN_I18N && window.PINN_I18N.keys("it", {
   "loc.sosTestNotPossible": "Impossibile eseguire il test SOS",
   "loc.sosTestSent": "Test SOS inviato",
   "loc.startSending": "Avvia l’invio",
+  "loc.statusLastSeen": "ultima posizione",
+  "loc.statusOnTheWay": "in movimento",
   "loc.streetTown": "Via, città",
   "loc.testSameProcessReal": "Test: stessa procedura di una vera richiesta di aiuto (notifica push, finestra popup, mappa, indirizzo), ma solo per te: la famiglia non riceverà alcuna notifica.",
   "loc.testSameProcessReal#wg": "Test: stessa procedura di una vera richiesta di aiuto (notifica push, finestra popup, mappa, indirizzo), ma solo per te: la casa condivisa non riceverà alcuna notifica.",

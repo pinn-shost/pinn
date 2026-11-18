@@ -4196,6 +4196,8 @@ window.PINN_I18N && window.PINN_I18N.keys("ko", {
   "loc.sosTestNotPossible": "SOS 테스트를 할 수 없어요",
   "loc.sosTestSent": "SOS 테스트를 보냈어요",
   "loc.startSending": "전송 시작",
+  "loc.statusLastSeen": "마지막 위치",
+  "loc.statusOnTheWay": "이동 중",
   "loc.streetTown": "도로명, 도시",
   "loc.testSameProcessReal": "테스트: 실제 도움 요청과 같은 과정(푸시, 팝업, 지도, 주소)이지만 나에게만 가고 가족은 알아채지 못해요.",
   "loc.testSameProcessReal#wg": "테스트: 실제 도움 요청과 같은 과정(푸시, 팝업, 지도, 주소)이지만 나에게만 가고 셰어하우스는 알아채지 못해요.",

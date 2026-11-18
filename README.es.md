@@ -129,6 +129,15 @@ Pulsa cualquier imagen para verla en tamaño completo.
 
 pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski y 🇺🇦 Українська**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades de la 1.153.2
+
+**Claves de Gemini con «AQ.», textos de estado, registro de errores**
+
+- Corregido: el asistente de configuración acepta las nuevas claves de Google Gemini que empiezan por `AQ.` (llevan un punto). Antes, «Comprobar» decía que la clave era válida, pero «Siguiente» la rechazaba.
+- Corregido: el estado de un miembro de la familia («en camino», «última vez») estaba siempre en alemán; ahora aparece en todos los idiomas.
+- Cambiado: el registro de errores muestra sus mensajes en alemán para el idioma alemán y en inglés para todos los demás.
+- Cambiado: `pb_hooks/pinn-einrichtung.js`, `pb_hooks/pinn-protokoll.js`, `pb_hooks/protokoll.pb.js`, `einrichtung.js`, `js/fehlerprotokoll.js`, `js/familie.js`, `js/familienkachel.js`, `js/versionslog.js`, `js/sprachen.js`, `i18n/`, `src/`, `index.html`, README.
+
 ## Novedades de la 1.153.1
 
 **Salud: cinco bloques nuevos, «Yo» en tu propio perfil**
@@ -246,15 +255,6 @@ pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Una o varias filas.** En Ajustes → Accesos directos eliges por separado para el móvil y para tableta y ordenador: una fila (desliza hacia el lado para ver el resto) o varias filas (todos los accesos directos hacia abajo).
 - Modificado: `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/design.js`, `js/ansichten.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.1).
 
-## Novedades de la 1.150.1
-
-**Accesos directos en su propio apartado**
-
-- **Apartado propio.** Las apps se eligen ahora en Ajustes → Accesos directos. Antes, al abrir «Accesos directos» se plegaba el ajuste del Resumen y la página ya no se podía desplazar.
-- **Activar o desactivar en Resumen.** El mosaico Accesos directos se activa o desactiva como cualquier otro; «Elegir apps» lleva directamente a la selección.
-- **Visible de inmediato.** Mientras no elijas nada, el mosaico muestra una selección estándar (beber, compra, tarea, cita, cocinar hoy, nota, gasto, plan de limpieza). Sin ninguna app elegida ofrece «Elegir apps» en lugar de desaparecer.
-- Modificado: `js/kurzbefehle.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README.
-
 ## Cómo funciona
 
 ```mermaid
@@ -281,7 +281,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.153.1` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.153.2` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

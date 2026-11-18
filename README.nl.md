@@ -110,6 +110,15 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski en 🇺🇦 Українська**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.153.2
+
+**Gemini-sleutels met “AQ.”, statusteksten, foutenlogboek**
+
+- Opgelost: de installatiewizard accepteert de nieuwe Google Gemini-sleutels die met `AQ.` beginnen (ze bevatten een punt). Eerder zei “Controleren” dat de sleutel geldig was, maar “Volgende” weigerde hem.
+- Opgelost: de status van een gezinslid (“onderweg”, “laatst gezien”) was altijd Duits – nu in elke taal.
+- Gewijzigd: het foutenlogboek toont zijn meldingen in het Duits voor Duits en in het Engels voor alle andere talen.
+- Gewijzigd: `pb_hooks/pinn-einrichtung.js`, `pb_hooks/pinn-protokoll.js`, `pb_hooks/protokoll.pb.js`, `einrichtung.js`, `js/fehlerprotokoll.js`, `js/familie.js`, `js/familienkachel.js`, `js/versionslog.js`, `js/sprachen.js`, `i18n/`, `src/`, `index.html`, README.
+
 ## Nieuw in 1.153.1
 
 **Gezondheid: vijf nieuwe blokken, ‘Ik’ in je eigen profiel**
@@ -162,13 +171,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Donkere modus.** Blauwe tekst is nu goud (apparaten, lijsten, “Boodschappen plannen”, vinkjes bij dieren, gezondheid en taken); de balken bij Huishouden hebben de kleur van de kamer; meldingen in de chat, bij contracten en “In één oogopslag” zijn leesbaar. **Meer pictogrammen i.p.v. emoji:** profielfoto’s (baby, jongen, meisje, man, vrouw, opa, oma), gezin en woongroep, dieren (hond, kat, konijn, hamster, vogel, kuiken, vis, paard, schildpad, slang); keuzelijsten tonen alleen tekst. **Nieuwe dierenbanner** met kleurrijke dieren. **Dierendagboek:** een afgevinkte controle staat in het dagboek, met de × maak je een per ongeluk vinkje ongedaan.
 - Gewijzigd: `css/dunkelfarbe.css` (new), `js/symbole3.js` (new), `js/symbole.js`, `js/szenen.js`, `js/familie.js`, `js/haushalt.js`, `css/symbolfarbe.css`, `css/haustierewetter.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
 
-## Nieuw in 1.150.9
-
-**Kleur in de pictogrammen, voertuig- en plantenpictogrammen**
-
-- **Kleur overdag.** De pictogrammen zijn nu licht ingekleurd (witte vlakken, zon geel, regen blauw, auto rood, gereedschap grijs, planten groen) in dezelfde lijnstijl; de donkere modus blijft zoals hij was. **Voertuigpictogrammen:** in plaats van de auto-emoji kies je een lijnpictogram (sedan, SUV, taxi, bestelbus, pick-up, tractor, caravan, fiets, e-bike …). Ook de **plantenpictogrammen** kies je in de app, met nieuwe pictogrammen voor cactus, palm, tulp, zonnebloem, roos en meer. In de banners van Voertuigen en Thuis lichten de auto’s alleen ’s nachts op: geelachtig voor, rood achter.
-- Gewijzigd: `js/symbole2.js`, `css/symbolfarbe.css` (new), `js/symbole.js`, `js/wetterlogos.js`, `js/symbolwahl.js`, `js/fahrzeuge.js`, `js/zuhause.js`, `js/dokumente.js`, `css/fahrzeuge.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -178,7 +180,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.153.1` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.153.2` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

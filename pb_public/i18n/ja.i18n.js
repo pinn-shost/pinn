@@ -4187,6 +4187,8 @@ window.PINN_I18N && window.PINN_I18N.keys("ja", {
   "loc.sosTestNotPossible": "SOSテストができません",
   "loc.sosTestSent": "SOSテストを送信しました",
   "loc.startSending": "送信を開始",
+  "loc.statusLastSeen": "最終位置",
+  "loc.statusOnTheWay": "移動中",
   "loc.streetTown": "通り、町",
   "loc.testSameProcessReal": "テスト：実際の助けの呼び出しと同じ流れ（プッシュ、ポップアップ、地図、住所）ですが、送信先は自分だけで、家族には気づかれません。",
   "loc.testSameProcessReal#wg": "テスト：実際の助けの呼び出しと同じ流れ（プッシュ、ポップアップ、地図、住所）ですが、送信先は自分だけで、ルームシェアには気づかれません。",

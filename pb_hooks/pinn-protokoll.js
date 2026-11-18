@@ -181,6 +181,88 @@ function sichtFilter(e) {
     return { filter: "familie = {:f}", params: { f: fam }, alle: false };
 }
 
+// ---------------------------------------------------------------------------------------------
+// Language of the entries (since 1.153.2)
+// ---------------------------------------------------------------------------------------------
+// The server writes its messages in German. Whoever reads the log in German sees them as they are, everybody
+// else gets English: the entries are translated when they are READ (the stored text never changes, so merging
+// of identical messages keeps working). Free text that comes from outside (e.g. the error text of a library) stays
+// as it is. Rules are tried in order; "„...“" quotes become English quotes at the end.
+const EN_RULES = [
+    // security warnings (pinn-alarm.js)
+    [/Viele falsche Anmeldeversuche von einer Adresse – sie ist vorübergehend gesperrt\./g, "Many wrong sign-in attempts from one address – it is temporarily blocked."],
+    [/Zu viele falsche Passwörter für „(.*?)“\. Das Profil ist vorübergehend gesperrt – die Sperre lässt sich unter Konto → Profile verwalten aufheben\./g, "Too many wrong passwords for “$1”. The profile is temporarily locked – the lock can be lifted under Account → Manage profiles."],
+    [/Zu viele falsche PINs für „(.*?)“ am Familien-Dashboard – das Profil ist vorübergehend gesperrt\./g, "Too many wrong PINs for “$1” on the family dashboard – the profile is temporarily locked."],
+    [/Jemand hat versucht, sich aus dem Internet mit dem Start-Passwort anzumelden – abgewiesen\./g, "Someone tried to sign in from the internet with the start password – rejected."],
+    [/Zugriffsversuche auf die PocketBase-Verwaltung aus dem Internet – abgewiesen\./g, "Access attempts to the PocketBase admin from the internet – rejected."],
+    [/Viele Ortungsmeldungen mit unbekannten Geräte-IDs – die Adresse wird 1 Stunde ignoriert\./g, "Many location reports with unknown device IDs – the address is ignored for 1 hour."],
+    [/Viele ungültige Zugangsschlüssel \(Familien-Dashboard, Widget oder Smart Home\) von einer Adresse – abgewiesen\./g, "Many invalid access keys (family dashboard, widget or smart home) from one address – rejected."],
+    [/Adresse: (.*?) \(aus dem Internet\)/g, "Address: $1 (from the internet)"],
+    [/Adresse: (.*?) \(Heimnetz\)/g, "Address: $1 (home network)"],
+    // sign-in locks (pinn-sitzungen.js)
+    [/Viele fehlgeschlagene Anmeldungen von der Adresse (.*?) – für (.*?) gesperrt\./g, "Many failed sign-ins from address $1 – blocked for $2."],
+    [/Zu viele falsche Passwörter für „(.*?)“ – Profil für (.*?) gesperrt\./g, "Too many wrong passwords for “$1” – profile locked for $2."],
+    [/Geräteverwaltung: Sammlung „sitzungen“ konnte nicht angelegt werden\./g, "Device management: the collection “sitzungen” could not be created."],
+    [/Geräteverwaltung: Eine Anmeldung konnte nicht mit ihrem Gerät verknüpft werden – einzelnes Abmelden geht dafür nur über „Überall abmelden“\./g, "Device management: a sign-in could not be linked to its device – signing out just that device does not work for it, only “Sign out everywhere”."],
+    // database set-up (pinn-schema.js)
+    [/Datenbank-Einrichtung „(.*?)“ fehlgeschlagen: /g, "Database set-up „$1“ failed: "],
+    [/Datenbank-Schema: Sammlung "(.*?)" nicht anlegbar: /g, "Database schema: collection \"$1\" could not be created: "],
+    [/Datenbank-Schema: Schritt (\d+) „(.*?)“ fehlgeschlagen: /g, "Database schema: step $1 „$2“ failed: "],
+    [/Datenbank-Schema: Schritt (\d+) lief, ließ sich aber nicht vermerken: /g, "Database schema: step $1 ran but could not be recorded: "],
+    [/Die Datenbank hat Schema (\d+), diese pinn\.-Version kennt nur bis (\d+)\. Es wird nichts verändert – bitte die passende neuere Version installieren oder eine Sicherung zurückspielen\./g, "The database has schema $1, this pinn. version only knows up to $2. Nothing is changed – please install the matching newer version or restore a backup."],
+    [/Schritt meldet einen Fehler\./g, "Step reports an error."],
+    [/: nicht eingerichtet$/g, ": not set up"],
+    // automatic update (pinn-system.js)
+    [/Automatisches Update auf (.*?) fehlgeschlagen \(/g, "Automatic update to $1 failed ("],
+    [/Automatisches Update nicht gestartet: /g, "Automatic update not started: "],
+    // hooks (prefix before the error text)
+    [/^Geburtstage in der Familie: /, "Birthdays in the family: "],
+    [/^Abgleich verknüpfter Kalender fehlgeschlagen: /, "Sync of linked calendars failed: "],
+    [/^Vorgemerkte Meldungen nach dem Neustart nicht wiederhergestellt: /, "Queued notifications could not be restored after the restart: "],
+    [/^Push ist auf dem Server nicht verfügbar: /, "Push is not available on the server: "],
+    [/^Push-Selbsttest fehlgeschlagen: /, "Push self-test failed: "],
+    [/^Verzögerte Meldungen: /, "Delayed notifications: "],
+    [/^Push-Zeitplan fehlgeschlagen: /, "Push schedule failed: "],
+    [/^Müllkalender-Zeitplan fehlgeschlagen: /, "Waste calendar schedule failed: "],
+    [/^Müllkalender-Suche fehlgeschlagen: /, "Waste calendar search failed: "],
+    [/^Ausblick \(Wochenvorschau\/Monatsausblick\): /, "Outlook (weekly preview / monthly outlook): "],
+    [/^Kalender-Sync-Zeitplan fehlgeschlagen: /, "Calendar sync schedule failed: "],
+    [/^Packliste: /, "Packing list: "],
+    [/^Gesundheit: /, "Health: "],
+    [/^Haustiere: /, "Pets: "],
+    [/^Futterautomat: /, "Pet feeder: "],
+    // frequent error texts that the hooks pass on
+    [/Die KI ist auf dem Server nicht eingerichtet \(PINN_GEMINI_KEY fehlt in der \.env\)\./g, "The AI is not set up on the server (PINN_GEMINI_KEY is missing in the .env)."],
+    [/Der Gemini-Schlüssel \(PINN_GEMINI_KEY\) ist ungültig\./g, "The Gemini key (PINN_GEMINI_KEY) is invalid."],
+    // wait times (pinn-dashboard.js waitText)
+    [/einer Minute/g, "one minute"],
+    [/(\d+) Minuten/g, "$1 minutes"],
+    [/(\d+) Sekunden/g, "$1 seconds"],
+    // detail lines of the security warnings (start of a line)
+    [/^Art: /gm, "Kind: "],
+    [/^Zeit: /gm, "Time: "],
+    [/^Direkter Absender \(Proxy\): /gm, "Direct sender (proxy): "],
+    [/^Gerät: /gm, "Device: "],
+    [/^Gerätename aus der App: /gm, "Device name from the app: "],
+    [/^Browser-Kennung: /gm, "Browser ID: "],
+    [/^Sprache: /gm, "Language: "],
+    [/^Anfrage: /gm, "Request: "],
+    [/^Familie: /gm, "Family: "],
+    [/^Profil: /gm, "Profile: "],
+    [/^Familien-Dashboard: /gm, "Family dashboard: "],
+    [/^Versuche: /gm, "Attempts: "],
+    [/^Gesperrt für: /gm, "Locked for: "],
+    [/^Selbst nachschlagen \(öffnet eine fremde Seite\): /gm, "Look it up yourself (opens a third-party page): "],
+];
+// German is shown as stored; every other language gets English
+function inLanguage(text, lang) {
+    const t = String(text || "");
+    if (!t || String(lang || "").toLowerCase().slice(0, 2) === "de") return t;
+    let out = t;
+    for (let i = 0; i < EN_RULES.length; i++) out = out.replace(EN_RULES[i][0], EN_RULES[i][1]);
+    return out.replace(/„([^“”]*)“/g, "“$1”");
+}
+
 function familienNamen() {
     const out = {};
     try { $app.findRecordsByFilter("familien", "", "", 0, 0).forEach(f => { out[f.id] = f.getString("name"); }); } catch (e) { /* ignore */ }
@@ -210,8 +292,8 @@ function liste(e, opts) {
             id: r.id,
             bereich: r.getString("bereich"),
             stufe: r.getString("stufe"),
-            meldung: r.getString("meldung"),
-            details: r.getString("details"),
+            meldung: inLanguage(r.getString("meldung"), o.sprache),
+            details: inLanguage(r.getString("details"), o.sprache),
             familie: r.getString("familie"),
             familienName: r.getString("familie") ? (namen[r.getString("familie")] || "") : "",
             anzahl: r.getInt("anzahl") || 1,
@@ -271,5 +353,5 @@ function aufraeumen() {
 module.exports = {
     COL, BEREICHE,
     ensureSchema, eintrag, fehler, warnung, info, behoben, familyOfUser,
-    liste, kurz, leeren, aufraeumen,
+    liste, kurz, leeren, aufraeumen, inLanguage,
 };

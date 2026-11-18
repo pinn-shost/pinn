@@ -133,6 +133,15 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski und 🇺🇦 Українська**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.153.2
+
+**Gemini-Schlüssel mit „AQ.“, Status-Texte, Fehlerprotokoll**
+
+- Behoben: der Einrichtungs-Assistent nimmt die neuen Google-Gemini-Schlüssel an, die mit `AQ.` beginnen (sie enthalten einen Punkt). Vorher meldete „Prüfen“, der Schlüssel sei gültig, „Weiter“ lehnte ihn aber ab.
+- Behoben: der Status eines Familienmitglieds („unterwegs“, „zuletzt“) war immer deutsch – jetzt in jeder Sprache.
+- Geändert: das Fehlerprotokoll zeigt seine Meldungen für Deutsch auf Deutsch und für jede andere Sprache auf Englisch.
+- Geändert: `pb_hooks/pinn-einrichtung.js`, `pb_hooks/pinn-protokoll.js`, `pb_hooks/protokoll.pb.js`, `einrichtung.js`, `js/fehlerprotokoll.js`, `js/familie.js`, `js/familienkachel.js`, `js/versionslog.js`, `js/sprachen.js`, `i18n/`, `src/`, `index.html`, README.
+
 ## Neu in 1.153.1
 
 **Gesundheit: fünf neue Bausteine, „Ich“ im eigenen Profil**
@@ -223,14 +232,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Face ID.** Entsperren startet nur noch mit dem Knopf (kein Fenster „Passkey verwenden“ mehr); der Knopf sitzt unten, mit dem Daumen erreichbar.
 - Geändert: `js/gesundheit.js`, `css/gesundheit.css`, `js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
 
-## Neu in 1.150.4
-
-**Benachrichtigungen bleiben nach Updates an**
-
-- **Push übersteht Updates.** Konnte der Server seinen Push-Schlüssel während eines Updates kurz nicht lesen, legte er einen neuen an – und alle Geräte waren von den Benachrichtigungen abgemeldet. Der Schlüssel wird jetzt nie ersetzt, solange er vorhanden ist, sicher gespeichert und zusätzlich als Sicherungskopie aufbewahrt.
-- **Ein Tipp genügt.** Verliert ein Gerät seine Anmeldung trotzdem (z. B. weil iOS sie zurückgesetzt hat), meldet pinn. es von selbst wieder an – oder zeigt unten „Wieder einschalten“, ohne Umweg über die Einstellungen.
-- Geändert: `pb_hooks/pinn-push.js`, `pb_hooks/push.pb.js`, `pb_hooks/pinn-sitzungen.js`, `js/mitteilungen.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
-
 ## So funktioniert’s
 
 ```mermaid
@@ -259,7 +260,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.153.1` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.153.2` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -114,7 +114,7 @@ function ofsSubLine(st) {
   if (st.soon) return { cls: 'soon', t: '🏠 ' + tk('famTile.almostThere') };
   if (st.hw) return { cls: '', t: '🚶 ' + (st.hw.entfernung != null ? (tk('famTile.left') + ' ') + hwKm(st.hw.entfernung) : tk('famTile.wayHome')) };
   if (st.bday && st.bday.today) return { cls: 'bday', t: tk('famTile.birthday') };
-  if (st.live) return { cls: 'live', t: st.place ? st.place.name : 'unterwegs' };
+  if (st.live) return { cls: 'live', t: st.place ? st.place.name : tk('loc.statusOnTheWay') };
   if (st.bday && st.bday.diff === 1) return { cls: '', t: tk('famTile.tomorrow') };
   if (st.bday && st.bday.diff <= 7) return { cls: '', t: '🎁 ' + tk('pet.days2', { days: st.bday.diff }) };
   if (st.kid && st.kid.total) return { cls: '', t: st.kid.done + '/' + st.kid.total + ' ✓' };
@@ -288,7 +288,7 @@ function ofsSheetHtml(m) {
     if (!g.teilen) line = tk('family.locationNotShared');
     else if (!pos) line = tk('family.noLocationReceivedYet');
     else {
-      line = [st.place ? st.place.emoji + ' ' + st.place.name : (st.live ? 'unterwegs' : 'zuletzt'), famAgo(pos.zeit),
+      line = [st.place ? st.place.emoji + ' ' + st.place.name : (st.live ? tk('loc.statusOnTheWay') : tk('loc.statusLastSeen')), famAgo(pos.zeit),
         pos.akku != null ? (st.low ? '🪫 ' : '🔋 ') + pos.akku + ' %' : ''].filter(Boolean).join(' · ');
     }
     out.push(`<div class="fam-card">

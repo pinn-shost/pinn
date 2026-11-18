@@ -133,6 +133,15 @@ Tocca un’immagine per aprirla a dimensione intera.
 
 pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
 
+## Novità della 1.153.2
+
+**Chiavi Gemini con «AQ.», testi di stato, registro errori**
+
+- Corretto: la configurazione guidata accetta le nuove chiavi Google Gemini che iniziano con `AQ.` (contengono un punto). Prima «Verifica» diceva che la chiave era valida, ma «Avanti» la rifiutava.
+- Corretto: lo stato di un familiare («in movimento», «ultima posizione») era sempre in tedesco; ora è in tutte le lingue.
+- Modificato: il registro errori mostra i suoi messaggi in tedesco per il tedesco e in inglese per tutte le altre lingue.
+- Modificato: `pb_hooks/pinn-einrichtung.js`, `pb_hooks/pinn-protokoll.js`, `pb_hooks/protokoll.pb.js`, `einrichtung.js`, `js/fehlerprotokoll.js`, `js/familie.js`, `js/familienkachel.js`, `js/versionslog.js`, `js/sprachen.js`, `i18n/`, `src/`, `index.html`, README.
+
 ## Novità della 1.153.1
 
 **Salute: cinque nuovi blocchi, «Io» nel tuo profilo**
@@ -214,15 +223,6 @@ pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Face ID.** pinn. chiede di nuovo Face ID da solo all’apertura, come prima della 1.150.5. iOS mostra sempre prima la sua finestra «Usa passkey»: un tocco su di essa, poi Face ID; il web non può saltarla e il pulsante in più significava solo un secondo tocco. Il grande pulsante in basso resta, nel caso chiudessi la finestra.
 - Modificato: `js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
 
-## Novità della 1.150.5
-
-**Nuovo banner salute · bevande in ordine**
-
-- **Banner salute.** La pagina salute e quella di ogni persona hanno di nuovo un banner: acqua che sale con ciò che si è bevuto, bollicine, battito cardiaco e oggetti fluttuanti – di notte, stelle.
-- **Bere.** Obiettivo, bevande di oggi e promemoria sono ora in una sezione richiudibile «Impostazioni» sotto il pulsante.
-- **Face ID.** Lo sblocco parte solo con il pulsante (niente più finestra «Usa passkey»); il pulsante è in basso, a portata di pollice.
-- Modificato: `js/gesundheit.js`, `css/gesundheit.css`, `js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
-
 ## Come funziona
 
 ```mermaid
@@ -251,7 +251,7 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 ## Installazione
 
 1. Scarica lo ZIP dell’[ultima release](https://github.com/pinn-shost/pinn/releases/latest) e decomprimilo.
-2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.153.1` o `pinn-main`) così com’è.
+2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.153.2` o `pinn-main`) così com’è.
 3. Accedi via SSH ed esegui:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

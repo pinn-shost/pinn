@@ -4190,6 +4190,8 @@ window.PINN_I18N && window.PINN_I18N.keys("uk", {
   "loc.sosTestNotPossible": "Тест SOS неможливий",
   "loc.sosTestSent": "Тест SOS надіслано",
   "loc.startSending": "Почати надсилання",
+  "loc.statusLastSeen": "востаннє",
+  "loc.statusOnTheWay": "у дорозі",
   "loc.streetTown": "Вулиця, місто",
   "loc.testSameProcessReal": "Тест: той самий процес, що й справжній заклик про допомогу (push, спливне вікно, карта, адреса) – але лише тобі, сім’я нічого не помічає.",
   "loc.testSameProcessReal#wg": "Тест: той самий процес, що й справжній заклик про допомогу (push, спливне вікно, карта, адреса) – але лише тобі, квартира нічого не помічає.",

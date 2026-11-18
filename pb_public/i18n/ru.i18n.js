@@ -4211,6 +4211,8 @@ window.PINN_I18N && window.PINN_I18N.keys("ru", {
   "loc.sosTestNotPossible": "Тест SOS невозможен",
   "loc.sosTestSent": "Тест SOS отправлен",
   "loc.startSending": "Начать передачу",
+  "loc.statusLastSeen": "последний раз",
+  "loc.statusOnTheWay": "в пути",
   "loc.streetTown": "Улица, город",
   "loc.testSameProcessReal": "Тест: тот же процесс, что и при настоящем вызове помощи (push, окно, карта, адрес) – но только для вас, семья ничего не заметит.",
   "loc.testSameProcessReal#wg": "Тест: тот же процесс, что и при настоящем вызове помощи (push, окно, карта, адрес) – но только для вас, квартира ничего не заметит.",

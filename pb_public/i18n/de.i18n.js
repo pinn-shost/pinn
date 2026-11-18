@@ -4196,6 +4196,8 @@ window.PINN_I18N && window.PINN_I18N.keys("de", {
   "loc.sosTestNotPossible": "SOS-Test nicht möglich",
   "loc.sosTestSent": "SOS-Test gesendet",
   "loc.startSending": "Senden starten",
+  "loc.statusLastSeen": "zuletzt",
+  "loc.statusOnTheWay": "unterwegs",
   "loc.streetTown": "Straße, Ort",
   "loc.testSameProcessReal": "Test: gleicher Ablauf wie ein echter Hilferuf (Push, Popup, Karte, Adresse) – aber nur an dich, die Familie merkt nichts.",
   "loc.testSameProcessReal#wg": "Test: gleicher Ablauf wie ein echter Hilferuf (Push, Popup, Karte, Adresse) – aber nur an dich, die WG merkt nichts.",

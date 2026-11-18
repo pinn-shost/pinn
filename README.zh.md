@@ -133,6 +133,15 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski和 🇺🇦 Українська**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.153.2 新功能
+
+**以 “AQ.” 开头的 Gemini 密钥、状态文字、错误日志**
+
+- 修复：设置向导现在接受以 `AQ.` 开头的新版 Google Gemini 密钥（其中含有一个点）。之前“检查”提示密钥有效，但“下一步”却拒绝它。
+- 修复：家庭成员的状态（“在路上”“最后位置”）一直是德语，现在所有语言都能正确显示。
+- 更改：错误日志的消息对德语显示德语，对其他所有语言显示英语。
+- 更改: `pb_hooks/pinn-einrichtung.js`, `pb_hooks/pinn-protokoll.js`, `pb_hooks/protokoll.pb.js`, `einrichtung.js`, `js/fehlerprotokoll.js`, `js/familie.js`, `js/familienkachel.js`, `js/versionslog.js`, `js/sprachen.js`, `i18n/`, `src/`, `index.html`, README.
+
 ## 1.153.1 新功能
 
 **健康：五个新模块，自己的资料显示“我”**
@@ -214,15 +223,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 - **Face ID。** 打开时 pinn. 又会自动请求 Face ID，和 1.150.5 之前一样。iOS 总会先显示自己的“使用通行密钥”窗口——点一下它，然后 Face ID；网页无法跳过它，额外的按钮只会多一次点按。底部的大按钮仍然保留，以防你把窗口划走。
 - 更改：`js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
 
-## 1.150.5 新功能
-
-**全新健康横幅 · 饮水整理**
-
-- **健康横幅。** 健康页面和每个人的页面重新有了横幅：水位随当天饮水量上升，还有气泡、心跳线和漂浮的小物件，夜晚会出现星星。
-- **饮水。** 目标、今天喝过的饮品和提醒现在都在按钮下方可展开的“设置”中。快捷方式“今日做饭”改名为“做饭”。
-- **Face ID。** 解锁只在点按按钮后开始（不再出现“使用通行密钥”窗口）；按钮位于底部，拇指即可轻松点到。
-- 更改：`js/gesundheit.js`, `css/gesundheit.css`, `js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
-
 ## 工作原理
 
 ```mermaid
@@ -251,7 +251,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.153.1` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.153.2` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

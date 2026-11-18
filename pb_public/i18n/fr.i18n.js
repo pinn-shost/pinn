@@ -4193,6 +4193,8 @@ window.PINN_I18N && window.PINN_I18N.keys("fr", {
   "loc.sosTestNotPossible": "Test SOS impossible",
   "loc.sosTestSent": "Test SOS envoyé",
   "loc.startSending": "Commencer l’envoi",
+  "loc.statusLastSeen": "dernière position",
+  "loc.statusOnTheWay": "en route",
   "loc.streetTown": "Rue, ville",
   "loc.testSameProcessReal": "Test : même déroulement qu'un vrai appel à l'aide (push, popup, carte, adresse) – mais seulement pour toi, la famille ne remarque rien.",
   "loc.testSameProcessReal#wg": "Test : même déroulement qu'un vrai appel à l'aide (push, popup, carte, adresse) – mais seulement pour toi, la colocation ne remarque rien.",

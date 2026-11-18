@@ -110,6 +110,15 @@ Dotknij obrazu, aby otworzyć go w pełnym rozmiarze.
 
 pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski i 🇺🇦 Українська**; dostosowuje walutę i numery alarmowe do twojego regionu i przełącza się między określeniami **rodzina** i **wspólne mieszkanie**. Jeden serwer może obsługiwać wiele rodzin, każdą z własnymi administratorami.
 
+## Nowości w 1.153.2
+
+**Klucze Gemini z „AQ.”, teksty statusu, dziennik błędów**
+
+- Naprawiono: kreator konfiguracji przyjmuje nowe klucze Google Gemini zaczynające się od `AQ.` (zawierają kropkę). Wcześniej „Sprawdź” mówiło, że klucz jest prawidłowy, ale „Dalej” go odrzucało.
+- Naprawiono: status członka rodziny („w drodze”, „ostatnio”) był zawsze po niemiecku – teraz jest w każdym języku.
+- Zmieniono: dziennik błędów pokazuje komunikaty po niemiecku dla języka niemieckiego i po angielsku dla wszystkich pozostałych.
+- Zmieniono: `pb_hooks/pinn-einrichtung.js`, `pb_hooks/pinn-protokoll.js`, `pb_hooks/protokoll.pb.js`, `einrichtung.js`, `js/fehlerprotokoll.js`, `js/familie.js`, `js/familienkachel.js`, `js/versionslog.js`, `js/sprachen.js`, `i18n/`, `src/`, `index.html`, README.
+
 ## Nowości w 1.153.1
 
 **Zdrowie: pięć nowych bloków, „Ja” we własnym profilu**
@@ -162,13 +171,6 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 - **Tryb ciemny.** Niebieski tekst jest teraz złoty (urządzenia, listy, „Zaplanuj zakupy”, ptaszki przy zwierzętach, zdrowiu i zadaniach); paski w Gospodarstwie mają kolor pokoju; komunikaty w czacie, przy umowach i „W skrócie” są czytelne. **Więcej ikon zamiast emoji:** zdjęcia profilowe (niemowlę, chłopiec, dziewczynka, mężczyzna, kobieta, dziadek, babcia), rodzina i wspólne mieszkanie, zwierzęta (pies, kot, królik, chomik, ptak, kurczak, ryba, koń, żółw, wąż); listy rozwijane pokazują tylko tekst. **Nowy baner zwierząt** z kolorowymi zwierzętami. **Dziennik zwierząt:** odhaczona kontrola pojawia się w dzienniku, a × cofa przypadkowe odhaczenie.
 - Zmieniono: `css/dunkelfarbe.css` (new), `js/symbole3.js` (new), `js/symbole.js`, `js/szenen.js`, `js/familie.js`, `js/haushalt.js`, `css/symbolfarbe.css`, `css/haustierewetter.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
 
-## Nowości w 1.150.9
-
-**Kolor ikon, ikony pojazdów i roślin**
-
-- **Kolor w dzień.** Ikony są teraz lekko wypełnione kolorem (białe pola, słońce żółte, deszcz niebieski, auto czerwone, narzędzia szare, rośliny zielone) w tym samym stylu linii; tryb ciemny bez zmian. **Ikony pojazdów:** zamiast emoji samochodu wybierasz ikonę liniową (sedan, SUV, taksówka, van, pickup, traktor, przyczepa kempingowa, rower, e-bike …). **Ikony roślin** też wybierasz w aplikacji, z nowymi ikonami kaktusa, palmy, tulipana, słonecznika, róży i innych. W banerach Pojazdów i Domu auta świecą tylko nocą: z przodu żółtawo, z tyłu na czerwono.
-- Zmienione: `js/symbole2.js`, `css/symbolfarbe.css` (new), `js/symbole.js`, `js/wetterlogos.js`, `js/symbolwahl.js`, `js/fahrzeuge.js`, `js/zuhause.js`, `js/dokumente.js`, `css/fahrzeuge.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
-
 ## Wymagania
 
 - NAS lub mini PC z zainstalowanym **Dockerem** i **Docker Compose** (np. Synology, UGREEN, QNAP albo zwykły serwer z Linuksem)
@@ -178,7 +180,7 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 ## Instalacja
 
 1. Pobierz i rozpakuj plik ZIP [najnowszej wersji](https://github.com/pinn-shost/pinn/releases/latest).
-2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.153.1` lub `pinn-main`) bez zmian.
+2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.153.2` lub `pinn-main`) bez zmian.
 3. Połącz się przez SSH i uruchom:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

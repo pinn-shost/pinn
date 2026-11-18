@@ -4196,6 +4196,8 @@ window.PINN_I18N && window.PINN_I18N.keys("nl", {
   "loc.sosTestNotPossible": "SOS-test niet mogelijk",
   "loc.sosTestSent": "SOS-test verzonden",
   "loc.startSending": "Starten met verzenden",
+  "loc.statusLastSeen": "laatst gezien",
+  "loc.statusOnTheWay": "onderweg",
   "loc.streetTown": "Straat, plaats",
   "loc.testSameProcessReal": "Test: hetzelfde proces als een echte hulpoproep (push, popup, kaart, adres) – maar alleen naar jou, het gezin merkt er niets van.",
   "loc.testSameProcessReal#wg": "Test: hetzelfde proces als een echte hulpoproep (push, popup, kaart, adres) – maar alleen naar jou, de woongroep merkt er niets van.",

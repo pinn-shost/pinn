@@ -91,7 +91,7 @@ async function errLogLoad() {
   if (!navigator.onLine) { list.innerHTML = `<p class="sm-empty">${escapeHtml(tk('common.noConnection'))}</p>`; return; }
   if (!errLogData) list.innerHTML = `<p class="sm-empty">${escapeHtml(tk('common.loading'))}</p>`;
   try {
-    const res = await apiFetch('/api/pinn/protokoll?limit=300', { cache: 'no-store' });
+    const res = await apiFetch('/api/pinn/protokoll?limit=300&sprache=' + encodeURIComponent((window.PINN_I18N && PINN_I18N.language && PINN_I18N.language.code) || 'en'), { cache: 'no-store' });
     if (res.status === 404) throw new Error(tk('errorLog.serverMissing'));
     const body = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(body.error || tk('errorLog.loadFailed'));

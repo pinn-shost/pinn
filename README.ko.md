@@ -133,6 +133,15 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.153.2의 새 소식
+
+**“AQ.”로 시작하는 Gemini 키, 상태 문구, 오류 로그**
+
+- 수정：설정 마법사가 `AQ.`로 시작하는 새 Google Gemini 키(점이 들어 있음)를 받아들입니다. 이전에는 “확인”에서 유효하다고 나오는데 “다음”에서 거부됐습니다.
+- 수정：가족 구성원의 상태(“이동 중”, “마지막 위치”)가 항상 독일어였던 문제를 고쳐 모든 언어로 표시됩니다.
+- 변경：오류 로그의 메시지는 독일어는 독일어로, 그 밖의 모든 언어는 영어로 표시됩니다.
+- 변경: `pb_hooks/pinn-einrichtung.js`, `pb_hooks/pinn-protokoll.js`, `pb_hooks/protokoll.pb.js`, `einrichtung.js`, `js/fehlerprotokoll.js`, `js/familie.js`, `js/familienkachel.js`, `js/versionslog.js`, `js/sprachen.js`, `i18n/`, `src/`, `index.html`, README.
+
 ## 1.153.1의 새 소식
 
 **건강: 새 블록 5개, 내 프로필에는 “나” 표시**
@@ -214,15 +223,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - **Face ID.** 열 때 1.150.5 이전처럼 pinn.이 다시 스스로 Face ID를 요청합니다. iOS는 항상 먼저 자체 “패스키 사용” 창을 보여 줍니다(한 번 탭한 뒤 Face ID). 웹에서는 이 창을 건너뛸 수 없고, 추가 버튼은 탭이 한 번 늘어날 뿐이었습니다. 창을 닫아 버린 경우를 위해 아래의 큰 버튼은 그대로 있습니다.
 - 변경: `js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
 
-## 1.150.5의 새 소식
-
-**새 건강 배너 · 수분 섭취 정리**
-
-- **건강 배너.** 건강 페이지와 각 사람의 페이지에 다시 배너가 생겼습니다. 오늘 마신 양만큼 차오르는 물, 거품, 심장 박동선, 떠다니는 물건들, 밤에는 별이 보입니다.
-- **마시기.** 목표, 오늘 마신 음료, 알림이 이제 버튼 아래 접을 수 있는 “설정”에 있습니다. 바로가기 “오늘 요리”는 이제 “요리”입니다.
-- **Face ID.** 잠금 해제는 버튼을 눌러야만 시작됩니다(“패스키 사용” 창이 더 이상 나오지 않음). 버튼은 엄지가 닿는 아래쪽에 있습니다.
-- 변경: `js/gesundheit.js`, `css/gesundheit.css`, `js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
-
 ## 작동 방식
 
 ```mermaid
@@ -251,7 +251,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.153.1` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.153.2` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

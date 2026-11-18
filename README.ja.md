@@ -133,6 +133,15 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski、🇺🇦 Українська** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.153.2の新機能
+
+**「AQ.」で始まる Gemini キー、ステータス表示、エラーログ**
+
+- 修正：セットアップウィザードが、`AQ.` で始まる新しい Google Gemini キー（ドットを含みます）を受け付けるようになりました。以前は「確認」で有効と表示されても「次へ」で拒否されていました。
+- 修正：家族メンバーの状態（「移動中」「最終位置」）が常にドイツ語だった問題を直し、すべての言語で表示されるようにしました。
+- 変更：エラーログのメッセージは、ドイツ語ではドイツ語、それ以外のすべての言語では英語で表示されます。
+- 変更: `pb_hooks/pinn-einrichtung.js`, `pb_hooks/pinn-protokoll.js`, `pb_hooks/protokoll.pb.js`, `einrichtung.js`, `js/fehlerprotokoll.js`, `js/familie.js`, `js/familienkachel.js`, `js/versionslog.js`, `js/sprachen.js`, `i18n/`, `src/`, `index.html`, README.
+
 ## 1.153.1の新機能
 
 **健康：新しいブロック5つ、自分のプロフィールは「自分」表示**
@@ -214,15 +223,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - **Face ID。** 開いたときに、1.150.5より前と同じようにpinn.が自動でFace IDを求めます。iOSは必ず先に独自の「パスキーを使用」画面を表示します（1回タップしてからFace ID）。Webからはこれを省略できず、追加のボタンはタップが1回増えるだけでした。画面を閉じてしまった場合に備えて、下の大きなボタンは残ります。
 - 変更：`js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
 
-## 1.150.5の新機能
-
-**新しい健康バナー · 水分記録を整理**
-
-- **健康バナー。** 健康ページと各メンバーのページに再びバナーが付きました。今日飲んだ量に応じて上がる水位、泡、心拍ライン、ふわふわ浮かぶアイテム、夜は星空です。
-- **水分。** 目標、今日の飲み物、リマインダーはボタンの下の折りたたみ「設定」にまとまりました。ショートカット「今日の料理」は「料理」になりました。
-- **Face ID。** ロック解除はボタンを押したときだけ始まります（「パスキーを使用」画面は出ません）。ボタンは親指が届く下部にあります。
-- 変更：`js/gesundheit.js`, `css/gesundheit.css`, `js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
-
 ## しくみ
 
 ```mermaid
@@ -251,7 +251,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.153.1`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.153.2`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -110,6 +110,15 @@ Tam boyutta açmak için bir resme dokun.
 
 pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski ve 🇺🇦 Українська**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
 
+## 1.153.2 sürümündeki yenilikler
+
+**“AQ.” ile başlayan Gemini anahtarları, durum metinleri, hata günlüğü**
+
+- Düzeltildi: kurulum sihirbazı `AQ.` ile başlayan yeni Google Gemini anahtarlarını (içlerinde bir nokta vardır) kabul eder. Daha önce “Kontrol et” anahtarın geçerli olduğunu söylüyor, “İleri” ise reddediyordu.
+- Düzeltildi: bir aile üyesinin durumu (“yolda”, “son konum”) hep Almancaydı – artık her dilde.
+- Değiştirildi: hata günlüğü iletilerini Almanca için Almanca, diğer tüm diller için İngilizce gösterir.
+- Değiştirildi: `pb_hooks/pinn-einrichtung.js`, `pb_hooks/pinn-protokoll.js`, `pb_hooks/protokoll.pb.js`, `einrichtung.js`, `js/fehlerprotokoll.js`, `js/familie.js`, `js/familienkachel.js`, `js/versionslog.js`, `js/sprachen.js`, `i18n/`, `src/`, `index.html`, README.
+
 ## 1.153.1 sürümündeki yenilikler
 
 **Sağlık: beş yeni blok, kendi profilinde “Ben”**
@@ -162,13 +171,6 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 - **Koyu mod.** Mavi yazı artık altın rengi (cihazlar, listeler, “Alışverişi planla”, evcil hayvan, sağlık ve görevlerdeki onay işaretleri); Ev işleri çubukları odanın rengini taşır; sohbet, sözleşme ve “Bir bakışta” notları okunaklı. **Emoji yerine daha fazla simge:** profil resimleri (bebek, erkek çocuk, kız çocuk, erkek, kadın, dede, nine), aile ve ev arkadaşlığı, hayvanlar (köpek, kedi, tavşan, hamster, kuş, civciv, balık, at, kaplumbağa, yılan); açılır listeler yalnızca metni gösterir. **Renkli hayvanlı yeni banner.** **Evcil hayvan günlüğü:** işaretlenen kontrol günlükte görünür, × yanlışlıkla yapılan işareti geri alır.
 - Değişenler: `css/dunkelfarbe.css` (new), `js/symbole3.js` (new), `js/symbole.js`, `js/szenen.js`, `js/familie.js`, `js/haushalt.js`, `css/symbolfarbe.css`, `css/haustierewetter.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
 
-## 1.150.9 sürümündeki yenilikler
-
-**Simgelere renk, taşıt ve bitki simgeleri**
-
-- **Gündüz renk.** Simgeler artık hafifçe boyalı (beyaz alanlar, güneş sarı, yağmur mavi, araba kırmızı, aletler gri, bitkiler yeşil), aynı çizgi stilinde; karanlık mod aynı kalır. **Taşıt simgeleri:** araba emojisi yerine bir çizgi simgesi seçilir (sedan, SUV, taksi, minibüs, pikap, traktör, karavan, bisiklet, e-bisiklet …). **Bitki simgeleri** de uygulamadan seçilir; kaktüs, palmiye, lale, ayçiçeği, gül ve daha fazlası için yeni simgeler var. Taşıtlar ve Ev bannerlarında arabalar yalnızca geceleri parlar: önde sarımsı, arkada kırmızı.
-- Değişenler: `js/symbole2.js`, `css/symbolfarbe.css` (new), `js/symbole.js`, `js/wetterlogos.js`, `js/symbolwahl.js`, `js/fahrzeuge.js`, `js/zuhause.js`, `js/dokumente.js`, `css/fahrzeuge.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -178,7 +180,7 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.153.1` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.153.2` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

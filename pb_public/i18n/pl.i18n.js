@@ -4197,6 +4197,8 @@ window.PINN_I18N && window.PINN_I18N.keys("pl", {
   "loc.sosTestNotPossible": "Test SOS niemożliwy",
   "loc.sosTestSent": "Test SOS wysłany",
   "loc.startSending": "Zacznij wysyłać",
+  "loc.statusLastSeen": "ostatnio",
+  "loc.statusOnTheWay": "w drodze",
   "loc.streetTown": "Ulica, miejscowość",
   "loc.testSameProcessReal": "Test: ten sam przebieg co przy prawdziwym wezwaniu pomocy (push, okno, mapa, adres) – ale tylko do ciebie, rodzina niczego nie zauważa.",
   "loc.testSameProcessReal#wg": "Test: ten sam przebieg co przy prawdziwym wezwaniu pomocy (push, okno, mapa, adres) – ale tylko do ciebie, wspólne mieszkanie niczego nie zauważa.",
