@@ -129,6 +129,13 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski et 🇺🇦 Українська**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.154.0
+
+**Correctif de sécurité pour les adresses de calendrier**
+
+- Corrigé : les adresses de calendrier sont désormais vérifiées. Quand un événement est supprimé, modifié ou lu dans iCloud ou Google, le serveur utilise les identifiants du calendrier familial et ne peut les envoyer qu'aux serveurs d'Apple et de Google. Auparavant, un profil connecté pouvait, avec une requête manipulée, envoyer ces identifiants à n'importe quel autre serveur. Les calendriers qui fonctionnent déjà ne sont pas concernés.
+- Modifié: `pb_hooks/calendar-sync.js`, `js/versionslog.js`, `js/sprachen.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, README.
+
 ## Nouveautés de la 1.153.2
 
 **Clés Gemini avec « AQ. », textes d'état, journal d'erreurs**
@@ -245,16 +252,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Shortcuts sans titre.** La tuile de l'aperçu n'affiche plus que les applis, séparées par la ligne.
 - Modifié: tous les modules de rappels dans `pb_hooks/` (`pinn-zeit.js` et 13 autres), `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.2).
 
-## Nouveautés de la 1.150.2
-
-**Les raccourcis restent sur l’aperçu**
-
-- **Fenêtre au lieu d’un saut.** Un appui sur boire, médicaments, courses, cuisiner aujourd’hui, plan de ménage, animaux, provisions, SOS ou en route ouvre la fenêtre en bas ; on y avance étape par étape et un court message indique ce qui s’est passé.
-- **Fenêtres et liens.** Tâche, rendez-vous, note, dépense et revenu ouvrent leur fenêtre habituelle, se laver les mains compte +1. Chat, finances et plantes sont de simples liens ; « Ouvrir › » dans la fenêtre mène à la page complète.
-- **Corrigé.** Après le passage à une autre page (p. ex. recettes ou courses), la tuile Raccourcis ne reste plus en bas.
-- **Une ou plusieurs rangées.** Sous Réglages → Raccourcis, vous choisissez séparément pour le téléphone et pour tablette et ordinateur : une rangée (balayer sur le côté pour voir le reste) ou plusieurs rangées (tous les raccourcis remplis vers le bas).
-- Modifié: `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/design.js`, `js/ansichten.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.1).
-
 ## Comment ça marche
 
 ```mermaid
@@ -281,7 +278,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.153.2` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.154.0` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

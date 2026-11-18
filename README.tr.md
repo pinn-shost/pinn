@@ -110,6 +110,13 @@ Tam boyutta açmak için bir resme dokun.
 
 pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski ve 🇺🇦 Українська**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
 
+## 1.154.0 sürümündeki yenilikler
+
+**Takvim adresleri için güvenlik düzeltmesi**
+
+- Düzeltildi: takvim adresleri artık denetleniyor. iCloud veya Google'da bir etkinlik silinirken, değiştirilirken ya da okunurken sunucu aile takviminin oturum bilgilerini kullanır ve bunları yalnızca Apple ve Google sunucularına gönderebilir. Önceden oturum açmış bir profil, değiştirilmiş bir istekle bu bilgileri başka bir sunucuya gönderebilirdi. Zaten çalışan takvimler etkilenmez.
+- Değiştirildi: `pb_hooks/calendar-sync.js`, `js/versionslog.js`, `js/sprachen.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, README.
+
 ## 1.153.2 sürümündeki yenilikler
 
 **“AQ.” ile başlayan Gemini anahtarları, durum metinleri, hata günlüğü**
@@ -164,13 +171,6 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 - Çocuk sayfasında “Saç tarama” için tarak simgesi; depo adının yanında artık emoji alanı yok; kasa seçim listelerinde emoji yok; alet simgesi artık açık ağızlı anahtar; “Misafir menüleri” iki kişi simgesiyle; aile adının yanındaki logoya dokunmak genel bakışa götürür; Bildirimler kartı ilk doldurulur, böylece “Bu cihazda etkinleştir” her zaman görünür; karanlık modda kısayol simgeleri gri.
 - Değiştirildi: `js/symbole.js`, `js/symbole3.js`, `js/ansichten.js`, `js/konto.js`, `css/dunkelfarbe.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`.
 
-## 1.150.10 sürümündeki yenilikler
-
-**Koyu mod, daha fazla simge, yeni evcil hayvan bannerı, evcil hayvan günlüğü**
-
-- **Koyu mod.** Mavi yazı artık altın rengi (cihazlar, listeler, “Alışverişi planla”, evcil hayvan, sağlık ve görevlerdeki onay işaretleri); Ev işleri çubukları odanın rengini taşır; sohbet, sözleşme ve “Bir bakışta” notları okunaklı. **Emoji yerine daha fazla simge:** profil resimleri (bebek, erkek çocuk, kız çocuk, erkek, kadın, dede, nine), aile ve ev arkadaşlığı, hayvanlar (köpek, kedi, tavşan, hamster, kuş, civciv, balık, at, kaplumbağa, yılan); açılır listeler yalnızca metni gösterir. **Renkli hayvanlı yeni banner.** **Evcil hayvan günlüğü:** işaretlenen kontrol günlükte görünür, × yanlışlıkla yapılan işareti geri alır.
-- Değişenler: `css/dunkelfarbe.css` (new), `js/symbole3.js` (new), `js/symbole.js`, `js/szenen.js`, `js/familie.js`, `js/haushalt.js`, `css/symbolfarbe.css`, `css/haustierewetter.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -180,7 +180,7 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.153.2` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.154.0` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

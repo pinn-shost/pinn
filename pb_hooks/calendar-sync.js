@@ -29,9 +29,30 @@ function authHeaderFor(email, password) {
     return "Basic " + base64Encode(email + ":" + password);
 }
 
+// Turns an address from the calendar server (or from the browser: delete / edit / raw event) into a full URL.
+// The requests carry the family's calendar login (iCloud app password, Google token), so they may only ever go
+// to the providers' own servers - otherwise a logged-in profile could send the login data to any server or let the
+// server call devices in the home network. Allowed: the account's own host, *.icloud.com, apidata.googleusercontent.com.
+// A relative address must be a plain path ("/..."): "@evil.com" or "//evil.com" would turn the host into a user name.
+const CALENDAR_HOSTS = /^(([a-z0-9-]+\.)*icloud\.com|apidata\.googleusercontent\.com)$/;
+function hostnameOf(url) {
+    const m = /^https:\/\/([^\/?#]*)/i.exec(String(url || ""));
+    if (!m || /[@\\\s]/.test(m[1])) return "";
+    return m[1].replace(/:\d+$/, "").toLowerCase();
+}
 function resolveHref(host, href) {
-    if (/^https?:\/\//i.test(href)) return href;
-    return host + href;
+    const h = String(href == null ? "" : href);
+    let url;
+    if (/^https?:\/\//i.test(h)) {
+        url = h;
+    } else if (h.charAt(0) === "/" && h.charAt(1) !== "/" && !/[\\\s]/.test(h)) {
+        url = host + h;
+    } else {
+        throw new Error("Ungültige Kalender-Adresse.");
+    }
+    const name = hostnameOf(url);
+    if (!name || !(name === hostnameOf(host) || CALENDAR_HOSTS.test(name))) throw new Error("Ungültige Kalender-Adresse.");
+    return url;
 }
 
 // Steps 1+2+3: principal -> calendar-home-set -> calendar list.
@@ -1322,7 +1343,7 @@ function deleteHouseholdTasks(email, password, taskCalendarName, cleaningCategor
 ===== END COMMENTED OUT ===== */
 
 module.exports = {
-    discoverCalendars, syncSelectedCalendars, runCronSync, syncCalendarFileOnly, syncFamily, deleteCalendarEvent, createCalendarEvent, updateCalendarEvent, fetchRawEvent, parseRecordData, bytesToText,
+    resolveHref, discoverCalendars, syncSelectedCalendars, runCronSync, syncCalendarFileOnly, syncFamily, deleteCalendarEvent, createCalendarEvent, updateCalendarEvent, fetchRawEvent, parseRecordData, bytesToText,
     kalenderPfad, readCalendarText, writeEmptyCalendar, removeCalendarFile, LEGACY_KALENDER_FILE_PATH, EMPTY_ICS,
     getHouseholdProgress,
     // AUSGEKLAMMERT (Aufgaben-Kalender): deleteHouseholdTasks, deleteTodayHouseholdTask,

@@ -133,6 +133,13 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski und 🇺🇦 Українська**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.154.0
+
+**Sicherheitsfix für Kalender-Adressen**
+
+- Behoben: Kalender-Adressen werden jetzt geprüft. Wenn ein Termin in iCloud oder Google gelöscht, geändert oder gelesen wird, nutzt der Server die Zugangsdaten des Familien-Kalenders und darf sie nur an die Server von Apple und Google schicken. Vorher hätte ein angemeldetes Profil mit einer manipulierten Anfrage die Zugangsdaten an einen beliebigen anderen Server schicken können. Bestehende Kalender funktionieren unverändert.
+- Geändert: `pb_hooks/calendar-sync.js`, `js/versionslog.js`, `js/sprachen.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, README.
+
 ## Neu in 1.153.2
 
 **Gemini-Schlüssel mit „AQ.“, Status-Texte, Fehlerprotokoll**
@@ -223,15 +230,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Face ID.** pinn. fragt beim Öffnen wieder von selbst nach Face ID, wie vor 1.150.5. iOS zeigt immer sein eigenes Fenster „Passkey verwenden“ davor – ein Tipp darauf, dann Face ID; die Web-App kann es nicht überspringen, und der zusätzliche Knopf bedeutete nur einen zweiten Tipp. Der große Knopf unten bleibt, falls du das Fenster wegwischst.
 - Geändert: `js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
 
-## Neu in 1.150.5
-
-**Neues Gesundheits-Banner · Trinken aufgeräumt**
-
-- **Gesundheits-Banner.** Die Gesundheitsseite und die Seite jeder Person haben wieder ein Banner: Wasser, das mit dem Getrunkenen steigt, Bläschen, Herzschlag und schwebende Dinge – nachts mit Sternen.
-- **Trinken.** Ziel, heutige Getränke und Erinnerung stehen jetzt im aufklappbaren Feld „Einstellungen“ unter dem Knopf. Der Shortcut „Heute kochen“ heißt jetzt „Kochen“.
-- **Face ID.** Entsperren startet nur noch mit dem Knopf (kein Fenster „Passkey verwenden“ mehr); der Knopf sitzt unten, mit dem Daumen erreichbar.
-- Geändert: `js/gesundheit.js`, `css/gesundheit.css`, `js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
-
 ## So funktioniert’s
 
 ```mermaid
@@ -260,7 +258,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.153.2` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.154.0` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

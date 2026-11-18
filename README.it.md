@@ -133,6 +133,13 @@ Tocca un’immagine per aprirla a dimensione intera.
 
 pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
 
+## Novità della 1.154.0
+
+**Correzione di sicurezza per gli indirizzi del calendario**
+
+- Corretto: gli indirizzi del calendario ora vengono controllati. Quando un evento viene eliminato, modificato o letto in iCloud o Google, il server usa le credenziali del calendario familiare e può inviarle solo ai server di Apple e Google. Prima un profilo connesso poteva, con una richiesta manipolata, inviare le credenziali a un altro server qualsiasi. I calendari che già funzionano non sono interessati.
+- Modificato: `pb_hooks/calendar-sync.js`, `js/versionslog.js`, `js/sprachen.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, README.
+
 ## Novità della 1.153.2
 
 **Chiavi Gemini con «AQ.», testi di stato, registro errori**
@@ -216,13 +223,6 @@ pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Icone proprie ovunque.** Circa 150 icone a linea semplici sostituiscono ora le emoji Apple in tutta l’app (stelle, spunte, avvisi, luoghi, regali, orologio, calendario, lucchetto, posta, attrezzi, salute, casa, denaro e altro). Animali, cibo, abbigliamento, piante, veicoli, sport e giocattoli, le emoji che scegli o scrivi tu (immagini dei membri, testi della chat, campi di inserimento) e le notifiche push restano emoji.
 - Modificato: `js/symbole.js` (new), `js/wetterlogos.js`, `css/wetterlogos.css` (new), `js/familie.js`, `js/grundlagen.js`, `js/profilauswahl.js`, `js/wetterkachel.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
 
-## Novità della 1.150.6
-
-**Face ID sblocca di nuovo da solo**
-
-- **Face ID.** pinn. chiede di nuovo Face ID da solo all’apertura, come prima della 1.150.5. iOS mostra sempre prima la sua finestra «Usa passkey»: un tocco su di essa, poi Face ID; il web non può saltarla e il pulsante in più significava solo un secondo tocco. Il grande pulsante in basso resta, nel caso chiudessi la finestra.
-- Modificato: `js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
-
 ## Come funziona
 
 ```mermaid
@@ -251,7 +251,7 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 ## Installazione
 
 1. Scarica lo ZIP dell’[ultima release](https://github.com/pinn-shost/pinn/releases/latest) e decomprimilo.
-2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.153.2` o `pinn-main`) così com’è.
+2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.154.0` o `pinn-main`) così com’è.
 3. Accedi via SSH ed esegui:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -133,6 +133,13 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski、🇺🇦 Українська** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.154.0の新機能
+
+**カレンダーアドレスのセキュリティ修正**
+
+- 修正：カレンダーのアドレスを検証するようになりました。iCloud や Google で予定を削除・変更・取得するとき、サーバーは家族カレンダーのログイン情報を使い、送信先は Apple と Google のサーバーだけです。以前は、ログイン済みのプロフィールが細工したリクエストでログイン情報を任意のサーバーへ送らせることができました。すでに動作しているカレンダーへの影響はありません。
+- 変更: `pb_hooks/calendar-sync.js`, `js/versionslog.js`, `js/sprachen.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, README.
+
 ## 1.153.2の新機能
 
 **「AQ.」で始まる Gemini キー、ステータス表示、エラーログ**
@@ -216,13 +223,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - **あらゆる場所に専用アイコン。** 約150個のシンプルな線のアイコンが、アプリ全体でAppleの絵文字に置き換わりました（星、チェック、警告、場所、プレゼント、時計、カレンダー、鍵、メール、道具、健康、家、お金など）。動物、食べ物、衣類、植物、乗り物、スポーツ、おもちゃ、自分で選んだり入力した絵文字（メンバーの画像、チャットの文章、入力欄）、プッシュ通知は絵文字のままです。
 - 変更：`js/symbole.js` (new), `js/wetterlogos.js`, `css/wetterlogos.css` (new), `js/familie.js`, `js/grundlagen.js`, `js/profilauswahl.js`, `js/wetterkachel.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
 
-## 1.150.6の新機能
-
-**Face IDが再び自動でロック解除**
-
-- **Face ID。** 開いたときに、1.150.5より前と同じようにpinn.が自動でFace IDを求めます。iOSは必ず先に独自の「パスキーを使用」画面を表示します（1回タップしてからFace ID）。Webからはこれを省略できず、追加のボタンはタップが1回増えるだけでした。画面を閉じてしまった場合に備えて、下の大きなボタンは残ります。
-- 変更：`js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
-
 ## しくみ
 
 ```mermaid
@@ -251,7 +251,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.153.2`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.154.0`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

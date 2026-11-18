@@ -133,6 +133,13 @@ Toque em qualquer imagem para abri-la em tamanho real.
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.154.0
+
+**Correção de segurança nos endereços do calendário**
+
+- Corrigido: os endereços do calendário agora são verificados. Quando um evento é excluído, alterado ou lido no iCloud ou no Google, o servidor usa os dados de acesso do calendário da família e só pode enviá-los aos servidores da Apple e do Google. Antes, um perfil conectado podia, com uma requisição manipulada, enviar esses dados a qualquer outro servidor. Os calendários que já funcionam não são afetados.
+- Alterado: `pb_hooks/calendar-sync.js`, `js/versionslog.js`, `js/sprachen.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, README.
+
 ## Novidades da 1.153.2
 
 **Chaves do Gemini com “AQ.”, textos de estado, registro de erros**
@@ -216,13 +223,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Ícones próprios em todo o lado.** Cerca de 150 ícones de linha simples substituem agora os emojis da Apple em toda a app (estrelas, vistos, avisos, locais, presentes, relógio, calendário, cadeado, correio, ferramentas, saúde, casa, dinheiro e mais). Animais, comida, roupa, plantas, veículos, desporto e brinquedos, os emojis que escolhe ou escreve (fotos dos membros, textos do chat, campos de entrada) e as notificações push continuam a ser emojis.
 - Alterado: `js/symbole.js` (new), `js/wetterlogos.js`, `css/wetterlogos.css` (new), `js/familie.js`, `js/grundlagen.js`, `js/profilauswahl.js`, `js/wetterkachel.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
 
-## Novidades da 1.150.6
-
-**O Face ID volta a desbloquear sozinho**
-
-- **Face ID.** O pinn. volta a pedir o Face ID sozinho ao abrir, como antes da 1.150.5. O iOS mostra sempre primeiro a sua própria janela «Usar chave-passe»: um toque nela e depois o Face ID; a web não a consegue saltar, e o botão adicional só significava um segundo toque. O botão grande em baixo continua, caso feches a janela.
-- Alterado: `js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
-
 ## Como funciona
 
 ```mermaid
@@ -251,7 +251,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.153.2` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.154.0` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

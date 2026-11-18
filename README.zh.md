@@ -133,6 +133,13 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski和 🇺🇦 Українська**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.154.0 新功能
+
+**日历地址的安全修复**
+
+- 修复：现在会检查日历地址。在 iCloud 或 Google 中删除、修改或读取日程时，服务器会使用家庭日历的登录信息，且只能把它发送给 Apple 和 Google 的服务器。以前，已登录的档案可以通过伪造的请求把登录信息发送到任意其他服务器。已正常工作的日历不受影响。
+- 更改: `pb_hooks/calendar-sync.js`, `js/versionslog.js`, `js/sprachen.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, README.
+
 ## 1.153.2 新功能
 
 **以 “AQ.” 开头的 Gemini 密钥、状态文字、错误日志**
@@ -216,13 +223,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 - **随处可见的专属图标。** 约 150 个简洁的线条图标现在取代了整个应用中的 Apple 表情符号（星星、对勾、警告、地点、礼物、时钟、日历、锁、邮件、工具、健康、房屋、金钱等）。动物、食物、衣物、植物、交通工具、运动和玩具，以及您自己选择或输入的表情符号（成员头像、聊天文字、输入框）和推送消息仍保持表情符号。
 - 更改：`js/symbole.js` (new), `js/wetterlogos.js`, `css/wetterlogos.css` (new), `js/familie.js`, `js/grundlagen.js`, `js/profilauswahl.js`, `js/wetterkachel.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
 
-## 1.150.6 新功能
-
-**Face ID 再次自动解锁**
-
-- **Face ID。** 打开时 pinn. 又会自动请求 Face ID，和 1.150.5 之前一样。iOS 总会先显示自己的“使用通行密钥”窗口——点一下它，然后 Face ID；网页无法跳过它，额外的按钮只会多一次点按。底部的大按钮仍然保留，以防你把窗口划走。
-- 更改：`js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
-
 ## 工作原理
 
 ```mermaid
@@ -251,7 +251,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.153.2` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.154.0` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

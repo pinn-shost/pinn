@@ -129,6 +129,13 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski and 🇺🇦 Українська**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.154.0
+
+**Security fix for calendar addresses**
+
+- Fixed: calendar addresses are now checked. When an event is deleted, changed or read in iCloud or Google, the server uses the family's calendar login and may send it only to the servers of Apple and Google. Before, a signed-in profile could have sent the login to any other server with a manipulated request. Calendars that already work are not affected.
+- Changed: `pb_hooks/calendar-sync.js`, `js/versionslog.js`, `js/sprachen.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, README.
+
 ## What's new in 1.153.2
 
 **Gemini keys with “AQ.”, status texts, error log**
@@ -245,16 +252,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Shortcuts without a heading.** The tile on the overview shows just the apps, separated by the line.
 - Changed: all reminder modules in `pb_hooks/` (`pinn-zeit.js` and 13 more), `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.2).
 
-## What's new in 1.150.2
-
-**Shortcuts stay on the overview**
-
-- **Window instead of jumping.** A tap on drinking, medication, shopping, cook today, cleaning plan, pets, pantry, SOS or on my way opens the window at the bottom; you click through it there and a short notice says what happened.
-- **Pop-ups and links.** Task, event, note, expense and income open their usual pop-up, hand washing counts +1. Chat, finances and plants are plain links; “Open ›” in the window leads to the full page.
-- **Fixed.** After switching to another page (e.g. recipes or shopping) the Shortcuts tile no longer stays at the bottom.
-- **One or several rows.** Under Settings → Shortcuts you choose separately for the phone and for tablet & computer: one row (swipe sideways to see the rest) or several rows (all shortcuts filled downwards).
-- Changed: `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/design.js`, `js/ansichten.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.1).
-
 ## How it works
 
 ```mermaid
@@ -281,7 +278,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.153.2` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.154.0` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

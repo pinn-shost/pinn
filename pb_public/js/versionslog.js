@@ -22,6 +22,13 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.154', datum: '18.11.2026', titel: 'Sicherheitsfix für Kalender-Adressen',
+    punkte: [
+      ['fix', '1.154.0: Sicherheit: Kalender-Adressen werden jetzt geprüft. Wenn ein Termin in iCloud oder Google gelöscht, geändert oder gelesen wird, nutzt der Server die Zugangsdaten des Familien-Kalenders und darf sie nur an die Server von Apple und Google schicken – eine fremde oder ins Heimnetz zeigende Adresse wird abgelehnt. Vorher hätte ein angemeldetes Profil mit einer manipulierten Anfrage die Zugangsdaten an einen beliebigen anderen Server schicken können. Bestehende Kalender funktionieren unverändert.'],
+      ['info', '1.154.0 geändert: pb_hooks/calendar-sync.js, js/versionslog.js, js/sprachen.js, i18n/versionslog.en.js, src/version.txt, index.html, alle READMEs.'],
+    ],
+  },
+  {
     v: '1.153', datum: '17.11.2026', titel: 'Sicherheit aus Home Assistant',
     punkte: [
       ['neu', 'Sicherheit: Admins der Familie fassen unter Einstellungen → Sicherheit Geräte aus Home Assistant zu Gruppen zusammen – Fenster & Türen, Türschlösser, Kameras, Garagentor & Rollläden, Rauch- & Wassermelder, Alarmanlage und Bewegungsmelder. Gruppe benennen, Symbol wählen, passende Sensoren abhaken (pinn. schlägt sie nach Art vor).'],

@@ -3,6 +3,10 @@
    language other than German. One entry per version of PINN_CHANGELOG: t = title, p = points in the same order
    (null = no translation, the German text is shown). Older versions are not translated. */
 window.PINN_CHANGELOG_EN = {
+  "1.154": {"t": "Security fix for calendar addresses", "p": [
+"1.154.0: Security: calendar addresses are now checked. When an event is deleted, changed or read in iCloud or Google, the server uses the family's calendar login and may send it only to the servers of Apple and Google – a foreign address or one pointing into the home network is rejected. Before, a signed-in profile could have sent the login to any other server with a manipulated request. Existing calendars keep working unchanged.",
+"1.154.0 changed: pb_hooks/calendar-sync.js, js/versionslog.js, js/sprachen.js, i18n/versionslog.en.js, src/version.txt, index.html, all READMEs."
+  ]},
   "1.153": {"t": "Security from Home Assistant", "p": [
 "Security: family admins group Home Assistant devices under Settings → Security – windows & doors, door locks, cameras, garage door & shutters, smoke & water detectors, alarm system and motion detectors. Name the group, pick a symbol, tick the matching sensors (pinn. suggests them by kind).",
 "Security bar at the bottom of the family dashboard: one field per group with symbol and status dot – e.g. “All closed”, “Kitchen window is open”, “1 camera is on”, “All cameras are off” or in red “Alarm: Hallway”. Refreshes every 30 seconds, display only.",

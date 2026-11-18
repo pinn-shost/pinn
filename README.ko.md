@@ -133,6 +133,13 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.154.0의 새 소식
+
+**캘린더 주소 보안 수정**
+
+- 수정：캘린더 주소를 이제 검사합니다. iCloud나 Google에서 일정을 삭제·변경·읽을 때 서버는 가족 캘린더의 로그인 정보를 사용하며, 이 정보는 Apple과 Google 서버로만 보낼 수 있습니다. 이전에는 로그인한 프로필이 조작된 요청으로 로그인 정보를 임의의 다른 서버로 보낼 수 있었습니다. 이미 작동하는 캘린더에는 영향이 없습니다.
+- 변경: `pb_hooks/calendar-sync.js`, `js/versionslog.js`, `js/sprachen.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, README.
+
 ## 1.153.2의 새 소식
 
 **“AQ.”로 시작하는 Gemini 키, 상태 문구, 오류 로그**
@@ -216,13 +223,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - **어디서나 나만의 아이콘.** 약 150개의 단순한 선 아이콘이 이제 앱 전체에서 Apple 이모지를 대신합니다(별, 체크, 경고, 장소, 선물, 시계, 달력, 자물쇠, 우편, 도구, 건강, 집, 돈 등). 동물, 음식, 옷, 식물, 탈것, 스포츠, 장난감, 직접 고르거나 입력한 이모지(멤버 사진, 채팅 글, 입력란)와 푸시 알림은 이모지로 남습니다.
 - 변경: `js/symbole.js` (new), `js/wetterlogos.js`, `css/wetterlogos.css` (new), `js/familie.js`, `js/grundlagen.js`, `js/profilauswahl.js`, `js/wetterkachel.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
 
-## 1.150.6의 새 소식
-
-**Face ID가 다시 자동으로 잠금 해제**
-
-- **Face ID.** 열 때 1.150.5 이전처럼 pinn.이 다시 스스로 Face ID를 요청합니다. iOS는 항상 먼저 자체 “패스키 사용” 창을 보여 줍니다(한 번 탭한 뒤 Face ID). 웹에서는 이 창을 건너뛸 수 없고, 추가 버튼은 탭이 한 번 늘어날 뿐이었습니다. 창을 닫아 버린 경우를 위해 아래의 큰 버튼은 그대로 있습니다.
-- 변경: `js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
-
 ## 작동 방식
 
 ```mermaid
@@ -251,7 +251,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.153.2` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.154.0` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

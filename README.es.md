@@ -129,6 +129,13 @@ Pulsa cualquier imagen para verla en tamaño completo.
 
 pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski y 🇺🇦 Українська**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades de la 1.154.0
+
+**Corrección de seguridad en las direcciones del calendario**
+
+- Corregido: ahora se comprueban las direcciones del calendario. Cuando se borra, cambia o lee un evento en iCloud o Google, el servidor usa los datos de acceso del calendario familiar y solo puede enviarlos a los servidores de Apple y Google. Antes, un perfil con sesión iniciada podía enviar esos datos a cualquier otro servidor con una petición manipulada. Los calendarios que ya funcionan no se ven afectados.
+- Cambiado: `pb_hooks/calendar-sync.js`, `js/versionslog.js`, `js/sprachen.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, README.
+
 ## Novedades de la 1.153.2
 
 **Claves de Gemini con «AQ.», textos de estado, registro de errores**
@@ -245,16 +252,6 @@ pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Shortcuts sin título.** El mosaico del resumen muestra solo las apps, separadas por la línea.
 - Modificado: todos los módulos de recordatorios en `pb_hooks/` (`pinn-zeit.js` y 13 más), `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.2).
 
-## Novedades de la 1.150.2
-
-**Los accesos directos se quedan en el resumen**
-
-- **Ventana en lugar de salto.** Un toque en beber, medicamentos, compra, cocinar hoy, plan de limpieza, mascotas, despensa, SOS o en camino abre la ventana abajo; allí vas paso a paso y un breve aviso dice qué ha pasado.
-- **Ventanas y enlaces.** Tarea, cita, nota, gasto e ingreso abren su ventana de siempre; lavarse las manos suma +1. Chat, finanzas y plantas son enlaces simples; «Abrir ›» en la ventana lleva a la página completa.
-- **Corregido.** Al cambiar a otra página (p. ej. recetas o compra) el mosaico Accesos directos ya no se queda abajo.
-- **Una o varias filas.** En Ajustes → Accesos directos eliges por separado para el móvil y para tableta y ordenador: una fila (desliza hacia el lado para ver el resto) o varias filas (todos los accesos directos hacia abajo).
-- Modificado: `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/design.js`, `js/ansichten.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.1).
-
 ## Cómo funciona
 
 ```mermaid
@@ -281,7 +278,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.153.2` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.154.0` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
