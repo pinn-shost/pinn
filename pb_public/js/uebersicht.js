@@ -11,7 +11,8 @@
    ----------------------------------------------------------
    Order and visibility per profile (stored with the personal design, i.e.
    across devices and sent later when offline). Large tiles: calendar, meals, tasks.
-   Small tiles: weather (3 days), shortcuts (since 1.150.0) and birthdays (iCloud and Google contacts, pb_hooks/geburtstage.pb.js).
+   Small tiles: weather (3 days), shortcuts (since 1.150.0), birthdays (iCloud and Google contacts, pb_hooks/geburtstage.pb.js)
+   and security (Home Assistant groups, since 1.153.0, js/sicherheit.js).
    - Phone / iPad portrait: all visible tiles one below the other in the chosen order.
    - iPad landscape / computer: calendar over the full height on the left (or right, if another large
      tile comes before it), all other tiles next to it one below the other.
@@ -26,12 +27,15 @@ const OVERVIEW_TILES = [
   { id: 'kalender', icon: '📅', get label() { return tk('overview.tile.calendar'); }, get hint() { return tk('overview.tileHint.calendar'); }, big: true },
   { id: 'essen', icon: '🍽️', get label() { return tk('overview.tile.meals'); }, get hint() { return tk('overview.tileHint.meals'); }, big: true },
   { id: 'aufgaben', icon: '✅', get label() { return tk('overview.tile.tasks'); }, get hint() { return tk('overview.tileHint.tasks'); }, big: true },
+  // since 1.153.0 - last in the default order, so it sits at the bottom (js/sicherheit.js)
+  { id: 'sicherheit', icon: '🛡️', get label() { return tk('overview.tile.security'); }, get hint() { return tk('overview.tileHint.security'); }, big: false },
 ];
 const OVERVIEW_DEFAULT_ORDER = OVERVIEW_TILES.map(t => t.id);
 const OVERVIEW_SECTION_IDS = {
   kalender: 'calendarSection', essen: 'recipeSection', aufgaben: 'taskSection',
   wetter: 'weatherTileSection', geburtstage: 'birthdayTileSection', vertraege: 'contractTileSection',
   pinnwand: 'boardTileSection', familie: 'familyTileSection', shortcuts: 'shortcutsTileSection',
+  sicherheit: 'securityTileSection',
 };
 const OVERVIEW_BDAY_DAY_OPTIONS = [7, 14, 30, 60];
 let overviewOrder = OVERVIEW_DEFAULT_ORDER.slice();
@@ -79,6 +83,8 @@ function overviewTileAvailable(id) {
     try { return !isCurrentUserGuest() && isViewAllowed('finanzen') && !!finance && vtTileList().length > 0; } catch (e) { return false; }
   }
   if (id === 'familie') return !isCurrentUserGuest() && members.length > 0;
+  // Security (Home Assistant groups): only if an admin set up groups and allows the overview (js/sicherheit.js)
+  if (id === 'sicherheit') { try { return secTileAvailable(); } catch (e) { return false; } }
   // Apps chosen under Settings → Shortcuts are usable, or none chosen yet (then the tile offers the selection)
   if (id === 'shortcuts') { try { return kzTileAvailable(); } catch (e) { return false; } }
   if (id === 'pinnwand') {
@@ -193,6 +199,7 @@ function refreshOverviewTiles() {
     renderContractTile();
     renderBoardTile();
     renderShortcutsTile();
+    renderSecurityTile();
     if (currentView !== 'uebersicht' || !familyRecordId || recipeDetailOpenedFromUebersicht) return;
     if (visibleOverviewTiles().join(',') === lastOverviewTileKey) return;
     const prevMode = calendarMode;

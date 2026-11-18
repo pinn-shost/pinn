@@ -133,6 +133,14 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski und 🇺🇦 Українська**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.153.0
+
+**Sicherheit aus Home Assistant**
+
+- Neu: **Sicherheit** – Admins der Familie fassen unter Einstellungen → Sicherheit Geräte aus Home Assistant zu benannten Gruppen zusammen: Fenster & Türen, Türschlösser, Kameras, Garagentor & Rollläden, Rauch- & Wassermelder, Alarmanlage, Bewegungsmelder. Das Familien-Dashboard zeigt unten eine Leiste (z. B. „Alles zu“, „Fenster Küche ist offen“, „1 Kamera ist an“, rot bei Alarm), die Übersicht bekommt die Kachel „Sicherheit“, in der Erwachsene ein offenes Türschloss zusperren können (nie aufsperren). Optional **Abend-Check**: Zur gewählten Uhrzeit bekommen alle Admins eine Push-Mitteilung, wenn noch etwas offen, nicht abgeschlossen oder die Alarmanlage unscharf ist. Voraussetzung: Home Assistant ist unter Einstellungen → Smarthome verbunden.
+- Behoben: Im Dunkelmodus waren die Knöpfe unter dem Titel einer Aufgabe (Smarthome-Start, Zähler ablesen …) blau auf blau – jetzt Gold.
+- Geändert: `pb_hooks/pinn-sicherheit.js` (new), `pb_hooks/sicherheit.pb.js` (new), `pb_hooks/pinn-smarthome.js`, `pb_hooks/pinn-schema.js`, `js/sicherheit.js` (new), `css/sicherheit.css` (new), `js/uebersicht.js`, `js/profilauswahl.js`, `js/einstellungen.js`, `css/dunkelfarbe.css`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `pinn-setup.sh`, `src/`, `index.html`.
+
 ## Neu in 1.152.1
 
 **Wiederherstellen von Sicherungen geht wieder**
@@ -224,16 +232,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Shortcuts ohne Überschrift.** Die Kachel auf der Übersicht zeigt nur noch die Apps, getrennt durch die Linie.
 - Geändert: alle Erinnerungs-Module in `pb_hooks/` (`pinn-zeit.js` und 13 weitere), `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.2).
 
-## Neu in 1.150.2
-
-**Shortcuts bleiben auf der Übersicht**
-
-- **Fenster statt Sprung.** Ein Tipp auf Trinken, Medikamente, Einkauf, Heute kochen, Putzplan, Haustiere, Vorrat, SOS oder Unterwegs öffnet das Fenster unten; dort klickst du dich durch, und ein kurzer Hinweis sagt, was passiert ist.
-- **Fenster und Links.** Aufgabe, Termin, Zettel, Ausgabe und Einnahme öffnen ihr gewohntes Fenster, Hände waschen zählt +1. Chat, Finanzen und Pflanzen sind einfache Links; „Öffnen ›“ im Fenster führt zur ganzen Seite.
-- **Behoben.** Nach dem Wechsel auf eine andere Seite (z. B. Rezepte oder Einkauf) steht unten nicht mehr die Kachel „Shortcuts“.
-- **Eine oder mehrere Reihen.** Unter Einstellungen → Shortcuts wählst du getrennt für das Handy und für Tablet & Computer: eine Reihe (zur Seite wischen für die übrigen) oder mehrere Reihen (alle Shortcuts nach unten aufgefüllt).
-- Geändert: `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `js/uebersicht.js`, `js/design.js`, `js/ansichten.js`, `js/rezepte.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.1).
-
 ## So funktioniert’s
 
 ```mermaid
@@ -262,7 +260,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.152.1` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.153.0` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

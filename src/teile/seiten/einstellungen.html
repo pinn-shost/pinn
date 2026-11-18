@@ -537,6 +537,18 @@
         <p data-tk="settings.smartHome.footer" class="text-[11px] text-ink/40 mt-3">You set which action belongs to which task on the household page in the respective cleaning task or on the bin.</p>
       </div>
     </details>
+    <!-- Security: Home Assistant devices in groups for the dashboard and the overview (family admins only, js/sicherheit.js) -->
+    <details class="settings-accordion set-card hidden" id="settingsSecurityAccordion">
+      <summary class="set-sum">
+        <span class="set-ico">🛡️</span>
+        <span class="set-head"><span data-tk="security.title" class="sa-title">Security</span><small data-tk="security.settingsSubtitle">Windows, doors, locks and cameras from Home Assistant</small></span>
+        <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
+      </summary>
+      <div class="set-body">
+        <p id="secSettingsStatus" class="text-xs text-ink/50 mb-3"></p>
+        <div id="secSettingsBody"></div>
+      </div>
+    </details>
     <details class="settings-accordion set-card" id="settingsVoiceAccordion">
       <summary class="set-sum">
         <span class="set-ico">🎙️</span>

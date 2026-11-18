@@ -133,6 +133,14 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski和 🇺🇦 Українська**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.153.0 新功能
+
+**来自 Home Assistant 的安全概览**
+
+- 新增：**安全** – 家庭管理员可在 设置 → 安全 中把 Home Assistant 设备分成命名的分组：门窗、门锁、摄像头、车库门和卷帘、烟雾和漏水探测器、报警系统、人体感应器。家庭看板底部显示一条状态栏（例如“全部关闭”“厨房窗户 未关”“1 个摄像头已开启”，报警时为红色），概览新增“安全”卡片，成人可在此锁上未锁的门锁（从不开锁）。可选**晚间检查**：在设定时间，如仍有东西未关、未上锁或报警系统未布防，所有管理员都会收到推送。前提：已在 设置 → 智能家居 中连接 Home Assistant。
+- 修复：深色模式下任务标题下方的按钮（智能家居启动、抄表 …）是蓝底蓝字——现在为金色。
+- 更改: `pb_hooks/pinn-sicherheit.js` (new), `pb_hooks/sicherheit.pb.js` (new), `pb_hooks/pinn-smarthome.js`, `pb_hooks/pinn-schema.js`, `js/sicherheit.js` (new), `css/sicherheit.css` (new), `js/uebersicht.js`, `js/profilauswahl.js`, `js/einstellungen.js`, `css/dunkelfarbe.css`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `pinn-setup.sh`, `src/`, `index.html`.
+
 ## 1.152.1 新功能
 
 **恢复备份重新可用**
@@ -215,15 +223,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 - **轻点一下即可。** 如果某台设备仍然丢失了注册（例如被 iOS 重置），pinn. 会自动重新注册，或在底部显示“重新开启”，无需进入设置。
 - 更改：`pb_hooks/pinn-push.js`, `pb_hooks/push.pb.js`, `pb_hooks/pinn-sitzungen.js`, `js/mitteilungen.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
 
-## 1.150.3 新功能
-
-**所有提醒按你的时间 · 家长一同提醒**
-
-- **所有提醒按你的时间。** 生日、宠物、行李清单、储物柜、合同、文件、每周预览、月度展望与年度回顾、日程提醒、每日概览、任务和垃圾提醒、留言板、语音控制、智能家居和位置消息现在都按你设备的时区计算，包括夏令时和冬令时。无需设置。
-- **家长一同提醒。** 对于孩子，家长也会收到喝水、服药和洗手提醒，并在前面标注孩子的名字。每个孩子可单独开关“同时提醒家长”（默认开启）。
-- **Shortcuts 不再有标题。** 概览中的卡片只显示应用，用分隔线隔开。
-- 已更改: `pb_hooks/` 中所有提醒模块（`pinn-zeit.js` 等共 14 个）、`js/gesundheit.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/`、`src/`、`index.html`、README（含 1.150.2）。
-
 ## 工作原理
 
 ```mermaid
@@ -252,7 +251,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.152.1` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.153.0` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

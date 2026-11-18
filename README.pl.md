@@ -110,6 +110,14 @@ Dotknij obrazu, aby otworzyć go w pełnym rozmiarze.
 
 pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski i 🇺🇦 Українська**; dostosowuje walutę i numery alarmowe do twojego regionu i przełącza się między określeniami **rodzina** i **wspólne mieszkanie**. Jeden serwer może obsługiwać wiele rodzin, każdą z własnymi administratorami.
 
+## Nowości w 1.153.0
+
+**Bezpieczeństwo z Home Assistant**
+
+- Nowość: **Bezpieczeństwo** – admini rodziny grupują urządzenia z Home Assistant w Ustawienia → Bezpieczeństwo: okna i drzwi, zamki drzwi, kamery, brama garażowa i rolety, czujniki dymu i wody, system alarmowy, czujniki ruchu. Panel rodziny pokazuje na dole pasek (np. „Wszystko zamknięte”, „Okno kuchnia jest otwarte”, „1 kamera jest włączona”, na czerwono przy alarmie), a przegląd dostaje kafelek „Bezpieczeństwo”, w którym dorośli mogą zamknąć otwarty zamek (nigdy otworzyć). Opcjonalna **kontrola wieczorna**: o wybranej godzinie wszyscy admini dostają powiadomienie, jeśli coś jest jeszcze otwarte, niezamknięte na klucz lub alarm jest rozbrojony. Warunek: Home Assistant połączony w Ustawienia → Inteligentny dom.
+- Naprawiono: w trybie ciemnym przyciski pod tytułem zadania (start inteligentnego domu, odczyt liczników …) były niebieskie na niebieskim – teraz złote.
+- Zmieniono: `pb_hooks/pinn-sicherheit.js` (new), `pb_hooks/sicherheit.pb.js` (new), `pb_hooks/pinn-smarthome.js`, `pb_hooks/pinn-schema.js`, `js/sicherheit.js` (new), `css/sicherheit.css` (new), `js/uebersicht.js`, `js/profilauswahl.js`, `js/einstellungen.js`, `css/dunkelfarbe.css`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `pinn-setup.sh`, `src/`, `index.html`.
+
 ## Nowości w 1.152.1
 
 **Przywracanie kopii zapasowych znów działa**
@@ -160,14 +168,6 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 - **Własne ikony wszędzie.** Jedzenie, dom, pojazdy, rośliny, ubrania, zabawki i sport mają teraz również własne ikony liniowe (pokoje, rodzaje odpadów, rodzaje pojazdów, ogród, budzik, przełącznik kalendarza, odliczanie). **Ikony kategorii** w Finansach, Umowach, Dokumentach i Spiżarni wybierasz spośród około 150 gotowych ikon zamiast z klawiatury emoji, a ten sam rodzaj kategorii ma wszędzie tę samą ikonę. Sceny Domu i Pojazdów pokazują nowe, kolorowe pojazdy. Drobiazgi: pogoda „Teraz” bez przerywanej ramki, czcionka zegara na pulpicie, ikona listy planu posiłków, ikony na linii tekstu.
 - Zmienione: `js/szenen.js`, `js/symbolwahl.js` (new), `js/symbole.js`, `css/wetterlogos.css`, `js/zustand.js`, `js/zuhause.js`, `js/fahrzeuge.js`, `js/gesundheit.js`, `js/finanzen.js`, `js/vertraege.js`, `js/dokumente.js`, `js/vorrat.js`, `js/vorrat2.js`, `js/einkauf.js`, `js/profilauswahl.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
 
-## Nowości w 1.150.7
-
-**Własne ikony pogody**
-
-- **Ikony pogody.** Widoki pogody mają teraz własne, proste ikony liniowe zamiast emoji Apple, w tym samym stylu co ikony skrótów: słońce, księżyc, chmury, deszcz, śnieg, burza, wiatr, UV, wschód słońca, woda i wskazówki dotyczące ubioru. W trybie ciemnym zmieniają kolor.
-- **Własne ikony wszędzie.** Około 150 prostych ikon liniowych zastępuje teraz emoji Apple w całej aplikacji (gwiazdki, ptaszki, ostrzeżenia, miejsca, prezenty, zegar, kalendarz, kłódka, poczta, narzędzia, zdrowie, dom, pieniądze i więcej). Zwierzęta, jedzenie, ubrania, rośliny, pojazdy, sport i zabawki, emoji wybrane lub wpisane samodzielnie (zdjęcia członków, teksty czatu, pola wpisywania) oraz powiadomienia push pozostają emoji.
-- Zmienione: `js/symbole.js` (new), `js/wetterlogos.js`, `css/wetterlogos.css` (new), `js/familie.js`, `js/grundlagen.js`, `js/profilauswahl.js`, `js/wetterkachel.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
-
 ## Wymagania
 
 - NAS lub mini PC z zainstalowanym **Dockerem** i **Docker Compose** (np. Synology, UGREEN, QNAP albo zwykły serwer z Linuksem)
@@ -177,7 +177,7 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 ## Instalacja
 
 1. Pobierz i rozpakuj plik ZIP [najnowszej wersji](https://github.com/pinn-shost/pinn/releases/latest).
-2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.152.1` lub `pinn-main`) bez zmian.
+2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.153.0` lub `pinn-main`) bez zmian.
 3. Połącz się przez SSH i uruchom:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

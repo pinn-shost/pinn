@@ -133,6 +133,14 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski、🇺🇦 Українська** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.153.0の新機能
+
+**Home Assistant のセキュリティ表示**
+
+- 新機能：**セキュリティ** – 家族の管理者は 設定 → セキュリティ で Home Assistant のデバイスを名前付きグループにまとめられます：窓とドア、ドアロック、カメラ、ガレージとシャッター、煙・水漏れ検知器、警報システム、人感センサー。ファミリーダッシュボードの下部にバーが表示され（例：「すべて閉まっています」「キッチンの窓 が開いています」「1 台のカメラがオンです」、警報時は赤）、概要には「セキュリティ」タイルが加わり、大人は開いているドアロックを施錠できます（解錠は不可）。任意の**夜のチェック**：指定時刻にまだ開いている・未施錠・警報解除のものがあれば、管理者全員にプッシュ通知が届きます。前提：設定 → スマートホーム で Home Assistant が接続されていること。
+- 修正：ダークモードでタスク名の下のボタン（スマートホーム開始、メーター読み取り …）が青地に青だった問題 – 金色になりました。
+- 変更: `pb_hooks/pinn-sicherheit.js` (new), `pb_hooks/sicherheit.pb.js` (new), `pb_hooks/pinn-smarthome.js`, `pb_hooks/pinn-schema.js`, `js/sicherheit.js` (new), `css/sicherheit.css` (new), `js/uebersicht.js`, `js/profilauswahl.js`, `js/einstellungen.js`, `css/dunkelfarbe.css`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `pinn-setup.sh`, `src/`, `index.html`.
+
 ## 1.152.1の新機能
 
 **バックアップの復元が再び使えるように**
@@ -215,15 +223,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - **タップ1回で元どおり。** それでもデバイスの登録が失われた場合（iOSによるリセットなど）、pinn. が自動で再登録するか、画面下に「再びオンにする」を表示します。設定を開く必要はありません。
 - 変更：`pb_hooks/pinn-push.js`, `pb_hooks/push.pb.js`, `pb_hooks/pinn-sitzungen.js`, `js/mitteilungen.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
 
-## 1.150.3の新機能
-
-**すべての通知があなたの時間で · 保護者にも通知**
-
-- **すべての通知があなたの時間で。** 誕生日、ペット、持ち物リスト、ストック、契約、書類、週間プレビュー、月間見通しと年間まとめ、予定の通知、今日の概要、タスクとごみの通知、掲示板、音声操作、スマートホーム、位置情報のお知らせが、サマータイムも含めて端末のタイムゾーンに従うようになりました。設定は不要です。
-- **保護者にも通知。** 子どもの場合、水分補給・服薬・手洗いの通知が保護者にも届きます（子どもの名前つき）。子どもごとに「保護者にも通知する」を切り替えられます（初期設定：オン）。
-- **Shortcuts の見出しなし。** 概要のタイルにはアプリだけが表示され、線で区切られます。
-- 変更: `pb_hooks/` のすべての通知モジュール（`pinn-zeit.js` ほか13個）、`js/gesundheit.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/`、`src/`、`index.html`、README（1.150.2を含む）。
-
 ## しくみ
 
 ```mermaid
@@ -252,7 +251,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.152.1`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.153.0`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

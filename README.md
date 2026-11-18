@@ -129,6 +129,14 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski and 🇺🇦 Українська**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.153.0
+
+**Security from Home Assistant**
+
+- New: **Security** – family admins put Home Assistant devices into named groups under Settings → Security: windows & doors, door locks, cameras, garage door & shutters, smoke & water detectors, alarm system, motion detectors. The family dashboard shows a bar at the bottom (e.g. “All closed”, “Kitchen window is open”, “1 camera is on”, red for an alarm), the overview gets a “Security” tile where adults can lock an unlocked door lock (never unlock). Optional **evening check**: at a time you choose, all admins get a push if something is still open, unlocked or the alarm system is disarmed. Needs Home Assistant connected under Settings → Smart home.
+- Fixed: in dark mode the buttons below the title of a task (smart home start, meter reading …) were blue on blue – now gold.
+- Changed: `pb_hooks/pinn-sicherheit.js` (new), `pb_hooks/sicherheit.pb.js` (new), `pb_hooks/pinn-smarthome.js`, `pb_hooks/pinn-schema.js`, `js/sicherheit.js` (new), `css/sicherheit.css` (new), `js/uebersicht.js`, `js/profilauswahl.js`, `js/einstellungen.js`, `css/dunkelfarbe.css`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `pinn-setup.sh`, `src/`, `index.html`.
+
 ## What's new in 1.152.1
 
 **Restoring backups works again**
@@ -251,14 +259,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Stays open.** The window stays open after an action, so several things can be done in a row; “Open” leads to the full function.
 - Changed: `pb_hooks/pinn-zeit.js`, `pb_hooks/zeit.pb.js`, `js/zeit.js`, `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `pb_hooks/pinn-gesundheit.js`, `js/appstart.js`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/ansichten.js`, `js/design.js`, `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, README (+ 1.149.1).
 
-## What's new in 1.149.1
-
-**Push reminders**
-
-- **Reminders for health.** On the health page you can switch on a push reminder per block: medication & vitamins at their times, drinking at an interval between two times of day (with the amount still missing), hand washing at fixed times.
-- **Only for the person themself.** Reminders go to the devices of that person; nothing is sent to other family members. Tapping the message opens the health page – for drinking, directly the drink popup.
-- Changed: `pb_hooks/pinn-gesundheit.js`, `pb_hooks/gesundheit.pb.js`, `js/gesundheit.js`, `css/gesundheit.css`, `js/hinweise.js`, `js/fortsetzen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, all READMEs. Includes 1.149.0.
-
 ## How it works
 
 ```mermaid
@@ -285,7 +285,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.152.1` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.153.0` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

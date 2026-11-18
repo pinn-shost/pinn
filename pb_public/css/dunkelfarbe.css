@@ -35,10 +35,12 @@ html.dark .sh-chip.active, html.dark .sh-icon.active, html.dark .kasse-chip.on, 
 html.dark .kasse-row.active, html.dark .el-chip.on, html.dark .sm-opt:has(input:checked), html.dark .sm-tag,
 html.dark .wx-tab.active, html.dark .wx-pack-chip, html.dark .wx-btn.ghost, html.dark .fam-emoji.active,
 html.dark .dash-bg-art-btn.active, html.dark .dash-bg-swatch.active, html.dark .pinn-cal-seg button.on,
-html.dark .task-shopping-open, html.dark .contract-status-btn.active {
+html.dark .task-shopping-open, html.dark .contract-status-btn.active, html.dark .sh-run {
   color: var(--dk-gold) !important;
   border-color: var(--dk-gold-line) !important;
 }
+/* Buttons below the title of a task (smart home start, meter reading …): were blue on blue until 1.153.0 */
+html.dark .sh-run:hover, html.dark .sh-run:active { background: var(--dk-gold-soft) !important; }
 html.dark .fz-kind-btn.active, html.dark .fz-drive-btn.active, html.dark .fz-type-chip.active,
 html.dark .fz-member-chip.active, html.dark .fz-filter-chip.active, html.dark .hs-mod-chip.active,
 html.dark .fz-pick-row.active, html.dark .fin-scope-opt.active, html.dark .plan-list-chip.active,

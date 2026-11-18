@@ -110,6 +110,14 @@ Tam boyutta açmak için bir resme dokun.
 
 pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski ve 🇺🇦 Українська**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
 
+## 1.153.0 sürümündeki yenilikler
+
+**Home Assistant'tan güvenlik**
+
+- Yeni: **Güvenlik** – aile yöneticileri Ayarlar → Güvenlik altında Home Assistant cihazlarını adlandırılmış gruplarda toplar: pencereler ve kapılar, kapı kilitleri, kameralar, garaj kapısı ve panjurlar, duman ve su dedektörleri, alarm sistemi, hareket dedektörleri. Aile panosu altta bir şerit gösterir (örn. “Hepsi kapalı”, “Mutfak penceresi açık”, “1 kamera açık”, alarmda kırmızı); genel bakışa “Güvenlik” kutucuğu eklenir, yetişkinler burada açık bir kapı kilidini kilitleyebilir (asla açamaz). İsteğe bağlı **akşam kontrolü**: seçilen saatte hâlâ açık, kilitlenmemiş bir şey varsa veya alarm devre dışıysa tüm yöneticilere anlık bildirim gider. Koşul: Home Assistant, Ayarlar → Akıllı ev altında bağlı olmalı.
+- Düzeltildi: karanlık modda bir görevin başlığının altındaki düğmeler (akıllı ev başlatma, sayaç okuma …) mavi üstüne maviydi – artık altın renginde.
+- Değiştirildi: `pb_hooks/pinn-sicherheit.js` (new), `pb_hooks/sicherheit.pb.js` (new), `pb_hooks/pinn-smarthome.js`, `pb_hooks/pinn-schema.js`, `js/sicherheit.js` (new), `css/sicherheit.css` (new), `js/uebersicht.js`, `js/profilauswahl.js`, `js/einstellungen.js`, `css/dunkelfarbe.css`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `pinn-setup.sh`, `src/`, `index.html`.
+
 ## 1.152.1 sürümündeki yenilikler
 
 **Yedekten geri yükleme yeniden çalışıyor**
@@ -160,14 +168,6 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 - **Her yerde kendi simgeler.** Yiyecek, ev, taşıt, bitki, giysi, oyuncak ve spor da artık kendi çizgi simgelerine sahip (odalar, atık türleri, taşıt türleri, bahçe, çalar saat, takvim düğmesi, geri sayım). Finans, Sözleşmeler, Belgeler ve Kiler bölümlerindeki **kategori simgeleri** emoji klavyesi yerine yaklaşık 150 hazır simgeden seçilir; aynı tür kategori her yerde aynı simgeyi taşır. Ev ve Taşıtlar sahneleri yeni renkli taşıtları gösterir. Küçük düzeltmeler: “Şimdi” hava durumunda kesikli kenarlık yok, panodaki saat yazı tipi, yemek planı listesi simgesi, simgeler metin satırında.
 - Değişenler: `js/szenen.js`, `js/symbolwahl.js` (new), `js/symbole.js`, `css/wetterlogos.css`, `js/zustand.js`, `js/zuhause.js`, `js/fahrzeuge.js`, `js/gesundheit.js`, `js/finanzen.js`, `js/vertraege.js`, `js/dokumente.js`, `js/vorrat.js`, `js/vorrat2.js`, `js/einkauf.js`, `js/profilauswahl.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
 
-## 1.150.7 sürümündeki yenilikler
-
-**Kendi hava durumu simgeleri**
-
-- **Hava durumu simgeleri.** Hava durumu ekranlarında artık Apple emojileri yerine kendi sade çizgi simgeleri var; kısayol simgeleriyle aynı görünümde: güneş, ay, bulutlar, yağmur, kar, fırtına, rüzgâr, UV, gün doğumu, su ve giyim ipuçları. Karanlık modda renkleri de değişir.
-- **Her yerde kendi simgeler.** Yaklaşık 150 sade çizgi simgesi artık uygulamanın her yerinde Apple emojilerinin yerini alıyor (yıldızlar, onay işaretleri, uyarılar, yerler, hediyeler, saat, takvim, kilit, posta, aletler, sağlık, ev, para ve daha fazlası). Hayvanlar, yiyecekler, giysiler, bitkiler, taşıtlar, spor ve oyuncaklar, kendi seçtiğiniz veya yazdığınız emojiler (üye resimleri, sohbet metinleri, giriş alanları) ve push bildirimleri emoji olarak kalır.
-- Değişenler: `js/symbole.js` (new), `js/wetterlogos.js`, `css/wetterlogos.css` (new), `js/familie.js`, `js/grundlagen.js`, `js/profilauswahl.js`, `js/wetterkachel.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -177,7 +177,7 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.152.1` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.153.0` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

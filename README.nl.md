@@ -110,6 +110,14 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski en 🇺🇦 Українська**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.153.0
+
+**Beveiliging uit Home Assistant**
+
+- Nieuw: **Beveiliging** – admins van het gezin zetten apparaten uit Home Assistant in benoemde groepen onder Instellingen → Beveiliging: ramen & deuren, deursloten, camera's, garagedeur & rolluiken, rook- & watermelders, alarmsysteem, bewegingsmelders. Het gezinsdashboard toont onderaan een balk (bijv. ‘Alles dicht’, ‘Raam keuken staat open’, ‘1 camera staat aan’, rood bij alarm) en het overzicht krijgt de tegel ‘Beveiliging’, waar volwassenen een open deurslot op slot kunnen doen (nooit openen). Optionele **avondcheck**: op het gekozen tijdstip krijgen alle admins een pushbericht als er nog iets open of niet op slot is of het alarm uit staat. Voorwaarde: Home Assistant verbonden onder Instellingen → Smart home.
+- Opgelost: in donkere modus waren de knoppen onder de titel van een taak (smart-home-start, meterstand …) blauw op blauw – nu goud.
+- Gewijzigd: `pb_hooks/pinn-sicherheit.js` (new), `pb_hooks/sicherheit.pb.js` (new), `pb_hooks/pinn-smarthome.js`, `pb_hooks/pinn-schema.js`, `js/sicherheit.js` (new), `css/sicherheit.css` (new), `js/uebersicht.js`, `js/profilauswahl.js`, `js/einstellungen.js`, `css/dunkelfarbe.css`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `pinn-setup.sh`, `src/`, `index.html`.
+
 ## Nieuw in 1.152.1
 
 **Back-ups terugzetten werkt weer**
@@ -160,14 +168,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Eigen pictogrammen overal.** Ook eten, huishouden, voertuigen, planten, kleding, speelgoed en sport hebben nu eigen lijnpictogrammen (kamers, afvalsoorten, voertuigsoorten, tuin, wekker, kalenderschakelaar, aftelling). De **categoriepictogrammen** in Financiën, Contracten, Documenten en Voorraad kies je uit ongeveer 150 kant-en-klare pictogrammen in plaats van met het emoji-toetsenbord, en dezelfde soort categorie heeft overal hetzelfde pictogram. De scènes van Thuis en Voertuigen tonen nieuwe kleurrijke voertuigen. Kleinigheden: weer “Nu” zonder gestippelde rand, lettertype van de klok op het dashboard, pictogram van de maaltijdplanlijst, pictogrammen op de tekstregel.
 - Gewijzigd: `js/szenen.js`, `js/symbolwahl.js` (new), `js/symbole.js`, `css/wetterlogos.css`, `js/zustand.js`, `js/zuhause.js`, `js/fahrzeuge.js`, `js/gesundheit.js`, `js/finanzen.js`, `js/vertraege.js`, `js/dokumente.js`, `js/vorrat.js`, `js/vorrat2.js`, `js/einkauf.js`, `js/profilauswahl.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
 
-## Nieuw in 1.150.7
-
-**Eigen weericonen**
-
-- **Weericonen.** De weerweergaven hebben nu eigen, eenvoudige lijnpictogrammen in plaats van de Apple-emoji, in dezelfde stijl als de shortcut-pictogrammen: zon, maan, wolken, regen, sneeuw, onweer, wind, UV, zonsopkomst, water en de kledingtips. In de donkere modus kleuren ze mee.
-- **Eigen pictogrammen overal.** Zo’n 150 eenvoudige lijnpictogrammen vervangen nu de Apple-emoji in de hele app (sterren, vinkjes, waarschuwingen, plaatsen, cadeaus, klok, agenda, slot, post, gereedschap, gezondheid, huis, geld en meer). Dieren, eten, kleding, planten, voertuigen, sport en speelgoed, zelf gekozen of getypte emoji (profielfoto’s, chatteksten, invoervelden) en pushberichten blijven emoji.
-- Gewijzigd: `js/symbole.js` (new), `js/wetterlogos.js`, `css/wetterlogos.css` (new), `js/familie.js`, `js/grundlagen.js`, `js/profilauswahl.js`, `js/wetterkachel.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -177,7 +177,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.152.1` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.153.0` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

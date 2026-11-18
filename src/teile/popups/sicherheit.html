@@ -1,0 +1,25 @@
+<!-- Security: create / edit a group of Home Assistant devices (Settings → Security, family admins, js/sicherheit.js) -->
+<div id="secGroupModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[320] grid place-items-center p-4 sm:p-6">
+  <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
+    <button id="secGroupCloseBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Close" data-tk-attr="aria-label:common.close">×</button>
+    <h3 id="secGroupTitle" data-tk="security.newGroup" class="font-serif text-lg mb-3 pr-6">New group</h3>
+    <label for="secGroupName" data-tk="security.groupName" class="sec-label">Name</label>
+    <input id="secGroupName" type="text" maxlength="40" autocomplete="off" class="sec-input" placeholder="e.g. Windows ground floor" data-tk-attr="placeholder:security.groupNamePh" />
+    <div data-tk="security.kind" class="sec-label">Kind</div>
+    <div id="secGroupKinds" class="sec-chips"></div>
+    <div data-tk="security.icon" class="sec-label">Symbol</div>
+    <div id="secGroupIcons" class="sec-chips"></div>
+    <div class="sec-label"><span data-tk="security.devices">Devices</span> <span id="secGroupCount"></span></div>
+    <input id="secGroupSearch" type="search" autocomplete="off" class="sec-input" placeholder="Search …" data-tk-attr="placeholder:security.search" />
+    <label class="sec-check"><input id="secGroupShowAll" type="checkbox" /> <span data-tk="security.showAll">Show all devices, not only matching ones</span></label>
+    <div id="secGroupEntities" class="sec-ents"></div>
+    <label id="secGroupEveningRow" class="sec-check mt-3"><input id="secGroupEvening" type="checkbox" /> <span data-tk="security.inEvening">🌙 Include in the evening check</span></label>
+    <p id="secGroupError" class="hidden text-xs text-red-500 mt-3"></p>
+    <div class="flex items-center gap-2 flex-wrap mt-4">
+      <button data-tk="common.delete" id="secGroupDeleteBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-red-300 text-sm text-red-500 hover:bg-red-50 transition">Delete</button>
+      <div class="flex-1"></div>
+      <button data-tk="common.cancel" id="secGroupCancelBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Cancel</button>
+      <button data-tk="common.save" id="secGroupSaveBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Save</button>
+    </div>
+  </div>
+</div>

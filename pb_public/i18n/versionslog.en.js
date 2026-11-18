@@ -3,6 +3,14 @@
    language other than German. One entry per version of PINN_CHANGELOG: t = title, p = points in the same order
    (null = no translation, the German text is shown). Older versions are not translated. */
 window.PINN_CHANGELOG_EN = {
+  "1.153": {"t": "Security from Home Assistant", "p": [
+"Security: family admins group Home Assistant devices under Settings → Security – windows & doors, door locks, cameras, garage door & shutters, smoke & water detectors, alarm system and motion detectors. Name the group, pick a symbol, tick the matching sensors (pinn. suggests them by kind).",
+"Security bar at the bottom of the family dashboard: one field per group with symbol and status dot – e.g. “All closed”, “Kitchen window is open”, “1 camera is on”, “All cameras are off” or in red “Alarm: Hallway”. Refreshes every 30 seconds, display only.",
+"New tile “Security” in the overview (at the bottom by default, can be moved under Settings → Overview). Adults can lock an unlocked door lock there – pinn. never unlocks, children and guests see no button.",
+"Evening check: at a time you choose, all admins get a message if something in a group marked 🌙 is still open, unlocked or the alarm system is disarmed (time zone of each device). If everything is closed, nothing is sent.",
+"Dark mode: the buttons below the title of a task (smart home start, meter reading …) were blue on blue – now clearly readable in gold.",
+"1.153.0 changed: pb_hooks/pinn-sicherheit.js (new), sicherheit.pb.js (new), pinn-smarthome.js, pinn-schema.js, js/sicherheit.js (new), css/sicherheit.css (new), js/uebersicht.js, js/profilauswahl.js, js/einstellungen.js, js/versionslog.js, js/sprachen.js, css/dunkelfarbe.css, i18n/ (all languages, 77 new texts), i18n/versionslog.en.js, pinn-setup.sh, src/ (settings, tiles, dashboard, new popup), src/version.txt, index.html, all READMEs."
+]},
   "1.152": {"t": "Your own reverse proxy instead of Tailscale", "p": [
 "Access from the internet through your own reverse proxy (e.g. Nginx Proxy Manager, Traefik or Cloudflare Tunnel) instead of Tailscale: the proxy forwards to http://<NAS-IP>:8090, the family opens pinn. at your own address – without a VPN app. Guide in the README under “Access from the internet with your own reverse proxy”.",
 "Real visitor address: pinn. now only believes the address passed on by a proxy (X-Forwarded-For) if the request really comes from a trusted proxy (home network, Docker, Tailscale; adjustable with PINN_PROXY_NETZE, e.g. “cloudflare”). So the lock after many wrong passwords can no longer be dodged with faked addresses; with IPv6 the whole /64 network counts.",

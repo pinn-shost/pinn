@@ -22,6 +22,17 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.153', datum: '17.11.2026', titel: 'Sicherheit aus Home Assistant',
+    punkte: [
+      ['neu', 'Sicherheit: Admins der Familie fassen unter Einstellungen → Sicherheit Geräte aus Home Assistant zu Gruppen zusammen – Fenster & Türen, Türschlösser, Kameras, Garagentor & Rollläden, Rauch- & Wassermelder, Alarmanlage und Bewegungsmelder. Gruppe benennen, Symbol wählen, passende Sensoren abhaken (pinn. schlägt sie nach Art vor).'],
+      ['neu', 'Sicherheitsleiste unten auf dem Familien-Dashboard: je Gruppe ein Feld mit Symbol und Ampelpunkt – z. B. „Alles zu“, „Fenster Küche ist offen“, „1 Kamera ist an“, „Alle Kameras sind aus“ oder rot „Alarm: Flur“. Aktualisiert sich alle 30 Sekunden, nur Anzeige.'],
+      ['neu', 'Neue Kachel „Sicherheit“ in der Übersicht (standardmäßig ganz unten, verschiebbar unter Einstellungen → Übersicht). Erwachsene können dort ein offenes Türschloss zusperren – aufsperren geht aus pinn. heraus nie, Kinder und Gäste sehen keinen Knopf.'],
+      ['neu', 'Abend-Check: Zu einer selbst gewählten Uhrzeit bekommen alle Admins eine Mitteilung, wenn in einer Gruppe mit 🌙 noch etwas offen, nicht abgeschlossen oder die Alarmanlage unscharf ist (Zeitzone des jeweiligen Geräts). Ist alles zu, kommt nichts.'],
+      ['fix', 'Dunkelmodus: Die Knöpfe unter dem Titel einer Aufgabe (Smarthome-Start, Zähler ablesen …) waren blau auf blau – jetzt gut lesbar in Gold.'],
+      ['info', '1.153.0 geändert: pb_hooks/pinn-sicherheit.js (neu), sicherheit.pb.js (neu), pinn-smarthome.js, pinn-schema.js, js/sicherheit.js (neu), css/sicherheit.css (neu), js/uebersicht.js, js/profilauswahl.js, js/einstellungen.js, js/versionslog.js, js/sprachen.js, css/dunkelfarbe.css, i18n/ (alle Sprachen, 77 neue Texte), i18n/versionslog.en.js, pinn-setup.sh, src/ (Einstellungen, Kacheln, Dashboard, neues Popup), src/version.txt, index.html, alle READMEs.'],
+    ],
+  },
+  {
     v: '1.152', datum: '17.11.2026', titel: 'Eigener Reverse Proxy statt Tailscale',
     punkte: [
       ['neu', 'Zugriff aus dem Internet über einen eigenen Reverse Proxy (z. B. Nginx Proxy Manager, Traefik oder Cloudflare Tunnel) statt Tailscale: Der Proxy leitet an http://<NAS-IP>:8090 weiter, die Familie öffnet pinn. unter der eigenen Adresse – ohne VPN-App. Anleitung in der README unter „Zugriff aus dem Internet mit eigenem Reverse Proxy“.'],

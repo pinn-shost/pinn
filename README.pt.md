@@ -133,6 +133,14 @@ Toque em qualquer imagem para abri-la em tamanho real.
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.153.0
+
+**Segurança a partir do Home Assistant**
+
+- Novo: **Segurança** – os admins da família agrupam dispositivos do Home Assistant em Configurações → Segurança: janelas e portas, fechaduras, câmeras, portão da garagem e persianas, detectores de fumaça e água, alarme, sensores de movimento. O painel da família mostra uma barra embaixo (ex.: “Tudo fechado”, “Janela cozinha está aberto”, “1 câmera está ligada”, em vermelho em caso de alarme) e a visão geral ganha o bloco “Segurança”, onde adultos podem trancar uma fechadura aberta (nunca destrancar). **Verificação da noite** opcional: no horário escolhido, todos os admins recebem uma notificação se algo ainda estiver aberto, destrancado ou com o alarme desarmado. Requisito: Home Assistant conectado em Configurações → Casa inteligente.
+- Corrigido: no modo escuro, os botões sob o título de uma tarefa (início da casa inteligente, leitura de medidores …) eram azul sobre azul – agora dourados.
+- Alterado: `pb_hooks/pinn-sicherheit.js` (new), `pb_hooks/sicherheit.pb.js` (new), `pb_hooks/pinn-smarthome.js`, `pb_hooks/pinn-schema.js`, `js/sicherheit.js` (new), `css/sicherheit.css` (new), `js/uebersicht.js`, `js/profilauswahl.js`, `js/einstellungen.js`, `css/dunkelfarbe.css`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `pinn-setup.sh`, `src/`, `index.html`.
+
 ## Novidades da 1.152.1
 
 **Restaurar backups voltou a funcionar**
@@ -215,15 +223,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Basta um toque.** Se um dispositivo ainda assim perder o registo (p. ex. porque o iOS o redefiniu), o pinn. regista-o de novo sozinho – ou mostra em baixo «Reativar», sem passar pelas definições.
 - Alterado: `pb_hooks/pinn-push.js`, `pb_hooks/push.pb.js`, `pb_hooks/pinn-sitzungen.js`, `js/mitteilungen.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
 
-## Novidades da 1.150.3
-
-**Todos os lembretes na sua hora · os pais também**
-
-- **Todos os lembretes na sua hora.** Aniversários, animais, lista de bagagem, despensa, contratos, documentos, pré-visualização semanal, previsão mensal e balanço do ano, lembretes de compromissos, resumo do dia, lembretes de tarefas e lixo, mural, controlo por voz, casa inteligente e avisos de localização seguem agora o fuso horário do seu dispositivo, com horário de verão e de inverno. Nada a configurar.
-- **Os pais também.** No caso das crianças, os pais também recebem os lembretes de beber, medicação e lavar as mãos, com o nome da criança à frente. Interruptor «Lembrar também os pais» por criança (predefinição: ligado).
-- **Shortcuts sem título.** O mosaico da visão geral mostra apenas as apps, separadas pela linha.
-- Alterado: todos os módulos de lembretes em `pb_hooks/` (`pinn-zeit.js` e mais 13), `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.2).
-
 ## Como funciona
 
 ```mermaid
@@ -252,7 +251,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.152.1` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.153.0` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -126,6 +126,7 @@ function hideDashboardScreen() {
   dashWeatherTimer = null;
   clearInterval(dashCountTimer);
   dashCountTimer = null;
+  if (typeof secDashStop === 'function') secDashStop(); // security bar (js/sicherheit.js)
 }
 
 // Shows the profile selection. Result: 'ok' (profile opened), 'password' (normal login wanted)
@@ -153,6 +154,8 @@ function showDashboardScreen(dash) {
     initWeather();
     clearInterval(dashWeatherTimer);
     dashWeatherTimer = setInterval(initWeather, 30 * 60 * 1000);
+    // security bar at the bottom (Home Assistant groups, since 1.153.0, js/sicherheit.js)
+    if (typeof secDashStart === 'function') secDashStart(dash.key);
 
     function finish(result) {
       if (finished) return;

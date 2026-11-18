@@ -1181,4 +1181,6 @@ function haStateOf(familyId, entity) {
 module.exports = {
     COL, ensureSchema, automatik, status, einrichten, ausschalten, gemeldet, haCron,
     haVerbinden, haTrennen, haEntitaeten, haTest, haAusfuehren, haSauger, haStateOf, offServiceFor,
+    // since 1.153.0 also used by pinn-sicherheit.js (security groups)
+    haOf, haRequest, haCall,
 };

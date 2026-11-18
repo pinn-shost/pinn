@@ -94,6 +94,7 @@ function renderSettings() {
   document.getElementById('defaultViewScopeSelectMobile').value = defaultViewScopeMobile;
 
   renderShoppingSettings();
+  if (typeof secRenderSettingsAccess === 'function') secRenderSettingsAccess(); // Security: family admins only (js/sicherheit.js)
 }
 
 // Family members in the settings - with their linked profile. Creating and removing only for

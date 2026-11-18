@@ -133,6 +133,14 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.153.0의 새 소식
+
+**Home Assistant 보안 현황**
+
+- 새 기능: **보안** – 가족 관리자는 설정 → 보안에서 Home Assistant 기기를 이름 있는 그룹으로 묶을 수 있습니다: 창문 및 문, 도어락, 카메라, 차고 문 및 셔터, 연기 및 누수 감지기, 경보 시스템, 동작 감지기. 가족 대시보드 하단에 상태 표시줄이 나타나고(예: “모두 닫힘”, “주방 창문 열림”, “카메라 1대 켜짐”, 경보 시 빨간색), 개요에는 “보안” 타일이 추가되어 성인은 열린 도어락을 잠글 수 있습니다(열기는 불가). 선택 사항 **저녁 점검**: 지정한 시각에 아직 열려 있거나 잠기지 않았거나 경보가 해제된 것이 있으면 모든 관리자에게 푸시 알림이 갑니다. 조건: 설정 → 스마트홈에서 Home Assistant 연결.
+- 수정: 다크 모드에서 작업 제목 아래 버튼(스마트홈 시작, 계량기 검침 …)이 파란 바탕에 파란 글씨였던 문제 – 이제 금색입니다.
+- 변경: `pb_hooks/pinn-sicherheit.js` (new), `pb_hooks/sicherheit.pb.js` (new), `pb_hooks/pinn-smarthome.js`, `pb_hooks/pinn-schema.js`, `js/sicherheit.js` (new), `css/sicherheit.css` (new), `js/uebersicht.js`, `js/profilauswahl.js`, `js/einstellungen.js`, `css/dunkelfarbe.css`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `pinn-setup.sh`, `src/`, `index.html`.
+
 ## 1.152.1의 새 소식
 
 **백업 복원이 다시 돼요**
@@ -215,15 +223,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - **한 번 탭으로 충분합니다.** 그래도 기기의 등록이 사라지면(예: iOS가 초기화한 경우) pinn.이 스스로 다시 등록하거나, 아래에 “다시 켜기”를 표시합니다. 설정에 들어갈 필요가 없습니다.
 - 변경: `pb_hooks/pinn-push.js`, `pb_hooks/push.pb.js`, `pb_hooks/pinn-sitzungen.js`, `js/mitteilungen.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
 
-## 1.150.3의 새 소식
-
-**모든 알림이 내 시간 기준으로 · 부모에게도 알림**
-
-- **모든 알림이 내 시간 기준으로.** 생일, 반려동물, 짐 목록, 비축품, 계약, 문서, 주간 미리보기, 월간 전망과 연간 돌아보기, 일정 알림, 오늘의 요약, 할 일·쓰레기 알림, 게시판, 음성 제어, 스마트홈, 위치 알림이 이제 서머타임을 포함해 기기의 시간대를 따릅니다. 설정할 것은 없습니다.
-- **부모에게도 알림.** 아이의 경우 물 마시기, 복약, 손 씻기 알림이 부모에게도 갑니다(아이 이름이 앞에 붙습니다). 아이별로 “부모에게도 알림” 스위치가 있습니다(기본값: 켜짐).
-- **제목 없는 Shortcuts.** 개요의 타일에는 앱만 표시되고 선으로 구분됩니다.
-- 변경: `pb_hooks/`의 모든 알림 모듈(`pinn-zeit.js` 외 13개), `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (1.150.2 포함).
-
 ## 작동 방식
 
 ```mermaid
@@ -252,7 +251,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.152.1` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.153.0` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

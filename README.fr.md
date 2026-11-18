@@ -129,6 +129,14 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski et 🇺🇦 Українська**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.153.0
+
+**Sécurité depuis Home Assistant**
+
+- Nouveau : **Sécurité** – les admins de la famille regroupent des appareils Home Assistant dans Réglages → Sécurité : fenêtres et portes, serrures, caméras, porte de garage et volets, détecteurs de fumée et d'eau, alarme, détecteurs de mouvement. Le tableau de bord familial affiche une barre en bas (p. ex. « Tout est fermé », « Fenêtre cuisine est ouvert », « 1 caméra est allumée », en rouge en cas d'alarme) et l'aperçu reçoit la tuile « Sécurité », où les adultes peuvent verrouiller une serrure ouverte (jamais déverrouiller). **Vérification du soir** en option : à l'heure choisie, tous les admins reçoivent une notification si quelque chose est encore ouvert, déverrouillé ou si l'alarme est désactivée. Condition : Home Assistant connecté dans Réglages → Maison connectée.
+- Corrigé : en mode sombre, les boutons sous le titre d'une tâche (démarrage maison connectée, relevé de compteurs …) étaient bleu sur bleu – désormais dorés.
+- Modifié: `pb_hooks/pinn-sicherheit.js` (new), `pb_hooks/sicherheit.pb.js` (new), `pb_hooks/pinn-smarthome.js`, `pb_hooks/pinn-schema.js`, `js/sicherheit.js` (new), `css/sicherheit.css` (new), `js/uebersicht.js`, `js/profilauswahl.js`, `js/einstellungen.js`, `css/dunkelfarbe.css`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `pinn-setup.sh`, `src/`, `index.html`.
+
 ## Nouveautés de la 1.152.1
 
 **La restauration des sauvegardes fonctionne à nouveau**
@@ -251,14 +259,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Reste ouverte.** La fenêtre reste ouverte après une action, on peut donc enchaîner plusieurs choses ; « Ouvrir » mène à la fonction complète.
 - Modifié: `pb_hooks/pinn-zeit.js`, `pb_hooks/zeit.pb.js`, `js/zeit.js`, `js/kurzbefehle.js`, `js/kurzfenster.js`, `css/kurzbefehle.css`, `pb_hooks/pinn-gesundheit.js`, `js/appstart.js`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/ansichten.js`, `js/design.js`, `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, `pinn-setup.sh`, README (+ 1.149.1).
 
-## Nouveautés de la 1.149.1
-
-**Rappels push**
-
-- **Rappels pour la santé.** Sur la page santé, on peut activer un rappel push par bloc : médicaments et vitamines à leurs heures, boire à intervalles entre deux heures de la journée (avec la quantité qu’il reste) et lavage des mains à heures fixes.
-- **Uniquement pour la personne elle-même.** Les rappels vont sur les appareils de cette personne ; rien n’est envoyé aux autres membres de la famille. Toucher la notification ouvre la page santé – pour boire, directement la fenêtre de boisson.
-- Modifié : `pb_hooks/pinn-gesundheit.js`, `pb_hooks/gesundheit.pb.js`, `js/gesundheit.js`, `css/gesundheit.css`, `js/hinweise.js`, `js/fortsetzen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, tous les README. Inclut 1.149.0.
-
 ## Comment ça marche
 
 ```mermaid
@@ -285,7 +285,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.152.1` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.153.0` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
