@@ -126,6 +126,11 @@ const CS_MATE = { '': 'spolubydlící', a: 'spolubydlícího', u: 'spolubydlíc�
 // Swedish (since 1.156.0): familj → hushåll (neuter: "en familj" → "ett hushåll", "familjen" → "hushållet"), familjemedlem → medboende,
 // familje- (compound prefix) → hushålls-
 const SV_END = { '': 'hushåll', en: 'hushållet', ens: 'hushållets', er: 'hushåll', erna: 'hushållen', ernas: 'hushållens' };
+// Danish (since 1.157.0): "familie" -> "husstand" (both common gender, so determiners stay), "familiemedlem" (neuter) -> "bofælle" (common gender,
+// the word in front changes: "et familiemedlem" -> "en bofælle"), "familie-" (compound prefix) -> "husstands-".
+const DA_HOME = { '': 'husstand', n: 'husstanden', ns: 'husstandens', r: 'husstande', rne: 'husstandene', rnes: 'husstandenes', rs: 'husstandes' };
+const DA_MATE = { '': 'bofælle', met: 'bofællen', mer: 'bofæller', merne: 'bofællerne', mets: 'bofællens', mers: 'bofællers', mernes: 'bofællernes' };
+const DA_DET = { et: 'en', dit: 'din', mit: 'min', sit: 'sin', hvert: 'hver', ethvert: 'enhver', intet: 'ingen', noget: 'nogen', andet: 'anden', nyt: 'ny', dette: 'denne' };
 const SV_DET = { en: 'ett', din: 'ditt', min: 'mitt', sin: 'sitt', er: 'ert', 'vår': 'vårt', ny: 'nytt', annan: 'annat', ingen: 'inget', 'någon': 'något', denna: 'detta' };
 const TERMS = {
   de: { keep: /Familienstammbuch|Familienkutsche/g, rules: [
@@ -305,6 +310,21 @@ const TERMS = {
     [/(?<![\p{L}\p{N}])([Ff])amilj(ernas|erna|er|ens|en)?(?![\p{L}\p{N}])/gu,
       function (m, f, end) { return cap(f === 'F', SV_END[end === undefined ? '' : end]); }],
     [/(?<![\p{L}\p{N}])([Ff])amilje(?=\p{L})/gu, function (m, f) { return cap(f === 'F', 'hushålls'); }],
+  ] },
+  da: { keep: /familielæge\p{L}*|familiebil\p{L}*|familiebus\p{L}*/giu, rules: [
+    // "et nyt familiemedlem" -> "en ny bofælle", "det nye familiemedlem" -> "den nye bofælle"
+    [/(?<![\p{L}\p{N}])([Ee]t)(\s+)(nyt|andet)(\s+)familiemedlem(?![\p{L}\p{N}])/gu,
+      function (m, d, sp, adj, sp2) { return (d.charAt(0) === 'E' ? 'En' : 'en') + sp + DA_DET[adj] + sp2 + 'bofælle'; }],
+    [/(?<![\p{L}\p{N}])([Dd])et (nye|valgte|aktuelle|andre|øvrige) familiemedlem(?![\p{L}\p{N}])/gu,
+      function (m, c, w) { return (c === 'D' ? 'Den ' : 'den ') + w + ' bofælle'; }],
+    // a common-gender noun needs the common-gender form of the word in front ("dit familiemedlem" -> "din bofælle")
+    [/(?<![\p{L}\p{N}])(et|dit|mit|sit|hvert|ethvert|intet|noget|andet|nyt|dette)(\s+)familiemedlem(?![\p{L}\p{N}])/giu,
+      function (m, d, sp) { var r = DA_DET[d.toLowerCase()]; return (d.charAt(0) === d.charAt(0).toUpperCase() ? r.charAt(0).toUpperCase() + r.slice(1) : r) + sp + 'bofælle'; }],
+    [/(?<![\p{L}\p{N}])([Ff])amiliemedlem(met|mer|merne|mets|mers|mernes)?(?![\p{L}\p{N}])/gu,
+      function (m, f, end) { return cap(f === 'F', DA_MATE[end === undefined ? '' : end]); }],
+    [/(?<![\p{L}\p{N}])([Ff])amili(en|ens|e|erne|ernes|ers|er)(?![\p{L}\p{N}])/gu,
+      function (m, f, end) { return cap(f === 'F', DA_HOME[end === 'e' ? '' : end.slice(1)]); }],
+    [/(?<![\p{L}\p{N}])([Ff])amilie(?=\p{L})/gu, function (m, f) { return cap(f === 'F', 'husstands'); }],
   ] },
   cs: { keep: /rodinn\p{L}*\s+(?:lékař|auto|rozpočet|doktor)\p{L}*|(?:lékař|auto|rozpočet|doktor)\p{L}*\s+rodinn\p{L}*/giu, rules: [
     // instrumental plural ("s členy rodiny" → "se spolubydlícími"; the plural accusative "členy" is handled below)
