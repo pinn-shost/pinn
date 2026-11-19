@@ -120,7 +120,7 @@ function langOf(u) {
     let w = {};
     try { w = require(`${__hooks}/pinn-design.js`).readDesign(u).werte || {}; } catch (e) { w = {}; }
     const s = String(w.sprache || "");
-    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr", "pl", "uk", "cs", "sv", "da"].indexOf(s) >= 0) return s;
+    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr", "pl", "uk", "cs", "sv", "da", "nb"].indexOf(s) >= 0) return s;
     if (/^[a-z]{2}$/.test(s)) return "en";
     const land = String(w.land || "").toUpperCase();
     if (["DE", "AT", "CH", "LI", "LU"].indexOf(land) >= 0) return "de";
@@ -139,6 +139,7 @@ function langOf(u) {
     if (["CZ"].indexOf(land) >= 0) return "cs";
     if (["SE", "AX"].indexOf(land) >= 0) return "sv";
     if (["DK", "GL", "FO"].indexOf(land) >= 0) return "da";
+    if (["NO", "SJ"].indexOf(land) >= 0) return "nb";
     return "en";
 }
 const T = {
@@ -180,6 +181,8 @@ const T = {
           gebText: "Extra godis i dag 🦴", mehr: "🐾 Något närmar sig hos dina husdjur", kurzHeute: "i dag", kurzIn3: "om 3 dagar", kurzUeber: "försenad" },
     da: { futter: "Fyld foderautomaten op", futterHeute: "fyld op i dag", futterUeber: "forsinket ({n} dage)", leer: "Foderautomaten er næsten tom", leerText: "Niveau {v} – fyld op.", leerText0: "Fyld op.", heute: "aktuelt i dag", in3: "aktuelt om 3 dage", ueber: "forsinket ({n} dage)", geb: "{name} har fødselsdag i dag!", gebAlt: "{name} – alder: {n} 🐾",
           gebText: "Ekstra godbidder i dag 🦴", mehr: "🐾 Noget nærmer sig hos dine kæledyr", kurzHeute: "i dag", kurzIn3: "om 3 dage", kurzUeber: "forsinket" },
+    nb: { futter: "Fyll opp fôrautomaten", futterHeute: "fyll opp i dag", futterUeber: "forsinket ({n} dager)", leer: "Fôrautomaten er nesten tom", leerText: "Nivå {v} – fyll opp.", leerText0: "Fyll opp.", heute: "aktuelt i dag", in3: "aktuelt om 3 dager", ueber: "forsinket ({n} dager)", geb: "{name} har bursdag i dag!", gebAlt: "{name} – alder: {n} 🐾",
+          gebText: "Ekstra godbiter i dag 🦴", mehr: "🐾 Noe nærmer seg hos kjæledyrene dine", kurzHeute: "i dag", kurzIn3: "om 3 dager", kurzUeber: "forsinket" },
 };
 function tx(lang, k, vars) {
     let s = (T[lang] || T.en)[k] || T.en[k] || k;

@@ -24,7 +24,7 @@
   'use strict';
   if (window.PinnExport) return;
 
-  var LANGS = ['de', 'en', 'fr', 'es', 'it', 'pt', 'zh', 'ja', 'ko', 'ru', 'nl', 'tr', 'pl', 'uk', 'cs', 'sv', 'da'];
+  var LANGS = ['de', 'en', 'fr', 'es', 'it', 'pt', 'zh', 'ja', 'ko', 'ru', 'nl', 'tr', 'pl', 'uk', 'cs', 'sv', 'da', 'nb'];
   var T = {};
   T.de = {
     F: 'Familie', FW: 'WG', Fd: 'der Familie', FWd: 'der WG',
@@ -1001,6 +1001,60 @@
       '',
       'Advarsel: Denne fil indeholder økonomi, dokumenter og nødkort ukrypteret.',
       'Opbevar den sikkert.',
+    ],
+  };
+
+  // Norwegian Bokmål (since 1.158.0)
+  T.nb = {
+    F: 'familie', FW: 'husstand', Fd: 'din familie', FWd: 'din husstand',
+    titel: 'Eksporter {F}',
+    intro: 'Alle data for {Fd} som en ZIP-fil – inkludert dokumenter, kvitteringer og bilder. For eksempel for flytting til en annen NAS eller som egen sikkerhetskopi.',
+    lade: 'Kontrollerer innholdet …', fehler: 'Det fungerte ikke.',
+    fehlerNetz: 'Ingen forbindelse til pinn. – sørg for at du er på hjemmenettverket eller VPN.',
+    serverFehlt: 'export.pb.js og pinn-export.js (pb_hooks) mangler fortsatt på serveren.',
+    familieWaehlen: 'Velg {F}', inhalt: 'Dette kommer i ZIP-filen', eintraege: '{0} poster', dateienN: '{0} filer',
+    dokumente: 'Filer totalt', groesse: 'Størrelse (ca.)',
+    nichtDrin: 'Er ikke med',
+    nichtDrinText: 'Passord, PIN-koder, tilgangsdata til iCloud, Google og Home Assistant, innloggede enheter og push-abonnementer. På en annen NAS logger du bare inn på nytt. Posisjonshistorikk fra Traccar er heller ikke med.',
+    privat: 'Er ikke med fordi det er privat: {0} kasse(r) du ikke er medlem av, og {1} kalender/kalendere «Bare for meg» fra andre profiler. En fullstendig eksport – for eksempel ved flytting – lages av hovedadministratoren.',
+    voll: 'Fullstendig eksport – private kasser og kalendere «Bare for meg» fra alle profiler er med.',
+    sicherheit: 'ZIP-filen inneholder økonomi, dokumenter og nødkort ukryptert. Oppbevar den trygt, og ikke send den med e-post.',
+    gross: 'Det er omtrent {0}. På en telefon kan det ta en stund – eksporter heller på en datamaskin, og la pinn. stå åpen imens.',
+    starten: 'Lag ZIP', abbrechen: 'Avbryt', schliessen: 'Lukk', nochmal: 'Prøv igjen',
+    schrittDaten: 'Data: {0}', schrittDatei: 'Fil {0} av {1}', packe: 'Pakker ZIP-filen …',
+    offenLassen: 'La pinn. stå åpen til eksporten er ferdig.',
+    fertig: 'Eksporten er ferdig ✓', fertigText: '{0} poster og {1} filer · {2}',
+    speichern: 'Lagre ZIP', teilen: 'Del eller lagre i Filer',
+    speichernTipp: 'iPhone/iPad: «Del» → «Arkiver i Filer». Datamaskin: «Lagre ZIP» legger filen i nedlastingsmappen din.',
+    fehlende: '{0} fil(er) kunne ikke leses – de står i listen i export-fehler.txt i ZIP-filen.',
+    abgebrochen: 'Eksporten ble avbrutt.', zuGross: 'Eksporten er større enn 4 GB – en vanlig ZIP-fil rommer ikke det.',
+    keinAdmin: 'Bare administratorer kan opprette eksporten.',
+    S: {
+      familien: '{F}', benutzer: 'Profiler', familien_daten: 'Kalender, lister, oppskrifter, medlemmer og innstillinger',
+      rezept_bilder: 'Oppskriftsbilder', oeffentliche_rezepte: 'Delte oppskrifter', aufgaben: 'Oppgaver',
+      haushalt_verlauf: 'Husholdningshistorikk', kassen: 'Kasser, depoter og kontrakter', ausgaben: 'Transaksjoner',
+      finanz_dokumente: 'Kontraktdokumenter', dokumente: 'Dokumenter', pinnwand_bilder: 'Oppslagstavlens bilder',
+      kalender_eigene: 'Egne kalendere', kalender_termine: 'Avtaler', muellkalender: 'Avfallskalender',
+      ortung: 'Steder og posisjon', zuhause: 'Hjem', smarthome_zugaenge: 'Smarthus',
+      dashboard_hintergruende: 'Panel', apple_zugaenge: 'iCloud', google_zugaenge: 'Google',
+    },
+    liesmich: 'README.txt',
+    readme: [
+      'pinn. – dataeksport',
+      '',
+      '{F}: {0}',
+      'Opprettet: {1} av {2} (pinn. {3})',
+      '',
+      'Innhold:',
+      '  pinn-export.json  beskrivelse av eksporten (format, innhold, filliste)',
+      '  daten/            alle poster per samling som JSON (slik de er lagret i PocketBase)',
+      '  dateien/          dokumenter, kvitteringer og bilder: dateien/<samling>/<post-id>/<fil>',
+      '',
+      'Er ikke med: passord, PIN-koder, tilgangsdata (iCloud, Google, Home Assistant),',
+      'innloggede enheter, push-abonnementer og posisjonshistorikk fra Traccar.',
+      '',
+      'Advarsel: Denne filen inneholder økonomi, dokumenter og nødkort ukryptert.',
+      'Oppbevar den trygt.',
     ],
   };
 

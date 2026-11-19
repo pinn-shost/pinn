@@ -10,7 +10,7 @@
   if (window.PinnSetup) return;
 
   // Russian (prepared since 1.120.0, enabled since 1.121.0); hidden languages are only selectable if the app offers them
-  var LANGS = ['de', 'en', 'fr', 'es', 'it', 'pt', 'zh', 'ja', 'ko', 'ru', 'nl', 'tr', 'pl', 'uk', 'cs', 'sv', 'da'];
+  var LANGS = ['de', 'en', 'fr', 'es', 'it', 'pt', 'zh', 'ja', 'ko', 'ru', 'nl', 'tr', 'pl', 'uk', 'cs', 'sv', 'da', 'nb'];
   var T = {};
   T.de = {
     titel: "Einrichtung", lade: "Einrichtung wird geladen …",
@@ -3494,6 +3494,218 @@
     nochmalPruefen: "Kontrollér igen", zurVerwaltung: "Til familieadministrationen",
   };
 
+  // Norwegian Bokmål (since 1.158.0)
+  T.nb = {
+    titel: "Oppsett", lade: "Oppsettet lastes …",
+    weiter: "Neste", zurueck: "Tilbake", ueberspringen: "Hopp over", spaeter: "Senere", schliessen: "Lukk",
+    pruefen: "Kontroller", pruefe: "Kontrollerer …", speichere: "Lagrer …", kopieren: "Kopier", kopiert: "Kopiert ✓",
+    anleitung: "Steg-for-steg-veiledning", optional: "valgfritt", erweitert: "Avansert", zeigen: "Vis",
+    gespeichertGeheim: "lagret: ••••{0}", leerLassen: "la feltet stå tomt = uendret", ausEnv: "Verdi fra .env eller docker-compose.yaml",
+    entfernen: "Fjern", wirdEntfernt: "fjernes ved lagring", entfernenFrage: "Fjerne denne lagrede verdien?",
+    schritt: "Trinn {0} av {1}", fehlerFeld: "Kontroller «{0}».", fehler: "Det fungerte ikke.", ok: "OK ✓",
+    fehlerNetz: "Ingen forbindelse til pinn. – sørg for at du er på hjemmenettverket ditt.",
+    ordnerFehlt: "Mappen «konfig» mangler på NAS-en din. Bruk den nye docker-compose.yaml, og kjør skriptet pinn-setup.sh (eller «docker compose up -d»). Uten denne mappen kan oppsettet ikke lagre noe.",
+    ordnerSchreibschutz: "Mappen «konfig» er skrivebeskyttet – kjør pinn-setup.sh på nytt.",
+    serverFehlt: "einrichtung.pb.js og pinn-einrichtung.js (pb_hooks) mangler fortsatt på serveren.",
+    erkannt: "Funnet i adressefeltet: {0}", deineAdresse: "Din pinn.-adresse:", ph_sub: "f.eks. hansen",
+    L_PORT: "HTTPS-port", h_port: "Endre den bare hvis du har endret port 8443 i docker-compose.yaml.",
+    pflichtInfo: "Bare «Hjemmenettverk» og «DuckDNS» er obligatoriske. Alt annet kan du hoppe over og komme tilbake til når som helst: Hovedadministrator → Oppsett.",
+    serverOk: "pinn. kjører og kan lagre innstillingene ✓",
+    schonFertig: "Oppsettet er allerede gjennomført. Du kan kontrollere og endre alt – ta det i bruk til slutt med «Lagre og start».",
+    bitteWaehlen: "Velg et alternativ (eller «Hopp over»).",
+    skipPflicht: "Uten dette trinnet fungerer ikke HTTPS, push-varsler og appen på hjemmeskjermen. Hoppe over likevel?",
+    pflichtFehlt: "Fyll ut feltene – eller trykk på «Hopp over».",
+    speichernStarten: "Lagre og start", neu: "ny", nichtGesetzt: "ikke angitt", erledigtKurz: "ferdig", offen: "åpen",
+    eingerichtet: "satt opp", aus: "av",
+
+    t_sprache: "Velkommen til pinn. 👋",
+    i_sprache: "Velg språk for oppsettet. Det brukes også for pinn. på denne enheten – hver profil kan senere velge sitt eget språk.",
+
+    t_start: "Dette trenger du",
+    i_start: "pinn. er ferdig satt opp på omtrent 20–30 minutter. Hvert trinn lagres når du trykker på «Neste» – du kan altså avbryte når som helst og fortsette der du slapp.",
+    l_start: [
+      "tilgang til ruteren din (for en FRITZ!Box: passordet på undersiden av boksen eller ditt eget)",
+      "denne enheten på hjemmenettverket (Wi-Fi) – en datamaskin er enklest, men en telefon fungerer også",
+      "en Google-, GitHub- eller Reddit-konto til den gratis tjenesten DuckDNS",
+      "valgfritt: en Google-konto til Android-kalendere og AI",
+    ],
+
+    t_netz: "Hjemmenettverk: NAS-adresse",
+    i_netz: "pinn. må kjenne adressen til NAS-en din på hjemmenettverket. For at adressen aldri skal endre seg, reserverer ruteren den permanent.",
+    L_NAS_IP: "NAS-ens IP-adresse",
+    g_netz: [
+      "Se i nettleserens adressefelt: Står det for eksempel `http://192.168.178.20:8090`, er tallet før kolonet allerede NAS-ens IP-adresse.",
+      "Ellers kan du se i FRITZ!Box-en din: Åpne [fritz.box](http://fritz.box) i nettleseren, og logg inn med FRITZ!Box-passordet.",
+      "Åpne til venstre «Home Network» → «Network» → fanen «Network Connections».",
+      "Finn NAS-en din i listen (som regel «UGREEN…» eller «DXP…»), og trykk på blyanten (rediger) til høyre.",
+      "Noter IPv4-adressen, og huk av ved «Always assign this network device the same IPv4 address» → «Apply».",
+      "Andre rutere: Se etter «Hjemmenettverk», «LAN» eller «DHCP» – ofte heter det «reserver adresse» eller «statisk IP». I UGREEN-appen finner du adressen under Kontrollpanel → Nettverk.",
+    ],
+
+    t_duckdns: "Adressen din med HTTPS (DuckDNS)",
+    i_duckdns: "DuckDNS er en gratis tjeneste som gir pinn. en fast adresse med sikkerhetssertifikat. pinn. trenger det til push-varsler, appen på hjemmeskjermen og Google-innlogging. Ingen portviderekobling er nødvendig – pinn. forblir usynlig utenfra.",
+    L_DUCKDNS_SUBDOMAIN: "Underdomene (valgfritt navn)", L_DUCKDNS_TOKEN: "DuckDNS-token", L_PINN_ADRESSE: "pinn.-adresse",
+    g_duckdns: [
+      "Åpne [duckdns.org](https://www.duckdns.org).",
+      "Logg inn øverst til høyre med en av kontoene som tilbys (for eksempel Google, GitHub eller Reddit) – DuckDNS har ikke eget passord.",
+      "Skriv et navn i feltet «sub domain», for eksempel `hansen` (bare små bokstaver, tall og bindestreker), og trykk på «add domain». Er navnet opptatt, prøv et annet.",
+      "Øverst på siden ser du «token» – en lang tegnrekke med bindestreker. Marker og kopier den.",
+      "Lim inn underdomene og token her, og trykk på «Kontroller». pinn. registrerer selv adressen til NAS-en din hos DuckDNS – du skal ikke endre feltet «current ip» på nettsiden.",
+      "Token er som et passord – ikke del det. Hvis det har skjedd: Trykk på «recreate token» på duckdns.org, og skriv inn det nye tokenet her.",
+    ],
+    test_duckdns_ok: "DuckDNS godtok adressen ✓ – {0} peker nå til NAS-en din ({1}).",
+    test_duckdns_ko: "DuckDNS avviste det. Kontroller underdomene og token – underdomenet må finnes i DuckDNS-kontoen din.",
+    test_duckdns_netz: "duckdns.org kan ikke nås fra NAS-en. Har NAS-en internettilgang?",
+    test_duckdns_fehlt: "Skriv inn underdomene og token.",
+    test_duckdns_ungueltig: "Underdomene eller token ser ikke riktig ut.",
+    test_duckdns_ip_fehlt: "Skriv først inn NAS-ens IP-adresse i trinnet «Hjemmenettverk».",
+
+    t_rebind: "Ruter: DNS-rebind-beskyttelse",
+    i_rebind: "pinn.-adressen din peker til en enhet på hjemmenettverket ditt. Mange rutere – også FRITZ!Box – blokkerer det som beskyttelse. Da åpnes ikke pinn. via adressen. Et unntak for akkurat denne adressen løser det:",
+    g_rebind: [
+      "Åpne [fritz.box](http://fritz.box), og logg inn.",
+      "«Home Network» → «Network» → fanen «Network Settings».",
+      "Bla helt ned, og åpne «additional settings».",
+      "I avsnittet «DNS Rebind Protection» skriver du denne linjen under «Host name exceptions»: `{SUB}.duckdns.org`",
+      "Trykk på «Apply», og – hvis FRITZ!Box spør – bekreft på boksen.",
+      "Andre rutere: Søk i innstillingene etter «DNS rebind», og oppgi samme adresse som unntak. Finnes ikke innstillingen, trenger du som regel ikke gjøre noe.",
+    ],
+    rebindErledigt: "Ferdig – unntaket er lagt til",
+
+    t_fern: "Bruk på farten (VPN)",
+    i_fern: "pinn. er bevisst ikke åpent mot internett. På farten kobler telefonen seg sikkert til hjemmet ditt via VPN – som om du var på Wi-Fi-et ditt. Hvordan vil du gjøre det?",
+    c_wg: "FRITZ!Box med WireGuard", c_wg_d: "Anbefales hvis du har en FRITZ!Box med FRITZ!OS 7.50 eller nyere. Gratis, ingen ekstra konto nødvendig.",
+    c_ts: "Tailscale", c_ts_d: "For andre rutere – eller hvis WireGuard ikke fungerer (for eksempel ved DS-Lite-tilkoblinger). Krever en gratis konto på tailscale.com.",
+    c_kein: "Bare hjemme", c_kein_d: "Bruk pinn. bare på Wi-Fi-et ditt hjemme. Kan legges til når som helst.",
+    L_TS_AUTHKEY: "Tailscale-nøkkel (auth key)",
+    g_wireguard: [
+      "Åpne [fritz.box](http://fritz.box), og logg inn. Under «System» → «Update» skal det stå FRITZ!OS 7.50 eller nyere (oppdater der hvis ikke).",
+      "«Internet» → «Permit Access» → fanen «VPN (WireGuard)» → «Add connection».",
+      "Velg «Simplified setup (recommended)» → «Next». På spørsmålet om en enkelt enhet skal kobles til, velger du «Yes».",
+      "Gi telefonen et navn (for eksempel `Annes telefon`) → «Finish». Hvis FRITZ!Box ber om bekreftelse: Trykk på en knapp på boksen, eller bekreft på telefonen.",
+      "Hvis FRITZ!Box spør etter en MyFRITZ!-konto: Opprett den gratis – da finner telefonen boksen din på farten.",
+      "Det vises en QR-kode. Installer appen «WireGuard» på telefonen: [iPhone](https://apps.apple.com/app/wireguard/id1441195209) · [Android](https://play.google.com/store/apps/details?id=com.wireguard.android).",
+      "I WireGuard-appen trykker du på «+» → «Scan from QR code» (iPhone: «Create from QR code») → skann koden på skjermen → gi den et navn → tillat at VPN-konfigurasjonen legges til.",
+      "Test: Slå av Wi-Fi på telefonen, slå på WireGuard, og åpne {ADRESSE}.",
+      "Gjenta trinnene fra «Add connection» for hver andre telefon – hver enhet får sin egen forbindelse.",
+    ],
+    wgNurPinnT: "Tillat bare pinn. (for eksempel for pårørende)",
+    wgNurPinn: "Hvis en enhet bare skal nå pinn. via VPN og ikke hele hjemmenettverket ditt: Trykk i WireGuard-appen på forbindelsen → «Edit» → under «Allowed IPs» erstatter du alt med `{NAS_IP}/32, {ROUTER_IP}/32` → «Save». Den andre adressen er ruteren (for navneoppslag). Merk: Begrensningen gjelder på den enheten.",
+    wgDsLite: "Fungerer det ikke på farten? Noen tilkoblinger (DS-Lite, vanlig ved kabel og fiber) har ingen egen IPv4-adresse – da fungerer WireGuard bare hvis telefonen har IPv6 på farten. Bruk i så fall Tailscale.",
+    g_tailscale: [
+      "Åpne [login.tailscale.com](https://login.tailscale.com/start), og opprett en gratis konto (for eksempel logg inn med Google, Microsoft eller Apple).",
+      "I administrasjonskonsollen: «Settings» øverst → «Keys» til venstre → «Generate auth key…».",
+      "Behold standardverdiene → «Generate key» → kopier nøkkelen (begynner med `tskey-auth-`), og lim den inn ovenfor.",
+      "Trykk på «Neste». Containeren «tailscale» på NAS-en bruker den til å logge inn i løpet av et minutt.",
+      "Tilbake i Tailscales administrasjonskonsoll: fanen «Machines» → ved enheten «pinn» trykk på «…» → «Edit route settings…» → huk av ved `{NAS_IP}/32` → «Save».",
+      "Også ved «pinn» under «…» → velg «Disable key expiry» – ellers må NAS-en logge inn på nytt hver 180. dag.",
+      "Installer appen «Tailscale» på hver telefon ([iPhone](https://apps.apple.com/app/tailscale/id1470499037) · [Android](https://play.google.com/store/apps/details?id=com.tailscale.ipn)), og logg inn med samme konto. Inviter pårørende under «Users» i administrasjonskonsollen.",
+      "Test: Slå av Wi-Fi på telefonen, koble til Tailscale, og åpne {ADRESSE}.",
+    ],
+    keinFern: "Ingen fare – pinn. fungerer da på Wi-Fi-et ditt hjemme. Du kan legge til fjerntilgang når som helst under Hovedadministrator → Oppsett.",
+
+    t_google: "Google: Android-kalendere og kontakter",
+    i_google: "Valgfritt. Er nødvendig hvis du vil se Google-kalendere (Android) eller bursdager fra Google-kontakter i pinn. Det settes opp én gang for hele serveren – deretter logger hver person inn i pinn. med sin egen Google-konto. Ingenting å gjøre her for iPhone/iCloud.",
+    googleBrauchtHttps: "Google trenger HTTPS-adressen fra trinnet «DuckDNS».",
+    L_REDIRECT: "Redirect URI (for Google Cloud Console)",
+    L_PINN_GOOGLE_CLIENT_ID: "Klient-ID", L_PINN_GOOGLE_CLIENT_SECRET: "Klienthemmelighet",
+    g_google: [
+      "Åpne [console.cloud.google.com](https://console.cloud.google.com), og logg inn med en Google-konto (godta vilkårene første gang).",
+      "Trykk på prosjektvelgeren øverst → «New project» → navn `pinn` → «Create». Velg deretter prosjektet «pinn» øverst.",
+      "Aktiver tre API-er – åpne hver av dem, og trykk på «Enable»: [Google Calendar API](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com) · [CalDAV API](https://console.cloud.google.com/apis/library/caldav.googleapis.com) · [People API](https://console.cloud.google.com/apis/library/people.googleapis.com).",
+      "Åpne [Google Auth Platform](https://console.cloud.google.com/auth/overview) → «Get started»: appnavn `pinn.`, støtteadresse = adressen din → målgruppe «External» → kontaktadresse → godta → «Create».",
+      "Til venstre «Audience» → «Publish app» → bekreft. Viktig: I status «Testing» utløper hver Google-tilkobling etter 7 dager.",
+      "Til venstre «Clients» → «Create client» → apptype «Web application», navn `pinn.`.",
+      "Under «Authorized redirect URIs» → «Add URI», og lim inn nøyaktig denne adressen: `{REDIRECT}` → «Create».",
+      "Kopier klient-ID og klienthemmelighet, lim dem inn her, og trykk på «Kontroller». (Google viser hemmeligheten bare én gang – ellers bruk «Add secret» på klienten.)",
+      "Når du senere kobler til, viser Google «Google hasn't verified this app». Det er normalt for din private app: «Advanced» → «Go to pinn.».",
+    ],
+    test_google_ok: "Google gjenkjenner denne klienten ✓",
+    test_google_uri: "Klient-ID og hemmelighet er riktige, men redirect-URI-en mangler i klienten: {0}",
+    test_google_ungueltig: "Google gjenkjenner ikke denne klient-ID-en eller hemmeligheten – kopier dem på nytt.",
+    test_google_netz: "Google kan ikke nås fra NAS-en.",
+    test_google_fehlt: "Skriv inn klient-ID og klienthemmelighet.",
+
+    t_ki: "AI for oppskrifter (Google Gemini)",
+    i_ki: "Valgfritt. AI leser oppskrifter fra tekst, bilder, PDF-filer og lenker mye bedre og finner avfallskalenderen din. Nøkkelen er gratis og blir på NAS-en – appene snakker aldri direkte med Google.",
+    L_PINN_GEMINI_KEY: "Gemini API-nøkkel", L_PINN_GEMINI_MODELL: "Fast modell",
+    h_modell: "Tomt = den aktuelle Flash-modellen automatisk.",
+    g_ki: [
+      "Åpne [aistudio.google.com/apikey](https://aistudio.google.com/apikey), og logg inn med en Google-konto.",
+      "Trykk på «Create API key». Hvis Google spør etter et prosjekt, velg prosjektet «pinn» fra forrige trinn, eller opprett et nytt.",
+      "Kopier nøkkelen (begynner oftest med `AIza` eller `AQ.`), lim den inn her, og trykk på «Kontroller».",
+      "Greit å vite: I den gratis versjonen kan Google bruke de sendte oppskriftstekstene til å forbedre tjenestene sine.",
+    ],
+    test_gemini_ok: "Nøkkelen er gyldig ✓",
+    test_gemini_ungueltig: "Google avviser nøkkelen – kopier den på nytt.",
+    test_gemini_gesperrt: "Nøkkelen er sperret for Gemini API. Opprett en ny nøkkel i AI Studio.",
+    test_gemini_netz: "Google kan ikke nås fra NAS-en.",
+    test_gemini_fehlt: "Skriv inn nøkkelen.",
+
+    t_ortung: "Posisjon (Familie → live-posisjoner)",
+    i_ortung: "Valgfritt. Telefoner deler posisjonen sin direkte i pinn. – ingenting å angi her. Containeren «traccar» trengs bare for GPS-sporere med SIM-kort.",
+    l_ortung: [
+      "Posisjonsdeling fungerer direkte i pinn. (Familie → Posisjon). For å fortsette å sende mens pinn. er lukket, kan du installere appen «Traccar Client» – den sender direkte til pinn.",
+      "pinn. viser senere serveradressen og enhets-ID-en for hver person under Familie → ⚙︎ Posisjon.",
+      "På farten må telefonen bruke VPN fra trinnet «Bruk på farten».",
+      "GPS-sporere med SIM-kort (for eksempel på et hundehalsbånd) sender via mobilnettet – det krever portviderekobling i ruteren. pinn. viser veiledningen når du legger til sporeren.",
+    ],
+    appTraccar: "Appen «Traccar Client»:",
+    h_traccar: "Fyll ut bare hvis du allerede har opprettet en konto i Traccar selv. Tomt = pinn. oppretter en selv.",
+    L_PINN_TRACCAR_EMAIL: "Traccar-e-post", L_PINN_TRACCAR_PASSWORT: "Traccar-passord",
+    test_traccar_ok: "Traccar kjører ✓",
+    test_traccar_aus: "Containeren «traccar» kjører ikke – den trengs ikke for telefoner. Bare for GPS-sporere: Legg til COMPOSE_PROFILES=tracker i filen .env.",
+
+    t_ha: "Smarthus: Home Assistant",
+    i_ha: "Valgfritt. Hvor kjører Home Assistant hos deg?",
+    c_ha_kein: "Ingen Home Assistant",
+    c_ha_geraet: "På en egen enhet", c_ha_geraet_d: "for eksempel Raspberry Pi eller Home Assistant Green.",
+    c_ha_vm: "Som virtuell maskin på denne NAS-en", c_ha_vm_d: "Da setter pinn. opp en liten nettverksomvei – ellers når ikke NAS-en den virtuelle maskinen.",
+    haGeraetInfo: "Ingenting å angi her. Hver familie setter opp tilkoblingen i pinn. under Innstillinger → Smarthus.",
+    L_HA_IP: "Home Assistants IP-adresse", L_HILFS_IP: "Ledig hjelpeadresse", L_NAS_NETZWERKKARTE: "NAS-ens nettverkskort",
+    h_karte: "«auto» = pinn. finner nettverkskortet selv.",
+    g_ha: [
+      "Home Assistants IP: I Home Assistant «Settings» → «System» → «Network» – eller finn enheten «homeassistant» i FRITZ!Box under «Home Network» → «Network». Huk også der av ved «always assign the same IPv4 address».",
+      "Hjelpeadresse: en adresse på hjemmenettverket ditt som ingen enhet bruker, og som ruteren aldri deler ut. I FRITZ!Box viser «Home Network» → «Network» → «Network Settings» → «IPv4 settings» området ruteren deler ut (for eksempel .20 til .200). Velg en adresse over det, for eksempel `{VORSCHLAG}`.",
+      "Trykk på «Neste» – containeren «ha-netz» setter opp omveien i løpet av et minutt. «Kontroller» viser om pinn. kan nå Home Assistant.",
+      "Hver familie skriver senere inn Home Assistants tilgangstoken i pinn. under Innstillinger → Smarthus.",
+    ],
+    haAktiv: "Omvei aktiv via {0} (hjelpeadresse {1}) ✓", haWartet: "Omveien venter på innstillingene.", haFehler: "Omveien kunne ikke settes opp (nettverkskort: {0}).",
+    test_homeassistant_ok: "Home Assistant kan nås ✓",
+    test_homeassistant_aus: "Home Assistant kan ikke nås (ennå). Etter «Neste» venter du i opptil et minutt og kontrollerer på nytt.",
+    test_homeassistant_fehlt: "Skriv inn Home Assistants IP-adresse.",
+
+    t_apps: "Apper og enheter",
+    i_apps: "Nesten ferdig! Dette trenger familiemedlemmene på telefonene sine:",
+    a_home_t: "pinn. på hjemmeskjermen (for alle)",
+    a_home: [
+      "iPhone/iPad: Åpne {ADRESSE} i Safari → delingsikonet (firkant med pil) → «Legg til på Hjem-skjerm» → «Legg til». Bare slik fungerer push-varsler (iOS 16.4 eller nyere).",
+      "Android: Åpne {ADRESSE} i Chrome → ⋮ øverst til høyre → «Installer app» eller «Legg til på startskjermen».",
+      "Bruk alltid https-adressen – ikke adressen med :8090.",
+    ],
+    a_vpn: "For på farten – oppsett, se trinnet «Bruk på farten»:",
+    a_traccar: "Bare for posisjonssporing:",
+    a_icloud_t: "iCloud-kalender (iPhone)",
+    a_icloud: "Hver familie kobler selv til iCloud-kalenderen sin i pinn. under Innstillinger → Kalender. Det krever et appspesifikt passord: [account.apple.com](https://account.apple.com) → «Pålogging og sikkerhet» → «Appspesifikke passord» → «+» → navn `pinn.` → skriv inn passordet som vises (xxxx-xxxx-xxxx-xxxx) i pinn.",
+    a_push_t: "Push-varsler",
+    a_push: "Alle slår dem på i pinn. under Innstillinger → Varsler → «Aktiver på denne enheten» – på iPhone bare i appen fra hjemmeskjermen.",
+
+    t_fertig: "Oversikt",
+    i_fertig: "Kontroller opplysningene. Med «Lagre og start» tar pinn. i bruk alt og starter på nytt én gang kort (omtrent 10–20 sekunder).",
+    S_ADRESSE: "Adresse", S_REBIND: "DNS-rebind-unntak", S_FERN: "På farten", S_KI: "AI", S_ORTUNG: "Posisjon",
+    L_PINN_PUSH_KONTAKT: "Kontakt for push-tjenester",
+    h_push: "Apple og Google krever en kontaktadresse (e-post) for push-varsler. Tomt = pinn. bruker sin egen adresse.",
+    neustart: "pinn. starter på nytt …", neustartOk: "startet på nytt ✓", neustartFehler: "pinn. svarer ikke. Last inn på nytt om et minutt eller to.",
+    pruefeHttps: "Kontrollerer HTTPS …", pruefeAlles: "Kontrollerer alt …",
+    zertifikatDauert: "Sikkerhetssertifikatet hentes første gang – det kan ta 1–2 minutter …",
+    httpsOk: "{0} kan nås ✓",
+    httpsFehler: "{0} svarer ikke ennå. Vanlige årsaker: DNS-rebind-beskyttelse i ruteren (trinn 5), denne enheten er ikke på hjemmenettverket, eller sertifikatet trenger litt lengre tid. Prøv senere med «Kontroller på nytt».",
+    httpsAus: "Ingen HTTPS-adresse angitt (trinnet DuckDNS).",
+    t_geschafft: "Ferdig! 🎉",
+    geschafftText: "pinn. er satt opp. Fra nå av åpner du pinn. via denne adressen og lagrer den på alle telefoner (se «Apper og enheter»). Opprett deretter din første familie i familieadministrasjonen.",
+    nochmalPruefen: "Kontroller på nytt", zurVerwaltung: "Til familieadministrasjonen",
+  };
+
   T.uk = {
     titel: "Конфігурація", lade: "Завантаження конфігурації …",
     weiter: "Далі", zurueck: "Назад", ueberspringen: "Пропустити", spaeter: "Пізніше", schliessen: "Закрити",
@@ -3999,7 +4211,7 @@
   var R = {};
   R.sprache = function () {
     var langs = (window.PINN_LANGUAGES || []).slice();
-    var order = { de: 0, en: 1, fr: 2, es: 3, it: 4, pt: 5, zh: 6, ja: 7, ko: 8, ru: 9, nl: 10, tr: 11, pl: 12, uk: 13, cs: 14, sv: 15, da: 16 };
+    var order = { de: 0, en: 1, fr: 2, es: 3, it: 4, pt: 5, zh: 6, ja: 7, ko: 8, ru: 9, nl: 10, tr: 11, pl: 12, uk: 13, cs: 14, sv: 15, da: 16, nb: 17 };
     // Hidden languages only if they are enabled on this device for testing (PINN_I18N.find)
     var I = window.PINN_I18N;
     langs = langs.filter(function (l) { return order[l.code] != null && (!l.hidden || (I && I.find && I.find(l.code))); })

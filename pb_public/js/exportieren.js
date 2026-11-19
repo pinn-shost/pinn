@@ -38,6 +38,8 @@ const PINN_EXPORT_TEXTE = {
   sv: { btn: '📦 Export: {F}', kurz: '📦 Export', text: 'Alla data för {Fd} som en ZIP-fil – inklusive dokument, kvitton och bilder. Till exempel för att flytta till en annan NAS eller som egen säkerhetskopia.', laden: 'Exporten kunde inte laddas (pb_public/datenexport.js saknas?).', F: 'familj', FW: 'hushåll', Fd: 'familjen', FWd: 'hushållet' },
   // Danish (since 1.157.0): {F} is the bare noun ("Eksport: familie"), {Fd} the definite form
   da: { btn: '📦 Eksport: {F}', kurz: '📦 Eksport', text: 'Alle data for {Fd} som en ZIP-fil – inklusive dokumenter, kvitteringer og billeder. For eksempel til flytning til en anden NAS eller som egen sikkerhedskopi.', laden: 'Eksporten kunne ikke indlæses (mangler pb_public/datenexport.js?).', F: 'familie', FW: 'husstand', Fd: 'familien', FWd: 'husstanden' },
+  // Norwegian Bokmål (since 1.158.0): {F} is the bare noun ("Eksporter: familie"), {Fd} the definite form
+  nb: { btn: '📦 Eksporter: {F}', kurz: '📦 Eksporter', text: 'Alle data for {Fd} som en ZIP-fil – inkludert dokumenter, kvitteringer og bilder. For eksempel for flytting til en annen NAS eller som egen sikkerhetskopi.', laden: 'Eksporten kunne ikke lastes (mangler pb_public/datenexport.js?).', F: 'familie', FW: 'husstand', Fd: 'familien', FWd: 'husstanden' },
 };
 function pinnExportText(key) {
   const l = (window.PINN_I18N && window.PINN_I18N.current) || 'en';

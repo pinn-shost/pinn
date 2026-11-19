@@ -119,7 +119,7 @@ function langOf(u) {
     let w = {};
     try { w = require(`${__hooks}/pinn-design.js`).readDesign(u).werte || {}; } catch (e) { w = {}; }
     const s = String(w.sprache || "");
-    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr", "pl", "uk", "cs", "sv", "da"].indexOf(s) >= 0) return s;
+    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr", "pl", "uk", "cs", "sv", "da", "nb"].indexOf(s) >= 0) return s;
     if (/^[a-z]{2}$/.test(s)) return "en";
     const land = String(w.land || "").toUpperCase();
     if (["DE", "AT", "CH", "LI", "LU"].indexOf(land) >= 0) return "de";
@@ -138,6 +138,7 @@ function langOf(u) {
     if (["CZ"].indexOf(land) >= 0) return "cs";
     if (["SE", "AX"].indexOf(land) >= 0) return "sv";
     if (["DK", "GL", "FO"].indexOf(land) >= 0) return "da";
+    if (["NO", "SJ"].indexOf(land) >= 0) return "nb";
     return "en";
 }
 
@@ -162,6 +163,7 @@ const MONTHS = {
     cs: ["leden", "únor", "březen", "duben", "květen", "červen", "červenec", "srpen", "září", "říjen", "listopad", "prosinec"],
     sv: ["januari", "februari", "mars", "april", "maj", "juni", "juli", "augusti", "september", "oktober", "november", "december"],
     da: ["januar", "februar", "marts", "april", "maj", "juni", "juli", "august", "september", "oktober", "november", "december"],
+    nb: ["januar", "februar", "mars", "april", "mai", "juni", "juli", "august", "september", "oktober", "november", "desember"],
 };
 // Russian needs the genitive for date ranges and the prepositional case for "in the month" (the list above is the nominative)
 const MONTHS_RU_GEN = ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"];
@@ -199,6 +201,8 @@ function rangeText(lang, mondayIso) {
     if (lang === "sv") return a[1] === b[1] ? (a[2] + "–" + b[2] + " " + M[b[1] - 1]) : (a[2] + " " + M[a[1] - 1] + " – " + b[2] + " " + M[b[1] - 1]);
     // Danish (since 1.157.0): "2.–8. november" / "30. oktober – 5. november"
     if (lang === "da") return a[1] === b[1] ? (a[2] + ".–" + b[2] + ". " + M[b[1] - 1]) : (a[2] + ". " + M[a[1] - 1] + " – " + b[2] + ". " + M[b[1] - 1]);
+    // Norwegian (since 1.158.0): "2.–8. november" / "30. oktober – 5. november"
+    if (lang === "nb") return a[1] === b[1] ? (a[2] + ".–" + b[2] + ". " + M[b[1] - 1]) : (a[2] + ". " + M[a[1] - 1] + " – " + b[2] + ". " + M[b[1] - 1]);
     return a[1] === b[1] ? ("du " + a[2] + " au " + b[2] + " " + M[b[1] - 1]) : ("du " + a[2] + " " + M[a[1] - 1] + " au " + b[2] + " " + M[b[1] - 1]);
 }
 function weekMessage(lang, mondayIso) {
@@ -219,6 +223,7 @@ function weekMessage(lang, mondayIso) {
     if (lang === "cs") return { titel: "🗓️ Tvůj týden je připraven", text: "Události, úkoly, jídla a další na období " + r + " – vše na jedné obrazovce." };
     if (lang === "sv") return { titel: "🗓️ Din vecka är här", text: "Händelser, uppgifter, måltider och mer för " + r + " – allt på ett ställe." };
     if (lang === "da") return { titel: "🗓️ Din uge er klar", text: "Begivenheder, opgaver, måltider og mere for " + r + " – alt samlet ét sted." };
+    if (lang === "nb") return { titel: "🗓️ Uken din er klar", text: "Avtaler, oppgaver, måltider og mer for " + r + " – alt samlet på ett sted." };
     return { titel: "🗓️ Your week is ready", text: "Events, tasks, meals and more for " + r + " – all at a glance." };
 }
 function monthMessage(lang, key) {
@@ -241,6 +246,7 @@ function monthMessage(lang, key) {
     if (lang === "cs") return { titel: "💶 Výhled financí: " + next, text: "Co přijde v " + MONTHS_CS_LOC[m - 1] + " – a rekapitulace: " + prev + "." };
     if (lang === "sv") return { titel: "💶 Ekonomiutblick: " + next, text: "Vad som väntar i " + next + " – och hur " + prev + " blev." };
     if (lang === "da") return { titel: "💶 Økonomioverblik: " + next, text: "Hvad der venter i " + next + " – og hvordan " + prev + " gik." };
+    if (lang === "nb") return { titel: "💶 Økonomioversikt: " + next, text: "Hva som venter i " + next + " – og hvordan " + prev + " gikk." };
     return { titel: "💶 Finance outlook: " + next.charAt(0).toUpperCase() + next.slice(1), text: "What's coming up in " + next + " – and how " + prev + " went." };
 }
 
@@ -261,6 +267,7 @@ function yearMessage(lang, year) {
     if (lang === "cs") return { titel: "🎁 Tvůj rok " + year + " v přehledu", text: "Výdaje, uvařená jídla a cesty – takový byl tvůj rok." };
     if (lang === "sv") return { titel: "🎁 Ditt år " + year + " i översikt", text: "Utgifter, lagade måltider och resor – så var ditt år." };
     if (lang === "da") return { titel: "🎁 Dit år " + year + " i overblik", text: "Udgifter, lavede måltider og rejser – sådan var dit år." };
+    if (lang === "nb") return { titel: "🎁 Året ditt " + year + " i oversikt", text: "Utgifter, lagde måltider og reiser – slik var året ditt." };
     return { titel: "🎁 Your year in review " + year, text: "Expenses, meals cooked and trips – this was your year." };
 }
 

@@ -69,6 +69,9 @@ window.PINN_LANGUAGES = [
   // Danish (since 1.157.0, offered in the app since 1.157.0)
   { code: 'da', name: 'Dansk', locale: 'da-DK',
     flag: '<svg viewBox=\"0 0 37 28\" aria-hidden=\"true\"><path d=\"M0,0h37v28H0z\" fill=\"#C8102E\"/><path d=\"M12,0h4v28h-4z\" fill=\"#fff\"/><path d=\"M0,12h37v4H0z\" fill=\"#fff\"/></svg>' },
+  // Norwegian Bokmål (since 1.158.0, offered in the app since 1.158.0)
+  { code: 'nb', name: 'Norsk', locale: 'nb-NO',
+    flag: '<svg viewBox=\"0 0 22 16\" aria-hidden=\"true\"><path d=\"M0,0h22v16H0z\" fill=\"#BA0C2F\"/><path d=\"M6,0h4v16H6z\" fill=\"#fff\"/><path d=\"M0,6h22v4H0z\" fill=\"#fff\"/><path d=\"M7,0h2v16H7z\" fill=\"#00205B\"/><path d=\"M0,7h22v2H0z\" fill=\"#00205B\"/></svg>' },
 ];
 (function () {
   var KEY = 'pinn.sprache';
@@ -155,7 +158,7 @@ window.PINN_LANGUAGES = [
 
   // Raise with every change to a text file in i18n/, otherwise devices keep using the old file.
   // .github/scripts/check-keys.js makes sure it matches src/version.txt.
-  var FILE_VERSION = '1.157.0';
+  var FILE_VERSION = '1.158.0';
 
   // Invisible until the texts are in place (no short flash of English placeholder texts)
   var style = document.createElement('style');

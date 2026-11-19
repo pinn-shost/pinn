@@ -13,14 +13,14 @@
 // placeholders are filled by pinn-textkern.js – the same table the app uses. A flat share uses the variant
 // "<key>#wg" of the language file (created by .github/scripts/i18n-keys.js from the TERMS of js/sprachen.js).
 //
-//  - Language: from the profile (personal design, value "sprache": de, en, fr, es, it, pt, zh, ja, ko, ru, nl, tr, pl, uk, cs, sv, da). Without one: German.
+//  - Language: from the profile (personal design, value "sprache": de, en, fr, es, it, pt, zh, ja, ko, ru, nl, tr, pl, uk, cs, sv, da, nb). Without one: German.
 //  - Household type: from the family settings (field "wohnform": 'familie' or 'wg'). Only this one field is read
 //    via SQL (json_extract), not the big family data; the result stays cached until the family data changes.
 //  - Freely entered content (names, event titles, note texts, addresses) stays unchanged. Whatever matches no
 //    pattern stays as it is (German, or already translated by the module itself) – an unknown message is never lost.
 //    For a flat share such texts still get the flat share terms (applyTerms, same rules as TERMS in js/sprachen.js).
 
-const LANGS = ["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr", "pl", "uk", "cs", "sv", "da"];
+const LANGS = ["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr", "pl", "uk", "cs", "sv", "da", "nb"];
 
 // ---------------------------------------------------------------------------------------------
 // Language and household type of the recipient
@@ -106,6 +106,11 @@ const SV_DET = { en: "ett", din: "ditt", min: "mitt", sin: "sitt", er: "ert", "v
 const DA_HOME = { "": "husstand", n: "husstanden", ns: "husstandens", r: "husstande", rne: "husstandene", rnes: "husstandenes", rs: "husstandes" };
 const DA_MATE = { "": "bofælle", met: "bofællen", mer: "bofæller", merne: "bofællerne", mets: "bofællens", mers: "bofællers", mernes: "bofællernes" };
 const DA_DET = { et: "en", dit: "din", mit: "min", sit: "sin", hvert: "hver", ethvert: "enhver", intet: "ingen", noget: "nogen", andet: "anden", nyt: "ny", dette: "denne" };
+// Norwegian Bokmål (since 1.158.0): "familie" -> "husstand", "familiemedlem" (neuter) -> "bofelle" (masculine: "et familiemedlem" -> "en bofelle"),
+// "familie-" (compound prefix) -> "husstands-" (same tables as .github/scripts/i18n-keys.js). Explicit letter class and a captured prefix instead of lookbehind.
+const NB_HOME = { "": "husstand", en: "husstanden", ens: "husstandens", er: "husstander", ene: "husstandene", enes: "husstandenes", ers: "husstanders" };
+const NB_MATE = { "": "bofelle", met: "bofellen", mer: "bofeller", mene: "bofellene", mets: "bofellens", mers: "bofellers", menes: "bofellenes" };
+const NB_DET = { et: "en", ditt: "din", mitt: "min", sitt: "sin", hvert: "hver", ethvert: "enhver", intet: "ingen", annet: "annen", nytt: "ny", dette: "denne" };
 // Ukrainian (since 1.135.16): "сім’я" -> "квартира", "член сім’ї" -> "співмешканець" in the same case (same tables as
 // .github/scripts/i18n-keys.js). No Unicode lookbehind and no \p{L} in this engine: explicit Cyrillic letter class,
 // a captured character in front (re-inserted) and a lookahead behind the word.
@@ -297,6 +302,21 @@ const TERMS = {
             (m, pre, f, end) => pre + cap(f === "F", DA_MATE[end === undefined ? "" : end])],
         [/(^|[^A-Za-zÆØÅæøåÉéÈèÜüÄäÖö0-9])([Ff])amili(en|ens|e|erne|ernes|ers|er)(?![A-Za-zÆØÅæøåÉéÈèÜüÄäÖö0-9])/g,
             (m, pre, f, end) => pre + cap(f === "F", DA_HOME[end === "e" ? "" : end.slice(1)])],
+        [/(^|[^A-Za-zÆØÅæøåÉéÈèÜüÄäÖö0-9])([Ff])amilie(?=[A-Za-zÆØÅæøåÉéÈèÜüÄäÖö])/g, (m, pre, f) => pre + cap(f === "F", "husstands")],
+    ] },
+    // Norwegian Bokmål (since 1.158.0): same rules as the app (TERMS.nb in .github/scripts/i18n-keys.js), written without lookbehind
+    nb: { keep: /familielege[A-Za-zÆØÅæøåÉéÈèÜüÄäÖö]*|familiebil[A-Za-zÆØÅæøåÉéÈèÜüÄäÖö]*|familiebuss[A-Za-zÆØÅæøåÉéÈèÜüÄäÖö]*/gi, rules: [
+        [/(^|[^A-Za-zÆØÅæøåÉéÈèÜüÄäÖö0-9])([Ee]t)(\s+)(nytt|annet)(\s+)familiemedlem(?:met)?(?![A-Za-zÆØÅæøåÉéÈèÜüÄäÖö0-9])/g,
+            (m, pre, d, sp, adj, sp2) => pre + (d.charAt(0) === "E" ? "En" : "en") + sp + NB_DET[adj] + sp2 + "bofelle"],
+        [/(^|[^A-Za-zÆØÅæøåÉéÈèÜüÄäÖö0-9])([Dd])et (nye|valgte|aktuelle|andre|øvrige) familiemedlem(?:met)?(?![A-Za-zÆØÅæøåÉéÈèÜüÄäÖö0-9])/g,
+            (m, pre, c, w) => pre + (c === "D" ? "Den " : "den ") + w + " bofellen"],
+        // a masculine noun needs the masculine form of the word in front ("ditt familiemedlem" -> "din bofelle")
+        [/(^|[^A-Za-zÆØÅæøåÉéÈèÜüÄäÖö0-9])(et|ditt|mitt|sitt|hvert|ethvert|intet|annet|nytt|dette)(\s+)familiemedlem(?![A-Za-zÆØÅæøåÉéÈèÜüÄäÖö0-9])/gi,
+            (m, pre, d, sp) => { const r = NB_DET[d.toLowerCase()]; return pre + (d.charAt(0) === d.charAt(0).toUpperCase() ? r.charAt(0).toUpperCase() + r.slice(1) : r) + sp + "bofelle"; }],
+        [/(^|[^A-Za-zÆØÅæøåÉéÈèÜüÄäÖö0-9])([Ff])amiliemedlem(met|mer|mene|mets|mers|menes)?(?![A-Za-zÆØÅæøåÉéÈèÜüÄäÖö0-9])/g,
+            (m, pre, f, end) => pre + cap(f === "F", NB_MATE[end === undefined ? "" : end])],
+        [/(^|[^A-Za-zÆØÅæøåÉéÈèÜüÄäÖö0-9])([Ff])amili(ens|en|ene|enes|ers|er|e)(?![A-Za-zÆØÅæøåÉéÈèÜüÄäÖö0-9])/g,
+            (m, pre, f, end) => pre + cap(f === "F", NB_HOME[end === "e" ? "" : end])],
         [/(^|[^A-Za-zÆØÅæøåÉéÈèÜüÄäÖö0-9])([Ff])amilie(?=[A-Za-zÆØÅæøåÉéÈèÜüÄäÖö])/g, (m, pre, f) => pre + cap(f === "F", "husstands")],
     ] },
 };

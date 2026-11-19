@@ -2,7 +2,7 @@
    Part of the app code that used to be a single block in index.html. Classic script, no build step:
    it is loaded right after the inline script of index.html and before the other files in js/
    (the load order is listed at the bottom of index.html and in pinn-setup.sh).
-   Contents: the texts of the setup in seventeen languages (PINN_SETUP_TEXTE, pinnSetupText) and loading and opening the assistant (loadPinnSetupScript, openPinnSetup). The assistant itself lives in pb_public/einrichtung.js and is only loaded when first opened. The notice about the open setup is in js/hauptadminseite.js. */
+   Contents: the texts of the setup in eighteen languages (PINN_SETUP_TEXTE, pinnSetupText) and loading and opening the assistant (loadPinnSetupScript, openPinnSetup). The assistant itself lives in pb_public/einrichtung.js and is only loaded when first opened. The notice about the open setup is in js/hauptadminseite.js. */
 
 /* ==========================================================
    Setup (assistant for the main admin)
@@ -211,6 +211,19 @@ const PINN_SETUP_TEXTE = {
     loginBtn: 'Log ind som hovedadministrator',
     loginMain: 'Første gang er adgangskoden »Admin« – derefter vælger du din egen, og opsætningen starter.',
     laden: 'Opsætningen kunne ikke indlæses (mangler pb_public/einrichtung.js?).',
+  },
+  // Norwegian Bokmål (since 1.158.0)
+  nb: {
+    btn: '⚙︎ Oppsett',
+    offen: 'Oppsettet av pinn. er ikke ferdig ennå. Uten det fungerer ikke HTTPS, push-varsler og appen på hjemmeskjermen.',
+    fortsetzen: 'Fortsett oppsettet',
+    neustart: 'De lagrede innstillingene trer først i kraft etter en omstart av pinn.',
+    neustartBtn: 'Ta i bruk nå (kort omstart)',
+    neustartLaeuft: 'pinn. starter på nytt …',
+    loginHint: 'Ny her? Det første oppsettet starter når du logger inn som hovedadministrator.',
+    loginBtn: 'Logg inn som hovedadministrator',
+    loginMain: 'Første gang er passordet «Admin» – deretter velger du ditt eget, og oppsettet starter.',
+    laden: 'Oppsettet kunne ikke lastes (mangler pb_public/einrichtung.js?).',
   },
   uk: {
     btn: '⚙︎ Конфігурація',

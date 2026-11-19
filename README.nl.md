@@ -28,7 +28,8 @@
   <a href="README.uk.md">🇺🇦 Українська</a> ·
   <a href="README.cs.md">🇨🇿 Čeština</a> ·
   <a href="README.sv.md">🇸🇪 Svenska</a> ·
-  <a href="README.da.md">🇩🇰 Dansk</a>
+  <a href="README.da.md">🇩🇰 Dansk</a> ·
+  <a href="README.nb.md">🇳🇴 Norsk</a>
 </p>
 
 ---
@@ -111,7 +112,15 @@ Tik op een plaatje om het op volledige grootte te openen.
 - 💬 **Chat** – gezins- en privéchat, end-to-end versleuteld, met push en leesvinkjes
 - 🔔 **Meldingen** – persoonlijke pushberichten op iPhone, iPad en Android en een meldingenbel met alle wijzigingen in het gezin
 
-pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska en 🇩🇰 Dansk**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
+pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk en 🇳🇴 Norsk**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
+
+## Nieuw in 1.158.0
+
+**Noors**
+
+- Nieuw: Noors (Norsk, bokmål) is een nieuwe app-taal – alle ruim 7.500 teksten van de app, de installatiewizard, de data-export, de pushberichten van de server en het Noorse alarmnummer (112). De variant voor een gedeelde woning zit er ook bij (“husstand”, “bofelle”). Kies het onder Instellingen → Taal en regio.
+- Let op: de vertaling is niet gecontroleerd door moedertaalsprekers – suggesties zijn welkom als GitHub-issue. Spraakbesturing via Siri/Android begrijpt nog geen Noors en antwoordt in het Engels.
+- Gewijzigd: `i18n/nb.i18n.js` (new), `README.nb.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
 
 ## Nieuw in 1.157.0
 
@@ -169,14 +178,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - Opgelost: in donkere modus waren de knoppen onder de titel van een taak (smart-home-start, meterstand …) blauw op blauw – nu goud.
 - Gewijzigd: `pb_hooks/pinn-sicherheit.js` (new), `pb_hooks/sicherheit.pb.js` (new), `pb_hooks/pinn-smarthome.js`, `pb_hooks/pinn-schema.js`, `js/sicherheit.js` (new), `css/sicherheit.css` (new), `js/uebersicht.js`, `js/profilauswahl.js`, `js/einstellungen.js`, `css/dunkelfarbe.css`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `pinn-setup.sh`, `src/`, `index.html`.
 
-## Nieuw in 1.152.1
-
-**Back-ups terugzetten werkt weer**
-
-- Opgelost: het terugzetten van een back-up (Instellingen → Systeem → Back-ups & updates) stopte altijd bij „Back-up controleren”, of je nu alleen gegevens of alles koos. De back-up van de huidige stand die vlak daarvoor wordt gemaakt, ruimde oude back-ups op en overschreef daarbij de naam van de gekozen back-up, die daarna niet meer werd gevonden. Elke mislukte poging liet een back-up „Vóór een herstel” achter – die zijn onschuldig en worden vanzelf opgeruimd (de laatste 3 blijven). De update vernieuwt `pinn-wartung.sh`; de container „wartung” start vanzelf opnieuw.
-- Portainer-stack: back-ups werken nu echt. De dienst „wartung” van de stack had niets om te starten, omdat een deel van 1.151.0 in de repository ontbrak. Nu zit het back-upscript in de image en vindt het de pinn-container van de stack zelf – nachtelijke back-up, „Nu back-up maken” en „Terugzetten” (gegevens en instellingen) werken zoals bij de installatie met het script. Updates blijven in Portainer. Daarna: in Portainer „Update the stack” met „Re-pull image and redeploy”.
-- Gewijzigd: `pinn-wartung.sh`, `docker/Dockerfile`, `.github/workflows/image.yml`, `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `js/serverzugriff.js`, `i18n/`, `js/versionslog.js`, `js/sprachen.js`, `src/`, `index.html`.
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -186,13 +187,13 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.157.0` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.158.0` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
 4. Open `http://<IP-adres van de NAS>:8090` → **Inloggen als hoofdbeheerder** → wachtwoord `Admin` → stel je eigen wachtwoord in.
-5. De **installatiewizard** leidt je door de rest – HTTPS, toegang op afstand, Google, AI, locatie en Home Assistant – stap voor stap, in zeventien talen.
+5. De **installatiewizard** leidt je door de rest – HTTPS, toegang op afstand, Google, AI, locatie en Home Assistant – stap voor stap, in achttien talen.
 6. Open pinn. op elke telefoon via het HTTPS-adres en voeg het toe aan het beginscherm:
    - **iPhone/iPad (Safari):** “Deel” → *Zet op beginscherm* (voor meldingen is iOS 16.4 of nieuwer nodig)
    - **Android (Chrome):** Instellingen → Meldingen → *pinn. als app installeren* of Chrome-menu ⋮ → *App installeren*

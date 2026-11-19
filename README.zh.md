@@ -28,7 +28,8 @@
   <a href="README.uk.md">🇺🇦 Українська</a> ·
   <a href="README.cs.md">🇨🇿 Čeština</a> ·
   <a href="README.sv.md">🇸🇪 Svenska</a> ·
-  <a href="README.da.md">🇩🇰 Dansk</a>
+  <a href="README.da.md">🇩🇰 Dansk</a> ·
+  <a href="README.nb.md">🇳🇴 Norsk</a>
 </p>
 
 <p align="center">
@@ -134,7 +135,15 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 | 🔔 **通知** | iPhone、iPad 和 Android 上的个人推送消息，以及汇总家庭中每项变动的通知铃。 |
 | 🧩 **其他功能** | 带可移动便签的家庭公告板、全局搜索、带自动同步的离线模式、深色模式、带个人 PIN 的 iPad 仪表板、访客账户、儿童锁。 |
 
-pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski、🇺🇦 Українська、🇨🇿 Čeština、🇸🇪 Svenska和 🇩🇰 Dansk**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
+pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski、🇺🇦 Українська、🇨🇿 Čeština、🇸🇪 Svenska、🇩🇰 Dansk和 🇳🇴 Norsk**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
+
+## 1.158.0 新功能
+
+**挪威语**
+
+- 新增：挪威语（Norsk，书面挪威语 Bokmål）成为新的应用语言——应用的约 7,500 条文字、设置向导、数据导出、服务器推送消息以及挪威紧急电话（112）。同时包含合租版用语（“husstand”“bofelle”）。可在设置 → 语言和地区中选择。
+- 说明：该翻译尚未经母语者审校，欢迎通过 GitHub issue 提出改进建议。通过 Siri/Android 的语音控制暂不支持挪威语，会用英语回答。
+- 变更: `i18n/nb.i18n.js` (new), `README.nb.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
 
 ## 1.157.0 新功能
 
@@ -221,13 +230,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 - 儿童页面“梳头发”使用梳子图标；储蓄账户名称旁不再有表情符号输入框；资金账户下拉列表不再显示表情符号；工具图标改为开口扳手；“访客菜单”使用双人图标；点击家庭名称旁的标志可回到概览；“通知”卡片优先加载，确保始终显示“在此设备上启用”；深色模式下快捷方式图标为灰色。
 - 已更改: `js/symbole.js`, `js/symbole3.js`, `js/ansichten.js`, `js/konto.js`, `css/dunkelfarbe.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`.
 
-## 1.150.10 新功能
-
-**深色模式、更多图标、新的宠物横幅、宠物日记**
-
-- **深色模式。** 蓝色文字现在是金色（设备、清单、“规划购物”、宠物/健康/任务的勾选）；家务页面的条形使用房间颜色；聊天提示、合同提示和“一目了然”的文字清晰可读。**用图标取代更多 emoji：**头像（婴儿、男孩、女孩、男人、女人、爷爷、奶奶）、家庭和合租、动物（狗、猫、兔、仓鼠、鸟、小鸡、鱼、马、乌龟、蛇）；下拉列表只显示文字。**新的宠物横幅**，带彩色动物。**宠物日记：**已勾选的体检会出现在日记中，点 × 可撤销误勾。
-- 更改： `css/dunkelfarbe.css` (new), `js/symbole3.js` (new), `js/symbole.js`, `js/szenen.js`, `js/familie.js`, `js/haushalt.js`, `css/symbolfarbe.css`, `css/haustierewetter.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
-
 ## 工作原理
 
 ```mermaid
@@ -256,14 +258,14 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.157.0` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.158.0` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
    脚本会把每个文件复制到位，下载 PDF 导入和照片文字识别所需的库，并启动 pinn.。
 4. 打开 `http://<NAS-IP>:8090` → **以主管理员身份登录** → 密码 `Admin` → 设置你自己的密码。
-5. **设置向导**会带你完成其余步骤——HTTPS、通过 WireGuard 或 Tailscale 远程访问、Google、AI、位置和 Home Assistant——一步一步，支持十七种语言。
+5. **设置向导**会带你完成其余步骤——HTTPS、通过 WireGuard 或 Tailscale 远程访问、Google、AI、位置和 Home Assistant——一步一步，支持十八种语言。
 6. 在每部手机上通过 HTTPS 地址打开 pinn.，并添加到主屏幕：
    - **iPhone/iPad（Safari）：** 分享 → *添加到主屏幕*（通知需要 iOS 16.4 或更高版本）
    - **Android（Chrome）：** 设置 → 通知 → *将 pinn. 安装为应用*，或 Chrome 菜单 ⋮ → *安装应用*
