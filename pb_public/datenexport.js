@@ -24,7 +24,7 @@
   'use strict';
   if (window.PinnExport) return;
 
-  var LANGS = ['de', 'en', 'fr', 'es', 'it', 'pt', 'zh', 'ja', 'ko', 'ru', 'nl', 'tr', 'pl', 'uk', 'cs', 'sv'];
+  var LANGS = ['de', 'en', 'fr', 'es', 'it', 'pt', 'zh', 'ja', 'ko', 'ru', 'nl', 'tr', 'pl', 'uk', 'cs', 'sv', 'da'];
   var T = {};
   T.de = {
     F: 'Familie', FW: 'WG', Fd: 'der Familie', FWd: 'der WG',
@@ -950,6 +950,60 @@
     ],
   };
 
+  // Danish (since 1.157.0)
+  T.da = {
+    F: 'familie', FW: 'husstand', Fd: 'din familie', FWd: 'din husstand',
+    titel: 'Eksportér {F}',
+    intro: 'Alle data for {Fd} som en ZIP-fil – inklusive dokumenter, kvitteringer og billeder. For eksempel til flytning til en anden NAS eller som egen sikkerhedskopi.',
+    lade: 'Kontrollerer indholdet …', fehler: 'Det virkede ikke.',
+    fehlerNetz: 'Ingen forbindelse til pinn. – sørg for, at du er på dit hjemmenetværk eller VPN.',
+    serverFehlt: 'export.pb.js og pinn-export.js (pb_hooks) mangler stadig på serveren.',
+    familieWaehlen: 'Vælg {F}', inhalt: 'Det, der kommer i ZIP-filen', eintraege: '{0} poster', dateienN: '{0} filer',
+    dokumente: 'Filer i alt', groesse: 'Størrelse (ca.)',
+    nichtDrin: 'Er ikke med',
+    nichtDrinText: 'Adgangskoder, PIN-koder, adgangsdata til iCloud, Google og Home Assistant, loggede enheder og push-abonnementer. På en anden NAS logger du blot ind igen. Positionshistorik fra Traccar er heller ikke med.',
+    privat: 'Er ikke med, fordi det er privat: {0} kasse(r), du ikke er medlem af, og {1} kalender/kalendere »Kun for mig« fra andre profiler. En fuldstændig eksport – fx til en flytning – laves af hovedadministratoren.',
+    voll: 'Fuldstændig eksport – private kasser og kalendere »Kun for mig« fra alle profiler er med.',
+    sicherheit: 'ZIP-filen indeholder økonomi, dokumenter og nødkort ukrypteret. Opbevar den sikkert, og send den ikke med e-mail.',
+    gross: 'Det er cirka {0}. På en telefon kan det tage et stykke tid – eksportér hellere på en computer, og lad pinn. være åben imens.',
+    starten: 'Opret ZIP', abbrechen: 'Annullér', schliessen: 'Luk', nochmal: 'Prøv igen',
+    schrittDaten: 'Data: {0}', schrittDatei: 'Fil {0} af {1}', packe: 'Samler ZIP-filen …',
+    offenLassen: 'Lad pinn. være åben, indtil eksporten er færdig.',
+    fertig: 'Eksporten er færdig ✓', fertigText: '{0} poster og {1} filer · {2}',
+    speichern: 'Gem ZIP', teilen: 'Del eller gem i Filer',
+    speichernTipp: 'iPhone/iPad: »Del« → »Gem i Filer«. Computer: »Gem ZIP« lægger filen i din downloadmappe.',
+    fehlende: '{0} fil(er) kunne ikke læses – de står på listen i export-fehler.txt i ZIP-filen.',
+    abgebrochen: 'Eksporten blev afbrudt.', zuGross: 'Eksporten er større end 4 GB – en almindelig ZIP-fil kan ikke rumme det.',
+    keinAdmin: 'Kun administratorer kan oprette eksporten.',
+    S: {
+      familien: '{F}', benutzer: 'Profiler', familien_daten: 'Kalender, lister, opskrifter, medlemmer og indstillinger',
+      rezept_bilder: 'Opskriftsbilleder', oeffentliche_rezepte: 'Delte opskrifter', aufgaben: 'Opgaver',
+      haushalt_verlauf: 'Husholdningshistorik', kassen: 'Kasser, depoter og kontrakter', ausgaben: 'Transaktioner',
+      finanz_dokumente: 'Kontraktdokumenter', dokumente: 'Dokumenter', pinnwand_bilder: 'Opslagstavlens billeder',
+      kalender_eigene: 'Egne kalendere', kalender_termine: 'Begivenheder', muellkalender: 'Skraldekalender',
+      ortung: 'Steder og position', zuhause: 'Hjem', smarthome_zugaenge: 'Smart home',
+      dashboard_hintergruende: 'Panel', apple_zugaenge: 'iCloud', google_zugaenge: 'Google',
+    },
+    liesmich: 'README.txt',
+    readme: [
+      'pinn. – dataeksport',
+      '',
+      '{F}: {0}',
+      'Oprettet: {1} af {2} (pinn. {3})',
+      '',
+      'Indhold:',
+      '  pinn-export.json  beskrivelse af eksporten (format, indhold, filliste)',
+      '  daten/            alle poster pr. samling som JSON (som gemt i PocketBase)',
+      '  dateien/          dokumenter, kvitteringer og billeder: dateien/<samling>/<post-id>/<fil>',
+      '',
+      'Er ikke med: adgangskoder, PIN-koder, adgangsdata (iCloud, Google, Home Assistant),',
+      'loggede enheder, push-abonnementer og positionshistorik fra Traccar.',
+      '',
+      'Advarsel: Denne fil indeholder økonomi, dokumenter og nødkort ukrypteret.',
+      'Opbevar den sikkert.',
+    ],
+  };
+
   T.uk = {
     F: "сім’я", FW: "спільна квартира", Fd: "сім’ї", FWd: "спільної квартири",
     titel: "Експорт: {F}",
@@ -1030,7 +1084,7 @@
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
-  function locale() { return { de: 'de-DE', en: 'en-GB', fr: 'fr-FR', es: 'es-ES', it: 'it-IT', pt: 'pt-BR', zh: 'zh-CN', ja: 'ja-JP', ko: 'ko-KR', ru: 'ru-RU', nl: 'nl-NL', tr: 'tr-TR', pl: 'pl-PL', uk: 'uk-UA', cs: 'cs-CZ', sv: 'sv-SE' }[S.lang] || 'en-GB'; }
+  function locale() { return { de: 'de-DE', en: 'en-GB', fr: 'fr-FR', es: 'es-ES', it: 'it-IT', pt: 'pt-BR', zh: 'zh-CN', ja: 'ja-JP', ko: 'ko-KR', ru: 'ru-RU', nl: 'nl-NL', tr: 'tr-TR', pl: 'pl-PL', uk: 'uk-UA', cs: 'cs-CZ', sv: 'sv-SE', da: 'da-DK' }[S.lang] || 'en-GB'; }
   function zahl(n) { try { return Number(n || 0).toLocaleString(locale()); } catch (e) { return String(n || 0); } }
   function groesse(b) {
     b = Number(b) || 0;

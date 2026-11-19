@@ -27,6 +27,7 @@
   <a href="README.uk.md">🇺🇦 Українська</a> ·
   <a href="README.cs.md">🇨🇿 Čeština</a> ·
   <a href="README.sv.md">🇸🇪 Svenska</a> ·
+  <a href="README.da.md">🇩🇰 Dansk</a> ·
   <b>🇰🇷 한국어</b>
 </p>
 
@@ -133,7 +134,15 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 | 🔔 **알림** | iPhone, iPad, Android에서 받는 개인 푸시 메시지와, 가족의 모든 변경을 모아 주는 알림 벨. |
 | 🧩 **그 밖에** | 옮길 수 있는 메모가 있는 가족 게시판, 전체 검색, 자동 동기화되는 오프라인 모드, 다크 모드, 프로필 PIN이 있는 iPad 대시보드, 손님 계정, 아이 보호 잠금. |
 
-pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
+pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
+
+## 1.157.0의 새 소식
+
+**덴마크어**
+
+- 새 기능: 덴마크어(Dansk)가 새 앱 언어로 추가됐어요. 앱의 약 7,500개 문장, 설정 도우미, 데이터 내보내기, 서버의 푸시 알림, 덴마크 긴급 전화번호(112)를 지원하고 셰어하우스용 표현(“husstand”, “bofælle”)도 들어 있어요. 설정 → 언어 및 지역에서 고를 수 있어요.
+- 참고: 번역은 원어민 검수를 받지 않았어요. 개선 제안은 GitHub 이슈로 보내 주세요. Siri/Android 음성 제어는 아직 덴마크어를 이해하지 못하고 영어로 답해요.
+- 변경: `i18n/da.i18n.js` (new), `README.da.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
 
 ## 1.156.0의 새 소식
 
@@ -219,13 +228,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - **다크 모드.** 파란 글씨가 이제 금색입니다(기기, 목록, ‘장보기 계획’, 반려동물·건강·할 일 체크). 집안일의 막대는 방 색상을 따르고, 채팅·계약·‘한눈에’ 안내도 읽기 쉬워졌습니다. **이모지 대신 더 많은 아이콘:** 프로필 사진(아기, 남자아이, 여자아이, 남자, 여자, 할아버지, 할머니), 가족과 쉐어하우스, 동물(개, 고양이, 토끼, 햄스터, 새, 병아리, 물고기, 말, 거북이, 뱀). 드롭다운 목록에는 글자만 표시됩니다. **다채로운 동물이 나오는 새 반려동물 배너.** **반려동물 일기:** 체크한 검진이 일기에 나타나고, ×로 실수로 한 체크를 되돌릴 수 있습니다.
 - 변경: `css/dunkelfarbe.css` (new), `js/symbole3.js` (new), `js/symbole.js`, `js/szenen.js`, `js/familie.js`, `js/haushalt.js`, `css/symbolfarbe.css`, `css/haustierewetter.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
 
-## 1.150.9의 새 소식
-
-**아이콘에 색, 탈것·식물 아이콘**
-
-- **낮에는 색이 있어요.** 아이콘에 은은한 색이 입혀졌습니다(흰 면, 해는 노랑, 비는 파랑, 자동차는 빨강, 도구는 회색, 식물은 초록). 선 스타일은 그대로이고 다크 모드도 그대로입니다. **탈것 아이콘:** 자동차 이모지 대신 선 아이콘을 고를 수 있습니다(세단, SUV, 택시, 밴, 픽업, 트랙터, 캐러밴, 자전거, 전기 자전거 등). **식물 아이콘**도 앱에서 고르며 선인장, 야자수, 튤립, 해바라기, 장미 등이 새로 생겼습니다. 탈것과 집 배너에서 자동차는 밤에만 빛납니다(앞은 노르스름, 뒤는 빨강).
-- 변경: `js/symbole2.js`, `css/symbolfarbe.css` (new), `js/symbole.js`, `js/wetterlogos.js`, `js/symbolwahl.js`, `js/fahrzeuge.js`, `js/zuhause.js`, `js/dokumente.js`, `css/fahrzeuge.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
-
 ## 작동 방식
 
 ```mermaid
@@ -254,14 +256,14 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.156.0` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.157.0` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
    스크립트가 모든 파일을 제자리에 복사하고, PDF 가져오기와 사진 문자 인식에 필요한 라이브러리를 내려받고, pinn.을 시작해요.
 4. `http://<NAS-IP>:8090`을 열고 → **메인 관리자로 로그인** → 비밀번호 `Admin` → 나만의 비밀번호를 정해요.
-5. **설정 도우미**가 나머지를 안내해 줘요. HTTPS, WireGuard 또는 Tailscale을 통한 원격 접속, Google, AI, 위치, Home Assistant를 열여섯 가지 언어로 차례대로요.
+5. **설정 도우미**가 나머지를 안내해 줘요. HTTPS, WireGuard 또는 Tailscale을 통한 원격 접속, Google, AI, 위치, Home Assistant를 열일곱 가지 언어로 차례대로요.
 6. 각 휴대폰에서 HTTPS 주소로 pinn.을 열고 홈 화면에 추가해요:
    - **iPhone/iPad(Safari):** 공유 → *홈 화면에 추가*(알림에는 iOS 16.4 이상 필요)
    - **Android(Chrome):** 설정 → 알림 → *pinn.을 앱으로 설치*, 또는 Chrome 메뉴 ⋮ → *앱 설치*

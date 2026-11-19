@@ -27,7 +27,8 @@
   <a href="README.pl.md">🇵🇱 Polski</a> ·
   <a href="README.uk.md">🇺🇦 Українська</a> ·
   <a href="README.cs.md">🇨🇿 Čeština</a> ·
-  <a href="README.sv.md">🇸🇪 Svenska</a>
+  <a href="README.sv.md">🇸🇪 Svenska</a> ·
+  <a href="README.da.md">🇩🇰 Dansk</a>
 </p>
 
 <p align="center">
@@ -133,7 +134,15 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 | 🔔 **通知** | iPhone、iPad、Androidに届く個人向けのプッシュメッセージと、家族内のあらゆる変更を集めるベル。 |
 | 🧩 **そのほか** | 動かせるメモ付きの家族の掲示板、全体検索、自動同期付きのオフラインモード、ダークモード、プロフィールPIN付きのiPadダッシュボード、ゲストアカウント、チャイルドロック。 |
 
-pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski、🇺🇦 Українська、🇨🇿 Čeština、🇸🇪 Svenska** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
+pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski、🇺🇦 Українська、🇨🇿 Čeština、🇸🇪 Svenska、🇩🇰 Dansk** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
+
+## 1.157.0の新機能
+
+**デンマーク語**
+
+- 新機能：デンマーク語（Dansk）がアプリの新しい言語として加わりました。アプリの約7,500のテキスト、セットアップアシスタント、データエクスポート、サーバーからのプッシュ通知、デンマークの緊急電話番号（112）に対応し、ルームシェア向けの表現（「husstand」「bofælle」）も含みます。設定 → 言語と地域で選べます。
+- 注意：翻訳はネイティブスピーカーによる確認を受けていません。改善案はGitHubのissueでお寄せください。Siri／Androidの音声操作はまだデンマーク語に対応しておらず、英語で答えます。
+- 変更: `i18n/da.i18n.js` (new), `README.da.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
 
 ## 1.156.0の新機能
 
@@ -219,13 +228,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - **ダークモード。** 青い文字がゴールドになりました（端末、リスト、「買い物を計画」、ペット・健康・タスクのチェック）。家事のバーは部屋の色になり、チャット、契約、「ひと目で」の文字も読みやすくなりました。**絵文字の代わりにアイコンを追加：**プロフィール画像（赤ちゃん、男の子、女の子、男性、女性、おじいちゃん、おばあちゃん）、家族とシェアハウス、動物（犬、猫、うさぎ、ハムスター、鳥、ひよこ、魚、馬、カメ、ヘビ）。ドロップダウンは文字のみ表示。**カラフルな動物の新しいペットバナー。** **ペット日記：**チェックした健診が日記に載り、×で誤チェックを取り消せます。
 - 変更： `css/dunkelfarbe.css` (new), `js/symbole3.js` (new), `js/symbole.js`, `js/szenen.js`, `js/familie.js`, `js/haushalt.js`, `css/symbolfarbe.css`, `css/haustierewetter.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
 
-## 1.150.9の新機能
-
-**アイコンに色、乗り物と植物のアイコン**
-
-- **昼は色付き。** アイコンにうっすら色が付きました（白い面、太陽は黄色、雨は青、車は赤、工具は灰色、植物は緑）。線のスタイルは同じで、ダークモードは変わりません。**乗り物アイコン：** 車の絵文字の代わりに線のアイコンを選べます（セダン、SUV、タクシー、バン、ピックアップ、トラクター、キャラバン、自転車、電動自転車など）。**植物アイコン**もアプリ内から選べ、サボテン、ヤシ、チューリップ、ヒマワリ、バラなどが加わりました。乗り物とホームのバナーでは、車は夜だけ光ります（前は黄色っぽく、後ろは赤）。
-- 変更：`js/symbole2.js`, `css/symbolfarbe.css` (new), `js/symbole.js`, `js/wetterlogos.js`, `js/symbolwahl.js`, `js/fahrzeuge.js`, `js/zuhause.js`, `js/dokumente.js`, `css/fahrzeuge.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
-
 ## しくみ
 
 ```mermaid
@@ -254,14 +256,14 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.156.0`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.157.0`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
    スクリプトがすべてのファイルを所定の場所にコピーし、PDF取り込みと写真の文字認識に必要なライブラリをダウンロードして、pinn.を起動します。
 4. `http://<NASのIP>:8090`を開き、**メイン管理者としてログイン** → パスワード`Admin` → 自分のパスワードを設定します。
-5. **セットアップアシスタント**が、HTTPS、WireGuardまたはTailscaleでのリモートアクセス、Google、AI、位置情報、Home Assistantといった残りの設定を、16の言語で順番に案内します。
+5. **セットアップアシスタント**が、HTTPS、WireGuardまたはTailscaleでのリモートアクセス、Google、AI、位置情報、Home Assistantといった残りの設定を、17の言語で順番に案内します。
 6. 各スマートフォンでHTTPSアドレスからpinn.を開き、ホーム画面に追加します：
    - **iPhone/iPad（Safari）：** 共有 → *ホーム画面に追加*（通知にはiOS 16.4以降が必要）
    - **Android（Chrome）：** 設定 → 通知 → *pinn.をアプリとしてインストール*、またはChromeのメニュー ⋮ → *アプリをインストール*

@@ -22,6 +22,15 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.157', datum: '18.11.2026', titel: 'Dänisch',
+    punkte: [
+      ['neu', '1.157.0: Dänisch (Dansk) ist als neue App-Sprache dabei – alle rund 7.500 Texte der App, der Einrichtungs-Assistent, der Datenexport, die Push-Nachrichten vom Server (inklusive Wochenvorschau, Geburtstage, Haustiere, Chat und Notfall) und die dänische Notrufnummer (112 für alle). Auch die WG-Variante („husstand“, „bofælle“) gibt es. Auswählbar unter Einstellungen → Sprache und Region.'],
+      ['info', '1.157.0: Hinweis: Die Übersetzung wurde nicht von Muttersprachlern geprüft – Verbesserungsvorschläge gerne als GitHub-Issue. Die Sprachsteuerung per Siri/Android („Hey Siri, pinn“) versteht Dänisch noch nicht und antwortet auf Englisch.'],
+      ['info', '1.157.0: Neue README.da.md (kurze dänische Einführung), Sprachleiste in allen READMEs um Dänisch ergänzt.'],
+      ['info', '1.157.0 geändert: i18n/da.i18n.js (neu), README.da.md (neu), js/sprachen.js, js/textkern.js, js/einrichten.js, js/exportieren.js, einrichtung.js, datenexport.js, js/versionslog.js, i18n/versionslog.en.js, pb_hooks/pinn-textkern.js, pinn-pushtext.js, pinn-chat.js, pinn-ausblick.js, pinn-familie-geburtstag.js, pinn-haustiere.js, pinn-ortung.js, pinn-wobistdu.js, pinn-packliste.js, pinn-aufgaben.js, pinn-einrichtung.js, .github/scripts (i18n-keys.js, check-hooks.js), src/version.txt, index.html, alle READMEs.'],
+    ],
+  },
+  {
     v: '1.156', datum: '18.11.2026', titel: 'Schwedisch',
     punkte: [
       ['neu', '1.156.0: Schwedisch (Svenska) ist als neue App-Sprache dabei – alle rund 7.500 Texte der App, der Einrichtungs-Assistent, der Datenexport, die Push-Nachrichten vom Server (inklusive Wochenvorschau, Geburtstage, Haustiere, Chat und Notfall) und die schwedischen Notrufnummern (112 für alle). Auch die WG-Variante („hushåll“, „medboende“) gibt es. Auswählbar unter Einstellungen → Sprache und Region.'],

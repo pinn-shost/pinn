@@ -27,7 +27,8 @@
   <a href="README.pl.md">🇵🇱 Polski</a> ·
   <a href="README.uk.md">🇺🇦 Українська</a> ·
   <a href="README.cs.md">🇨🇿 Čeština</a> ·
-  <a href="README.sv.md">🇸🇪 Svenska</a>
+  <a href="README.sv.md">🇸🇪 Svenska</a> ·
+  <a href="README.da.md">🇩🇰 Dansk</a>
 </p>
 
 <p align="center">
@@ -129,7 +130,15 @@ Touche une image pour l’ouvrir en taille réelle.
 | 🔔 **Notifications** | Messages push personnels sur iPhone, iPad et Android, plus une cloche qui rassemble chaque changement dans la famille. |
 | 🧩 **Tout le reste** | Tableau familial avec notes déplaçables, recherche globale, mode hors ligne avec synchronisation automatique, mode sombre, tableau de bord iPad avec PIN par profil, compte invité, contrôle parental. |
 
-pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština et 🇸🇪 Svenska**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
+pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska et 🇩🇰 Dansk**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
+
+## Nouveautés de la 1.157.0
+
+**Danois**
+
+- Nouveau : le danois (Dansk) rejoint les langues de l’app – les quelque 7 500 textes de l’app, l’assistant de configuration, l’export des données, les messages push du serveur et le numéro d’urgence danois (112). La variante colocation est incluse (« husstand », « bofælle »). À choisir dans Réglages → Langue et région.
+- Remarque : la traduction n’a pas été relue par des locuteurs natifs – les suggestions sont les bienvenues sous forme d’issue GitHub. La commande vocale via Siri/Android ne comprend pas encore le danois et répond en anglais.
+- Modifié: `i18n/da.i18n.js` (new), `README.da.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
 
 ## Nouveautés de la 1.156.0
 
@@ -244,15 +253,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Face ID.** pinn. redemande Face ID de lui-même à l’ouverture, comme avant la 1.150.5. iOS affiche toujours d’abord sa propre fenêtre « Utiliser la clé d’identification » : un toucher dessus, puis Face ID ; le web ne peut pas la sauter, et le bouton supplémentaire ne faisait qu’ajouter un second toucher. Le grand bouton en bas reste, au cas où tu fermerais la fenêtre.
 - Modifié : `js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
 
-## Nouveautés de la 1.150.5
-
-**Nouvelle bannière santé · boissons rangées**
-
-- **Bannière santé.** La page santé et celle de chaque personne ont de nouveau une bannière : de l’eau qui monte avec ce qui a été bu, des bulles, un battement de cœur et des objets flottants – la nuit, des étoiles.
-- **Boire.** L’objectif, les boissons du jour et le rappel sont désormais dans une section repliable « Réglages » sous le bouton. Le raccourci s’appelle toujours « Cuisiner ».
-- **Face ID.** Le déverrouillage ne démarre plus qu’avec le bouton (plus de fenêtre « Utiliser la clé d’identification ») ; le bouton est en bas, à portée du pouce.
-- Modifié : `js/gesundheit.js`, `css/gesundheit.css`, `js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
-
 ## Comment ça marche
 
 ```mermaid
@@ -279,14 +279,14 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.156.0` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.157.0` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
    Le script met chaque fichier à sa place, télécharge les bibliothèques pour l’import PDF et la reconnaissance de texte sur photo, et démarre pinn.
 4. Ouvre `http://<IP-du-NAS>:8090` → **Se connecter en admin principal** → mot de passe `Admin` → choisis ton propre mot de passe.
-5. L’**assistant de configuration** t’accompagne pour le reste – HTTPS, accès à distance via WireGuard ou Tailscale, Google, IA, localisation et Home Assistant – étape par étape, en seize langues.
+5. L’**assistant de configuration** t’accompagne pour le reste – HTTPS, accès à distance via WireGuard ou Tailscale, Google, IA, localisation et Home Assistant – étape par étape, en dix-sept langues.
 6. Ouvre pinn. sur chaque téléphone via son adresse HTTPS et ajoute-le à l’écran d’accueil :
    - **iPhone/iPad (Safari) :** Partager → *Sur l’écran d’accueil* (iOS 16.4 ou plus récent pour les notifications)
    - **Android (Chrome) :** Réglages → Notifications → *Installer pinn. comme app*, ou menu Chrome ⋮ → *Installer l’application*

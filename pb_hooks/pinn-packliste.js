@@ -111,6 +111,7 @@ const T = {
     uk: { titel: "🧳 Створити список речей для «{t}»?", heute: "Виїзд сьогодні", morgen: "Виїзд завтра", tage: "Виїзд через {n} дн.", text: "{w} – торкнись, щоб створити список із уже заповненими датами." },
     cs: { titel: "🧳 Vytvořit balicí seznam pro „{t}“?", heute: "Začíná dnes", morgen: "Začíná zítra", tage: "Začíná za {n} d.", text: "{w} – klepni a seznam se hned vytvoří s vyplněnými daty." },
     sv: { titel: "🧳 Skapa en packlista för ”{t}”?", heute: "Börjar i dag", morgen: "Börjar i morgon", tage: "Börjar om {n} d.", text: "{w} – tryck så skapas listan direkt med ifyllda datum." },
+    da: { titel: "🧳 Opret en pakkeliste til »{t}«?", heute: "Starter i dag", morgen: "Starter i morgen", tage: "Starter om {n} d.", text: "{w} – tryk, så oprettes listen med det samme med udfyldte datoer." },
 };
 function tx(lang, k, vars) {
     let s = (T[lang] || T.en)[k] || T.en[k];

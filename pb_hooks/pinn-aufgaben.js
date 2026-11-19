@@ -1064,6 +1064,7 @@ const REWARD_TEXT = {
     uk: { t: "⭐ Запит нагороди", b: "{k} хоче обміняти зірки ({n}) на «{w}»." },
     cs: { t: "⭐ Žádost o odměnu", b: "{k} chce vyměnit hvězdičky ({n}) za „{w}“." },
     sv: { t: "⭐ Önskemål om belöning", b: "{k} vill byta {n} stjärnor mot ”{w}”." },
+    da: { t: "⭐ Ønske om belønning", b: "{k} vil bytte {n} stjerner til »{w}«." },
 };
 function notifyReward(familyId, actorUserId, body) {
     if (!familyId) return 0;

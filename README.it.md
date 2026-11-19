@@ -27,7 +27,8 @@
   <a href="README.pl.md">🇵🇱 Polski</a> ·
   <a href="README.uk.md">🇺🇦 Українська</a> ·
   <a href="README.cs.md">🇨🇿 Čeština</a> ·
-  <a href="README.sv.md">🇸🇪 Svenska</a>
+  <a href="README.sv.md">🇸🇪 Svenska</a> ·
+  <a href="README.da.md">🇩🇰 Dansk</a>
 </p>
 
 <p align="center">
@@ -133,7 +134,15 @@ Tocca un’immagine per aprirla a dimensione intera.
 | 🔔 **Notifiche** | Messaggi push personali su iPhone, iPad e Android, più una campanella che raccoglie ogni modifica in famiglia. |
 | 🧩 **Tutto il resto** | Bacheca di famiglia con note spostabili, ricerca globale, modalità offline con sincronizzazione automatica, modalità scura, dashboard su iPad con PIN dei profili, account ospite, blocco bambini. |
 
-pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština e 🇸🇪 Svenska**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
+pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska e 🇩🇰 Dansk**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
+
+## Novità della 1.157.0
+
+**Danese**
+
+- Novità: il danese (Dansk) è una nuova lingua dell’app – tutti i circa 7.500 testi dell’app, l’assistente di configurazione, l’esportazione dei dati, i messaggi push dal server e il numero di emergenza danese (112). È inclusa anche la variante per casa condivisa («husstand», «bofælle»). Si sceglie in Impostazioni → Lingua e regione.
+- Nota: la traduzione non è stata verificata da madrelingua – i suggerimenti sono benvenuti come issue su GitHub. Il controllo vocale tramite Siri/Android non capisce ancora il danese e risponde in inglese.
+- Modificato: `i18n/da.i18n.js` (new), `README.da.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
 
 ## Novità della 1.156.0
 
@@ -219,13 +228,6 @@ pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Modalità scura.** Il testo blu ora è oro (dispositivi, liste, «Pianifica la spesa», spunte per animali, salute e compiti); le barre di Casa hanno il colore della stanza; avvisi della chat, dei contratti e «In primo piano» sono leggibili. **Più icone al posto delle emoji:** foto profilo (neonato, bambino, bambina, uomo, donna, nonno, nonna), famiglia e coinquilini, animali (cane, gatto, coniglio, criceto, uccello, pulcino, pesce, cavallo, tartaruga, serpente); i menu a tendina mostrano solo il testo. **Nuovo banner degli animali** con animali colorati. **Diario degli animali:** un controllo spuntato compare nel diario e con la × si annulla una spunta accidentale.
 - Modificato: `css/dunkelfarbe.css` (new), `js/symbole3.js` (new), `js/symbole.js`, `js/szenen.js`, `js/familie.js`, `js/haushalt.js`, `css/symbolfarbe.css`, `css/haustierewetter.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
 
-## Novità della 1.150.9
-
-**Colore per le icone, icone di veicoli e piante**
-
-- **Colore di giorno.** Le icone sono ora leggermente colorate (superfici bianche, sole giallo, pioggia blu, auto rossa, attrezzi grigi, piante verdi) nello stesso stile a linee; la modalità scura resta invariata. **Icone dei veicoli:** al posto dell’emoji dell’auto si sceglie un’icona a linee (berlina, SUV, taxi, furgone, pickup, trattore, roulotte, bicicletta, e-bike …). Anche le **icone delle piante** si scelgono nell’app, con nuove icone per cactus, palma, tulipano, girasole, rosa e altro. Nei banner di Veicoli e Casa le auto brillano solo di notte: giallastre davanti, rosse dietro.
-- Modificato: `js/symbole2.js`, `css/symbolfarbe.css` (new), `js/symbole.js`, `js/wetterlogos.js`, `js/symbolwahl.js`, `js/fahrzeuge.js`, `js/zuhause.js`, `js/dokumente.js`, `css/fahrzeuge.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
-
 ## Come funziona
 
 ```mermaid
@@ -254,14 +256,14 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 ## Installazione
 
 1. Scarica lo ZIP dell’[ultima release](https://github.com/pinn-shost/pinn/releases/latest) e decomprimilo.
-2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.156.0` o `pinn-main`) così com’è.
+2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.157.0` o `pinn-main`) così com’è.
 3. Accedi via SSH ed esegui:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
    Lo script copia ogni file al suo posto, scarica le librerie per l’importazione dei PDF e il riconoscimento del testo nelle foto e avvia pinn.
 4. Apri `http://<IP-NAS>:8090` → **Accedi come amministratore principale** → password `Admin` → scegli la tua password.
-5. L’**assistente di configurazione** ti guida nel resto – HTTPS, accesso remoto con WireGuard o Tailscale, Google, IA, posizione e Home Assistant – passo dopo passo, in sedici lingue.
+5. L’**assistente di configurazione** ti guida nel resto – HTTPS, accesso remoto con WireGuard o Tailscale, Google, IA, posizione e Home Assistant – passo dopo passo, in diciassette lingue.
 6. Apri pinn. dal suo indirizzo HTTPS su ogni telefono e aggiungilo alla schermata Home:
    - **iPhone/iPad (Safari):** Condividi → *Aggiungi alla schermata Home* (iOS 16.4 o successivo per le notifiche)
    - **Android (Chrome):** Impostazioni → Notifiche → *Installa pinn. come app*, oppure menu di Chrome ⋮ → *Installa app*

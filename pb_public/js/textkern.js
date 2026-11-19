@@ -31,6 +31,7 @@
     it: oneIfOneInt,
     nl: oneIfOneInt,
     sv: oneIfOneInt,
+    da: function (n) { return n === 1 || (n > 0 && n < 2 && n !== Math.floor(n)) ? 'one' : 'other'; },   // Danish (CLDR): 1 and decimals between 0 and 2 are singular
     tr: function (n) { return n === 1 ? 'one' : 'other'; },   // Turkish (CLDR): only 1 is singular
     es: function (n) { return n === 1 ? 'one' : 'other'; },
     fr: oneIfZeroOrOne,
@@ -81,6 +82,7 @@
     pl: ['one', 'few', 'many'],   // "other" (fractions) is optional and falls back to "many"
     uk: ['one', 'few', 'many'],   // "other" (fractions) is optional and falls back to "few" (genitive singular)
     sv: ['one', 'other'],
+    da: ['one', 'other'],
     cs: ['one', 'few', 'other'],  // "other" = 0, 5 and more and fractions (genitive plural)
   };
   // Where to look when a form is missing in a text

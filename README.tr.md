@@ -27,7 +27,8 @@
   <a href="README.pl.md">🇵🇱 Polski</a> ·
   <a href="README.uk.md">🇺🇦 Українська</a> ·
   <a href="README.cs.md">🇨🇿 Čeština</a> ·
-  <a href="README.sv.md">🇸🇪 Svenska</a>
+  <a href="README.sv.md">🇸🇪 Svenska</a> ·
+  <a href="README.da.md">🇩🇰 Dansk</a>
 </p>
 
 ---
@@ -110,7 +111,15 @@ Tam boyutta açmak için bir resme dokun.
 - 💬 **Sohbet** – aile ve özel sohbet, uçtan uca şifreli, anlık bildirim ve okundu işaretiyle
 - 🔔 **Bildirimler** – iPhone, iPad ve Android'de kişiye özel anlık bildirimler ve ailedeki tüm değişiklikleri gösteren bir bildirim zili
 
-pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština ve 🇸🇪 Svenska**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
+pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska ve 🇩🇰 Dansk**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
+
+## 1.157.0 sürümündeki yenilikler
+
+**Danca**
+
+- Yeni: Danca (Dansk) yeni bir uygulama dili olarak eklendi – uygulamanın yaklaşık 7.500 metni, kurulum sihirbazı, veri dışa aktarma, sunucudan gelen push mesajları ve Danimarka acil durum numarası (112). Ortak ev (WG) ifadeleri de dahil (“husstand”, “bofælle”). Ayarlar → Dil ve bölge altından seçilir.
+- Not: çeviri ana dili konuşanlar tarafından kontrol edilmedi – önerilerinizi GitHub issue olarak bekleriz. Siri/Android ile sesli kontrol henüz Danca anlamıyor ve İngilizce yanıt veriyor.
+- Değişenler: `i18n/da.i18n.js` (new), `README.da.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
 
 ## 1.156.0 sürümündeki yenilikler
 
@@ -168,13 +177,6 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 - Portainer yığını: yedekler artık gerçekten çalışıyor. Depoda 1.151.0'ın bir kısmı eksik olduğu için yığının „wartung” hizmetinin başlatacağı bir şey yoktu. Artık yedekleme betiği imajın içinde ve yığındaki pinn konteynerini kendisi buluyor – gece yedeği, „Şimdi yedekle” ve „Geri yükle” (veriler ve kurulum) betikle kurulumdaki gibi çalışıyor. Güncellemeler Portainer'da kalıyor. Sonrasında: Portainer'da „Re-pull image and redeploy” açıkken „Update the stack”.
 - Değiştirildi: `pinn-wartung.sh`, `docker/Dockerfile`, `.github/workflows/image.yml`, `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `js/serverzugriff.js`, `i18n/`, `js/versionslog.js`, `js/sprachen.js`, `src/`, `index.html`.
 
-## 1.152.0 sürümündeki yenilikler
-
-**Tailscale yerine kendi ters proxy’n**
-
-- Yeni: kendi ters proxy’n üzerinden internetten erişim (Nginx Proxy Manager, Traefik, Cloudflare Tunnel …) – Kurulum altındaki “Kendi ters proxy’nle internetten erişim” bölümüne bak. pinn. ziyaretçi adresine yalnızca güvenilen proxy’lerden (`PINN_PROXY_NETZE`) inanır; böylece yanlış parolalardan sonraki kilit atlatılamaz (IPv6: /64 başına). İnternetten PocketBase yönetimi ve PocketBase’in kendi giriş yolları engellenir, başlangıç parolası `Admin` çalışmaz ve izleyici kimliklerini tahmin etmek yavaşlatılır. Böyle denemelerde yöneticiler “🚨 Güvenlik uyarısı” bildirimi alır (adres, ev ağı veya internet, cihaz); tüm ayrıntılar hata günlüğünde “Güvenlik” altında. Ev ağında hiçbir şey değişmez.
-- Değişenler: `pb_hooks/pinn-netz.js` (new), `pb_hooks/netz.pb.js` (new), `pb_hooks/pinn-alarm.js` (new), `pb_hooks/pinn-sitzungen.js`, `pb_hooks/benutzer.pb.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/zuhause.pb.js`, `pb_hooks/sprache.pb.js`, `pb_hooks/smarthome.pb.js`, `pb_hooks/pinn-ortung.js`, `pb_hooks/pinn-protokoll.js`, `pb_hooks/pinn-pushtext.js`, `js/anmeldemaske.js`, `js/fehlerprotokoll.js`, `js/hinweise.js`, `js/appstart.js`, `i18n/`, `docker/docker-compose.portainer.yaml`, `env.txt`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -184,13 +186,13 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.156.0` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.157.0` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
 4. `http://<NAS'ın IP adresi>:8090` adresini aç → **Ana yönetici olarak giriş yap** → şifre `Admin` → kendi şifreni belirle.
-5. **Kurulum sihirbazı** gerisinde sana adım adım rehberlik eder – HTTPS, uzaktan erişim, Google, yapay zekâ, konum ve Home Assistant – 16 dilde.
+5. **Kurulum sihirbazı** gerisinde sana adım adım rehberlik eder – HTTPS, uzaktan erişim, Google, yapay zekâ, konum ve Home Assistant – 17 dilde.
 6. pinn.'i her telefonda HTTPS adresinden aç ve ana ekrana ekle:
    - **iPhone/iPad (Safari):** “Paylaş” → *Ana Ekrana Ekle* (bildirimler için iOS 16.4 veya daha yenisi gerekir)
    - **Android (Chrome):** Ayarlar → Bildirimler → *pinn.'i uygulama olarak yükle* veya Chrome menüsü ⋮ → *Uygulamayı yükle*
