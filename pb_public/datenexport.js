@@ -24,7 +24,7 @@
   'use strict';
   if (window.PinnExport) return;
 
-  var LANGS = ['de', 'en', 'fr', 'es', 'it', 'pt', 'zh', 'ja', 'ko', 'ru', 'nl', 'tr', 'pl', 'uk', 'cs', 'sv', 'da', 'nb', 'fi'];
+  var LANGS = ['de', 'en', 'fr', 'es', 'it', 'pt', 'zh', 'ja', 'ko', 'ru', 'nl', 'tr', 'pl', 'uk', 'cs', 'sv', 'da', 'nb', 'fi', 'hu'];
   var T = {};
   T.de = {
     F: 'Familie', FW: 'WG', Fd: 'der Familie', FWd: 'der WG',
@@ -1109,6 +1109,60 @@
       '',
       'Varoitus: tämä tiedosto sisältää talouden, asiakirjat ja hätäkortit salaamattomina.',
       'Säilytä se turvallisesti.',
+    ],
+  };
+
+  // Hungarian (since 1.160.0)
+  T.hu = {
+    F: 'család', FW: 'háztartás', Fd: 'családod', FWd: 'háztartásod',
+    titel: '{F} exportálása',
+    intro: 'A(z) {Fd} összes adata ZIP-fájlként – a dokumentumokat, blokkokat és képeket is beleértve. Például másik NAS-ra költözéshez vagy saját biztonsági mentésként.',
+    lade: 'Tartalom ellenőrzése …', fehler: 'Ez nem sikerült.',
+    fehlerNetz: 'A pinn. nem érhető el – győződj meg róla, hogy az otthoni hálózatban vagy VPN-en vagy.',
+    serverFehlt: 'Az export.pb.js és a pinn-export.js (pb_hooks) még hiányzik a szerverről.',
+    familieWaehlen: '{F} kiválasztása', inhalt: 'Ez kerül a ZIP-fájlba', eintraege: '{0} bejegyzés', dateienN: '{0} fájl',
+    dokumente: 'Fájlok összesen', groesse: 'Méret (kb.)',
+    nichtDrin: 'Nem része',
+    nichtDrinText: 'A jelszavak, PIN-kódok, az iCloud, a Google és a Home Assistant hozzáférési adatai, a bejelentkezett eszközök és a push-feliratkozások. A másik NAS-on egyszerűen újra bejelentkezel. A Traccar helyzetelőzményei sem részei.',
+    privat: 'Nem része, mert privát: {0} olyan alap, amelynek nem vagy tagja, és {1} „Csak nekem” naptár más profiloktól. A teljes exportot – például költözéskor – a főadminisztrátor készítheti el.',
+    voll: 'Teljes export – minden profil privát alapjai és „Csak nekem” naptárai benne vannak.',
+    sicherheit: 'A ZIP-fájl a pénzügyeket, a dokumentumokat és a segélykártyákat titkosítatlanul tartalmazza. Tárold biztonságos helyen, és ne küldd el e-mailben.',
+    gross: 'Ez kb. {0}. Telefonon eltarthat egy ideig – inkább számítógépen exportálj, és közben tartsd nyitva a pinn.-t.',
+    starten: 'ZIP létrehozása', abbrechen: 'Mégse', schliessen: 'Bezárás', nochmal: 'Újra',
+    schrittDaten: 'Adatok: {0}', schrittDatei: '{0}. fájl / {1}', packe: 'ZIP-fájl csomagolása …',
+    offenLassen: 'Tartsd nyitva a pinn.-t, amíg az export el nem készül.',
+    fertig: 'Az export elkészült ✓', fertigText: '{0} bejegyzés és {1} fájl · {2}',
+    speichern: 'ZIP mentése', teilen: 'Megosztás vagy mentés a Fájlokba',
+    speichernTipp: 'iPhone/iPad: „Megosztás” → „Mentés a Fájlokba”. Számítógép: a „ZIP mentése” a fájlt a Letöltések mappába menti.',
+    fehlende: '{0} fájlt nem sikerült beolvasni – ezeket az export-fehler.txt listázza a ZIP-fájlban.',
+    abgebrochen: 'Az export megszakítva.', zuGross: 'Az export 4 GB-nál nagyobb – egy hagyományos ZIP-fájlba nem fér bele.',
+    keinAdmin: 'Exportot csak adminisztrátorok készíthetnek.',
+    S: {
+      familien: '{F}', benutzer: 'Profilok', familien_daten: 'Naptár, listák, receptek, tagok és beállítások',
+      rezept_bilder: 'Receptképek', oeffentliche_rezepte: 'Megosztott receptek', aufgaben: 'Feladatok',
+      haushalt_verlauf: 'Háztartási előzmények', kassen: 'Alapok, portfóliók és szerződések', ausgaben: 'Tranzakciók',
+      finanz_dokumente: 'Szerződéses dokumentumok', dokumente: 'Dokumentumok', pinnwand_bilder: 'Faliújság-képek',
+      kalender_eigene: 'Saját naptárak', kalender_termine: 'Időpontok', muellkalender: 'Hulladéknaptár',
+      ortung: 'Helyek és helyzet', zuhause: 'Otthon', smarthome_zugaenge: 'Okosotthon',
+      dashboard_hintergruende: 'Műszerfal', apple_zugaenge: 'iCloud', google_zugaenge: 'Google',
+    },
+    liesmich: 'README.txt',
+    readme: [
+      'pinn. – adatexport',
+      '',
+      '{F}: {0}',
+      'Létrehozva: {1} / {2} (pinn. {3})',
+      '',
+      'Tartalom:',
+      '  pinn-export.json  az export leírása (formátum, tartalom, fájllista)',
+      '  daten/            minden bejegyzés gyűjteményenként JSON-formátumban (úgy, ahogy a PocketBase-ben tárolva vannak)',
+      '  dateien/          dokumentumok, blokkok és képek: dateien/<gyűjtemény>/<bejegyzés-azonosító>/<fájl>',
+      '',
+      'Nem része: jelszavak, PIN-kódok, hozzáférési adatok (iCloud, Google, Home Assistant),',
+      'bejelentkezett eszközök, push-feliratkozások és a Traccar helyzetelőzményei.',
+      '',
+      'Figyelem: ez a fájl a pénzügyeket, a dokumentumokat és a segélykártyákat titkosítatlanul tartalmazza.',
+      'Tárold biztonságos helyen.',
     ],
   };
 

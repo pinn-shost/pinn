@@ -30,7 +30,8 @@
   <a href="README.sv.md">🇸🇪 Svenska</a> ·
   <a href="README.da.md">🇩🇰 Dansk</a> ·
   <a href="README.nb.md">🇳🇴 Norsk</a> ·
-  <a href="README.fi.md">🇫🇮 Suomi</a>
+  <a href="README.fi.md">🇫🇮 Suomi</a> ·
+  <a href="README.hu.md">🇭🇺 Magyar</a>
 </p>
 
 ---
@@ -113,7 +114,15 @@ Dotknij obrazu, aby otworzyć go w pełnym rozmiarze.
 - 💬 **Czat** – czat rodzinny i prywatny, szyfrowany end-to-end, z powiadomieniami push i potwierdzeniem odczytu
 - 🔔 **Powiadomienia** – osobiste powiadomienia push na iPhonie, iPadzie i Androidzie oraz dzwonek powiadomień ze wszystkimi zmianami w rodzinie
 
-pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk, 🇳🇴 Norsk i 🇫🇮 Suomi**; dostosowuje walutę i numery alarmowe do twojego regionu i przełącza się między określeniami **rodzina** i **wspólne mieszkanie**. Jeden serwer może obsługiwać wiele rodzin, każdą z własnymi administratorami.
+pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk, 🇳🇴 Norsk, 🇫🇮 Suomi i 🇭🇺 Magyar**; dostosowuje walutę i numery alarmowe do twojego regionu i przełącza się między określeniami **rodzina** i **wspólne mieszkanie**. Jeden serwer może obsługiwać wiele rodzin, każdą z własnymi administratorami.
+
+## Nowości w 1.160.0
+
+**Węgierski**
+
+- Nowe: węgierski (Magyar) to nowy język aplikacji – wszystkie około 7 500 tekstów aplikacji, kreator konfiguracji, eksport danych, wiadomości push z serwera i węgierski numer alarmowy (112). Jest też wariant dla wspólnego mieszkania („háztartás”, „lakótárs”) z węgierskimi końcówkami. Wybierzesz go w Ustawienia → Język i region.
+- Uwaga: tłumaczenie nie zostało sprawdzone przez native speakerów – propozycje poprawek mile widziane jako GitHub issue. Sterowanie głosowe przez Siri/Android jeszcze nie rozumie węgierskiego i odpowiada po angielsku.
+- Zmieniono: `i18n/hu.i18n.js` (new), `README.hu.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
 
 ## Nowości w 1.159.0
 
@@ -171,14 +180,6 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 - Zmieniono: dziennik błędów pokazuje komunikaty po niemiecku dla języka niemieckiego i po angielsku dla wszystkich pozostałych.
 - Zmieniono: `pb_hooks/pinn-einrichtung.js`, `pb_hooks/pinn-protokoll.js`, `pb_hooks/protokoll.pb.js`, `einrichtung.js`, `js/fehlerprotokoll.js`, `js/familie.js`, `js/familienkachel.js`, `js/versionslog.js`, `js/sprachen.js`, `i18n/`, `src/`, `index.html`, README.
 
-## Nowości w 1.153.1
-
-**Zdrowie: pięć nowych bloków, „Ja” we własnym profilu**
-
-- Nowość na stronie zdrowia: **krem z filtrem** (dzisiejszy indeks UV w domu, przypomnienie tylko w słoneczne dni), **sen** (przypomnienie przed snem, rano „Jak spałeś(-aś)?”), **owoce i warzywa** (porcje dziennie), **kontrola kleszczy** (kwiecień–październik) i **badania kontrolne** (dentysta, badanie ogólne … z odstępem; dla dzieci niemieckie badania U wg wieku). Przy dzieciach przypomnienia dostają też rodzice.
-- Nowość: we własnym profilu pinn. pokazuje „Ja” zamiast imienia – filtr kalendarza, zadania, rodzina i wszędzie indziej, odpowiednio odmienione w zdaniach. Do tego: ikona liniowa dla strzałki przywracania, nowa ikona felgi, ten sam złoty dla żółtych wskazówek w trybie ciemnym.
-- Zmieniono: `pb_hooks/pinn-gesundheit.js`, `js/gesundheit.js`, `css/gesundheit.css`, `js/mitglieder.js`, `js/symbole.js`, `css/dunkelfarbe.css`, `js/aufgaben.js`, `js/termine.js`, `js/listen.js`, `js/sparen.js`, `js/vertraege.js`, `js/familie.js`, `js/hinweise.js`, `js/kassen.js`, `js/zuhause.js`, `js/dokumente.js`, `js/fahrzeuge.js`, `js/ausblick.js`, `js/sterne.js`, `js/vorrat2.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `index.html`.
-
 ## Wymagania
 
 - NAS lub mini PC z zainstalowanym **Dockerem** i **Docker Compose** (np. Synology, UGREEN, QNAP albo zwykły serwer z Linuksem)
@@ -188,13 +189,13 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 ## Instalacja
 
 1. Pobierz i rozpakuj plik ZIP [najnowszej wersji](https://github.com/pinn-shost/pinn/releases/latest).
-2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.159.0` lub `pinn-main`) bez zmian.
+2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.160.0` lub `pinn-main`) bez zmian.
 3. Połącz się przez SSH i uruchom:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
 4. Otwórz `http://<adres IP NAS-a>:8090` → **Zaloguj się jako główny administrator** → hasło `Admin` → ustaw własne hasło.
-5. **Kreator konfiguracji** poprowadzi cię krok po kroku przez resztę – HTTPS, dostęp z zewnątrz, Google, sztuczną inteligencję, lokalizację i Home Assistant – w 19 językach.
+5. **Kreator konfiguracji** poprowadzi cię krok po kroku przez resztę – HTTPS, dostęp z zewnątrz, Google, sztuczną inteligencję, lokalizację i Home Assistant – w 20 językach.
 6. Otwórz pinn. na każdym telefonie pod adresem HTTPS i dodaj do ekranu głównego:
    - **iPhone/iPad (Safari):** „Udostępnij” → *Dodaj do ekranu początkowego* (powiadomienia wymagają iOS 16.4 lub nowszego)
    - **Android (Chrome):** Ustawienia → Powiadomienia → *zainstaluj pinn. jako aplikację* albo menu Chrome ⋮ → *Zainstaluj aplikację*

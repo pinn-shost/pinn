@@ -34,6 +34,7 @@
     da: function (n) { return n === 1 || (n > 0 && n < 2 && n !== Math.floor(n)) ? 'one' : 'other'; },   // Danish (CLDR): 1 and decimals between 0 and 2 are singular
     nb: function (n) { return n === 1 ? 'one' : 'other'; },   // Norwegian Bokmål (CLDR): only n = 1 is singular (1.0 too)
     fi: oneIfOneInt,   // Finnish (CLDR): 1 is singular, fractions (also 1.0) are plural
+    hu: function (n) { return n === 1 ? 'one' : 'other'; },   // Hungarian (CLDR): only n = 1 is singular
     tr: function (n) { return n === 1 ? 'one' : 'other'; },   // Turkish (CLDR): only 1 is singular
     es: function (n) { return n === 1 ? 'one' : 'other'; },
     fr: oneIfZeroOrOne,
@@ -87,6 +88,7 @@
     da: ['one', 'other'],
     nb: ['one', 'other'],
     fi: ['one', 'other'],
+    hu: ['one', 'other'],
     cs: ['one', 'few', 'other'],  // "other" = 0, 5 and more and fractions (genitive plural)
   };
   // Where to look when a form is missing in a text

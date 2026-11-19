@@ -114,6 +114,7 @@ const T = {
     da: { titel: "🧳 Opret en pakkeliste til »{t}«?", heute: "Starter i dag", morgen: "Starter i morgen", tage: "Starter om {n} d.", text: "{w} – tryk, så oprettes listen med det samme med udfyldte datoer." },
     nb: { titel: "🧳 Opprette en pakkeliste for «{t}»?", heute: "Starter i dag", morgen: "Starter i morgen", tage: "Starter om {n} d.", text: "{w} – trykk, så opprettes listen med en gang med utfylte datoer." },
     fi: { titel: "🧳 Pakkauslista matkalle ”{t}”?", heute: "Alkaa tänään", morgen: "Alkaa huomenna", tage: "Alkaa {n} päivän päästä", text: "{w} – napauta, niin lista luodaan päivämäärät valmiiksi täytettyinä." },
+    hu: { titel: "🧳 Csomaglista a(z) „{t}” utazáshoz?", heute: "Ma kezdődik", morgen: "Holnap kezdődik", tage: "{n} nap múlva kezdődik", text: "{w} – koppints, és a lista elkészül kitöltött dátumokkal." },
 };
 function tx(lang, k, vars) {
     let s = (T[lang] || T.en)[k] || T.en[k];

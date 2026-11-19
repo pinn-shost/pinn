@@ -120,7 +120,7 @@ function langOf(u) {
     let w = {};
     try { w = require(`${__hooks}/pinn-design.js`).readDesign(u).werte || {}; } catch (e) { w = {}; }
     const s = String(w.sprache || "");
-    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr", "pl", "uk", "cs", "sv", "da", "nb", "fi"].indexOf(s) >= 0) return s;
+    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr", "pl", "uk", "cs", "sv", "da", "nb", "fi", "hu"].indexOf(s) >= 0) return s;
     if (/^[a-z]{2}$/.test(s)) return "en";
     const land = String(w.land || "").toUpperCase();
     if (["DE", "AT", "CH", "LI", "LU"].indexOf(land) >= 0) return "de";
@@ -141,6 +141,7 @@ function langOf(u) {
     if (["DK", "GL", "FO"].indexOf(land) >= 0) return "da";
     if (["NO", "SJ"].indexOf(land) >= 0) return "nb";
     if (["FI"].indexOf(land) >= 0) return "fi";
+    if (["HU"].indexOf(land) >= 0) return "hu";
     return "en";
 }
 const T = {
@@ -186,6 +187,8 @@ const T = {
           gebText: "Ekstra godbiter i dag 🦴", mehr: "🐾 Noe nærmer seg hos kjæledyrene dine", kurzHeute: "i dag", kurzIn3: "om 3 dager", kurzUeber: "forsinket" },
     fi: { futter: "Täytä lemmikin ruoka-automaatti", futterHeute: "täytä tänään", futterUeber: "myöhässä {n} päivää", leer: "Ruoka-automaatti melkein tyhjä", leerText: "Täyttötaso {v} – täytä uudelleen.", leerText0: "Täytä uudelleen.", heute: "erääntyy tänään", in3: "erääntyy 3 päivän päästä", ueber: "myöhässä {n} päivää", geb: "{name} täyttää tänään vuosia!", gebAlt: "{name} täyttää tänään {n} vuotta 🐾",
           gebText: "Aika lisäherkulle 🦴", mehr: "🐾 Lemmikeillesi on jotain tulossa", kurzHeute: "tänään", kurzIn3: "3 päivän päästä", kurzUeber: "myöhässä" },
+    hu: { futter: "Töltsd fel a kedvenc etetőjét", futterHeute: "töltsd fel ma", futterUeber: "{n} napja késik", leer: "Az etető majdnem üres", leerText: "Töltöttség: {v} – töltsd újra.", leerText0: "Töltsd újra.", heute: "ma esedékes", in3: "3 nap múlva esedékes", ueber: "{n} napja késik", geb: "{name} ma születésnapos!", gebAlt: "{name} ma {n} éves 🐾",
+          gebText: "Ideje egy extra jutalomfalatnak 🦴", mehr: "🐾 Történik valami a kedvenceiddel", kurzHeute: "ma", kurzIn3: "3 nap múlva", kurzUeber: "késésben" },
 };
 function tx(lang, k, vars) {
     let s = (T[lang] || T.en)[k] || T.en[k] || k;

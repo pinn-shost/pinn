@@ -22,6 +22,15 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.160', datum: '18.11.2026', titel: 'Ungarisch',
+    punkte: [
+      ['neu', '1.160.0: Ungarisch (Magyar) ist als neue App-Sprache dabei – alle rund 7.500 Texte der App, der Einrichtungs-Assistent, der Datenexport, die Push-Nachrichten vom Server (inklusive Wochenvorschau, Geburtstage, Haustiere, Chat und Notfall) und die ungarische Notrufnummer (112 für alle). Auch die WG-Variante („háztartás“, „lakótárs“) gibt es, samt ungarischer Endungen und Pluralregeln. Auswählbar unter Einstellungen → Sprache und Region.'],
+      ['info', '1.160.0: Hinweis: Die Übersetzung wurde nicht von Muttersprachlern geprüft – Verbesserungsvorschläge gerne als GitHub-Issue. Die Sprachsteuerung per Siri/Android („Hey Siri, pinn“) versteht Ungarisch noch nicht und antwortet auf Englisch.'],
+      ['info', '1.160.0: Neue README.hu.md (kurze ungarische Einführung), Sprachleiste in allen READMEs um Ungarisch ergänzt.'],
+      ['info', '1.160.0 geändert: i18n/hu.i18n.js (neu), README.hu.md (neu), js/sprachen.js, js/textkern.js, js/einrichten.js, js/exportieren.js, einrichtung.js, datenexport.js, js/versionslog.js, i18n/versionslog.en.js, pb_hooks/pinn-textkern.js, pinn-pushtext.js, pinn-chat.js, pinn-ausblick.js, pinn-familie-geburtstag.js, pinn-haustiere.js, pinn-ortung.js, pinn-wobistdu.js, pinn-packliste.js, pinn-aufgaben.js, pinn-einrichtung.js, .github/scripts (i18n-keys.js, check-hooks.js), src/version.txt, index.html, alle READMEs.'],
+    ],
+  },
+  {
     v: '1.159', datum: '18.11.2026', titel: 'Finnisch',
     punkte: [
       ['neu', '1.159.0: Finnisch (Suomi) ist als neue App-Sprache dabei – alle rund 7.500 Texte der App, der Einrichtungs-Assistent, der Datenexport, die Push-Nachrichten vom Server (inklusive Wochenvorschau, Geburtstage, Haustiere, Chat und Notfall) und die finnische Notrufnummer (112 für alle). Auch die WG-Variante („kotitalous“, „asukas“) gibt es, samt finnischer Fallendungen und Pluralregeln. Auswählbar unter Einstellungen → Sprache und Region.'],

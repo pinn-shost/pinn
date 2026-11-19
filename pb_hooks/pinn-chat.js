@@ -60,7 +60,7 @@ const DM_RE = /^dm:([a-z0-9]{15}):([a-z0-9]{15})$/;
 const GR_RE = /^gr:([a-z0-9]{15})$/;
 const UNREAD_WINDOW_MS = 30 * 24 * 60 * 60 * 1000;
 const PAGE = 60;
-const LANGS = ["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr", "pl", "uk", "cs", "sv", "da", "nb", "fi"];
+const LANGS = ["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr", "pl", "uk", "cs", "sv", "da", "nb", "fi", "hu"];
 const MAX_PREVIEW = 200 * 1024;  // preview picture of a photo/video push message (plain mode only)
 const MUTE_MAX_MS = 400 * 24 * 60 * 60 * 1000;
 const PUSH_TEXT = {
@@ -83,6 +83,7 @@ const PUSH_TEXT = {
     da: { group: "Ny besked i gruppechatten", dm: "Ny besked", photo: "Foto", video: "Video", voice: "Talebesked", file: "Fil", loc: "Position", poll: "Afstemning" },
     nb: { group: "Ny melding i gruppechatten", dm: "Ny melding", photo: "Bilde", video: "Video", voice: "Talemelding", file: "Fil", loc: "Posisjon", poll: "Avstemning" },
     fi: { group: "Uusi viesti ryhmächatissa", dm: "Uusi viesti", photo: "Kuva", video: "Video", voice: "Ääniviesti", file: "Tiedosto", loc: "Sijainti", poll: "Kysely" },
+    hu: { group: "Új üzenet a csoportos csevegésben", dm: "Új üzenet", photo: "Fénykép", video: "Videó", voice: "Hangüzenet", file: "Fájl", loc: "Helyzet", poll: "Szavazás" },
 };
 
 module.exports = { ensureSchema, unreadCountsForFamily, roster, saveKey, saveBackup, saveSettings, overview, list, send, markRead, remove, upload, download, saveRetention, cleanup,

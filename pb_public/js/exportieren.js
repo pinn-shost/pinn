@@ -42,6 +42,8 @@ const PINN_EXPORT_TEXTE = {
   nb: { btn: '📦 Eksporter: {F}', kurz: '📦 Eksporter', text: 'Alle data for {Fd} som en ZIP-fil – inkludert dokumenter, kvitteringer og bilder. For eksempel for flytting til en annen NAS eller som egen sikkerhetskopi.', laden: 'Eksporten kunne ikke lastes (mangler pb_public/datenexport.js?).', F: 'familie', FW: 'husstand', Fd: 'familien', FWd: 'husstanden' },
   // Finnish (since 1.159.0): {F} is the bare noun ("Vie: perhe"), {Fd} the possessive form
   fi: { btn: '📦 Vie: {F}', kurz: '📦 Vie', text: 'Kaikki {Fd} tiedot ZIP-tiedostona – myös asiakirjat, kuitit ja kuvat. Esimerkiksi siirtoa varten toiselle NAS-laitteelle tai omana varmuuskopiona.', laden: 'Vientiä ei voitu ladata (puuttuuko pb_public/datenexport.js?).', F: 'perhe', FW: 'kotitalous', Fd: 'perheesi', FWd: 'kotitaloutesi' },
+  // Hungarian (since 1.160.0): {F} is the bare noun ("Család exportálása" is built from titel in the module), {Fd} the possessive form
+  hu: { btn: '📦 {F} exportálása', kurz: '📦 Exportálás', text: 'A(z) {Fd} összes adata ZIP-fájlként – a dokumentumokat, blokkokat és képeket is beleértve. Például másik NAS-ra költözéshez vagy saját biztonsági mentésként.', laden: 'Az exportot nem sikerült betölteni (hiányzik a pb_public/datenexport.js?).', F: 'család', FW: 'háztartás', Fd: 'családod', FWd: 'háztartásod' },
 };
 function pinnExportText(key) {
   const l = (window.PINN_I18N && window.PINN_I18N.current) || 'en';

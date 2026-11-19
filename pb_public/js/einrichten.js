@@ -2,7 +2,7 @@
    Part of the app code that used to be a single block in index.html. Classic script, no build step:
    it is loaded right after the inline script of index.html and before the other files in js/
    (the load order is listed at the bottom of index.html and in pinn-setup.sh).
-   Contents: the texts of the setup in nineteen languages (PINN_SETUP_TEXTE, pinnSetupText) and loading and opening the assistant (loadPinnSetupScript, openPinnSetup). The assistant itself lives in pb_public/einrichtung.js and is only loaded when first opened. The notice about the open setup is in js/hauptadminseite.js. */
+   Contents: the texts of the setup in twenty languages (PINN_SETUP_TEXTE, pinnSetupText) and loading and opening the assistant (loadPinnSetupScript, openPinnSetup). The assistant itself lives in pb_public/einrichtung.js and is only loaded when first opened. The notice about the open setup is in js/hauptadminseite.js. */
 
 /* ==========================================================
    Setup (assistant for the main admin)
@@ -237,6 +237,19 @@ const PINN_SETUP_TEXTE = {
     loginBtn: 'Kirjaudu sisään pääylläpitäjänä',
     loginMain: 'Ensimmäisellä kerralla salasana on ”Admin” – sen jälkeen valitset oman salasanasi ja käyttöönotto alkaa.',
     laden: 'Käyttöönottoa ei voitu ladata (puuttuuko pb_public/einrichtung.js?).',
+  },
+  // Hungarian (since 1.160.0)
+  hu: {
+    btn: '⚙︎ Beüzemelés',
+    offen: 'A pinn. beüzemelése még nem fejeződött be. Enélkül a HTTPS, a push-értesítések és a kezdőképernyős alkalmazás nem működik.',
+    fortsetzen: 'Beüzemelés folytatása',
+    neustart: 'A mentett beállítások csak a pinn. újraindítása után lépnek életbe.',
+    neustartBtn: 'Alkalmazás most (rövid újraindítás)',
+    neustartLaeuft: 'A pinn. újraindul …',
+    loginHint: 'Új vagy itt? Az első beüzemelés a főadminisztrátorként való bejelentkezés után indul.',
+    loginBtn: 'Bejelentkezés főadminisztrátorként',
+    loginMain: 'Első alkalommal a jelszó „Admin” – ezután megadsz egy saját jelszót, és elindul a beüzemelés.',
+    laden: 'A beüzemelést nem sikerült betölteni (hiányzik a pb_public/einrichtung.js?).',
   },
   uk: {
     btn: '⚙︎ Конфігурація',

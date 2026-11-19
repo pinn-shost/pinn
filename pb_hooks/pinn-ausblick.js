@@ -119,7 +119,7 @@ function langOf(u) {
     let w = {};
     try { w = require(`${__hooks}/pinn-design.js`).readDesign(u).werte || {}; } catch (e) { w = {}; }
     const s = String(w.sprache || "");
-    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr", "pl", "uk", "cs", "sv", "da", "nb", "fi"].indexOf(s) >= 0) return s;
+    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr", "pl", "uk", "cs", "sv", "da", "nb", "fi", "hu"].indexOf(s) >= 0) return s;
     if (/^[a-z]{2}$/.test(s)) return "en";
     const land = String(w.land || "").toUpperCase();
     if (["DE", "AT", "CH", "LI", "LU"].indexOf(land) >= 0) return "de";
@@ -140,6 +140,7 @@ function langOf(u) {
     if (["DK", "GL", "FO"].indexOf(land) >= 0) return "da";
     if (["NO", "SJ"].indexOf(land) >= 0) return "nb";
     if (["FI"].indexOf(land) >= 0) return "fi";
+    if (["HU"].indexOf(land) >= 0) return "hu";
     return "en";
 }
 
@@ -166,6 +167,7 @@ const MONTHS = {
     da: ["januar", "februar", "marts", "april", "maj", "juni", "juli", "august", "september", "oktober", "november", "december"],
     nb: ["januar", "februar", "mars", "april", "mai", "juni", "juli", "august", "september", "oktober", "november", "desember"],
     fi: ["tammikuu", "helmikuu", "maaliskuu", "huhtikuu", "toukokuu", "kesäkuu", "heinäkuu", "elokuu", "syyskuu", "lokakuu", "marraskuu", "joulukuu"],
+    hu: ["január", "február", "március", "április", "május", "június", "július", "augusztus", "szeptember", "október", "november", "december"],
 };
 // Russian needs the genitive for date ranges and the prepositional case for "in the month" (the list above is the nominative)
 const MONTHS_RU_GEN = ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"];
@@ -210,6 +212,8 @@ function rangeText(lang, mondayIso) {
         const P = ["tammikuuta", "helmikuuta", "maaliskuuta", "huhtikuuta", "toukokuuta", "kesäkuuta", "heinäkuuta", "elokuuta", "syyskuuta", "lokakuuta", "marraskuuta", "joulukuuta"];
         return a[1] === b[1] ? (a[2] + ".–" + b[2] + ". " + P[b[1] - 1]) : (a[2] + ". " + P[a[1] - 1] + " – " + b[2] + ". " + P[b[1] - 1]);
     }
+    // Hungarian (since 1.160.0): "november 2–8." / "október 30. – november 5."
+    if (lang === "hu") return a[1] === b[1] ? (M[a[1] - 1] + " " + a[2] + "–" + b[2] + ".") : (M[a[1] - 1] + " " + a[2] + ". – " + M[b[1] - 1] + " " + b[2] + ".");
     return a[1] === b[1] ? ("du " + a[2] + " au " + b[2] + " " + M[b[1] - 1]) : ("du " + a[2] + " " + M[a[1] - 1] + " au " + b[2] + " " + M[b[1] - 1]);
 }
 function weekMessage(lang, mondayIso) {
@@ -232,6 +236,7 @@ function weekMessage(lang, mondayIso) {
     if (lang === "da") return { titel: "🗓️ Din uge er klar", text: "Begivenheder, opgaver, måltider og mere for " + r + " – alt samlet ét sted." };
     if (lang === "nb") return { titel: "🗓️ Uken din er klar", text: "Avtaler, oppgaver, måltider og mer for " + r + " – alt samlet på ett sted." };
     if (lang === "fi") return { titel: "🗓️ Viikkosi on valmis", text: "Tapahtumat, tehtävät, ateriat ja paljon muuta ajalle " + r + " – kaikki yhdellä silmäyksellä." };
+    if (lang === "hu") return { titel: "🗓️ Elkészült a heted", text: "Időpontok, feladatok, étkezések és még sok más a következő időszakra: " + r + " – egy helyen." };
     return { titel: "🗓️ Your week is ready", text: "Events, tasks, meals and more for " + r + " – all at a glance." };
 }
 function monthMessage(lang, key) {
@@ -259,6 +264,10 @@ function monthMessage(lang, key) {
         const IN = ["tammikuussa", "helmikuussa", "maaliskuussa", "huhtikuussa", "toukokuussa", "kesäkuussa", "heinäkuussa", "elokuussa", "syyskuussa", "lokakuussa", "marraskuussa", "joulukuussa"][m - 1];
         return { titel: "💶 Talousnäkymä: " + next, text: "Mitä " + IN + " on tulossa – ja miten " + prev + " meni." };
     }
+    if (lang === "hu") {
+        const IN = ["januárban", "februárban", "márciusban", "áprilisban", "májusban", "júniusban", "júliusban", "augusztusban", "szeptemberben", "októberben", "novemberben", "decemberben"][m - 1];
+        return { titel: "💶 Pénzügyi kitekintés: " + next, text: "Mi vár rád " + IN + " – és hogyan alakult " + prev + "." };
+    }
     return { titel: "💶 Finance outlook: " + next.charAt(0).toUpperCase() + next.slice(1), text: "What's coming up in " + next + " – and how " + prev + " went." };
 }
 
@@ -281,6 +290,7 @@ function yearMessage(lang, year) {
     if (lang === "da") return { titel: "🎁 Dit år " + year + " i overblik", text: "Udgifter, lavede måltider og rejser – sådan var dit år." };
     if (lang === "nb") return { titel: "🎁 Året ditt " + year + " i oversikt", text: "Utgifter, lagde måltider og reiser – slik var året ditt." };
     if (lang === "fi") return { titel: "🎁 Vuotesi " + year + " yhteenveto", text: "Menot, valmistetut ateriat ja matkat – tällainen oli vuotesi." };
+    if (lang === "hu") return { titel: "🎁 A te " + year + " éved összefoglalva", text: "Kiadások, elkészített ételek és utazások – ilyen volt az éved." };
     return { titel: "🎁 Your year in review " + year, text: "Expenses, meals cooked and trips – this was your year." };
 }
 

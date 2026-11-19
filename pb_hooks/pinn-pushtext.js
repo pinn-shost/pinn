@@ -13,14 +13,14 @@
 // placeholders are filled by pinn-textkern.js – the same table the app uses. A flat share uses the variant
 // "<key>#wg" of the language file (created by .github/scripts/i18n-keys.js from the TERMS of js/sprachen.js).
 //
-//  - Language: from the profile (personal design, value "sprache": de, en, fr, es, it, pt, zh, ja, ko, ru, nl, tr, pl, uk, cs, sv, da, nb, fi). Without one: German.
+//  - Language: from the profile (personal design, value "sprache": de, en, fr, es, it, pt, zh, ja, ko, ru, nl, tr, pl, uk, cs, sv, da, nb, fi, hu). Without one: German.
 //  - Household type: from the family settings (field "wohnform": 'familie' or 'wg'). Only this one field is read
 //    via SQL (json_extract), not the big family data; the result stays cached until the family data changes.
 //  - Freely entered content (names, event titles, note texts, addresses) stays unchanged. Whatever matches no
 //    pattern stays as it is (German, or already translated by the module itself) – an unknown message is never lost.
 //    For a flat share such texts still get the flat share terms (applyTerms, same rules as TERMS in js/sprachen.js).
 
-const LANGS = ["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr", "pl", "uk", "cs", "sv", "da", "nb", "fi"];
+const LANGS = ["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr", "pl", "uk", "cs", "sv", "da", "nb", "fi", "hu"];
 
 // ---------------------------------------------------------------------------------------------
 // Language and household type of the recipient
@@ -111,6 +111,20 @@ const DA_DET = { et: "en", dit: "din", mit: "min", sit: "sin", hvert: "hver", et
 const NB_HOME = { "": "husstand", en: "husstanden", ens: "husstandens", er: "husstander", ene: "husstandene", enes: "husstandenes", ers: "husstanders" };
 const NB_MATE = { "": "bofelle", met: "bofellen", mer: "bofeller", mene: "bofellene", mets: "bofellens", mers: "bofellers", menes: "bofellenes" };
 const NB_DET = { et: "en", ditt: "din", mitt: "min", sitt: "sin", hvert: "hver", ethvert: "enhver", intet: "ingen", annet: "annen", nytt: "ny", dette: "denne" };
+// Hungarian (since 1.160.0): "család" -> "háztartás", "családtag" -> "lakótárs". Both stems have back vowels, so the suffixes stay the same;
+// only "j" of the possessive is dropped ("családja" -> "háztartása") and "d" of "-dal/-dá" becomes "s" ("családdal" -> "háztartással").
+function huRest(r) {
+    if (/^j/.test(r)) r = r.slice(1);
+    else if (/^d(al|el|á|é)/.test(r)) r = "s" + r.slice(1);
+    return r;
+}
+function huMate(r) {
+    // "családtag" -> "lakótárs": plural/accusative vowels follow the new stem ("-ok" -> "-ak", "-ot" -> "-at"), "-gal" -> "-sal"
+    if (/^j/.test(r)) r = r.slice(1);
+    else if (/^gal/.test(r)) r = "s" + r.slice(1);
+    else if (/^o(k|t)/.test(r)) r = "a" + r.slice(1);
+    return r;
+}
 // Finnish (since 1.159.0): "perhe" -> "kotitalous", "perheenjäsen" -> "asukas" (case endings are mapped one by one, the stems differ), "perhe-" (compound prefix) -> "kotitalous-".
 // Same tables as .github/scripts/i18n-keys.js. Explicit letter class and a captured prefix instead of lookbehind. Write source texts without possessive suffixes on "perheenjäsen".
 const FI_HOME = { "": "kotitalous", en: "kotitalouden", ttä: "kotitaloutta", essä: "kotitaloudessa", estä: "kotitaloudesta", eseen: "kotitalouteen", ellä: "kotitaloudella", eltä: "kotitaloudelta", elle: "kotitaloudelle", enä: "kotitaloutena", eksi: "kotitaloudeksi", et: "kotitaloudet", iden: "kotitalouksien", itä: "kotitalouksia", issä: "kotitalouksissa", istä: "kotitalouksista", isiin: "kotitalouksiin", illä: "kotitalouksilla", iltä: "kotitalouksilta", ille: "kotitalouksille", iksi: "kotitalouksiksi", inä: "kotitalouksina", esi: "kotitaloutesi", emme: "kotitaloutemme", enne: "kotitaloutenne" };
@@ -331,8 +345,15 @@ const TERMS = {
             (m, pre, f, end) => pre + cap(f === "P", FI_HOME[end === undefined ? "" : end])],
         [/(^|[^A-Za-zÆØÅæøåÄäÖöÉéÈèÜü0-9])([Pp])erhe(?=[A-Za-zÆØÅæøåÄäÖöÉéÈèÜü])/g, (m, pre, f) => pre + cap(f === "P", "kotitalous")],
     ] },
+    // Hungarian (since 1.160.0): same rules as the app (TERMS.hu in .github/scripts/i18n-keys.js), written without lookbehind
+    hu: { keep: /csal[aá]dorvos[A-Za-zÆØÅæøåÄäÖöÉéÈèÜüÁáÍíÓóŐőÚúŰű]*|csal[aá]dn[eé]v[A-Za-zÆØÅæøåÄäÖöÉéÈèÜüÁáÍíÓóŐőÚúŰű]*|csal[aá]dfa[A-Za-zÆØÅæøåÄäÖöÉéÈèÜüÁáÍíÓóŐőÚúŰű]*|csal[aá]di\s+(?:orvos|aut[oó])[A-Za-zÆØÅæøåÄäÖöÉéÈèÜüÁáÍíÓóŐőÚúŰű]*/gi, rules: [
+        [/(^|[^A-Za-zÆØÅæøåÄäÖöÉéÈèÜüÁáÍíÓóŐőÚúŰű0-9])([Cc])sal[aá]dtag([A-Za-zÆØÅæøåÄäÖöÉéÈèÜüÁáÍíÓóŐőÚúŰű]*)/g,
+            (m, pre, f, r) => pre + (f === "C" ? "L" : "l") + "akótárs" + huMate(r)],
+        [/(^|[^A-Za-zÆØÅæøåÄäÖöÉéÈèÜüÁáÍíÓóŐőÚúŰű0-9])([Cc])sal[aá]d([A-Za-zÆØÅæøåÄäÖöÉéÈèÜüÁáÍíÓóŐőÚúŰű]*)/g,
+            (m, pre, f, r) => pre + (f === "C" ? "H" : "h") + "áztartás" + huRest(r)],
+    ] },
 };
-const TERM_HINT = /[Pp]erhe|[Aa]ile|[Ff]amil|[Ff]am\u00EDli|[Ff]amigli|\u5BB6\u5EAD|\u5168\u5BB6|\u5BB6\u65CF|\uAC00\uC871|\uD83D\uDC68\u200D\uD83D\uDC69|[\u0421\u0441]\u0435\u043C|[\u0427\u0447]\u043B\u0435\u043D|[Rr]odzin|[Rr]odin|[\u010C\u010D]len|[Cc]z\u0142on|[\u0421\u0441]\u0456\u043C/;
+const TERM_HINT = /[Pp]erhe|[Cc]sal[a\u00E1]d|[Aa]ile|[Ff]amil|[Ff]am\u00EDli|[Ff]amigli|\u5BB6\u5EAD|\u5168\u5BB6|\u5BB6\u65CF|\uAC00\uC871|\uD83D\uDC68\u200D\uD83D\uDC69|[\u0421\u0441]\u0435\u043C|[\u0427\u0447]\u043B\u0435\u043D|[Rr]odzin|[Rr]odin|[\u010C\u010D]len|[Cc]z\u0142on|[\u0421\u0441]\u0456\u043C/;
 function applyTerms(s, lang) {
     const T = TERMS[lang] || TERMS.de;
     if (!s || !TERM_HINT.test(s)) return s;

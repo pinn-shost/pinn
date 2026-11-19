@@ -30,7 +30,8 @@
   <a href="README.sv.md">🇸🇪 Svenska</a> ·
   <a href="README.da.md">🇩🇰 Dansk</a> ·
   <a href="README.nb.md">🇳🇴 Norsk</a> ·
-  <a href="README.fi.md">🇫🇮 Suomi</a>
+  <a href="README.fi.md">🇫🇮 Suomi</a> ·
+  <a href="README.hu.md">🇭🇺 Magyar</a>
 </p>
 
 <p align="center">
@@ -136,7 +137,15 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 | 🔔 **Benachrichtigungen** | Persönliche Push-Nachrichten auf iPhone, iPad und Android sowie eine Glocke, die jede Änderung in der Familie sammelt. |
 | 🧩 **Und mehr** | Familien-Pinnwand mit verschiebbaren Zetteln, globale Suche, Offline-Modus mit automatischem Abgleich, Dunkelmodus, iPad-Dashboard mit Profil-PINs, Gastzugang, Kindersicherung. |
 
-pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk, 🇳🇴 Norsk und 🇫🇮 Suomi**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
+pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk, 🇳🇴 Norsk, 🇫🇮 Suomi und 🇭🇺 Magyar**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
+
+## Neu in 1.160.0
+
+**Ungarisch**
+
+- Neu: Ungarisch (Magyar) ist als neue App-Sprache dabei – alle rund 7.500 Texte der App, der Einrichtungsassistent, der Datenexport, die Push-Nachrichten vom Server und die ungarische Notrufnummer (112). Auch die WG-Variante ist enthalten („háztartás“, „lakótárs“), samt ungarischer Endungen. Auswählbar unter Einstellungen → Sprache und Region.
+- Hinweis: Die Übersetzung wurde nicht von Muttersprachlern geprüft – Verbesserungsvorschläge gern als GitHub-Issue. Die Sprachsteuerung über Siri/Android versteht Ungarisch noch nicht und antwortet auf Englisch.
+- Geändert: `i18n/hu.i18n.js` (new), `README.hu.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
 
 ## Neu in 1.159.0
 
@@ -232,13 +241,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - Neu: pinn. lässt sich ohne SSH und ohne Setup-Skript über die Portainer-Stack-Oberfläche installieren. Bei jedem Release wird ein fertiges Image (amd64, arm64) gebaut und unter `ghcr.io/pinn-shost/pinn` veröffentlicht; die neue Datei `docker/docker-compose.portainer.yaml` nutzt es mit Volumes und ohne feste Container-Namen (kein Konflikt mehr mit einem vorhandenen Tailscale-Container). Der Stack enthält außerdem einen Sicherungsdienst (nächtliche Sicherung, „Jetzt sichern“ und „Wiederherstellen“ in der App; Updates bleiben in Portainer) sowie auskommentierte, optionale Blöcke für Traccar und den Umweg zu Home Assistant. Siehe „Portainer-Stack (ohne Skript)“ unter Installation.
 - Geändert: `docker/` (new), `.github/workflows/image.yml` (new), `pinn-wartung.sh`, `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
 
-## Neu in 1.150.11
-
-**Symbole und Kleinigkeiten**
-
-- Kamm-Symbol bei „Haare kämmen“ auf der Kinderseite; kein Emoji-Feld mehr neben dem Depot-Namen; Kassen-Auswahllisten ohne Emoji; das Werkzeug ist jetzt ein Maulschlüssel; „Menüs für Gäste“ mit dem Zwei-Personen-Symbol; ein Tipp auf das Logo neben dem Familiennamen führt zur Übersicht; die Karte „Benachrichtigungen“ wird zuerst gefüllt, damit „Auf diesem Gerät aktivieren“ immer erscheint; Shortcut-Symbole sind im Dunkelmodus grau.
-- Geändert: `js/symbole.js`, `js/symbole3.js`, `js/ansichten.js`, `js/konto.js`, `css/dunkelfarbe.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`.
-
 ## So funktioniert’s
 
 ```mermaid
@@ -267,14 +269,14 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.159.0` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.160.0` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
    Das Skript kopiert jede Datei an ihren Platz, lädt die Bibliotheken für PDF-Import und Texterkennung in Fotos herunter und startet pinn.
 4. Öffne `http://<NAS-IP>:8090` → **Als Hauptadmin anmelden** → Passwort `Admin` → wähle dein eigenes Passwort.
-5. Der **Einrichtungsassistent** führt dich durch den Rest – HTTPS, Fernzugriff über WireGuard oder Tailscale, Google, KI, Standort und Home Assistant – Schritt für Schritt, in neunzehn Sprachen.
+5. Der **Einrichtungsassistent** führt dich durch den Rest – HTTPS, Fernzugriff über WireGuard oder Tailscale, Google, KI, Standort und Home Assistant – Schritt für Schritt, in zwanzig Sprachen.
 6. Öffne pinn. auf jedem Handy über die HTTPS-Adresse und füge es zum Home-Bildschirm hinzu:
    - **iPhone/iPad (Safari):** Teilen → *Zum Home-Bildschirm* (für Benachrichtigungen iOS 16.4 oder neuer)
    - **Android (Chrome):** Einstellungen → Benachrichtigungen → *pinn. als App installieren* oder Chrome-Menü ⋮ → *App installieren*

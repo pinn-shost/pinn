@@ -3,6 +3,12 @@
    language other than German. One entry per version of PINN_CHANGELOG: t = title, p = points in the same order
    (null = no translation, the German text is shown). Older versions are not translated. */
 window.PINN_CHANGELOG_EN = {
+  "1.160": {"t": "Hungarian", "p": [
+"1.160.0: Hungarian (Magyar) joins as a new app language – all roughly 7,500 texts of the app, the setup assistant, the data export, the push messages from the server (including the weekly outlook, birthdays, pets, chat and emergency) and the Hungarian emergency number (112 for everything). The flat-share wording (“háztartás”, “lakótárs”) is included too, with Hungarian suffixes and plural rules. Choose it under Settings → Language and region.",
+"1.160.0 note: the translation has not been checked by native speakers – suggestions are welcome as a GitHub issue. Voice control via Siri/Android (“Hey Siri, pinn”) does not understand Hungarian yet and answers in English.",
+"1.160.0: New README.hu.md (short Hungarian introduction), language bar in all READMEs extended by Hungarian.",
+"1.160.0 changed: i18n/hu.i18n.js (new), README.hu.md (new), js/sprachen.js, js/textkern.js, js/einrichten.js, js/exportieren.js, einrichtung.js, datenexport.js, js/versionslog.js, i18n/versionslog.en.js, pb_hooks/pinn-textkern.js, pinn-pushtext.js, pinn-chat.js, pinn-ausblick.js, pinn-familie-geburtstag.js, pinn-haustiere.js, pinn-ortung.js, pinn-wobistdu.js, pinn-packliste.js, pinn-aufgaben.js, pinn-einrichtung.js, .github/scripts (i18n-keys.js, check-hooks.js), src/version.txt, index.html, all READMEs."
+]},
   "1.159": {"t": "Finnish", "p": [
 "1.159.0: Finnish (Suomi) joins as a new app language – all roughly 7,500 texts of the app, the setup assistant, the data export, the push messages from the server (including the weekly outlook, birthdays, pets, chat and emergency) and the Finnish emergency number (112 for everything). The flat-share wording (“kotitalous”, “asukas”) is included too, with Finnish case endings and plural rules. Choose it under Settings → Language and region.",
 "1.159.0 note: the translation has not been checked by native speakers – suggestions are welcome as a GitHub issue. Voice control via Siri/Android (“Hey Siri, pinn”) does not understand Finnish yet and answers in English.",

@@ -30,7 +30,8 @@
   <a href="README.sv.md">🇸🇪 Svenska</a> ·
   <a href="README.da.md">🇩🇰 Dansk</a> ·
   <a href="README.nb.md">🇳🇴 Norsk</a> ·
-  <a href="README.fi.md">🇫🇮 Suomi</a>
+  <a href="README.fi.md">🇫🇮 Suomi</a> ·
+  <a href="README.hu.md">🇭🇺 Magyar</a>
 </p>
 
 <p align="center">
@@ -136,7 +137,15 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 | 🔔 **通知** | iPhone、iPad、Androidに届く個人向けのプッシュメッセージと、家族内のあらゆる変更を集めるベル。 |
 | 🧩 **そのほか** | 動かせるメモ付きの家族の掲示板、全体検索、自動同期付きのオフラインモード、ダークモード、プロフィールPIN付きのiPadダッシュボード、ゲストアカウント、チャイルドロック。 |
 
-pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski、🇺🇦 Українська、🇨🇿 Čeština、🇸🇪 Svenska、🇩🇰 Dansk、🇳🇴 Norsk、🇫🇮 Suomi** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
+pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski、🇺🇦 Українська、🇨🇿 Čeština、🇸🇪 Svenska、🇩🇰 Dansk、🇳🇴 Norsk、🇫🇮 Suomi、🇭🇺 Magyar** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
+
+## 1.160.0の新機能
+
+**ハンガリー語**
+
+- 新機能：ハンガリー語（Magyar）がアプリの新しい言語として加わりました。アプリの約7,500のテキスト、セットアップアシスタント、データエクスポート、サーバーからのプッシュ通知、ハンガリーの緊急電話番号（112）に対応し、ルームシェア向けの表現（「háztartás」「lakótárs」）と語尾変化も含みます。設定 → 言語と地域で選べます。
+- 注意：翻訳はネイティブスピーカーによる確認を受けていません。改善案はGitHubのissueでお寄せください。Siri／Androidの音声操作はまだハンガリー語に対応しておらず、英語で答えます。
+- 変更: `i18n/hu.i18n.js` (new), `README.hu.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
 
 ## 1.159.0の新機能
 
@@ -225,13 +234,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - 新機能：自分のリバースプロキシ（Nginx Proxy Manager、Traefik、Cloudflare Tunnel など）でインターネットからアクセスできます。インストールの「自分のリバースプロキシでインターネットからアクセス」を参照してください。pinn. は信頼できるプロキシ（`PINN_PROXY_NETZE`）からの訪問者アドレスだけを信用するため、パスワード誤り後のロックを回避できません（IPv6 は /64 単位）。インターネットからは PocketBase の管理画面と独自のサインイン方法がブロックされ、初期パスワード `Admin` は使えず、トラッカー ID の推測は減速されます。こうした試行があると、管理者に「🚨 セキュリティ警告」のプッシュ通知（アドレス、自宅ネットワークかインターネットか、デバイス）が届き、詳細はエラーログの「セキュリティ」にあります。自宅ネットワークでは何も変わりません。
 - 変更: `pb_hooks/pinn-netz.js` (new), `pb_hooks/netz.pb.js` (new), `pb_hooks/pinn-alarm.js` (new), `pb_hooks/pinn-sitzungen.js`, `pb_hooks/benutzer.pb.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/zuhause.pb.js`, `pb_hooks/sprache.pb.js`, `pb_hooks/smarthome.pb.js`, `pb_hooks/pinn-ortung.js`, `pb_hooks/pinn-protokoll.js`, `pb_hooks/pinn-pushtext.js`, `js/anmeldemaske.js`, `js/fehlerprotokoll.js`, `js/hinweise.js`, `js/appstart.js`, `i18n/`, `docker/docker-compose.portainer.yaml`, `env.txt`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
 
-## 1.151.0の新機能
-
-**Portainer スタックと出来合いのイメージ**
-
-- 新機能：SSH もセットアップスクリプトも使わず、Portainer のスタック画面から pinn. をインストールできます。リリースごとに出来合いのイメージ（amd64、arm64）が作られ、`ghcr.io/pinn-shost/pinn` に公開されます。新しいファイル `docker/docker-compose.portainer.yaml` はこれをボリュームと固定名なしのコンテナで利用します（既存の Tailscale コンテナと衝突しません）。スタックにはバックアップサービス（毎晩のバックアップ、アプリの「今すぐバックアップ」「復元」。アップデートは引き続き Portainer）と、コメントアウトされた任意ブロック（Traccar、Home Assistant への迂回）も含まれます。インストールの「Portainer スタック（スクリプト不要）」を参照してください。
-- 変更: `docker/` (new), `.github/workflows/image.yml` (new), `pinn-wartung.sh`, `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
-
 ## しくみ
 
 ```mermaid
@@ -260,14 +262,14 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.159.0`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.160.0`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
    スクリプトがすべてのファイルを所定の場所にコピーし、PDF取り込みと写真の文字認識に必要なライブラリをダウンロードして、pinn.を起動します。
 4. `http://<NASのIP>:8090`を開き、**メイン管理者としてログイン** → パスワード`Admin` → 自分のパスワードを設定します。
-5. **セットアップアシスタント**が、HTTPS、WireGuardまたはTailscaleでのリモートアクセス、Google、AI、位置情報、Home Assistantといった残りの設定を、19の言語で順番に案内します。
+5. **セットアップアシスタント**が、HTTPS、WireGuardまたはTailscaleでのリモートアクセス、Google、AI、位置情報、Home Assistantといった残りの設定を、20の言語で順番に案内します。
 6. 各スマートフォンでHTTPSアドレスからpinn.を開き、ホーム画面に追加します：
    - **iPhone/iPad（Safari）：** 共有 → *ホーム画面に追加*（通知にはiOS 16.4以降が必要）
    - **Android（Chrome）：** 設定 → 通知 → *pinn.をアプリとしてインストール*、またはChromeのメニュー ⋮ → *アプリをインストール*

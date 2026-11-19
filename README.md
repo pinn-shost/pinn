@@ -30,7 +30,8 @@
   <a href="README.sv.md">🇸🇪 Svenska</a> ·
   <a href="README.da.md">🇩🇰 Dansk</a> ·
   <a href="README.nb.md">🇳🇴 Norsk</a> ·
-  <a href="README.fi.md">🇫🇮 Suomi</a>
+  <a href="README.fi.md">🇫🇮 Suomi</a> ·
+  <a href="README.hu.md">🇭🇺 Magyar</a>
 </p>
 
 <p align="center">
@@ -132,7 +133,15 @@ Tap any picture to open it in full size.
 | 🔔 **Notifications** | Personal push messages on iPhone, iPad and Android, plus a notification bell that collects every change in the family. |
 | 🧩 **Everything else** | Family board with movable notes, global search, offline mode with automatic sync, dark mode, iPad dashboard with profile PINs, guest account, child lock. |
 
-pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk, 🇳🇴 Norsk and 🇫🇮 Suomi**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
+pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk, 🇳🇴 Norsk, 🇫🇮 Suomi and 🇭🇺 Magyar**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
+
+## What's new in 1.160.0
+
+**Hungarian**
+
+- New: Hungarian (Magyar) is a new app language – all roughly 7,500 texts of the app, the setup assistant, the data export, the push messages from the server and the Hungarian emergency number (112). The flat-share wording is included too (“háztartás”, “lakótárs”), with Hungarian suffixes. Choose it under Settings → Language and region.
+- Note: the translation has not been checked by native speakers – suggestions are welcome as a GitHub issue. Voice control via Siri/Android does not understand Hungarian yet and answers in English.
+- Changed: `i18n/hu.i18n.js` (new), `README.hu.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
 
 ## What's new in 1.159.0
 
@@ -249,13 +258,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Colour by day.** The icons are lightly coloured in now (white fills, sun yellow, rain blue, car red, tools grey, plants green) in the same line style; dark mode stays as it was. **Vehicle icons:** pick a line icon (saloon, SUV, taxi, van, pickup, tractor, caravan, bicycle, e-bike …) instead of the car emoji. **Plant icons** are picked from the app too, with new icons for cactus, palm, tulip, sunflower, rose and more. In the banners of Vehicles and Home the cars only glow at night – yellowish at the front, red at the back.
 - Changed: `js/symbole2.js`, `css/symbolfarbe.css` (new), `js/symbole.js`, `js/wetterlogos.js`, `js/symbolwahl.js`, `js/fahrzeuge.js`, `js/zuhause.js`, `js/dokumente.js`, `css/fahrzeuge.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
 
-## What's new in 1.150.8
-
-**Icons everywhere, picked from the app**
-
-- **Own icons everywhere.** Food, household, vehicles, plants, clothes, toys and sports now have our own line icons too (rooms, waste types, vehicle types, garden, alarm clock, calendar switch, countdown). **Category icons** in Finances, Contracts, Documents and Pantry are picked from about 150 ready-made icons instead of the emoji keyboard, and the same kind of category has the same icon everywhere. The scenes of Home and Vehicles show new colourful vehicles. Small fixes: weather “Now” without the dashed border, dashboard clock font, meal-plan list icon, icons sit on the text line.
-- Changed: `js/szenen.js`, `js/symbolwahl.js` (new), `js/symbole.js`, `css/wetterlogos.css`, `js/zustand.js`, `js/zuhause.js`, `js/fahrzeuge.js`, `js/gesundheit.js`, `js/finanzen.js`, `js/vertraege.js`, `js/dokumente.js`, `js/vorrat.js`, `js/vorrat2.js`, `js/einkauf.js`, `js/profilauswahl.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
-
 ## How it works
 
 ```mermaid
@@ -282,14 +284,14 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.159.0` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.160.0` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
    The script copies every file into place, downloads the libraries for PDF import and photo text recognition, and starts pinn.
 4. Open `http://<NAS-IP>:8090` → **Log in as main admin** → password `Admin` → choose your own password.
-5. The **setup assistant** walks you through the rest – HTTPS, remote access via WireGuard or Tailscale, Google, AI, location and Home Assistant – step by step, in nineteen languages.
+5. The **setup assistant** walks you through the rest – HTTPS, remote access via WireGuard or Tailscale, Google, AI, location and Home Assistant – step by step, in twenty languages.
 6. Open pinn. via its HTTPS address on each phone and add it to the home screen:
    - **iPhone/iPad (Safari):** Share → *Add to Home Screen* (iOS 16.4 or later for notifications)
    - **Android (Chrome):** Settings → Notifications → *Install pinn. as an app*, or Chrome menu ⋮ → *Install app*

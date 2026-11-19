@@ -2110,7 +2110,7 @@ function langOfUser(userId) {
     let w = {};
     try { w = require(`${__hooks}/pinn-design.js`).readDesign($app.findRecordById(USERS, userId)).werte || {}; } catch (e) { w = {}; }
     const s = String(w.sprache || "");
-    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr", "pl", "uk", "cs", "sv", "da", "nb", "fi"].indexOf(s) >= 0) return s;
+    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr", "pl", "uk", "cs", "sv", "da", "nb", "fi", "hu"].indexOf(s) >= 0) return s;
     if (/^[a-z]{2}$/.test(s)) return "en";
     const land = String(w.land || "").toUpperCase();
     if (["DE", "AT", "CH", "LI", "LU"].indexOf(land) >= 0) return "de";
@@ -2131,6 +2131,7 @@ function langOfUser(userId) {
     if (["DK", "GL", "FO"].indexOf(land) >= 0) return "da";
     if (["NO", "SJ"].indexOf(land) >= 0) return "nb";
     if (["FI"].indexOf(land) >= 0) return "fi";
+    if (["HU"].indexOf(land) >= 0) return "hu";
     return "en";
 }
 const LADEN_TEXT = {
@@ -2172,6 +2173,8 @@ const LADEN_TEXT = {
           geplant: "Planlagt: {titel}", tipp1: "Trykk her for å se handlelisten.", tippN: "Trykk her for å se handlelistene.", und: " og " },
     fi: { bei: "Olet täällä: {laden}", frage: "ostoksilla?", artikel1: "1 tuote listalla", artikel: "{n} tuotetta listalla",
           geplant: "Suunniteltu: {titel}", tipp1: "Napauta tästä nähdäksesi ostoslistan.", tippN: "Napauta tästä nähdäksesi ostoslistat.", und: " ja " },
+    hu: { bei: "Itt vagy: {laden}", frage: "bevásárlás?", artikel1: "1 tétel a listán", artikel: "{n} tétel a listán",
+          geplant: "Tervezve: {titel}", tipp1: "Koppints a bevásárlólista megtekintéséhez.", tippN: "Koppints a bevásárlólisták megtekintéséhez.", und: " és " },
 };
 function ladenPushText(lang, items, geraetId) {
     const T = LADEN_TEXT[lang] || LADEN_TEXT.en;

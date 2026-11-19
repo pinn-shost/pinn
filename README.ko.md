@@ -30,6 +30,7 @@
   <a href="README.da.md">🇩🇰 Dansk</a> ·
   <a href="README.nb.md">🇳🇴 Norsk</a> ·
   <a href="README.fi.md">🇫🇮 Suomi</a> ·
+  <a href="README.hu.md">🇭🇺 Magyar</a> ·
   <b>🇰🇷 한국어</b>
 </p>
 
@@ -136,7 +137,15 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 | 🔔 **알림** | iPhone, iPad, Android에서 받는 개인 푸시 메시지와, 가족의 모든 변경을 모아 주는 알림 벨. |
 | 🧩 **그 밖에** | 옮길 수 있는 메모가 있는 가족 게시판, 전체 검색, 자동 동기화되는 오프라인 모드, 다크 모드, 프로필 PIN이 있는 iPad 대시보드, 손님 계정, 아이 보호 잠금. |
 
-pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk, 🇳🇴 Norsk, 🇫🇮 Suomi**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
+pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk, 🇳🇴 Norsk, 🇫🇮 Suomi, 🇭🇺 Magyar**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
+
+## 1.160.0의 새 소식
+
+**헝가리어**
+
+- 새 기능: 헝가리어(Magyar)가 새 앱 언어로 추가됐어요. 앱의 약 7,500개 문장, 설정 도우미, 데이터 내보내기, 서버의 푸시 알림, 헝가리 긴급 전화번호(112)를 지원하고 셰어하우스용 표현(“háztartás”, “lakótárs”)과 헝가리어 어미도 들어 있어요. 설정 → 언어 및 지역에서 고를 수 있어요.
+- 참고: 번역은 원어민 검수를 받지 않았어요. 개선 제안은 GitHub 이슈로 보내 주세요. Siri/Android 음성 제어는 아직 헝가리어를 이해하지 못하고 영어로 답해요.
+- 변경: `i18n/hu.i18n.js` (new), `README.hu.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
 
 ## 1.159.0의 새 소식
 
@@ -225,13 +234,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - 새 기능: 직접 운영하는 리버스 프록시(Nginx Proxy Manager, Traefik, Cloudflare Tunnel 등)로 인터넷에서 접속 – 설치 항목의 “직접 운영하는 리버스 프록시로 인터넷에서 접속”을 참고하세요. pinn.은 신뢰하는 프록시(`PINN_PROXY_NETZE`)에서 온 방문자 주소만 믿으므로 잘못된 비밀번호 뒤의 잠금을 피할 수 없습니다(IPv6: /64 단위). 인터넷에서는 PocketBase 관리 화면과 자체 로그인 방법이 차단되고, 초기 비밀번호 `Admin`은 통하지 않으며, 추적기 ID 추측은 느려집니다. 이런 시도가 있으면 관리자에게 “🚨 보안 경고” 푸시(주소, 집 네트워크 또는 인터넷, 기기)가 가며, 자세한 내용은 오류 기록의 “보안”에 있습니다. 집 네트워크에서는 바뀌는 것이 없습니다.
 - 변경: `pb_hooks/pinn-netz.js` (new), `pb_hooks/netz.pb.js` (new), `pb_hooks/pinn-alarm.js` (new), `pb_hooks/pinn-sitzungen.js`, `pb_hooks/benutzer.pb.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/zuhause.pb.js`, `pb_hooks/sprache.pb.js`, `pb_hooks/smarthome.pb.js`, `pb_hooks/pinn-ortung.js`, `pb_hooks/pinn-protokoll.js`, `pb_hooks/pinn-pushtext.js`, `js/anmeldemaske.js`, `js/fehlerprotokoll.js`, `js/hinweise.js`, `js/appstart.js`, `i18n/`, `docker/docker-compose.portainer.yaml`, `env.txt`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
 
-## 1.151.0의 새 소식
-
-**Portainer 스택, 완성된 이미지**
-
-- 새 기능: SSH와 설치 스크립트 없이 Portainer 스택 화면에서 pinn.을 설치할 수 있습니다. 릴리스마다 완성된 이미지(amd64, arm64)가 만들어져 `ghcr.io/pinn-shost/pinn`에 게시됩니다. 새 파일 `docker/docker-compose.portainer.yaml`은 이를 볼륨과 고정되지 않은 컨테이너 이름으로 사용합니다(기존 Tailscale 컨테이너와 더는 충돌하지 않음). 스택에는 백업 서비스(매일 밤 백업, 앱의 “지금 백업”과 “복원”. 업데이트는 계속 Portainer에서)와 주석 처리된 선택 블록(Traccar, Home Assistant 우회)도 들어 있습니다. 설치 항목의 “Portainer 스택 (스크립트 없이)”을 참고하세요.
-- 변경: `docker/` (new), `.github/workflows/image.yml` (new), `pinn-wartung.sh`, `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
-
 ## 작동 방식
 
 ```mermaid
@@ -260,14 +262,14 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.159.0` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.160.0` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
    스크립트가 모든 파일을 제자리에 복사하고, PDF 가져오기와 사진 문자 인식에 필요한 라이브러리를 내려받고, pinn.을 시작해요.
 4. `http://<NAS-IP>:8090`을 열고 → **메인 관리자로 로그인** → 비밀번호 `Admin` → 나만의 비밀번호를 정해요.
-5. **설정 도우미**가 나머지를 안내해 줘요. HTTPS, WireGuard 또는 Tailscale을 통한 원격 접속, Google, AI, 위치, Home Assistant를 열아홉 가지 언어로 차례대로요.
+5. **설정 도우미**가 나머지를 안내해 줘요. HTTPS, WireGuard 또는 Tailscale을 통한 원격 접속, Google, AI, 위치, Home Assistant를 스무 가지 언어로 차례대로요.
 6. 각 휴대폰에서 HTTPS 주소로 pinn.을 열고 홈 화면에 추가해요:
    - **iPhone/iPad(Safari):** 공유 → *홈 화면에 추가*(알림에는 iOS 16.4 이상 필요)
    - **Android(Chrome):** 설정 → 알림 → *pinn.을 앱으로 설치*, 또는 Chrome 메뉴 ⋮ → *앱 설치*

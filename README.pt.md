@@ -30,7 +30,8 @@
   <a href="README.sv.md">🇸🇪 Svenska</a> ·
   <a href="README.da.md">🇩🇰 Dansk</a> ·
   <a href="README.nb.md">🇳🇴 Norsk</a> ·
-  <a href="README.fi.md">🇫🇮 Suomi</a>
+  <a href="README.fi.md">🇫🇮 Suomi</a> ·
+  <a href="README.hu.md">🇭🇺 Magyar</a>
 </p>
 
 <p align="center">
@@ -136,7 +137,15 @@ Toque em qualquer imagem para abri-la em tamanho real.
 | 🔔 **Notificações** | Mensagens push pessoais no iPhone, iPad e Android, além de um sino que reúne cada mudança na família. |
 | 🧩 **E mais** | Mural da família com notas móveis, busca global, modo offline com sincronização automática, modo escuro, painel no iPad com PINs de perfil, conta de convidado, bloqueio infantil. |
 
-O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk, 🇳🇴 Norsk e 🇫🇮 Suomi**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
+O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk, 🇳🇴 Norsk, 🇫🇮 Suomi e 🇭🇺 Magyar**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
+
+## Novidades da 1.160.0
+
+**Húngaro**
+
+- Novo: o húngaro (Magyar) é um novo idioma do app – os cerca de 7.500 textos do app, o assistente de configuração, a exportação de dados, as mensagens push do servidor e o número de emergência húngaro (112). A variante de moradia compartilhada também está incluída (“háztartás”, “lakótárs”), com as terminações húngaras. Escolha em Ajustes → Idioma e região.
+- Nota: a tradução não foi revisada por falantes nativos – sugestões são bem-vindas como issue no GitHub. O controle por voz via Siri/Android ainda não entende húngaro e responde em inglês.
+- Alterado: `i18n/hu.i18n.js` (new), `README.hu.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
 
 ## Novidades da 1.159.0
 
@@ -225,13 +234,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - Novidade: acesso a partir da internet através do seu próprio proxy inverso (Nginx Proxy Manager, Traefik, Cloudflare Tunnel …) – veja «Acesso a partir da internet com o seu próprio proxy inverso» em Instalação. O pinn. só acredita no endereço do visitante vindo de proxies de confiança (`PINN_PROXY_NETZE`), assim o bloqueio após palavras-passe erradas não é contornado (IPv6: por /64). A partir da internet, a administração do PocketBase e as suas próprias vias de início de sessão ficam bloqueadas, a palavra-passe inicial `Admin` não funciona e adivinhar IDs de localizadores é travado. Perante essas tentativas, os administradores recebem uma notificação «🚨 Aviso de segurança» (endereço, rede de casa ou internet, dispositivo); todos os detalhes estão no registo de erros em «Segurança». Na rede de casa nada muda.
 - Alterado: `pb_hooks/pinn-netz.js` (new), `pb_hooks/netz.pb.js` (new), `pb_hooks/pinn-alarm.js` (new), `pb_hooks/pinn-sitzungen.js`, `pb_hooks/benutzer.pb.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/zuhause.pb.js`, `pb_hooks/sprache.pb.js`, `pb_hooks/smarthome.pb.js`, `pb_hooks/pinn-ortung.js`, `pb_hooks/pinn-protokoll.js`, `pb_hooks/pinn-pushtext.js`, `js/anmeldemaske.js`, `js/fehlerprotokoll.js`, `js/hinweise.js`, `js/appstart.js`, `i18n/`, `docker/docker-compose.portainer.yaml`, `env.txt`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
 
-## Novidades da 1.151.0
-
-**Stack do Portainer, imagem pronta**
-
-- Novidade: o pinn. pode ser instalado a partir da interface de stacks do Portainer, sem SSH e sem o script de instalação. A cada versão é criada uma imagem pronta (amd64, arm64) e publicada em `ghcr.io/pinn-shost/pinn`; o novo ficheiro `docker/docker-compose.portainer.yaml` usa-a com volumes e sem nomes de contentor fixos (acabou o conflito com um contentor Tailscale existente). O stack inclui ainda um serviço de cópias (cópia noturna, «Guardar agora» e «Restaurar» na app; as atualizações continuam no Portainer) e blocos opcionais comentados para o Traccar e o desvio para o Home Assistant. Veja «Stack do Portainer (sem script)» em Instalação.
-- Alterado: `docker/` (new), `.github/workflows/image.yml` (new), `pinn-wartung.sh`, `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
-
 ## Como funciona
 
 ```mermaid
@@ -260,14 +262,14 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.159.0` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.160.0` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
    O script copia cada arquivo para o lugar certo, baixa as bibliotecas para importação de PDF e reconhecimento de texto em fotos e inicia o pinn.
 4. Abra `http://<IP-do-NAS>:8090` → **Entrar como administrador principal** → senha `Admin` → escolha a sua própria senha.
-5. O **assistente de configuração** guia você pelo resto – HTTPS, acesso remoto por WireGuard ou Tailscale, Google, IA, localização e Home Assistant – passo a passo, em dezenove idiomas.
+5. O **assistente de configuração** guia você pelo resto – HTTPS, acesso remoto por WireGuard ou Tailscale, Google, IA, localização e Home Assistant – passo a passo, em vinte idiomas.
 6. Abra o pinn. pelo endereço HTTPS em cada celular e adicione-o à tela inicial:
    - **iPhone/iPad (Safari):** Compartilhar → *Adicionar à Tela de Início* (iOS 16.4 ou posterior para notificações)
    - **Android (Chrome):** Configurações → Notificações → *Instalar o pinn. como app*, ou menu do Chrome ⋮ → *Instalar app*

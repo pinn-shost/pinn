@@ -30,7 +30,8 @@
   <b>🇸🇪 Svenska</b> ·
   <a href="README.da.md">🇩🇰 Dansk</a> ·
   <a href="README.nb.md">🇳🇴 Norsk</a> ·
-  <a href="README.fi.md">🇫🇮 Suomi</a>
+  <a href="README.fi.md">🇫🇮 Suomi</a> ·
+  <a href="README.hu.md">🇭🇺 Magyar</a>
 
 ---
 
@@ -112,7 +113,15 @@ Tryck på en bild för att öppna den i full storlek.
 - 💬 **Chatt** – familje- och privatchatt med end-to-end-kryptering, push-aviseringar och läskvitton
 - 🔔 **Aviseringar** – personliga push-meddelanden på iPhone, iPad och Android samt en klocka som samlar alla ändringar i familjen
 
-pinn. talar **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk, 🇳🇴 Norsk och 🇫🇮 Suomi**, anpassar valuta och nödnummer efter din region och växlar mellan orden **familj** och **hushåll**. En server kan rymma flera familjer, var och en med egna administratörer.
+pinn. talar **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk, 🇳🇴 Norsk, 🇫🇮 Suomi och 🇭🇺 Magyar**, anpassar valuta och nödnummer efter din region och växlar mellan orden **familj** och **hushåll**. En server kan rymma flera familjer, var och en med egna administratörer.
+
+## Nyheter i 1.160.0
+
+**Ungerska**
+
+- Nytt: ungerska (Magyar) är ett nytt appspråk – alla ungefär 7 500 texter i appen, installationsguiden, dataexporten, push-meddelandena från servern och det ungerska nödnumret (112). Varianten för delat boende ingår också (”háztartás”, ”lakótárs”), med ungerska ändelser. Välj det under Inställningar → Språk och region.
+- Observera: översättningen har inte granskats av modersmålstalare – förslag på förbättringar är välkomna som GitHub-issue. Röststyrningen via Siri/Android förstår ännu inte ungerska och svarar på engelska.
+- Ändrat: `i18n/hu.i18n.js` (new), `README.hu.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
 
 ## Nyheter i 1.159.0
 
@@ -121,14 +130,6 @@ pinn. talar **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Nytt: finska (Suomi) är ett nytt appspråk – alla ungefär 7 500 texter i appen, installationsguiden, dataexporten, push-meddelandena från servern och det finska nödnumret (112). Varianten för delat boende ingår också (”kotitalous”, ”asukas”), med finska kasusändelser. Du väljer det under Inställningar → Språk och region.
 - Observera: översättningen har inte granskats av modersmålstalare – förslag på förbättringar är välkomna som GitHub-issue. Röststyrningen via Siri/Android förstår ännu inte finska och svarar på engelska.
 - Ändrat: `i18n/fi.i18n.js` (new), `README.fi.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## Nyheter i 1.158.0
-
-**Norska**
-
-- Nytt: norska (Norsk, bokmål) är ett nytt appspråk – alla ungefär 7 500 texter i appen, installationsguiden, dataexporten, push-meddelandena från servern och det norska nödnumret (112). Varianten för delat boende ingår också (”husstand”, ”bofelle”). Du väljer det under Inställningar → Språk och region.
-- Observera: översättningen har inte granskats av modersmålstalare – förslag på förbättringar är välkomna som GitHub-issue. Röststyrningen via Siri/Android förstår ännu inte norska och svarar på engelska.
-- Ändrat: `i18n/nb.i18n.js` (new), `README.nb.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
 
 ## Krav
 
@@ -139,13 +140,13 @@ pinn. talar **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 ## Installation
 
 1. Ladda ned och packa upp ZIP-filen för [den senaste versionen](https://github.com/pinn-shost/pinn/releases/latest).
-2. Skapa en mapp på NAS:en, t.ex. `/volume1/docker/Pocketbase`, och lägg den uppackade mappen (t.ex. `pinn-1.159.0` eller `pinn-main`) i den utan ändringar.
+2. Skapa en mapp på NAS:en, t.ex. `/volume1/docker/Pocketbase`, och lägg den uppackade mappen (t.ex. `pinn-1.160.0` eller `pinn-main`) i den utan ändringar.
 3. Anslut via SSH och kör:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
 4. Öppna `http://<NAS:ens IP-adress>:8090` → **Logga in som huvudadministratör** → lösenord `Admin` → välj ett eget lösenord.
-5. **Installationsguiden** tar dig genom resten steg för steg – HTTPS, åtkomst utifrån, Google, AI, position och Home Assistant – på 19 språk.
+5. **Installationsguiden** tar dig genom resten steg för steg – HTTPS, åtkomst utifrån, Google, AI, position och Home Assistant – på 20 språk.
 6. Öppna pinn. på varje telefon via HTTPS-adressen och lägg till på hemskärmen:
    - **iPhone/iPad (Safari):** ”Dela” → *Lägg till på hemskärmen* (för aviseringar krävs iOS 16.4 eller senare)
    - **Android (Chrome):** Inställningar → Aviseringar → *installera pinn. som app* eller Chrome-menyn ⋮ → *Installera app*
