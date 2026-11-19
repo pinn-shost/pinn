@@ -123,6 +123,10 @@ const CS_HOME = { '': 'domácností', a: 'domácnost', u: 'domácnost', y: 'dom�
   'ám': 'domácnostem', 'ách': 'domácnostech', ami: 'domácnostmi' };
 const CS_MATE = { '': 'spolubydlící', a: 'spolubydlícího', u: 'spolubydlícímu', ovi: 'spolubydlícímu', em: 'spolubydlícím', 'ové': 'spolubydlící',
   y: 'spolubydlící', 'ů': 'spolubydlících', 'ům': 'spolubydlícím', ech: 'spolubydlících' };
+// Swedish (since 1.156.0): familj → hushåll (neuter: "en familj" → "ett hushåll", "familjen" → "hushållet"), familjemedlem → medboende,
+// familje- (compound prefix) → hushålls-
+const SV_END = { '': 'hushåll', en: 'hushållet', ens: 'hushållets', er: 'hushåll', erna: 'hushållen', ernas: 'hushållens' };
+const SV_DET = { en: 'ett', din: 'ditt', min: 'mitt', sin: 'sitt', er: 'ert', 'vår': 'vårt', ny: 'nytt', annan: 'annat', ingen: 'inget', 'någon': 'något', denna: 'detta' };
 const TERMS = {
   de: { keep: /Familienstammbuch|Familienkutsche/g, rules: [
     [/\b([Jj])edes Familienmitglied\b/g, '$1eder Mitbewohner'],
@@ -290,6 +294,18 @@ const TERMS = {
   ] },
   // Czech (since 1.155.0): Unicode lookarounds (flag u). rodina and domácnost are both feminine, so determiners (vaše, naší, této, celé …)
   // stay unchanged. Write source texts so that "s členy rodiny" (instrumental plural = accusative plural) does not occur.
+  sv: { keep: /familjeläkare\p{L}*|familjebil\p{L}*|familjebuss\p{L}*/giu, rules: [
+    [/(?<![\p{L}\p{N}])([Ff])amiljemedlem(men|mar|marna|mens|mars|marnas)?(?![\p{L}\p{N}])/gu,
+      function (m, f, end) { return cap(f === 'F', 'medboende') + (end && end.slice(-1) === 's' ? 's' : ''); }],
+    // a neuter noun needs the neuter form of the word in front ("din familj" → "ditt hushåll")
+    [/(?<![\p{L}\p{N}])(en|din|min|sin|er|vår|ny|annan|ingen|någon|denna)(\s+)familj(?![\p{L}\p{N}])/giu,
+      function (m, d, sp) { var r = SV_DET[d.toLowerCase()]; return (d.charAt(0) === d.charAt(0).toUpperCase() ? r.charAt(0).toUpperCase() + r.slice(1) : r) + sp + 'hushåll'; }],
+    [/(?<![\p{L}\p{N}])([Dd])en (här|nya|andra|valda|aktuella) familjen(?![\p{L}\p{N}])/gu,
+      function (m, c, w) { return (c === 'D' ? 'Det ' : 'det ') + w + ' hushållet'; }],
+    [/(?<![\p{L}\p{N}])([Ff])amilj(ernas|erna|er|ens|en)?(?![\p{L}\p{N}])/gu,
+      function (m, f, end) { return cap(f === 'F', SV_END[end === undefined ? '' : end]); }],
+    [/(?<![\p{L}\p{N}])([Ff])amilje(?=\p{L})/gu, function (m, f) { return cap(f === 'F', 'hushålls'); }],
+  ] },
   cs: { keep: /rodinn\p{L}*\s+(?:lékař|auto|rozpočet|doktor)\p{L}*|(?:lékař|auto|rozpočet|doktor)\p{L}*\s+rodinn\p{L}*/giu, rules: [
     // instrumental plural ("s členy rodiny" → "se spolubydlícími"; the plural accusative "členy" is handled below)
     [/(?<![\p{L}\p{N}])([Ss]) členy(\s+(?:vaší|tvé|naší|své|této|celé|každé)?\s*)rodiny(?![\p{L}\p{N}])/gu, function (m, c) { return c + 'e spolubydlícími'; }],
