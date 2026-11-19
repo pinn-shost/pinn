@@ -25,7 +25,8 @@
   <a href="README.nl.md">🇳🇱 Nederlands</a> ·
   <a href="README.tr.md">🇹🇷 Türkçe</a> ·
   <a href="README.pl.md">🇵🇱 Polski</a> ·
-  <a href="README.uk.md">🇺🇦 Українська</a>
+  <a href="README.uk.md">🇺🇦 Українська</a> ·
+  <a href="README.cs.md">🇨🇿 Čeština</a>
 </p>
 
 <p align="center">
@@ -131,7 +132,15 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 | 🔔 **Benachrichtigungen** | Persönliche Push-Nachrichten auf iPhone, iPad und Android sowie eine Glocke, die jede Änderung in der Familie sammelt. |
 | 🧩 **Und mehr** | Familien-Pinnwand mit verschiebbaren Zetteln, globale Suche, Offline-Modus mit automatischem Abgleich, Dunkelmodus, iPad-Dashboard mit Profil-PINs, Gastzugang, Kindersicherung. |
 
-pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski und 🇺🇦 Українська**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
+pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська und 🇨🇿 Čeština**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
+
+## Neu in 1.155.0
+
+**Tschechisch**
+
+- Neu: Tschechisch (Čeština) ist als neue App-Sprache dabei – alle rund 7.500 Texte der App, der Einrichtungsassistent, der Datenexport, die Push-Nachrichten vom Server und die tschechischen Notrufnummern (112, Polizei 158, Rettung 155, Feuerwehr 150). Auch die WG-Variante ist enthalten. Auswählbar unter Einstellungen → Sprache und Region.
+- Hinweis: Die Übersetzung wurde nicht von Muttersprachlern geprüft – Verbesserungsvorschläge gern als GitHub-Issue. Die Sprachsteuerung über Siri/Android versteht Tschechisch noch nicht und antwortet auf Englisch.
+- Geändert: `i18n/cs.i18n.js` (new), `README.cs.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
 
 ## Neu in 1.154.0
 
@@ -223,13 +232,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Eigene Symbole überall.** Rund 150 schlichte Linien-Symbole ersetzen jetzt in der ganzen App die Apple-Emojis (Sterne, Haken, Warnungen, Orte, Geschenke, Uhr, Kalender, Schloss, Post, Werkzeug, Gesundheit, Haus, Geld und mehr). Tiere, Essen, Kleidung, Pflanzen, Fahrzeuge, Sport und Spielzeug, selbst gewählte oder getippte Emojis (Profilbilder, Chat-Texte, Eingabefelder) und Push-Nachrichten bleiben Emojis.
 - Geändert: `js/symbole.js` (new), `js/wetterlogos.js`, `css/wetterlogos.css` (new), `js/familie.js`, `js/grundlagen.js`, `js/profilauswahl.js`, `js/wetterkachel.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
 
-## Neu in 1.150.6
-
-**Face ID entsperrt wieder von selbst**
-
-- **Face ID.** pinn. fragt beim Öffnen wieder von selbst nach Face ID, wie vor 1.150.5. iOS zeigt immer sein eigenes Fenster „Passkey verwenden“ davor – ein Tipp darauf, dann Face ID; die Web-App kann es nicht überspringen, und der zusätzliche Knopf bedeutete nur einen zweiten Tipp. Der große Knopf unten bleibt, falls du das Fenster wegwischst.
-- Geändert: `js/entsperren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
-
 ## So funktioniert’s
 
 ```mermaid
@@ -258,14 +260,14 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.154.0` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.155.0` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
    Das Skript kopiert jede Datei an ihren Platz, lädt die Bibliotheken für PDF-Import und Texterkennung in Fotos herunter und startet pinn.
 4. Öffne `http://<NAS-IP>:8090` → **Als Hauptadmin anmelden** → Passwort `Admin` → wähle dein eigenes Passwort.
-5. Der **Einrichtungsassistent** führt dich durch den Rest – HTTPS, Fernzugriff über WireGuard oder Tailscale, Google, KI, Standort und Home Assistant – Schritt für Schritt, in vierzehn Sprachen.
+5. Der **Einrichtungsassistent** führt dich durch den Rest – HTTPS, Fernzugriff über WireGuard oder Tailscale, Google, KI, Standort und Home Assistant – Schritt für Schritt, in fünfzehn Sprachen.
 6. Öffne pinn. auf jedem Handy über die HTTPS-Adresse und füge es zum Home-Bildschirm hinzu:
    - **iPhone/iPad (Safari):** Teilen → *Zum Home-Bildschirm* (für Benachrichtigungen iOS 16.4 oder neuer)
    - **Android (Chrome):** Einstellungen → Benachrichtigungen → *pinn. als App installieren* oder Chrome-Menü ⋮ → *App installieren*

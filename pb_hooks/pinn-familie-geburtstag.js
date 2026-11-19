@@ -110,7 +110,7 @@ function langOf(u) {
     let w = {};
     try { w = require(`${__hooks}/pinn-design.js`).readDesign(u).werte || {}; } catch (e) { w = {}; }
     const s = String(w.sprache || "");
-    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr", "pl", "uk"].indexOf(s) >= 0) return s;
+    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr", "pl", "uk", "cs"].indexOf(s) >= 0) return s;
     if (/^[a-z]{2}$/.test(s)) return "en";
     const land = String(w.land || "").toUpperCase();
     if (["DE", "AT", "CH", "LI", "LU"].indexOf(land) >= 0) return "de";
@@ -126,11 +126,12 @@ function langOf(u) {
     if (["TR"].indexOf(land) >= 0) return "tr";
     if (["PL"].indexOf(land) >= 0) return "pl";
     if (["UA"].indexOf(land) >= 0) return "uk";
+    if (["CZ"].indexOf(land) >= 0) return "cs";
     return "en";
 }
 function joinNames(lang, names) {
     if (names.length <= 1) return names[0] || "";
-    const und = { de: " und ", en: " and ", fr: " et ", es: " y ", it: " e ", pt: " e ", zh: "和", ja: "と", ko: ", ", ru: " и ", nl: " en ", tr: " ve ", pl: " i ", uk: " і " }[lang] || " and ";
+    const und = { de: " und ", en: " and ", fr: " et ", es: " y ", it: " e ", pt: " e ", zh: "和", ja: "と", ko: ", ", ru: " и ", nl: " en ", tr: " ve ", pl: " i ", uk: " і ", cs: " a " }[lang] || " and ";
     return names.slice(0, -1).join(", ") + und + names[names.length - 1];
 }
 function message(lang, list) {
@@ -153,6 +154,8 @@ function message(lang, list) {
         if (lang === "pl") return { titel: "🎂 Dziś urodziny: " + n + "!", text: (b.alter ? "Wiek: " + b.alter + ". " : "") + "Nie zapomnijcie złożyć życzeń 🎉" };
         // Ukrainian: names are never declined, the age is written as a number after "Вік" (no "рік/роки/років" plural)
         if (lang === "uk") return { titel: "🎂 Сьогодні день народження: " + n + "!", text: (b.alter ? "Вік: " + b.alter + ". " : "") + "Не забудьте привітати 🎉" };
+        // Czech: names are not declined, the age is written as a number after "věk"
+        if (lang === "cs") return { titel: "🎂 Dnes má narozeniny: " + n + "!", text: (b.alter ? "Věk: " + b.alter + ". " : "") + "Nezapomeňte popřát 🎉" };
         return { titel: "🎂 It's " + n + "'s birthday today!", text: (b.alter ? n + " turns " + b.alter + " today. " : "") + "Don't forget to say happy birthday 🎉" };
     }
     const names = joinNames(lang, list.map(b => b.name));
@@ -169,6 +172,7 @@ function message(lang, list) {
     if (lang === "tr") return { titel: "🎂 Bugün doğum günü olanlar: " + names, text: "Kutlamayı unutma 🎉" };
     if (lang === "pl") return { titel: "🎂 Dziś urodziny mają: " + names, text: "Nie zapomnijcie złożyć życzeń 🎉" };
     if (lang === "uk") return { titel: "🎂 Сьогодні день народження: " + names, text: "Не забудьте привітати 🎉" };
+    if (lang === "cs") return { titel: "🎂 Dnes mají narozeniny: " + names, text: "Nezapomeňte popřát 🎉" };
     return { titel: "🎂 Birthdays today: " + names, text: "Don't forget to say happy birthday 🎉" };
 }
 

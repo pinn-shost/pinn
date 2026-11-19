@@ -25,7 +25,8 @@
   <a href="README.nl.md">🇳🇱 Nederlands</a> ·
   <a href="README.tr.md">🇹🇷 Türkçe</a> ·
   <a href="README.pl.md">🇵🇱 Polski</a> ·
-  <a href="README.uk.md">🇺🇦 Українська</a>
+  <a href="README.uk.md">🇺🇦 Українська</a> ·
+  <a href="README.cs.md">🇨🇿 Čeština</a>
 </p>
 
 <p align="center">
@@ -127,7 +128,15 @@ Tap any picture to open it in full size.
 | 🔔 **Notifications** | Personal push messages on iPhone, iPad and Android, plus a notification bell that collects every change in the family. |
 | 🧩 **Everything else** | Family board with movable notes, global search, offline mode with automatic sync, dark mode, iPad dashboard with profile PINs, guest account, child lock. |
 
-pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski and 🇺🇦 Українська**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
+pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська and 🇨🇿 Čeština**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
+
+## What's new in 1.155.0
+
+**Czech**
+
+- New: Czech (Čeština) is a new app language – all roughly 7,500 texts of the app, the setup assistant, the data export, the push messages from the server and the Czech emergency numbers (112, police 158, ambulance 155, fire brigade 150). The flat-share wording is included too. Choose it under Settings → Language and region.
+- Note: the translation has not been checked by native speakers – suggestions are welcome as a GitHub issue. Voice control via Siri/Android does not understand Czech yet and answers in English.
+- Changed: `i18n/cs.i18n.js` (new), `README.cs.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
 
 ## What's new in 1.154.0
 
@@ -243,15 +252,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **One tap is enough.** If a device still loses its registration (e.g. iOS reset it), pinn. registers it again by itself – or shows “Turn back on” at the bottom, without a detour via the settings.
 - Changed: `pb_hooks/pinn-push.js`, `pb_hooks/push.pb.js`, `pb_hooks/pinn-sitzungen.js`, `js/mitteilungen.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`.
 
-## What's new in 1.150.3
-
-**All reminders on your clock · parents remind along**
-
-- **All reminders on your clock.** Birthdays, pets, packing list, pantry, contracts, documents, weekly preview, monthly outlook and year in review, event reminders, daily overview, task and waste reminders, pinboard, voice control, smart home and location messages now follow the time zone of your device, summer and winter time included. Nothing to set up.
-- **Parents remind along.** For children the parents also get the reminders for drinking, medication and hand washing – with the child's name in front. Switch “Also remind the parents” per child (default: on).
-- **Shortcuts without a heading.** The tile on the overview shows just the apps, separated by the line.
-- Changed: all reminder modules in `pb_hooks/` (`pinn-zeit.js` and 13 more), `js/gesundheit.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `index.html`, README (+ 1.150.2).
-
 ## How it works
 
 ```mermaid
@@ -278,14 +278,14 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.154.0` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.155.0` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
    The script copies every file into place, downloads the libraries for PDF import and photo text recognition, and starts pinn.
 4. Open `http://<NAS-IP>:8090` → **Log in as main admin** → password `Admin` → choose your own password.
-5. The **setup assistant** walks you through the rest – HTTPS, remote access via WireGuard or Tailscale, Google, AI, location and Home Assistant – step by step, in fourteen languages.
+5. The **setup assistant** walks you through the rest – HTTPS, remote access via WireGuard or Tailscale, Google, AI, location and Home Assistant – step by step, in fifteen languages.
 6. Open pinn. via its HTTPS address on each phone and add it to the home screen:
    - **iPhone/iPad (Safari):** Share → *Add to Home Screen* (iOS 16.4 or later for notifications)
    - **Android (Chrome):** Settings → Notifications → *Install pinn. as an app*, or Chrome menu ⋮ → *Install app*

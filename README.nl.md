@@ -25,7 +25,8 @@
   <b>🇳🇱 Nederlands</b> ·
   <a href="README.tr.md">🇹🇷 Türkçe</a> ·
   <a href="README.pl.md">🇵🇱 Polski</a> ·
-  <a href="README.uk.md">🇺🇦 Українська</a>
+  <a href="README.uk.md">🇺🇦 Українська</a> ·
+  <a href="README.cs.md">🇨🇿 Čeština</a>
 </p>
 
 ---
@@ -108,7 +109,15 @@ Tik op een plaatje om het op volledige grootte te openen.
 - 💬 **Chat** – gezins- en privéchat, end-to-end versleuteld, met push en leesvinkjes
 - 🔔 **Meldingen** – persoonlijke pushberichten op iPhone, iPad en Android en een meldingenbel met alle wijzigingen in het gezin
 
-pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski en 🇺🇦 Українська**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
+pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська en 🇨🇿 Čeština**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
+
+## Nieuw in 1.155.0
+
+**Tsjechisch**
+
+- Nieuw: Tsjechisch (Čeština) is een nieuwe app-taal – alle ruim 7.500 teksten van de app, de installatiewizard, de data-export, de pushberichten van de server en de Tsjechische alarmnummers (112, politie 158, ambulance 155, brandweer 150). De variant voor een gedeelde woning zit er ook bij. Kies het onder Instellingen → Taal en regio.
+- Let op: de vertaling is niet gecontroleerd door moedertaalsprekers – suggesties zijn welkom als GitHub-issue. Spraakbesturing via Siri/Android begrijpt nog geen Tsjechisch en antwoordt in het Engels.
+- Gewijzigd: `i18n/cs.i18n.js` (new), `README.cs.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
 
 ## Nieuw in 1.154.0
 
@@ -164,13 +173,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - Nieuw: pinn. is te installeren via de stack-omgeving van Portainer, zonder SSH en zonder installatiescript. Bij elke release wordt een kant-en-klare image (amd64, arm64) gebouwd en gepubliceerd op `ghcr.io/pinn-shost/pinn`; het nieuwe bestand `docker/docker-compose.portainer.yaml` gebruikt die met volumes en zonder vaste containernamen (geen botsing meer met een bestaande Tailscale-container). De stack bevat ook een back-upservice (nachtelijke back-up, “Nu back-uppen” en “Herstellen” in de app; updates blijven in Portainer) en optionele, uitgecommentarieerde blokken voor Traccar en de omleiding naar Home Assistant. Zie “Portainer-stack (zonder script)” onder Installatie.
 - Gewijzigd: `docker/` (new), `.github/workflows/image.yml` (new), `pinn-wartung.sh`, `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
 
-## Nieuw in 1.150.11
-
-**Pictogrammen en kleine verbeteringen**
-
-- Kam-pictogram bij “Haren kammen” op de kinderpagina; geen emoji-veld meer naast de naam van het depot; kas-keuzelijsten zonder emoji; het gereedschap is nu een steeksleutel; “Menu’s voor gasten” met het pictogram van twee personen; een tik op het logo naast de familienaam leidt naar het overzicht; de kaart Meldingen wordt eerst gevuld, zodat “Op dit apparaat activeren” altijd verschijnt; snelkoppelingspictogrammen zijn grijs in de donkere modus.
-- Gewijzigd: `js/symbole.js`, `js/symbole3.js`, `js/ansichten.js`, `js/konto.js`, `css/dunkelfarbe.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`.
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -180,13 +182,13 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.154.0` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.155.0` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
 4. Open `http://<IP-adres van de NAS>:8090` → **Inloggen als hoofdbeheerder** → wachtwoord `Admin` → stel je eigen wachtwoord in.
-5. De **installatiewizard** leidt je door de rest – HTTPS, toegang op afstand, Google, AI, locatie en Home Assistant – stap voor stap, in veertien talen.
+5. De **installatiewizard** leidt je door de rest – HTTPS, toegang op afstand, Google, AI, locatie en Home Assistant – stap voor stap, in vijftien talen.
 6. Open pinn. op elke telefoon via het HTTPS-adres en voeg het toe aan het beginscherm:
    - **iPhone/iPad (Safari):** “Deel” → *Zet op beginscherm* (voor meldingen is iOS 16.4 of nieuwer nodig)
    - **Android (Chrome):** Instellingen → Meldingen → *pinn. als app installeren* of Chrome-menu ⋮ → *App installeren*

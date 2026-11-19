@@ -22,6 +22,15 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.155', datum: '18.11.2026', titel: 'Tschechisch',
+    punkte: [
+      ['neu', '1.155.0: Tschechisch (Čeština) ist als neue App-Sprache dabei – alle rund 7.500 Texte der App, der Einrichtungs-Assistent, der Datenexport, die Push-Nachrichten vom Server (inklusive Wochenvorschau, Geburtstage, Haustiere, Chat und Notfall) und die tschechischen Notrufnummern (112, Polizei 158, Rettung 155, Feuerwehr 150). Auch die WG-Variante („společná domácnost“, „spolubydlící“) gibt es. Auswählbar unter Einstellungen → Sprache und Region.'],
+      ['info', '1.155.0: Hinweis: Die Übersetzung wurde nicht von Muttersprachlern geprüft – Verbesserungsvorschläge gerne als GitHub-Issue. Die Sprachsteuerung per Siri/Android („Hey Siri, pinn“) versteht Tschechisch noch nicht und antwortet auf Englisch.'],
+      ['info', '1.155.0: Neue README.cs.md (kurze tschechische Einführung), Sprachleiste in allen READMEs um Tschechisch ergänzt.'],
+      ['info', '1.155.0 geändert: i18n/cs.i18n.js (neu), README.cs.md (neu), js/sprachen.js, js/textkern.js, js/einrichten.js, js/exportieren.js, einrichtung.js, datenexport.js, js/versionslog.js, i18n/versionslog.en.js, pb_hooks/pinn-textkern.js, pinn-pushtext.js, pinn-chat.js, pinn-ausblick.js, pinn-familie-geburtstag.js, pinn-haustiere.js, pinn-ortung.js, pinn-wobistdu.js, pinn-packliste.js, pinn-aufgaben.js, pinn-einrichtung.js, .github/scripts (i18n-keys.js, check-hooks.js), src/version.txt, index.html, alle READMEs.'],
+    ],
+  },
+  {
     v: '1.154', datum: '18.11.2026', titel: 'Sicherheitsfix für Kalender-Adressen',
     punkte: [
       ['fix', '1.154.0: Sicherheit: Kalender-Adressen werden jetzt geprüft. Wenn ein Termin in iCloud oder Google gelöscht, geändert oder gelesen wird, nutzt der Server die Zugangsdaten des Familien-Kalenders und darf sie nur an die Server von Apple und Google schicken – eine fremde oder ins Heimnetz zeigende Adresse wird abgelehnt. Vorher hätte ein angemeldetes Profil mit einer manipulierten Anfrage die Zugangsdaten an einen beliebigen anderen Server schicken können. Bestehende Kalender funktionieren unverändert.'],

@@ -25,7 +25,8 @@
   <a href="README.nl.md">🇳🇱 Nederlands</a> ·
   <a href="README.tr.md">🇹🇷 Türkçe</a> ·
   <a href="README.pl.md">🇵🇱 Polski</a> ·
-  <a href="README.uk.md">🇺🇦 Українська</a>
+  <a href="README.uk.md">🇺🇦 Українська</a> ·
+  <a href="README.cs.md">🇨🇿 Čeština</a>
 </p>
 
 <p align="center">
@@ -131,7 +132,15 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 | 🔔 **通知** | iPhone、iPad、Androidに届く個人向けのプッシュメッセージと、家族内のあらゆる変更を集めるベル。 |
 | 🧩 **そのほか** | 動かせるメモ付きの家族の掲示板、全体検索、自動同期付きのオフラインモード、ダークモード、プロフィールPIN付きのiPadダッシュボード、ゲストアカウント、チャイルドロック。 |
 
-pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski、🇺🇦 Українська** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
+pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski、🇺🇦 Українська、🇨🇿 Čeština** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
+
+## 1.155.0の新機能
+
+**チェコ語**
+
+- 新機能：チェコ語（Čeština）がアプリの新しい言語として加わりました。アプリの約7,500のテキスト、セットアップアシスタント、データエクスポート、サーバーからのプッシュ通知、チェコの緊急電話番号（112、警察158、救急155、消防150）に対応し、ルームシェア向けの表現も含みます。設定 → 言語と地域で選べます。
+- 注意：翻訳はネイティブスピーカーによる確認を受けていません。改善案はGitHubのissueでお寄せください。Siri／Androidの音声操作はまだチェコ語に対応しておらず、英語で答えます。
+- 変更: `i18n/cs.i18n.js` (new), `README.cs.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
 
 ## 1.154.0の新機能
 
@@ -215,14 +224,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - **あらゆる場所に専用アイコン。** 食べ物、家、乗り物、植物、衣類、おもちゃ、スポーツにも専用の線のアイコンが付きました（部屋、ごみの種類、乗り物の種類、庭、目覚まし、カレンダー切り替え、カウントダウン）。家計、契約、書類、ストックの**カテゴリアイコン**は、絵文字キーボードの代わりに約150個の用意済みアイコンから選びます。同じ種類のカテゴリはどこでも同じアイコンになります。ホームと乗り物のシーンには新しいカラフルな乗り物が登場します。細かな修正：天気「今」の破線の枠を廃止、ダッシュボード時計のフォント、食事プラン一覧のアイコン、アイコンを文字の行に合わせました。
 - 変更：`js/szenen.js`, `js/symbolwahl.js` (new), `js/symbole.js`, `css/wetterlogos.css`, `js/zustand.js`, `js/zuhause.js`, `js/fahrzeuge.js`, `js/gesundheit.js`, `js/finanzen.js`, `js/vertraege.js`, `js/dokumente.js`, `js/vorrat.js`, `js/vorrat2.js`, `js/einkauf.js`, `js/profilauswahl.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
 
-## 1.150.7の新機能
-
-**天気の専用アイコン**
-
-- **天気アイコン。** 天気の画面で、Appleの絵文字の代わりに専用のシンプルな線のアイコンを使うようになりました。ショートカットのアイコンと同じスタイルで、太陽、月、雲、雨、雪、雷雨、風、UV、日の出、水温、服装のヒントに対応しています。ダークモードでは色も切り替わります。
-- **あらゆる場所に専用アイコン。** 約150個のシンプルな線のアイコンが、アプリ全体でAppleの絵文字に置き換わりました（星、チェック、警告、場所、プレゼント、時計、カレンダー、鍵、メール、道具、健康、家、お金など）。動物、食べ物、衣類、植物、乗り物、スポーツ、おもちゃ、自分で選んだり入力した絵文字（メンバーの画像、チャットの文章、入力欄）、プッシュ通知は絵文字のままです。
-- 変更：`js/symbole.js` (new), `js/wetterlogos.js`, `css/wetterlogos.css` (new), `js/familie.js`, `js/grundlagen.js`, `js/profilauswahl.js`, `js/wetterkachel.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
-
 ## しくみ
 
 ```mermaid
@@ -251,14 +252,14 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.154.0`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.155.0`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
    スクリプトがすべてのファイルを所定の場所にコピーし、PDF取り込みと写真の文字認識に必要なライブラリをダウンロードして、pinn.を起動します。
 4. `http://<NASのIP>:8090`を開き、**メイン管理者としてログイン** → パスワード`Admin` → 自分のパスワードを設定します。
-5. **セットアップアシスタント**が、HTTPS、WireGuardまたはTailscaleでのリモートアクセス、Google、AI、位置情報、Home Assistantといった残りの設定を、14の言語で順番に案内します。
+5. **セットアップアシスタント**が、HTTPS、WireGuardまたはTailscaleでのリモートアクセス、Google、AI、位置情報、Home Assistantといった残りの設定を、15の言語で順番に案内します。
 6. 各スマートフォンでHTTPSアドレスからpinn.を開き、ホーム画面に追加します：
    - **iPhone/iPad（Safari）：** 共有 → *ホーム画面に追加*（通知にはiOS 16.4以降が必要）
    - **Android（Chrome）：** 設定 → 通知 → *pinn.をアプリとしてインストール*、またはChromeのメニュー ⋮ → *アプリをインストール*

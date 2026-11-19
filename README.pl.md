@@ -25,7 +25,8 @@
   <a href="README.nl.md">🇳🇱 Nederlands</a> ·
   <a href="README.tr.md">🇹🇷 Türkçe</a> ·
   <b>🇵🇱 Polski</b> ·
-  <a href="README.uk.md">🇺🇦 Українська</a>
+  <a href="README.uk.md">🇺🇦 Українська</a> ·
+  <a href="README.cs.md">🇨🇿 Čeština</a>
 </p>
 
 ---
@@ -108,7 +109,15 @@ Dotknij obrazu, aby otworzyć go w pełnym rozmiarze.
 - 💬 **Czat** – czat rodzinny i prywatny, szyfrowany end-to-end, z powiadomieniami push i potwierdzeniem odczytu
 - 🔔 **Powiadomienia** – osobiste powiadomienia push na iPhonie, iPadzie i Androidzie oraz dzwonek powiadomień ze wszystkimi zmianami w rodzinie
 
-pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski i 🇺🇦 Українська**; dostosowuje walutę i numery alarmowe do twojego regionu i przełącza się między określeniami **rodzina** i **wspólne mieszkanie**. Jeden serwer może obsługiwać wiele rodzin, każdą z własnymi administratorami.
+pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська i 🇨🇿 Čeština**; dostosowuje walutę i numery alarmowe do twojego regionu i przełącza się między określeniami **rodzina** i **wspólne mieszkanie**. Jeden serwer może obsługiwać wiele rodzin, każdą z własnymi administratorami.
+
+## Nowości w 1.155.0
+
+**Czeski**
+
+- Nowe: czeski (Čeština) to nowy język aplikacji – wszystkie około 7 500 tekstów aplikacji, kreator konfiguracji, eksport danych, wiadomości push z serwera i czeskie numery alarmowe (112, policja 158, pogotowie 155, straż pożarna 150). Jest też wariant dla wspólnego mieszkania. Wybierzesz go w Ustawienia → Język i region.
+- Uwaga: tłumaczenie nie zostało sprawdzone przez native speakerów – propozycje poprawek mile widziane jako GitHub issue. Sterowanie głosowe przez Siri/Android jeszcze nie rozumie czeskiego i odpowiada po angielsku.
+- Zmieniono: `i18n/cs.i18n.js` (new), `README.cs.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
 
 ## Nowości w 1.154.0
 
@@ -164,13 +173,6 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 - Nowość: pinn. można zainstalować z interfejsu stosów Portainera, bez SSH i bez skryptu instalacyjnego. Przy każdym wydaniu powstaje gotowy obraz (amd64, arm64) publikowany w `ghcr.io/pinn-shost/pinn`; nowy plik `docker/docker-compose.portainer.yaml` używa go z woluminami i bez stałych nazw kontenerów (koniec kolizji z istniejącym kontenerem Tailscale). Stos zawiera też usługę kopii zapasowych (kopia nocna, „Zrób kopię teraz” i „Przywróć” w aplikacji; aktualizacje zostają w Portainerze) oraz opcjonalne, zakomentowane bloki dla Traccara i objazdu do Home Assistanta. Zobacz „Stos Portainera (bez skryptu)” w Instalacji.
 - Zmieniono: `docker/` (new), `.github/workflows/image.yml` (new), `pinn-wartung.sh`, `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
 
-## Nowości w 1.150.11
-
-**Ikony i drobne poprawki**
-
-- Ikona grzebienia przy „Czesaniu włosów” na stronie dziecięcej; brak już pola emoji obok nazwy depozytu; listy wyboru kas bez emoji; narzędzie to teraz klucz płaski; „Menu dla gości” z ikoną dwóch osób; dotknięcie logo obok nazwy rodziny prowadzi do przeglądu; karta Powiadomienia wypełnia się jako pierwsza, więc „Włącz na tym urządzeniu” zawsze się pojawia; ikony skrótów są szare w trybie ciemnym.
-- Zmieniono: `js/symbole.js`, `js/symbole3.js`, `js/ansichten.js`, `js/konto.js`, `css/dunkelfarbe.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`.
-
 ## Wymagania
 
 - NAS lub mini PC z zainstalowanym **Dockerem** i **Docker Compose** (np. Synology, UGREEN, QNAP albo zwykły serwer z Linuksem)
@@ -180,13 +182,13 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 ## Instalacja
 
 1. Pobierz i rozpakuj plik ZIP [najnowszej wersji](https://github.com/pinn-shost/pinn/releases/latest).
-2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.154.0` lub `pinn-main`) bez zmian.
+2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.155.0` lub `pinn-main`) bez zmian.
 3. Połącz się przez SSH i uruchom:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
 4. Otwórz `http://<adres IP NAS-a>:8090` → **Zaloguj się jako główny administrator** → hasło `Admin` → ustaw własne hasło.
-5. **Kreator konfiguracji** poprowadzi cię krok po kroku przez resztę – HTTPS, dostęp z zewnątrz, Google, sztuczną inteligencję, lokalizację i Home Assistant – w 14 językach.
+5. **Kreator konfiguracji** poprowadzi cię krok po kroku przez resztę – HTTPS, dostęp z zewnątrz, Google, sztuczną inteligencję, lokalizację i Home Assistant – w 15 językch.
 6. Otwórz pinn. na każdym telefonie pod adresem HTTPS i dodaj do ekranu głównego:
    - **iPhone/iPad (Safari):** „Udostępnij” → *Dodaj do ekranu początkowego* (powiadomienia wymagają iOS 16.4 lub nowszego)
    - **Android (Chrome):** Ustawienia → Powiadomienia → *zainstaluj pinn. jako aplikację* albo menu Chrome ⋮ → *Zainstaluj aplikację*

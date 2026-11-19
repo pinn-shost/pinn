@@ -119,7 +119,7 @@ function langOf(u) {
     let w = {};
     try { w = require(`${__hooks}/pinn-design.js`).readDesign(u).werte || {}; } catch (e) { w = {}; }
     const s = String(w.sprache || "");
-    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr", "pl", "uk"].indexOf(s) >= 0) return s;
+    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr", "pl", "uk", "cs"].indexOf(s) >= 0) return s;
     if (/^[a-z]{2}$/.test(s)) return "en";
     const land = String(w.land || "").toUpperCase();
     if (["DE", "AT", "CH", "LI", "LU"].indexOf(land) >= 0) return "de";
@@ -135,6 +135,7 @@ function langOf(u) {
     if (["TR"].indexOf(land) >= 0) return "tr";
     if (["PL"].indexOf(land) >= 0) return "pl";
     if (["UA"].indexOf(land) >= 0) return "uk";
+    if (["CZ"].indexOf(land) >= 0) return "cs";
     return "en";
 }
 
@@ -156,6 +157,7 @@ const MONTHS = {
     tr: ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"],
     pl: ["styczeń", "luty", "marzec", "kwiecień", "maj", "czerwiec", "lipiec", "sierpień", "wrzesień", "październik", "listopad", "grudzień"],
     uk: ["січень", "лютий", "березень", "квітень", "травень", "червень", "липень", "серпень", "вересень", "жовтень", "листопад", "грудень"],
+    cs: ["leden", "únor", "březen", "duben", "květen", "červen", "červenec", "srpen", "září", "říjen", "listopad", "prosinec"],
 };
 // Russian needs the genitive for date ranges and the prepositional case for "in the month" (the list above is the nominative)
 const MONTHS_RU_GEN = ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"];
@@ -166,6 +168,8 @@ const MONTHS_PL_LOC = ["styczniu", "lutym", "marcu", "kwietniu", "maju", "czerwc
 // Ukrainian (since 1.135.16): genitive for date ranges ("з 2 по 8 листопада") and locative for "in the month" (the list above is the nominative)
 const MONTHS_UK_GEN = ["січня", "лютого", "березня", "квітня", "травня", "червня", "липня", "серпня", "вересня", "жовтня", "листопада", "грудня"];
 const MONTHS_UK_LOC = ["січні", "лютому", "березні", "квітні", "травні", "червні", "липні", "серпні", "вересні", "жовтні", "листопаді", "грудні"];
+const MONTHS_CS_GEN = ["ledna", "února", "března", "dubna", "května", "června", "července", "srpna", "září", "října", "listopadu", "prosince"];
+const MONTHS_CS_LOC = ["lednu", "únoru", "březnu", "dubnu", "květnu", "červnu", "červenci", "srpnu", "září", "říjnu", "listopadu", "prosinci"];
 function rangeText(lang, mondayIso) {
     const a = mondayIso.split("-").map(Number);
     const b = isoAddDays(mondayIso, 6).split("-").map(Number);
@@ -186,6 +190,7 @@ function rangeText(lang, mondayIso) {
     }
     if (lang === "pl") return a[1] === b[1] ? ("od " + a[2] + " do " + b[2] + " " + MONTHS_PL_GEN[b[1] - 1]) : ("od " + a[2] + " " + MONTHS_PL_GEN[a[1] - 1] + " do " + b[2] + " " + MONTHS_PL_GEN[b[1] - 1]);
     if (lang === "uk") return a[1] === b[1] ? ("з " + a[2] + " по " + b[2] + " " + MONTHS_UK_GEN[b[1] - 1]) : ("з " + a[2] + " " + MONTHS_UK_GEN[a[1] - 1] + " по " + b[2] + " " + MONTHS_UK_GEN[b[1] - 1]);
+    if (lang === "cs") return a[1] === b[1] ? ("od " + a[2] + ". do " + b[2] + ". " + MONTHS_CS_GEN[b[1] - 1]) : ("od " + a[2] + ". " + MONTHS_CS_GEN[a[1] - 1] + " do " + b[2] + ". " + MONTHS_CS_GEN[b[1] - 1]);
     return a[1] === b[1] ? ("du " + a[2] + " au " + b[2] + " " + M[b[1] - 1]) : ("du " + a[2] + " " + M[a[1] - 1] + " au " + b[2] + " " + M[b[1] - 1]);
 }
 function weekMessage(lang, mondayIso) {
@@ -203,6 +208,7 @@ function weekMessage(lang, mondayIso) {
     if (lang === "tr") return { titel: "🗓️ Haftan hazır", text: r + " için etkinlikler, görevler, yemekler ve daha fazlası – hepsi bir bakışta." };
     if (lang === "pl") return { titel: "🗓️ Twój tydzień jest gotowy", text: "Wydarzenia, zadania, posiłki i więcej – " + r + " – wszystko na jednym ekranie." };
     if (lang === "uk") return { titel: "🗓️ Ваш тиждень готовий", text: "Події, завдання, харчування та багато іншого на період " + r + " – усе на одному екрані." };
+    if (lang === "cs") return { titel: "🗓️ Tvůj týden je připraven", text: "Události, úkoly, jídla a další na období " + r + " – vše na jedné obrazovce." };
     return { titel: "🗓️ Your week is ready", text: "Events, tasks, meals and more for " + r + " – all at a glance." };
 }
 function monthMessage(lang, key) {
@@ -222,6 +228,7 @@ function monthMessage(lang, key) {
     if (lang === "tr") return { titel: "💶 Finans ön bakışı: " + next, text: next + " ayında neler var – ve " + prev + " ayı nasıl geçti." };
     if (lang === "pl") return { titel: "💶 Zapowiedź finansów: " + next, text: "Co czeka w " + MONTHS_PL_LOC[m - 1] + " – i jak minął " + prev + "." };
     if (lang === "uk") return { titel: "💶 Фінансовий огляд: " + next, text: "Що очікується у " + MONTHS_UK_LOC[m - 1] + " – і як минув " + prev + "." };
+    if (lang === "cs") return { titel: "💶 Výhled financí: " + next, text: "Co přijde v " + MONTHS_CS_LOC[m - 1] + " – a rekapitulace: " + prev + "." };
     return { titel: "💶 Finance outlook: " + next.charAt(0).toUpperCase() + next.slice(1), text: "What's coming up in " + next + " – and how " + prev + " went." };
 }
 
@@ -239,6 +246,7 @@ function yearMessage(lang, year) {
     if (lang === "tr") return { titel: "🎁 " + year + " yıl özetiniz hazır", text: "Harcamalar, pişirilen yemekler ve geziler – işte yılınız." };
     if (lang === "pl") return { titel: "🎁 Wasze podsumowanie roku " + year, text: "Wydatki, ugotowane dania i wyjazdy – tak wyglądał wasz rok." };
     if (lang === "uk") return { titel: "🎁 Підсумки вашого " + year + " року", text: "Витрати, приготовані страви та подорожі – таким був ваш рік." };
+    if (lang === "cs") return { titel: "🎁 Tvůj rok " + year + " v přehledu", text: "Výdaje, uvařená jídla a cesty – takový byl tvůj rok." };
     return { titel: "🎁 Your year in review " + year, text: "Expenses, meals cooked and trips – this was your year." };
 }
 

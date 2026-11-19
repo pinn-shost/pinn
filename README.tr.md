@@ -25,7 +25,8 @@
   <a href="README.nl.md">🇳🇱 Nederlands</a> ·
   <b>🇹🇷 Türkçe</b> ·
   <a href="README.pl.md">🇵🇱 Polski</a> ·
-  <a href="README.uk.md">🇺🇦 Українська</a>
+  <a href="README.uk.md">🇺🇦 Українська</a> ·
+  <a href="README.cs.md">🇨🇿 Čeština</a>
 </p>
 
 ---
@@ -108,7 +109,15 @@ Tam boyutta açmak için bir resme dokun.
 - 💬 **Sohbet** – aile ve özel sohbet, uçtan uca şifreli, anlık bildirim ve okundu işaretiyle
 - 🔔 **Bildirimler** – iPhone, iPad ve Android'de kişiye özel anlık bildirimler ve ailedeki tüm değişiklikleri gösteren bir bildirim zili
 
-pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski ve 🇺🇦 Українська**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
+pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська ve 🇨🇿 Čeština**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
+
+## 1.155.0 sürümündeki yenilikler
+
+**Çekçe**
+
+- Yeni: Çekçe (Čeština) yeni bir uygulama dili olarak eklendi – uygulamanın yaklaşık 7.500 metni, kurulum sihirbazı, veri dışa aktarma, sunucudan gelen push mesajları ve Çek acil durum numaraları (112, polis 158, ambulans 155, itfaiye 150). Ortak ev (WG) ifadeleri de dahil. Ayarlar → Dil ve bölge altından seçilir.
+- Not: çeviri ana dili konuşanlar tarafından kontrol edilmedi – önerilerinizi GitHub issue olarak bekleriz. Siri/Android ile sesli kontrol henüz Çekçe anlamıyor ve İngilizce yanıt veriyor.
+- Değişenler: `i18n/cs.i18n.js` (new), `README.cs.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
 
 ## 1.154.0 sürümündeki yenilikler
 
@@ -164,13 +173,6 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 - Yeni: pinn., SSH ve kurulum betiği olmadan Portainer’ın yığın arayüzünden kurulabilir. Her sürümde hazır bir imaj (amd64, arm64) oluşturulur ve `ghcr.io/pinn-shost/pinn` adresinde yayımlanır; yeni `docker/docker-compose.portainer.yaml` dosyası bunu birimlerle ve sabit kapsayıcı adı olmadan kullanır (mevcut bir Tailscale kapsayıcısıyla çakışma yok). Yığın ayrıca bir yedekleme hizmeti (gece yedeği, uygulamada “Şimdi yedekle” ve “Geri yükle”; güncellemeler Portainer’da kalır) ile Traccar ve Home Assistant dolambaçlı yolu için yorum satırı hâlindeki isteğe bağlı bloklar içerir. Kurulum bölümündeki “Portainer yığını (betiksiz)” konusuna bak.
 - Değiştirildi: `docker/` (new), `.github/workflows/image.yml` (new), `pinn-wartung.sh`, `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
 
-## 1.150.11 sürümündeki yenilikler
-
-**Simgeler ve küçük düzeltmeler**
-
-- Çocuk sayfasında “Saç tarama” için tarak simgesi; depo adının yanında artık emoji alanı yok; kasa seçim listelerinde emoji yok; alet simgesi artık açık ağızlı anahtar; “Misafir menüleri” iki kişi simgesiyle; aile adının yanındaki logoya dokunmak genel bakışa götürür; Bildirimler kartı ilk doldurulur, böylece “Bu cihazda etkinleştir” her zaman görünür; karanlık modda kısayol simgeleri gri.
-- Değiştirildi: `js/symbole.js`, `js/symbole3.js`, `js/ansichten.js`, `js/konto.js`, `css/dunkelfarbe.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`.
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -180,13 +182,13 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.154.0` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.155.0` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
 4. `http://<NAS'ın IP adresi>:8090` adresini aç → **Ana yönetici olarak giriş yap** → şifre `Admin` → kendi şifreni belirle.
-5. **Kurulum sihirbazı** gerisinde sana adım adım rehberlik eder – HTTPS, uzaktan erişim, Google, yapay zekâ, konum ve Home Assistant – 14 dilde.
+5. **Kurulum sihirbazı** gerisinde sana adım adım rehberlik eder – HTTPS, uzaktan erişim, Google, yapay zekâ, konum ve Home Assistant – 15 dilde.
 6. pinn.'i her telefonda HTTPS adresinden aç ve ana ekrana ekle:
    - **iPhone/iPad (Safari):** “Paylaş” → *Ana Ekrana Ekle* (bildirimler için iOS 16.4 veya daha yenisi gerekir)
    - **Android (Chrome):** Ayarlar → Bildirimler → *pinn.'i uygulama olarak yükle* veya Chrome menüsü ⋮ → *Uygulamayı yükle*

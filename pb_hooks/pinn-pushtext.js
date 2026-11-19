@@ -13,14 +13,14 @@
 // placeholders are filled by pinn-textkern.js – the same table the app uses. A flat share uses the variant
 // "<key>#wg" of the language file (created by .github/scripts/i18n-keys.js from the TERMS of js/sprachen.js).
 //
-//  - Language: from the profile (personal design, value "sprache": de, en, fr, es, it, pt, zh, ja, ko, ru, nl, tr, pl, uk). Without one: German.
+//  - Language: from the profile (personal design, value "sprache": de, en, fr, es, it, pt, zh, ja, ko, ru, nl, tr, pl, uk, cs). Without one: German.
 //  - Household type: from the family settings (field "wohnform": 'familie' or 'wg'). Only this one field is read
 //    via SQL (json_extract), not the big family data; the result stays cached until the family data changes.
 //  - Freely entered content (names, event titles, note texts, addresses) stays unchanged. Whatever matches no
 //    pattern stays as it is (German, or already translated by the module itself) – an unknown message is never lost.
 //    For a flat share such texts still get the flat share terms (applyTerms, same rules as TERMS in js/sprachen.js).
 
-const LANGS = ["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr", "pl", "uk"];
+const LANGS = ["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr", "pl", "uk", "cs"];
 
 // ---------------------------------------------------------------------------------------------
 // Language and household type of the recipient
@@ -90,6 +90,13 @@ function plDet(stem, end) {
     return stem === "twoj" ? "twoim" : stem + "ym";
 }
 const PL_L = "A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż0-9";
+// Czech (since 1.155.0): "rodina" -> "domácnost", "člen rodiny" -> "spolubydlící", "rodinný" -> "společný" in the same case
+// (same tables as .github/scripts/i18n-keys.js). No lookbehind and no \p{L} in this engine: explicit letter class,
+// a captured character in front (re-inserted) and a lookahead behind the word.
+const CS_HOME = { "": "domácností", a: "domácnost", u: "domácnost", y: "domácnosti", "ě": "domácnosti", o: "domácnosti", ou: "domácností",
+    "ám": "domácnostem", "ách": "domácnostech", ami: "domácnostmi" };
+const CS_MATE = { "": "spolubydlící", a: "spolubydlícího", u: "spolubydlícímu", ovi: "spolubydlícímu", em: "spolubydlícím", "ové": "spolubydlící",
+    y: "spolubydlící", "ů": "spolubydlících", "ům": "spolubydlícím", ech: "spolubydlících" };
 // Ukrainian (since 1.135.16): "сім’я" -> "квартира", "член сім’ї" -> "співмешканець" in the same case (same tables as
 // .github/scripts/i18n-keys.js). No Unicode lookbehind and no \p{L} in this engine: explicit Cyrillic letter class,
 // a captured character in front (re-inserted) and a lookahead behind the word.
@@ -242,8 +249,21 @@ const TERMS = {
         // "з" before the new words needs a vowel ("з співмешканцями" -> "зі співмешканцями")
         [/(^|[^А-Яа-яЁёІіЇїЄєҐґ0-9])([Зз]) (співмешканц[А-Яа-яЁёІіЇїЄєҐґ]*|спільн[А-Яа-яЁёІіЇїЄєҐґ]*)/g, (m, pre, c, word) => pre + c + "і " + word],
     ] },
+    // Czech (since 1.155.0): same rules as the app (TERMS.cs in .github/scripts/i18n-keys.js), written without lookbehind
+    cs: { keep: /[Rr]odinn[A-Za-zÁČĎÉĚÍŇÓŘŠŤÚŮÝŽáčďéěíňóřšťúůýž]*\s+(?:lékař|auto|rozpočet|doktor)[A-Za-zÁČĎÉĚÍŇÓŘŠŤÚŮÝŽáčďéěíňóřšťúůýž]*|(?:lékař|auto|rozpočet|doktor)[A-Za-zÁČĎÉĚÍŇÓŘŠŤÚŮÝŽáčďéěíňóřšťúůýž]*\s+rodinn[A-Za-zÁČĎÉĚÍŇÓŘŠŤÚŮÝŽáčďéěíňóřšťúůýž]*/g, rules: [
+        // instrumental plural ("s členy rodiny" -> "se spolubydlícími"; the plural accusative "členy" is handled below)
+        [/(^|[^A-Za-zÁČĎÉĚÍŇÓŘŠŤÚŮÝŽáčďéěíňóřšťúůýž0-9])([Ss]) členy(\s+(?:vaší|tvé|naší|své|této|celé|každé)?\s*)rodiny(?![A-Za-zÁČĎÉĚÍŇÓŘŠŤÚŮÝŽáčďéěíňóřšťúůýž0-9])/g, (m, pre, c) => pre + c + "e spolubydlícími"],
+        [/(^|[^A-Za-zÁČĎÉĚÍŇÓŘŠŤÚŮÝŽáčďéěíňóřšťúůýž0-9])([Čč])len(|a|u|ovi|em|ové|y|ů|ům|ech)(\s+(?:vaší|tvé|naší|své|této|celé|každé)?\s*)rodiny(?![A-Za-zÁČĎÉĚÍŇÓŘŠŤÚŮÝŽáčďéěíňóřšťúůýž0-9])/g,
+            (m, pre, c, end) => pre + cap(c === "Č", CS_MATE[end])],
+        [/(^|[^A-Za-zÁČĎÉĚÍŇÓŘŠŤÚŮÝŽáčďéěíňóřšťúůýž0-9])([Rr])odin(ou|ám|ách|ami|a|u|y|ě|o)?(?![A-Za-zÁČĎÉĚÍŇÓŘŠŤÚŮÝŽáčďéěíňóřšťúůýž0-9])/g,
+            (m, pre, c, end) => pre + cap(c === "R", CS_HOME[end === undefined ? "" : end])],
+        [/(^|[^A-Za-zÁČĎÉĚÍŇÓŘŠŤÚŮÝŽáčďéěíňóřšťúůýž0-9])([Rr])odinn(ý|á|é|í|ého|ému|ém|ým|ou|ých|ými)(?![A-Za-zÁČĎÉĚÍŇÓŘŠŤÚŮÝŽáčďéěíňóřšťúůýž0-9])/g,
+            (m, pre, c, end) => pre + cap(c === "R", "společn" + end)],
+        // v / s / z / k in front of the new words need a vowel ("s společnou" -> "se společnou")
+        [/(^|[^A-Za-zÁČĎÉĚÍŇÓŘŠŤÚŮÝŽáčďéěíňóřšťúůýž0-9])([VvSsZzKk]) (spolubydl[A-Za-zÁČĎÉĚÍŇÓŘŠŤÚŮÝŽáčďéěíňóřšťúůýž]*|společn[A-Za-zÁČĎÉĚÍŇÓŘŠŤÚŮÝŽáčďéěíňóřšťúůýž]*)/g, (m, pre, c, word) => pre + c + "e " + word],
+    ] },
 };
-const TERM_HINT = /[Aa]ile|[Ff]amil|[Ff]am\u00EDli|[Ff]amigli|\u5BB6\u5EAD|\u5168\u5BB6|\u5BB6\u65CF|\uAC00\uC871|\uD83D\uDC68\u200D\uD83D\uDC69|[\u0421\u0441]\u0435\u043C|[\u0427\u0447]\u043B\u0435\u043D|[Rr]odzin|[Cc]z\u0142on|[\u0421\u0441]\u0456\u043C/;
+const TERM_HINT = /[Aa]ile|[Ff]amil|[Ff]am\u00EDli|[Ff]amigli|\u5BB6\u5EAD|\u5168\u5BB6|\u5BB6\u65CF|\uAC00\uC871|\uD83D\uDC68\u200D\uD83D\uDC69|[\u0421\u0441]\u0435\u043C|[\u0427\u0447]\u043B\u0435\u043D|[Rr]odzin|[Rr]odin|[\u010C\u010D]len|[Cc]z\u0142on|[\u0421\u0441]\u0456\u043C/;
 function applyTerms(s, lang) {
     const T = TERMS[lang] || TERMS.de;
     if (!s || !TERM_HINT.test(s)) return s;

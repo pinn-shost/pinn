@@ -61,6 +61,14 @@
       if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return 'few';
       return 'many';
     },
+    // Czech (CLDR): 1 → one · 2–4 → few · 0, 5 and more → other · fractions: CLDR says "many", here they use "other" (like the other
+    // languages without a real "many" for round numbers) – the form of "other" (genitive plural) is also used for 0 and 5+
+    cs: function (n, i, v) {
+      if (v !== 0) return 'other';
+      if (i === 1) return 'one';
+      if (i >= 2 && i <= 4) return 'few';
+      return 'other';
+    },
   };
 
   // Categories a language file must contain for every plural text
@@ -71,6 +79,7 @@
     ru: ['one', 'few', 'many'],   // "other" (fractions) is optional and falls back to "few" (genitive singular)
     pl: ['one', 'few', 'many'],   // "other" (fractions) is optional and falls back to "many"
     uk: ['one', 'few', 'many'],   // "other" (fractions) is optional and falls back to "few" (genitive singular)
+    cs: ['one', 'few', 'other'],  // "other" = 0, 5 and more and fractions (genitive plural)
   };
   // Where to look when a form is missing in a text
   var FALLBACK = { ru: { other: ['few', 'many'] }, pl: { other: ['many', 'few'] }, uk: { other: ['few', 'many'] } };

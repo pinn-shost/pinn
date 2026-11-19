@@ -24,7 +24,7 @@
   'use strict';
   if (window.PinnExport) return;
 
-  var LANGS = ['de', 'en', 'fr', 'es', 'it', 'pt', 'zh', 'ja', 'ko', 'ru', 'nl', 'tr', 'pl', 'uk'];
+  var LANGS = ['de', 'en', 'fr', 'es', 'it', 'pt', 'zh', 'ja', 'ko', 'ru', 'nl', 'tr', 'pl', 'uk', 'cs'];
   var T = {};
   T.de = {
     F: 'Familie', FW: 'WG', Fd: 'der Familie', FWd: 'der WG',
@@ -843,6 +843,59 @@
       "Przechowuj go bezpiecznie.",
     ],
   };
+  T.cs = {
+    F: 'rodina', FW: 'společná domácnost', Fd: 'rodiny', FWd: 'společné domácnosti',
+    titel: 'Export: {F}',
+    intro: 'Všechna data {Fd} jako soubor ZIP – včetně dokumentů, účtenek a obrázků. Například pro přechod na jiný NAS nebo jako vlastní záloha.',
+    lade: 'Kontroluje se obsah …', fehler: 'To se nepovedlo.',
+    fehlerNetz: 'Žádné spojení s pinn. – zkontroluj prosím, že jsi v domácí síti nebo přes VPN.',
+    serverFehlt: 'Na serveru stále chybí export.pb.js a pinn-export.js (pb_hooks).',
+    familieWaehlen: 'Která {F}?', inhalt: 'Co přijde do ZIPu', eintraege: '{0} záznamů', dateienN: '{0} souborů',
+    dokumente: 'Souborů celkem', groesse: 'Velikost (přibližně)',
+    nichtDrin: 'Není zahrnuto',
+    nichtDrinText: 'Hesla, PIN, přístupové údaje k iCloudu, Googlu a Home Assistant, přihlášená zařízení a odběry push oznámení. Na jiném NAS se prostě přihlásíš znovu. Historie poloh z Traccaru také není zahrnuta.',
+    privat: 'Není zahrnuto, protože je soukromé: {0} pokladen, jejichž nejsi členem, a {1} kalendářů „Jen pro mě“ jiných profilů. Úplný export – např. pro přechod jinam – vytvoří hlavní správce.',
+    voll: 'Úplný export – soukromé pokladny a kalendáře „Jen pro mě“ všech profilů jsou zahrnuty.',
+    sicherheit: 'ZIP obsahuje finance, dokumenty a nouzové karty nešifrované. Uchovej ho prosím bezpečně a neposílej e-mailem.',
+    gross: 'To je asi {0}. Na telefonu to může chvíli trvat – raději exportuj na počítači a nech pinn. mezitím otevřené.',
+    starten: 'Vytvořit ZIP', abbrechen: 'Zrušit', schliessen: 'Zavřít', nochmal: 'Zkusit znovu',
+    schrittDaten: 'Data: {0}', schrittDatei: 'Soubor {0} z {1}', packe: 'Sestavuje se ZIP …',
+    offenLassen: 'Nech prosím pinn. otevřené, dokud export neskončí.',
+    fertig: 'Export dokončen ✓', fertigText: '{0} záznamů a {1} souborů · {2}',
+    speichern: 'Uložit ZIP', teilen: 'Sdílet nebo uložit do Souborů',
+    speichernTipp: 'iPhone/iPad: „Sdílet“ → „Uložit do Souborů“. Počítač: „Uložit ZIP“ uloží soubor do složky stažených souborů.',
+    fehlende: '{0} souborů se nepodařilo přečíst – jsou uvedeny v export-fehler.txt uvnitř ZIPu.',
+    abgebrochen: 'Export zrušen.', zuGross: 'Export je větší než 4 GB – prostý ZIP to neunese.',
+    keinAdmin: 'Export mohou vytvořit jen správci.',
+    S: {
+      familien: '{F}', benutzer: 'Profily', familien_daten: 'Kalendář, seznamy, recepty, členové a nastavení',
+      rezept_bilder: 'Obrázky receptů', oeffentliche_rezepte: 'Sdílené recepty', aufgaben: 'Úkoly',
+      haushalt_verlauf: 'Historie domácnosti', kassen: 'Pokladny, portfolia a smlouvy', ausgaben: 'Transakce',
+      finanz_dokumente: 'Dokumenty ke smlouvám', dokumente: 'Dokumenty', pinnwand_bilder: 'Obrázky z nástěnky',
+      kalender_eigene: 'Vlastní kalendáře', kalender_termine: 'Události', muellkalender: 'Kalendář odpadu',
+      ortung: 'Místa a poloha', zuhause: 'Domov', smarthome_zugaenge: 'Chytrá domácnost',
+      dashboard_hintergruende: 'Dashboard', apple_zugaenge: 'iCloud', google_zugaenge: 'Google',
+    },
+    liesmich: 'README.txt',
+    readme: [
+      'pinn. – export dat',
+      '',
+      '{F}: {0}',
+      'Vytvořeno: {1} uživatelem {2} (pinn. {3})',
+      '',
+      'Obsah:',
+      '  pinn-export.json  popis exportu (formát, obsah, seznam souborů)',
+      '  daten/            všechny záznamy podle kolekcí jako JSON (tak, jak jsou uloženy v PocketBase)',
+      '  dateien/          dokumenty, účtenky a obrázky: dateien/<kolekce>/<id záznamu>/<soubor>',
+      '',
+      'Není zahrnuto: hesla, PIN, přístupové údaje (iCloud, Google, Home Assistant),',
+      'přihlášená zařízení, odběry push oznámení a historie poloh z Traccaru.',
+      '',
+      'Pozor: tento soubor obsahuje finance, dokumenty a nouzové karty nešifrované.',
+      'Uchovej ho prosím bezpečně.',
+    ],
+  };
+
   T.uk = {
     F: "сім’я", FW: "спільна квартира", Fd: "сім’ї", FWd: "спільної квартири",
     titel: "Експорт: {F}",
@@ -923,7 +976,7 @@
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
-  function locale() { return { de: 'de-DE', en: 'en-GB', fr: 'fr-FR', es: 'es-ES', it: 'it-IT', pt: 'pt-BR', zh: 'zh-CN', ja: 'ja-JP', ko: 'ko-KR', ru: 'ru-RU', nl: 'nl-NL', tr: 'tr-TR', pl: 'pl-PL', uk: 'uk-UA' }[S.lang] || 'en-GB'; }
+  function locale() { return { de: 'de-DE', en: 'en-GB', fr: 'fr-FR', es: 'es-ES', it: 'it-IT', pt: 'pt-BR', zh: 'zh-CN', ja: 'ja-JP', ko: 'ko-KR', ru: 'ru-RU', nl: 'nl-NL', tr: 'tr-TR', pl: 'pl-PL', uk: 'uk-UA', cs: 'cs-CZ' }[S.lang] || 'en-GB'; }
   function zahl(n) { try { return Number(n || 0).toLocaleString(locale()); } catch (e) { return String(n || 0); } }
   function groesse(b) {
     b = Number(b) || 0;

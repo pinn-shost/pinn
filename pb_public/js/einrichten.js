@@ -175,6 +175,18 @@ const PINN_SETUP_TEXTE = {
     loginMain: 'Za pierwszym razem hasło to „Admin” – potem ustawisz własne i rozpocznie się konfiguracja.',
     laden: 'Nie udało się wczytać konfiguracji (brakuje pb_public/einrichtung.js?).',
   },
+  cs: {
+    btn: '⚙︎ Nastavení',
+    offen: 'Nastavení pinn. ještě nebylo dokončeno. Bez něj nefungují HTTPS, push oznámení a aplikace na ploše.',
+    fortsetzen: 'Pokračovat v nastavení',
+    neustart: 'Uložená nastavení se projeví až po restartu pinn.',
+    neustartBtn: 'Použít nyní (krátký restart)',
+    neustartLaeuft: 'pinn. se restartuje …',
+    loginHint: 'Jsi tu poprvé? První nastavení začne po přihlášení jako hlavní správce.',
+    loginBtn: 'Přihlásit se jako hlavní správce',
+    loginMain: 'Poprvé je heslo „Admin“ – pak si nastavíš vlastní a nastavení začne.',
+    laden: 'Nastavení se nepodařilo načíst (chybí pb_public/einrichtung.js?).',
+  },
   uk: {
     btn: '⚙︎ Конфігурація',
     offen: 'Конфігурацію pinn. ще не завершено. Без неї не працюють HTTPS, push-сповіщення та застосунок на головному екрані.',

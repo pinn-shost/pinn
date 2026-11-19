@@ -25,7 +25,8 @@
   <a href="README.nl.md">🇳🇱 Nederlands</a> ·
   <a href="README.tr.md">🇹🇷 Türkçe</a> ·
   <a href="README.pl.md">🇵🇱 Polski</a> ·
-  <a href="README.uk.md">🇺🇦 Українська</a>
+  <a href="README.uk.md">🇺🇦 Українська</a> ·
+  <a href="README.cs.md">🇨🇿 Čeština</a>
 </p>
 
 <p align="center">
@@ -131,7 +132,15 @@ Tocca un’immagine per aprirla a dimensione intera.
 | 🔔 **Notifiche** | Messaggi push personali su iPhone, iPad e Android, più una campanella che raccoglie ogni modifica in famiglia. |
 | 🧩 **Tutto il resto** | Bacheca di famiglia con note spostabili, ricerca globale, modalità offline con sincronizzazione automatica, modalità scura, dashboard su iPad con PIN dei profili, account ospite, blocco bambini. |
 
-pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
+pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська e 🇨🇿 Čeština**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
+
+## Novità della 1.155.0
+
+**Ceco**
+
+- Novità: il ceco (Čeština) è una nuova lingua dell’app – tutti i circa 7.500 testi dell’app, l’assistente di configurazione, l’esportazione dei dati, i messaggi push dal server e i numeri di emergenza cechi (112, polizia 158, ambulanza 155, vigili del fuoco 150). È inclusa anche la variante per casa condivisa. Si sceglie in Impostazioni → Lingua e regione.
+- Nota: la traduzione non è stata verificata da madrelingua – i suggerimenti sono benvenuti come issue su GitHub. Il controllo vocale tramite Siri/Android non capisce ancora il ceco e risponde in inglese.
+- Modificato: `i18n/cs.i18n.js` (new), `README.cs.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
 
 ## Novità della 1.154.0
 
@@ -215,14 +224,6 @@ pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Icone proprie ovunque.** Anche cibo, casa, veicoli, piante, abiti, giocattoli e sport hanno ora icone a linea proprie (stanze, tipi di rifiuti, tipi di veicolo, giardino, sveglia, selettore del calendario, conto alla rovescia). Le **icone delle categorie** in Finanze, Contratti, Documenti e Dispensa si scelgono tra circa 150 icone pronte invece che con la tastiera delle emoji, e lo stesso tipo di categoria ha ovunque la stessa icona. Le scene di Casa e Veicoli mostrano nuovi veicoli colorati. Dettagli: meteo «Adesso» senza bordo tratteggiato, carattere dell’orologio nel pannello, icona dell’elenco del piano pasti, icone sulla linea del testo.
 - Modificato: `js/szenen.js`, `js/symbolwahl.js` (new), `js/symbole.js`, `css/wetterlogos.css`, `js/zustand.js`, `js/zuhause.js`, `js/fahrzeuge.js`, `js/gesundheit.js`, `js/finanzen.js`, `js/vertraege.js`, `js/dokumente.js`, `js/vorrat.js`, `js/vorrat2.js`, `js/einkauf.js`, `js/profilauswahl.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
 
-## Novità della 1.150.7
-
-**Icone meteo tutte nuove**
-
-- **Icone meteo.** Le schermate del meteo hanno ora icone a linea semplici e proprie al posto delle emoji Apple, con lo stesso stile delle icone degli shortcut: sole, luna, nuvole, pioggia, neve, temporale, vento, UV, alba, acqua e i consigli sull’abbigliamento. Nella modalità scura cambiano colore.
-- **Icone proprie ovunque.** Circa 150 icone a linea semplici sostituiscono ora le emoji Apple in tutta l’app (stelle, spunte, avvisi, luoghi, regali, orologio, calendario, lucchetto, posta, attrezzi, salute, casa, denaro e altro). Animali, cibo, abbigliamento, piante, veicoli, sport e giocattoli, le emoji che scegli o scrivi tu (immagini dei membri, testi della chat, campi di inserimento) e le notifiche push restano emoji.
-- Modificato: `js/symbole.js` (new), `js/wetterlogos.js`, `css/wetterlogos.css` (new), `js/familie.js`, `js/grundlagen.js`, `js/profilauswahl.js`, `js/wetterkachel.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
-
 ## Come funziona
 
 ```mermaid
@@ -251,14 +252,14 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 ## Installazione
 
 1. Scarica lo ZIP dell’[ultima release](https://github.com/pinn-shost/pinn/releases/latest) e decomprimilo.
-2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.154.0` o `pinn-main`) così com’è.
+2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.155.0` o `pinn-main`) così com’è.
 3. Accedi via SSH ed esegui:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
    Lo script copia ogni file al suo posto, scarica le librerie per l’importazione dei PDF e il riconoscimento del testo nelle foto e avvia pinn.
 4. Apri `http://<IP-NAS>:8090` → **Accedi come amministratore principale** → password `Admin` → scegli la tua password.
-5. L’**assistente di configurazione** ti guida nel resto – HTTPS, accesso remoto con WireGuard o Tailscale, Google, IA, posizione e Home Assistant – passo dopo passo, in quattordici lingue.
+5. L’**assistente di configurazione** ti guida nel resto – HTTPS, accesso remoto con WireGuard o Tailscale, Google, IA, posizione e Home Assistant – passo dopo passo, in quindici lingue.
 6. Apri pinn. dal suo indirizzo HTTPS su ogni telefono e aggiungilo alla schermata Home:
    - **iPhone/iPad (Safari):** Condividi → *Aggiungi alla schermata Home* (iOS 16.4 o successivo per le notifiche)
    - **Android (Chrome):** Impostazioni → Notifiche → *Installa pinn. come app*, oppure menu di Chrome ⋮ → *Installa app*

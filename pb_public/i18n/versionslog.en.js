@@ -3,6 +3,12 @@
    language other than German. One entry per version of PINN_CHANGELOG: t = title, p = points in the same order
    (null = no translation, the German text is shown). Older versions are not translated. */
 window.PINN_CHANGELOG_EN = {
+  "1.155": {"t": "Czech", "p": [
+"1.155.0: Czech (Čeština) joins as a new app language – all roughly 7,500 texts of the app, the setup assistant, the data export, the push messages from the server (including the weekly outlook, birthdays, pets, chat and emergency) and the Czech emergency numbers (112, police 158, ambulance 155, fire brigade 150). The flat-share wording (“společná domácnost”, “spolubydlící”) is included too. Choose it under Settings → Language and region.",
+"1.155.0 note: the translation has not been checked by native speakers – suggestions are welcome as a GitHub issue. Voice control via Siri/Android (“Hey Siri, pinn”) does not understand Czech yet and answers in English.",
+"1.155.0: New README.cs.md (short Czech introduction); the language bar in all READMEs now includes Czech.",
+"1.155.0 changed: i18n/cs.i18n.js (new), README.cs.md (new), js/sprachen.js, js/textkern.js, js/einrichten.js, js/exportieren.js, einrichtung.js, datenexport.js, js/versionslog.js, i18n/versionslog.en.js, pb_hooks/pinn-textkern.js, pinn-pushtext.js, pinn-chat.js, pinn-ausblick.js, pinn-familie-geburtstag.js, pinn-haustiere.js, pinn-ortung.js, pinn-wobistdu.js, pinn-packliste.js, pinn-aufgaben.js, pinn-einrichtung.js, .github/scripts (i18n-keys.js, check-hooks.js), src/version.txt, index.html, all READMEs."
+  ]},
   "1.154": {"t": "Security fix for calendar addresses", "p": [
 "1.154.0: Security: calendar addresses are now checked. When an event is deleted, changed or read in iCloud or Google, the server uses the family's calendar login and may send it only to the servers of Apple and Google – a foreign address or one pointing into the home network is rejected. Before, a signed-in profile could have sent the login to any other server with a manipulated request. Existing calendars keep working unchanged.",
 "1.154.0 changed: pb_hooks/calendar-sync.js, js/versionslog.js, js/sprachen.js, i18n/versionslog.en.js, src/version.txt, index.html, all READMEs."

@@ -38,7 +38,7 @@ function langOf(u) {
     let w = {};
     try { w = require(`${__hooks}/pinn-design.js`).readDesign(u).werte || {}; } catch (e) { w = {}; }
     const s = String(w.sprache || "");
-    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr", "pl", "uk"].indexOf(s) >= 0) return s;
+    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr", "pl", "uk", "cs"].indexOf(s) >= 0) return s;
     if (/^[a-z]{2}$/.test(s)) return "en";
     const land = String(w.land || "").toUpperCase();
     if (["DE", "AT", "CH", "LI", "LU"].indexOf(land) >= 0) return "de";
@@ -54,6 +54,7 @@ function langOf(u) {
     if (["TR"].indexOf(land) >= 0) return "tr";
     if (["PL"].indexOf(land) >= 0) return "pl";
     if (["UA"].indexOf(land) >= 0) return "uk";
+    if (["CZ"].indexOf(land) >= 0) return "cs";
     return "en";
 }
 const CODE_TEXT = {
@@ -71,9 +72,10 @@ const CODE_TEXT = {
     tr: { zuhause: "🏠 Evdeyim", unterwegs: "🚶 Yoldayım", gleich: "⏱️ Neredeyse vardım", gut: "👍 Her şey yolunda", anrufen: "📞 Beni ara" },
     pl: { zuhause: "🏠 Jestem w domu", unterwegs: "🚶 Jestem w drodze", gleich: "⏱️ Zaraz będę", gut: "👍 Wszystko w porządku", anrufen: "📞 Zadzwoń do mnie" },
     uk: { zuhause: "🏠 Я вдома", unterwegs: "🚶 Я в дорозі", gleich: "⏱️ Майже на місці", gut: "👍 Усе добре", anrufen: "📞 Зателефонуй мені" },
+    cs: { zuhause: "🏠 Jsem doma", unterwegs: "🚶 Jsem na cestě", gleich: "⏱️ Hned jsem tam", gut: "👍 Všechno v pořádku", anrufen: "📞 Zavolej mi" },
 };
 function askMessage(lang, name) {
-    const n = name || ({ de: "Jemand", en: "Someone", fr: "Quelqu'un", es: "Alguien", it: "Qualcuno", pt: "Alguém", zh: "有人", ja: "誰か", ko: "누군가", ru: "Кто-то", nl: "Iemand", tr: "Biri", pl: "Ktoś", uk: "Хтось" }[lang]);
+    const n = name || ({ de: "Jemand", en: "Someone", fr: "Quelqu'un", es: "Alguien", it: "Qualcuno", pt: "Alguém", zh: "有人", ja: "誰か", ko: "누군가", ru: "Кто-то", nl: "Iemand", tr: "Biri", pl: "Ktoś", uk: "Хтось", cs: "Někdo" }[lang]);
     if (lang === "de") return { titel: "📍 " + n + " fragt: Wo bist du?", text: "Tippe hier, um deinen Standort zu schicken oder kurz zu antworten." };
     if (lang === "fr") return { titel: "📍 " + n + " demande : où es-tu ?", text: "Touche ici pour envoyer ta position ou répondre en un mot." };
     if (lang === "es") return { titel: "📍 " + n + " pregunta: ¿dónde estás?", text: "Toca aquí para enviar tu ubicación o responder rápido." };
@@ -87,10 +89,11 @@ function askMessage(lang, name) {
     if (lang === "tr") return { titel: "📍 " + n + " soruyor: neredesin?", text: "Konumunu göndermek veya kısaca yanıtlamak için buraya dokun." };
     if (lang === "pl") return { titel: "📍 " + n + " pyta: gdzie jesteś?", text: "Dotknij tutaj, aby wysłać swoją lokalizację lub krótko odpowiedzieć." };
     if (lang === "uk") return { titel: "📍 " + n + " питає: де ти?", text: "Торкнись тут, щоб надіслати місцезнаходження або коротко відповісти." };
+    if (lang === "cs") return { titel: "📍 " + n + " se ptá: kde jsi?", text: "Klepni sem a pošli svou polohu nebo krátce odpověz." };
     return { titel: "📍 " + n + " asks: where are you?", text: "Tap here to send your location or a quick reply." };
 }
 function answerMessage(lang, name, a) {
-    const n = name || ({ de: "Jemand", en: "Someone", fr: "Quelqu'un", es: "Alguien", it: "Qualcuno", pt: "Alguém", zh: "有人", ja: "誰か", ko: "누군가", ru: "Кто-то", nl: "Iemand", tr: "Biri", pl: "Ktoś", uk: "Хтось" }[lang]);
+    const n = name || ({ de: "Jemand", en: "Someone", fr: "Quelqu'un", es: "Alguien", it: "Qualcuno", pt: "Alguém", zh: "有人", ja: "誰か", ko: "누군가", ru: "Кто-то", nl: "Iemand", tr: "Biri", pl: "Ktoś", uk: "Хтось", cs: "Někdo" }[lang]);
     const t = a.text ? ((CODE_TEXT[lang] || CODE_TEXT.en)[a.text] || ("„" + a.text + "“")) : "";
     if (lang === "de") return { titel: "📍 " + n + " hat geantwortet", text: a.lat != null ? "Standort geschickt – tippe zum Ansehen." : t };
     if (lang === "fr") return { titel: "📍 " + n + " a répondu", text: a.lat != null ? "Position envoyée – touche pour la voir." : t };
@@ -105,6 +108,7 @@ function answerMessage(lang, name, a) {
     if (lang === "tr") return { titel: "📍 " + n + " yanıtladı", text: a.lat != null ? "Konum gönderildi – görmek için dokun." : t };
     if (lang === "pl") return { titel: "📍 " + n + ": odpowiedź", text: a.lat != null ? "Lokalizacja wysłana – dotknij, aby zobaczyć." : t };
     if (lang === "uk") return { titel: "📍 " + n + ": відповідь", text: a.lat != null ? "Місцезнаходження надіслано – торкнись, щоб переглянути." : t };
+    if (lang === "cs") return { titel: "📍 " + n + ": odpověď", text: a.lat != null ? "Poloha odeslána – klepnutím zobrazíš." : t };
     return { titel: "📍 " + n + " replied", text: a.lat != null ? "Location sent – tap to view." : t };
 }
 
