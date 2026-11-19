@@ -141,6 +141,19 @@ const NB_DET = { et: 'en', ditt: 'din', mitt: 'min', sitt: 'sin', hvert: 'hver',
 const FI_HOME = { '': 'kotitalous', en: 'kotitalouden', ttä: 'kotitaloutta', essä: 'kotitaloudessa', estä: 'kotitaloudesta', eseen: 'kotitalouteen', ellä: 'kotitaloudella', eltä: 'kotitaloudelta', elle: 'kotitaloudelle', enä: 'kotitaloutena', eksi: 'kotitaloudeksi', et: 'kotitaloudet', iden: 'kotitalouksien', itä: 'kotitalouksia', issä: 'kotitalouksissa', istä: 'kotitalouksista', isiin: 'kotitalouksiin', illä: 'kotitalouksilla', iltä: 'kotitalouksilta', ille: 'kotitalouksille', iksi: 'kotitalouksiksi', inä: 'kotitalouksina', esi: 'kotitaloutesi', emme: 'kotitaloutemme', enne: 'kotitaloutenne' };
 const FI_MATE = { '': 'asukas', en: 'asukkaan', tä: 'asukasta', essä: 'asukkaassa', estä: 'asukkaasta', een: 'asukkaaseen', ellä: 'asukkaalla', eltä: 'asukkaalta', elle: 'asukkaalle', enä: 'asukkaana', eksi: 'asukkaaksi', et: 'asukkaat', ten: 'asukkaiden', iä: 'asukkaita', issä: 'asukkaissa', istä: 'asukkaista', iin: 'asukkaisiin', illä: 'asukkailla', iltä: 'asukkailta', ille: 'asukkaille', inä: 'asukkaina', iksi: 'asukkaiksi' };
 const SV_DET = { en: 'ett', din: 'ditt', min: 'mitt', sin: 'sitt', er: 'ert', 'vår': 'vårt', ny: 'nytt', annan: 'annat', ingen: 'inget', 'någon': 'något', denna: 'detta' };
+// Hungarian (since 1.160.0): "család" -> "háztartás", "családtag" -> "lakótárs". Both stems have back vowels, so the suffixes stay the same;
+// only "j" of the possessive is dropped ("családja" -> "háztartása") and "d" of "-dal/-dá" becomes "s" ("családdal" -> "háztartással").
+function huRest(r) {
+  if (/^j/.test(r)) r = r.slice(1);
+  else if (/^d(al|el|á|é)/.test(r)) r = 's' + r.slice(1);
+  return r;
+}
+function huMate(r) {
+  if (/^j/.test(r)) r = r.slice(1);
+  else if (/^gal/.test(r)) r = 's' + r.slice(1);
+  else if (/^o(k|t)/.test(r)) r = 'a' + r.slice(1);
+  return r;
+}
 const TERMS = {
   de: { keep: /Familienstammbuch|Familienkutsche/g, rules: [
     [/\b([Jj])edes Familienmitglied\b/g, '$1eder Mitbewohner'],
@@ -356,6 +369,10 @@ const TERMS = {
     [/(?<![\p{L}\p{N}])([Pp])erhe(en|ttä|essä|estä|eseen|ellä|eltä|elle|enä|eksi|et|iden|itä|issä|istä|isiin|illä|iltä|ille|iksi|inä|esi|emme|enne)?(?![\p{L}\p{N}])/gu,
       function (m, f, end) { return cap(f === 'P', FI_HOME[end === undefined ? '' : end]); }],
     [/(?<![\p{L}\p{N}])([Pp])erhe(?=\p{L})/gu, function (m, f) { return cap(f === 'P', 'kotitalous'); }],
+  ] },
+  hu: { keep: /csal[aá]dorvos\p{L}*|csal[aá]dn[eé]v\p{L}*|csal[aá]dfa\p{L}*|csal[aá]di\s+(?:orvos|aut[oó])\p{L}*/giu, rules: [
+    [/(?<![\p{L}\p{N}])([Cc])sal[aá]dtag(\p{L}*)/gu, function (m, f, r) { return (f === 'C' ? 'L' : 'l') + 'akótárs' + huMate(r); }],
+    [/(?<![\p{L}\p{N}])([Cc])sal[aá]d(\p{L}*)/gu, function (m, f, r) { return (f === 'C' ? 'H' : 'h') + 'áztartás' + huRest(r); }],
   ] },
   cs: { keep: /rodinn\p{L}*\s+(?:lékař|auto|rozpočet|doktor)\p{L}*|(?:lékař|auto|rozpočet|doktor)\p{L}*\s+rodinn\p{L}*/giu, rules: [
     // instrumental plural ("s členy rodiny" → "se spolubydlícími"; the plural accusative "členy" is handled below)
