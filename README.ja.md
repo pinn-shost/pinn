@@ -139,100 +139,6 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski、🇺🇦 Українська、🇨🇿 Čeština、🇸🇪 Svenska、🇩🇰 Dansk、🇳🇴 Norsk、🇫🇮 Suomi、🇭🇺 Magyar** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
-## 1.160.1の新機能
-
-**修正：未翻訳のテキスト**
-
-- 修正：書類のカテゴリ（例：「レシートと保証」）と「家計 → おこづかい」の「支給済み」の表示が、アプリ全体でアプリの言語になりました。
-
-## 1.160.0の新機能
-
-**ハンガリー語**
-
-- 新機能：ハンガリー語（Magyar）がアプリの新しい言語として加わりました。アプリの約7,500のテキスト、セットアップアシスタント、データエクスポート、サーバーからのプッシュ通知、ハンガリーの緊急電話番号（112）に対応し、ルームシェア向けの表現（「háztartás」「lakótárs」）と語尾変化も含みます。設定 → 言語と地域で選べます。
-- 注意：翻訳はネイティブスピーカーによる確認を受けていません。改善案はGitHubのissueでお寄せください。Siri／Androidの音声操作はまだハンガリー語に対応しておらず、英語で答えます。
-- 変更: `i18n/hu.i18n.js` (new), `README.hu.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## 1.159.0の新機能
-
-**フィンランド語**
-
-- 新機能：フィンランド語（Suomi）がアプリの新しい言語として加わりました。アプリの約7,500のテキスト、セットアップアシスタント、データエクスポート、サーバーからのプッシュ通知、フィンランドの緊急電話番号（112）に対応し、ルームシェア向けの表現（「kotitalous」「asukas」）と格語尾も含みます。設定 → 言語と地域で選べます。
-- 注意：翻訳はネイティブスピーカーによる確認を受けていません。改善案はGitHubのissueでお寄せください。Siri／Androidの音声操作はまだフィンランド語に対応しておらず、英語で答えます。
-- 変更: `i18n/fi.i18n.js` (new), `README.fi.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## 1.158.0の新機能
-
-**ノルウェー語**
-
-- 新機能：ノルウェー語（Norsk、ブークモール）がアプリの新しい言語として加わりました。アプリの約7,500のテキスト、セットアップアシスタント、データエクスポート、サーバーからのプッシュ通知、ノルウェーの緊急電話番号（112）に対応し、ルームシェア向けの表現（「husstand」「bofelle」）も含みます。設定 → 言語と地域で選べます。
-- 注意：翻訳はネイティブスピーカーによる確認を受けていません。改善案はGitHubのissueでお寄せください。Siri／Androidの音声操作はまだノルウェー語に対応しておらず、英語で答えます。
-- 変更: `i18n/nb.i18n.js` (new), `README.nb.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## 1.157.0の新機能
-
-**デンマーク語**
-
-- 新機能：デンマーク語（Dansk）がアプリの新しい言語として加わりました。アプリの約7,500のテキスト、セットアップアシスタント、データエクスポート、サーバーからのプッシュ通知、デンマークの緊急電話番号（112）に対応し、ルームシェア向けの表現（「husstand」「bofælle」）も含みます。設定 → 言語と地域で選べます。
-- 注意：翻訳はネイティブスピーカーによる確認を受けていません。改善案はGitHubのissueでお寄せください。Siri／Androidの音声操作はまだデンマーク語に対応しておらず、英語で答えます。
-- 変更: `i18n/da.i18n.js` (new), `README.da.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## 1.156.0の新機能
-
-**スウェーデン語**
-
-- 新機能：スウェーデン語（Svenska）がアプリの新しい言語として加わりました。アプリの約7,500のテキスト、セットアップアシスタント、データエクスポート、サーバーからのプッシュ通知、スウェーデンの緊急電話番号（112）に対応し、ルームシェア向けの表現（「hushåll」「medboende」）も含みます。設定 → 言語と地域で選べます。
-- 注意：翻訳はネイティブスピーカーによる確認を受けていません。改善案はGitHubのissueでお寄せください。Siri／Androidの音声操作はまだスウェーデン語に対応しておらず、英語で答えます。
-- 変更: `i18n/sv.i18n.js` (new), `README.sv.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## 1.155.0の新機能
-
-**チェコ語**
-
-- 新機能：チェコ語（Čeština）がアプリの新しい言語として加わりました。アプリの約7,500のテキスト、セットアップアシスタント、データエクスポート、サーバーからのプッシュ通知、チェコの緊急電話番号（112、警察158、救急155、消防150）に対応し、ルームシェア向けの表現も含みます。設定 → 言語と地域で選べます。
-- 注意：翻訳はネイティブスピーカーによる確認を受けていません。改善案はGitHubのissueでお寄せください。Siri／Androidの音声操作はまだチェコ語に対応しておらず、英語で答えます。
-- 変更: `i18n/cs.i18n.js` (new), `README.cs.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## 1.154.0の新機能
-
-**カレンダーアドレスのセキュリティ修正**
-
-- 修正：カレンダーのアドレスを検証するようになりました。iCloud や Google で予定を削除・変更・取得するとき、サーバーは家族カレンダーのログイン情報を使い、送信先は Apple と Google のサーバーだけです。以前は、ログイン済みのプロフィールが細工したリクエストでログイン情報を任意のサーバーへ送らせることができました。すでに動作しているカレンダーへの影響はありません。
-- 変更: `pb_hooks/calendar-sync.js`, `js/versionslog.js`, `js/sprachen.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, README.
-
-## 1.153.2の新機能
-
-**「AQ.」で始まる Gemini キー、ステータス表示、エラーログ**
-
-- 修正：セットアップウィザードが、`AQ.` で始まる新しい Google Gemini キー（ドットを含みます）を受け付けるようになりました。以前は「確認」で有効と表示されても「次へ」で拒否されていました。
-- 修正：家族メンバーの状態（「移動中」「最終位置」）が常にドイツ語だった問題を直し、すべての言語で表示されるようにしました。
-- 変更：エラーログのメッセージは、ドイツ語ではドイツ語、それ以外のすべての言語では英語で表示されます。
-- 変更: `pb_hooks/pinn-einrichtung.js`, `pb_hooks/pinn-protokoll.js`, `pb_hooks/protokoll.pb.js`, `einrichtung.js`, `js/fehlerprotokoll.js`, `js/familie.js`, `js/familienkachel.js`, `js/versionslog.js`, `js/sprachen.js`, `i18n/`, `src/`, `index.html`, README.
-
-## 1.153.1の新機能
-
-**健康：新しいブロック5つ、自分のプロフィールは「自分」表示**
-
-- 健康ページに新登場：**日焼け止め**（自宅の今日のUV指数、晴れの日だけ通知）、**睡眠**（就寝前の通知、朝に「よく眠れましたか？」）、**果物と野菜**（1日の皿数）、**マダニチェック**（4〜10月）、**健診**（歯科、一般健診 … 間隔つき。子どもは年齢に応じたドイツのU健診）。子どもの通知は保護者にも届きます。
-- 新機能：自分のプロフィールでは名前の代わりに「自分」と表示 – カレンダーの絞り込み、タスク、家族などあらゆる場所で、文中でも自然な形に。ほかに：復元の矢印を線アイコンに、新しいホイールのアイコン、ダークモードの黄色い注意書きを同じ金色に。
-- 変更: `pb_hooks/pinn-gesundheit.js`, `js/gesundheit.js`, `css/gesundheit.css`, `js/mitglieder.js`, `js/symbole.js`, `css/dunkelfarbe.css`, `js/aufgaben.js`, `js/termine.js`, `js/listen.js`, `js/sparen.js`, `js/vertraege.js`, `js/familie.js`, `js/hinweise.js`, `js/kassen.js`, `js/zuhause.js`, `js/dokumente.js`, `js/fahrzeuge.js`, `js/ausblick.js`, `js/sterne.js`, `js/vorrat2.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `index.html`.
-
-## 1.153.0の新機能
-
-**Home Assistant のセキュリティ表示**
-
-- 新機能：**セキュリティ** – 家族の管理者は 設定 → セキュリティ で Home Assistant のデバイスを名前付きグループにまとめられます：窓とドア、ドアロック、カメラ、ガレージとシャッター、煙・水漏れ検知器、警報システム、人感センサー。ファミリーダッシュボードの下部にバーが表示され（例：「すべて閉まっています」「キッチンの窓 が開いています」「1 台のカメラがオンです」、警報時は赤）、概要には「セキュリティ」タイルが加わり、大人は開いているドアロックを施錠できます（解錠は不可）。任意の**夜のチェック**：指定時刻にまだ開いている・未施錠・警報解除のものがあれば、管理者全員にプッシュ通知が届きます。前提：設定 → スマートホーム で Home Assistant が接続されていること。
-- 修正：ダークモードでタスク名の下のボタン（スマートホーム開始、メーター読み取り …）が青地に青だった問題 – 金色になりました。
-- 変更: `pb_hooks/pinn-sicherheit.js` (new), `pb_hooks/sicherheit.pb.js` (new), `pb_hooks/pinn-smarthome.js`, `pb_hooks/pinn-schema.js`, `js/sicherheit.js` (new), `css/sicherheit.css` (new), `js/uebersicht.js`, `js/profilauswahl.js`, `js/einstellungen.js`, `css/dunkelfarbe.css`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `pinn-setup.sh`, `src/`, `index.html`.
-
-## 1.152.1の新機能
-
-**バックアップの復元が再び使えるように**
-
-- 修正：バックアップの復元（設定 → システム → バックアップと更新）が、データのみでもすべてでも、必ず「バックアップを確認」で止まっていました。直前に行う現在の状態のバックアップが古いバックアップを整理する際、選んだバックアップの名前を上書きしてしまい、見つからなくなっていたためです。失敗のたびに「復元の前」のバックアップが残りますが、害はなく自動で整理されます（最新3件を保持）。更新で `pinn-wartung.sh` が新しくなり、コンテナ「wartung」は自動で再起動します。
-- Portainer スタック：バックアップが本当に使えるようになりました。1.151.0 の一部がリポジトリに欠けていたため、スタックのサービス「wartung」は起動できませんでした。現在はイメージにバックアップスクリプトが入っていて、スタックの pinn コンテナを自動で見つけます。夜間バックアップ、「今すぐバックアップ」「復元」（データと設定）はスクリプト版と同じように使えます。更新は引き続き Portainer で行います。更新後は Portainer で「Update the stack」を「Re-pull image and redeploy」オンで実行してください。
-- 変更: `pinn-wartung.sh`, `docker/Dockerfile`, `.github/workflows/image.yml`, `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `js/serverzugriff.js`, `i18n/`, `js/versionslog.js`, `js/sprachen.js`, `src/`, `index.html`.
-
 ## しくみ
 
 ```mermaid
@@ -261,7 +167,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.160.1`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.161.0`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

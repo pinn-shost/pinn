@@ -73,6 +73,7 @@ html.dark .fin-trend-budgetline { border-top-color: #EDEAE2; }
 .pcook-ring { width:2.6rem; height:2.6rem; border-radius:999px; display:grid; place-items:center; background: conic-gradient(var(--c-pine) calc(var(--p) * 1%), rgba(37,35,31,0.1) 0); }
 .pcook-ring span { width:2.05rem; height:2.05rem; border-radius:999px; background:#fff; display:grid; place-items:center; font-size:10px; font-weight:600; color: rgba(37,35,31,0.75); }
 .pcook-exp { font-size:11px; color: color-mix(in srgb, var(--c-mustard) 75%, #000); }
+.pcook-ok { font-size:11px; font-weight:500; color: var(--c-pine); }
 .pcook-chip { font-size:10.5px; line-height:1; padding:3px 7px; border-radius:999px; }
 .pcook-miss { background:#FEF3F2; color:#B42318; }
 .pcook-short { background: color-mix(in srgb, var(--c-mustard) 16%, transparent); color: color-mix(in srgb, var(--c-mustard) 75%, #000); }

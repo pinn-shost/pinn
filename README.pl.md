@@ -116,67 +116,6 @@ Dotknij obrazu, aby otworzyć go w pełnym rozmiarze.
 
 pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk, 🇳🇴 Norsk, 🇫🇮 Suomi i 🇭🇺 Magyar**; dostosowuje walutę i numery alarmowe do twojego regionu i przełącza się między określeniami **rodzina** i **wspólne mieszkanie**. Jeden serwer może obsługiwać wiele rodzin, każdą z własnymi administratorami.
 
-## Nowości w 1.160.1
-
-**Poprawka: nieprzetłumaczone teksty**
-
-- Naprawiono: kategorie dokumentów (np. „Paragony i gwarancja”) oraz opis „wypłacono” w Finanse → Kieszonkowe są teraz wszędzie wyświetlane w języku aplikacji.
-
-## Nowości w 1.160.0
-
-**Węgierski**
-
-- Nowe: węgierski (Magyar) to nowy język aplikacji – wszystkie około 7 500 tekstów aplikacji, kreator konfiguracji, eksport danych, wiadomości push z serwera i węgierski numer alarmowy (112). Jest też wariant dla wspólnego mieszkania („háztartás”, „lakótárs”) z węgierskimi końcówkami. Wybierzesz go w Ustawienia → Język i region.
-- Uwaga: tłumaczenie nie zostało sprawdzone przez native speakerów – propozycje poprawek mile widziane jako GitHub issue. Sterowanie głosowe przez Siri/Android jeszcze nie rozumie węgierskiego i odpowiada po angielsku.
-- Zmieniono: `i18n/hu.i18n.js` (new), `README.hu.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## Nowości w 1.159.0
-
-**Fiński**
-
-- Nowe: fiński (Suomi) to nowy język aplikacji – wszystkie około 7 500 tekstów aplikacji, kreator konfiguracji, eksport danych, wiadomości push z serwera i fiński numer alarmowy (112). Jest też wariant dla wspólnego mieszkania („kotitalous”, „asukas”) z fińskimi końcówkami przypadków. Wybierzesz go w Ustawienia → Język i region.
-- Uwaga: tłumaczenie nie zostało sprawdzone przez native speakerów – propozycje poprawek mile widziane jako GitHub issue. Sterowanie głosowe przez Siri/Android jeszcze nie rozumie fińskiego i odpowiada po angielsku.
-- Zmieniono: `i18n/fi.i18n.js` (new), `README.fi.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## Nowości w 1.158.0
-
-**Norweski**
-
-- Nowe: norweski (Norsk, bokmål) to nowy język aplikacji – wszystkie około 7 500 tekstów aplikacji, kreator konfiguracji, eksport danych, wiadomości push z serwera i norweski numer alarmowy (112). Jest też wariant dla wspólnego mieszkania („husstand”, „bofelle”). Wybierzesz go w Ustawienia → Język i region.
-- Uwaga: tłumaczenie nie zostało sprawdzone przez native speakerów – propozycje poprawek mile widziane jako GitHub issue. Sterowanie głosowe przez Siri/Android jeszcze nie rozumie norweskiego i odpowiada po angielsku.
-- Zmieniono: `i18n/nb.i18n.js` (new), `README.nb.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## Nowości w 1.157.0
-
-**Duński**
-
-- Nowe: duński (Dansk) to nowy język aplikacji – wszystkie około 7 500 tekstów aplikacji, kreator konfiguracji, eksport danych, wiadomości push z serwera i duński numer alarmowy (112). Jest też wariant dla wspólnego mieszkania („husstand”, „bofælle”). Wybierzesz go w Ustawienia → Język i region.
-- Uwaga: tłumaczenie nie zostało sprawdzone przez native speakerów – propozycje poprawek mile widziane jako GitHub issue. Sterowanie głosowe przez Siri/Android jeszcze nie rozumie duńskiego i odpowiada po angielsku.
-- Zmieniono: `i18n/da.i18n.js` (new), `README.da.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## Nowości w 1.156.0
-
-**Szwedzki**
-
-- Nowe: szwedzki (Svenska) to nowy język aplikacji – wszystkie około 7 500 tekstów aplikacji, kreator konfiguracji, eksport danych, wiadomości push z serwera i szwedzki numer alarmowy (112). Jest też wariant dla wspólnego mieszkania („hushåll”, „medboende”). Wybierzesz go w Ustawienia → Język i region.
-- Uwaga: tłumaczenie nie zostało sprawdzone przez native speakerów – propozycje poprawek mile widziane jako GitHub issue. Sterowanie głosowe przez Siri/Android jeszcze nie rozumie szwedzkiego i odpowiada po angielsku.
-- Zmieniono: `i18n/sv.i18n.js` (new), `README.sv.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## Nowości w 1.155.0
-
-**Czeski**
-
-- Nowe: czeski (Čeština) to nowy język aplikacji – wszystkie około 7 500 tekstów aplikacji, kreator konfiguracji, eksport danych, wiadomości push z serwera i czeskie numery alarmowe (112, policja 158, pogotowie 155, straż pożarna 150). Jest też wariant dla wspólnego mieszkania. Wybierzesz go w Ustawienia → Język i region.
-- Uwaga: tłumaczenie nie zostało sprawdzone przez native speakerów – propozycje poprawek mile widziane jako GitHub issue. Sterowanie głosowe przez Siri/Android jeszcze nie rozumie czeskiego i odpowiada po angielsku.
-- Zmieniono: `i18n/cs.i18n.js` (new), `README.cs.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## Nowości w 1.154.0
-
-**Poprawka bezpieczeństwa dla adresów kalendarza**
-
-- Naprawiono: adresy kalendarza są teraz sprawdzane. Przy usuwaniu, zmianie lub odczycie wydarzenia w iCloud albo Google serwer używa danych logowania kalendarza rodzinnego i może je wysyłać tylko do serwerów Apple i Google. Wcześniej zalogowany profil mógł zmanipulowanym żądaniem wysłać te dane na dowolny inny serwer. Kalendarze, które już działają, nie są dotknięte.
-- Zmieniono: `pb_hooks/calendar-sync.js`, `js/versionslog.js`, `js/sprachen.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, README.
-
 ## Wymagania
 
 - NAS lub mini PC z zainstalowanym **Dockerem** i **Docker Compose** (np. Synology, UGREEN, QNAP albo zwykły serwer z Linuksem)
@@ -186,7 +125,7 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 ## Instalacja
 
 1. Pobierz i rozpakuj plik ZIP [najnowszej wersji](https://github.com/pinn-shost/pinn/releases/latest).
-2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.160.1` lub `pinn-main`) bez zmian.
+2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.161.0` lub `pinn-main`) bez zmian.
 3. Połącz się przez SSH i uruchom:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

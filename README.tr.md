@@ -116,67 +116,6 @@ Tam boyutta açmak için bir resme dokun.
 
 pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk, 🇳🇴 Norsk, 🇫🇮 Suomi ve 🇭🇺 Magyar**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
 
-## 1.160.1 sürümündeki yenilikler
-
-**Düzeltme: çevrilmemiş metinler**
-
-- Düzeltildi: belge kategorileri (ör. “Fişler ve garanti”) ve Finans → Harçlık altındaki “ödendi” notu artık uygulamanın her yerinde uygulama dilinde gösteriliyor.
-
-## 1.160.0 sürümündeki yenilikler
-
-**Macarca**
-
-- Yeni: Macarca (Magyar) yeni bir uygulama dili olarak eklendi – uygulamanın yaklaşık 7.500 metni, kurulum sihirbazı, veri dışa aktarma, sunucudan gelen push mesajları ve Macaristan acil durum numarası (112). Ortak ev (WG) ifadeleri de dahil (“háztartás”, “lakótárs”), Macarca ekleriyle birlikte. Ayarlar → Dil ve bölge altından seçilir.
-- Not: çeviri ana dili konuşanlar tarafından kontrol edilmedi – önerilerinizi GitHub issue olarak bekleriz. Siri/Android ile sesli kontrol henüz Macarca anlamıyor ve İngilizce yanıt veriyor.
-- Değişenler: `i18n/hu.i18n.js` (new), `README.hu.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## 1.159.0 sürümündeki yenilikler
-
-**Fince**
-
-- Yeni: Fince (Suomi) yeni bir uygulama dili olarak eklendi – uygulamanın yaklaşık 7.500 metni, kurulum sihirbazı, veri dışa aktarma, sunucudan gelen push mesajları ve Finlandiya acil durum numarası (112). Ortak ev (WG) ifadeleri de dahil (“kotitalous”, “asukas”), Fince hâl ekleriyle birlikte. Ayarlar → Dil ve bölge altından seçilir.
-- Not: çeviri ana dili konuşanlar tarafından kontrol edilmedi – önerilerinizi GitHub issue olarak bekleriz. Siri/Android ile sesli kontrol henüz Fince anlamıyor ve İngilizce yanıt veriyor.
-- Değişenler: `i18n/fi.i18n.js` (new), `README.fi.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## 1.158.0 sürümündeki yenilikler
-
-**Norveççe**
-
-- Yeni: Norveççe (Norsk, Bokmål) yeni bir uygulama dili olarak eklendi – uygulamanın yaklaşık 7.500 metni, kurulum sihirbazı, veri dışa aktarma, sunucudan gelen push mesajları ve Norveç acil durum numarası (112). Ortak ev (WG) ifadeleri de dahil (“husstand”, “bofelle”). Ayarlar → Dil ve bölge altından seçilir.
-- Not: çeviri ana dili konuşanlar tarafından kontrol edilmedi – önerilerinizi GitHub issue olarak bekleriz. Siri/Android ile sesli kontrol henüz Norveççe anlamıyor ve İngilizce yanıt veriyor.
-- Değişenler: `i18n/nb.i18n.js` (new), `README.nb.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## 1.157.0 sürümündeki yenilikler
-
-**Danca**
-
-- Yeni: Danca (Dansk) yeni bir uygulama dili olarak eklendi – uygulamanın yaklaşık 7.500 metni, kurulum sihirbazı, veri dışa aktarma, sunucudan gelen push mesajları ve Danimarka acil durum numarası (112). Ortak ev (WG) ifadeleri de dahil (“husstand”, “bofælle”). Ayarlar → Dil ve bölge altından seçilir.
-- Not: çeviri ana dili konuşanlar tarafından kontrol edilmedi – önerilerinizi GitHub issue olarak bekleriz. Siri/Android ile sesli kontrol henüz Danca anlamıyor ve İngilizce yanıt veriyor.
-- Değişenler: `i18n/da.i18n.js` (new), `README.da.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## 1.156.0 sürümündeki yenilikler
-
-**İsveççe**
-
-- Yeni: İsveççe (Svenska) yeni bir uygulama dili olarak eklendi – uygulamanın yaklaşık 7.500 metni, kurulum sihirbazı, veri dışa aktarma, sunucudan gelen push mesajları ve İsveç acil durum numarası (112). Ortak ev (WG) ifadeleri de dahil (“hushåll”, “medboende”). Ayarlar → Dil ve bölge altından seçilir.
-- Not: çeviri ana dili konuşanlar tarafından kontrol edilmedi – önerilerinizi GitHub issue olarak bekleriz. Siri/Android ile sesli kontrol henüz İsveççe anlamıyor ve İngilizce yanıt veriyor.
-- Değişenler: `i18n/sv.i18n.js` (new), `README.sv.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## 1.155.0 sürümündeki yenilikler
-
-**Çekçe**
-
-- Yeni: Çekçe (Čeština) yeni bir uygulama dili olarak eklendi – uygulamanın yaklaşık 7.500 metni, kurulum sihirbazı, veri dışa aktarma, sunucudan gelen push mesajları ve Çek acil durum numaraları (112, polis 158, ambulans 155, itfaiye 150). Ortak ev (WG) ifadeleri de dahil. Ayarlar → Dil ve bölge altından seçilir.
-- Not: çeviri ana dili konuşanlar tarafından kontrol edilmedi – önerilerinizi GitHub issue olarak bekleriz. Siri/Android ile sesli kontrol henüz Çekçe anlamıyor ve İngilizce yanıt veriyor.
-- Değişenler: `i18n/cs.i18n.js` (new), `README.cs.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## 1.154.0 sürümündeki yenilikler
-
-**Takvim adresleri için güvenlik düzeltmesi**
-
-- Düzeltildi: takvim adresleri artık denetleniyor. iCloud veya Google'da bir etkinlik silinirken, değiştirilirken ya da okunurken sunucu aile takviminin oturum bilgilerini kullanır ve bunları yalnızca Apple ve Google sunucularına gönderebilir. Önceden oturum açmış bir profil, değiştirilmiş bir istekle bu bilgileri başka bir sunucuya gönderebilirdi. Zaten çalışan takvimler etkilenmez.
-- Değiştirildi: `pb_hooks/calendar-sync.js`, `js/versionslog.js`, `js/sprachen.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, README.
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -186,7 +125,7 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.160.1` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.161.0` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

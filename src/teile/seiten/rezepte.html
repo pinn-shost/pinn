@@ -42,6 +42,13 @@
           <h3 data-tk="recipe.plannedThisWeek" class="text-xs uppercase tracking-wide text-ink/40 mb-2">Planned this week</h3>
           <div id="recipeWeekSlider" class="flex gap-3 overflow-x-auto pb-3 -mx-6" style="scroll-snap-type: x proximity;"></div>
         </div>
+        <div id="recipeCookSliderWrap" class="hidden px-6 pt-4">
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <h3 data-tk="recipe.cookFromPantry" class="text-xs uppercase tracking-wide text-ink/40">Cook from your pantry</h3>
+            <button data-tk="recipe.cookFromPantryAll" id="recipeCookAllBtn" type="button" class="text-xs text-pine hover:underline">Show all</button>
+          </div>
+          <div id="recipeCookSlider" class="flex gap-3 overflow-x-auto pb-3 -mx-6" style="scroll-snap-type: x proximity;"></div>
+        </div>
         <div id="recipeFavSliderWrap" class="hidden px-6 pt-4">
           <h3 data-tk="recipe.favourites" class="text-xs uppercase tracking-wide text-ink/40 mb-2">Favourites</h3>
           <div id="recipeFavSlider" class="flex gap-3 overflow-x-auto pb-3 -mx-6" style="scroll-snap-type: x proximity;"></div>

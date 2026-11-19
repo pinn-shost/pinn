@@ -139,100 +139,6 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk, 🇳🇴 Norsk, 🇫🇮 Suomi, 🇭🇺 Magyar**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
-## 1.160.1의 새 소식
-
-**수정: 번역되지 않은 텍스트**
-
-- 수정: 문서 카테고리(예: ‘영수증 및 보증’)와 재무 → 용돈의 ‘지급됨’ 표시가 이제 앱 전체에서 앱 언어로 표시됩니다.
-
-## 1.160.0의 새 소식
-
-**헝가리어**
-
-- 새 기능: 헝가리어(Magyar)가 새 앱 언어로 추가됐어요. 앱의 약 7,500개 문장, 설정 도우미, 데이터 내보내기, 서버의 푸시 알림, 헝가리 긴급 전화번호(112)를 지원하고 셰어하우스용 표현(“háztartás”, “lakótárs”)과 헝가리어 어미도 들어 있어요. 설정 → 언어 및 지역에서 고를 수 있어요.
-- 참고: 번역은 원어민 검수를 받지 않았어요. 개선 제안은 GitHub 이슈로 보내 주세요. Siri/Android 음성 제어는 아직 헝가리어를 이해하지 못하고 영어로 답해요.
-- 변경: `i18n/hu.i18n.js` (new), `README.hu.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## 1.159.0의 새 소식
-
-**핀란드어**
-
-- 새 기능: 핀란드어(Suomi)가 새 앱 언어로 추가됐어요. 앱의 약 7,500개 문장, 설정 도우미, 데이터 내보내기, 서버의 푸시 알림, 핀란드 긴급 전화번호(112)를 지원하고 셰어하우스용 표현(“kotitalous”, “asukas”)과 핀란드어 격 어미도 들어 있어요. 설정 → 언어 및 지역에서 고를 수 있어요.
-- 참고: 번역은 원어민 검수를 받지 않았어요. 개선 제안은 GitHub 이슈로 보내 주세요. Siri/Android 음성 제어는 아직 핀란드어를 이해하지 못하고 영어로 답해요.
-- 변경: `i18n/fi.i18n.js` (new), `README.fi.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## 1.158.0의 새 소식
-
-**노르웨이어**
-
-- 새 기능: 노르웨이어(Norsk, 보크몰)가 새 앱 언어로 추가됐어요. 앱의 약 7,500개 문장, 설정 도우미, 데이터 내보내기, 서버의 푸시 알림, 노르웨이 긴급 전화번호(112)를 지원하고 셰어하우스용 표현(“husstand”, “bofelle”)도 들어 있어요. 설정 → 언어 및 지역에서 고를 수 있어요.
-- 참고: 번역은 원어민 검수를 받지 않았어요. 개선 제안은 GitHub 이슈로 보내 주세요. Siri/Android 음성 제어는 아직 노르웨이어를 이해하지 못하고 영어로 답해요.
-- 변경: `i18n/nb.i18n.js` (new), `README.nb.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## 1.157.0의 새 소식
-
-**덴마크어**
-
-- 새 기능: 덴마크어(Dansk)가 새 앱 언어로 추가됐어요. 앱의 약 7,500개 문장, 설정 도우미, 데이터 내보내기, 서버의 푸시 알림, 덴마크 긴급 전화번호(112)를 지원하고 셰어하우스용 표현(“husstand”, “bofælle”)도 들어 있어요. 설정 → 언어 및 지역에서 고를 수 있어요.
-- 참고: 번역은 원어민 검수를 받지 않았어요. 개선 제안은 GitHub 이슈로 보내 주세요. Siri/Android 음성 제어는 아직 덴마크어를 이해하지 못하고 영어로 답해요.
-- 변경: `i18n/da.i18n.js` (new), `README.da.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## 1.156.0의 새 소식
-
-**스웨덴어**
-
-- 새 기능: 스웨덴어(Svenska)가 새 앱 언어로 추가됐어요. 앱의 약 7,500개 문장, 설정 도우미, 데이터 내보내기, 서버의 푸시 알림, 스웨덴 긴급 전화번호(112)를 지원하고 셰어하우스용 표현(“hushåll”, “medboende”)도 들어 있어요. 설정 → 언어 및 지역에서 고를 수 있어요.
-- 참고: 번역은 원어민 검수를 받지 않았어요. 개선 제안은 GitHub 이슈로 보내 주세요. Siri/Android 음성 제어는 아직 스웨덴어를 이해하지 못하고 영어로 답해요.
-- 변경: `i18n/sv.i18n.js` (new), `README.sv.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## 1.155.0의 새 소식
-
-**체코어**
-
-- 새 기능: 체코어(Čeština)가 새 앱 언어로 추가됐어요. 앱의 약 7,500개 문장, 설정 도우미, 데이터 내보내기, 서버의 푸시 알림, 체코 긴급 전화번호(112, 경찰 158, 구급 155, 소방 150)를 지원하고 셰어하우스용 표현도 들어 있어요. 설정 → 언어 및 지역에서 고를 수 있어요.
-- 참고: 번역은 원어민 검수를 받지 않았어요. 개선 제안은 GitHub 이슈로 보내 주세요. Siri/Android 음성 제어는 아직 체코어를 이해하지 못하고 영어로 답해요.
-- 변경: `i18n/cs.i18n.js` (new), `README.cs.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## 1.154.0의 새 소식
-
-**캘린더 주소 보안 수정**
-
-- 수정：캘린더 주소를 이제 검사합니다. iCloud나 Google에서 일정을 삭제·변경·읽을 때 서버는 가족 캘린더의 로그인 정보를 사용하며, 이 정보는 Apple과 Google 서버로만 보낼 수 있습니다. 이전에는 로그인한 프로필이 조작된 요청으로 로그인 정보를 임의의 다른 서버로 보낼 수 있었습니다. 이미 작동하는 캘린더에는 영향이 없습니다.
-- 변경: `pb_hooks/calendar-sync.js`, `js/versionslog.js`, `js/sprachen.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, README.
-
-## 1.153.2의 새 소식
-
-**“AQ.”로 시작하는 Gemini 키, 상태 문구, 오류 로그**
-
-- 수정：설정 마법사가 `AQ.`로 시작하는 새 Google Gemini 키(점이 들어 있음)를 받아들입니다. 이전에는 “확인”에서 유효하다고 나오는데 “다음”에서 거부됐습니다.
-- 수정：가족 구성원의 상태(“이동 중”, “마지막 위치”)가 항상 독일어였던 문제를 고쳐 모든 언어로 표시됩니다.
-- 변경：오류 로그의 메시지는 독일어는 독일어로, 그 밖의 모든 언어는 영어로 표시됩니다.
-- 변경: `pb_hooks/pinn-einrichtung.js`, `pb_hooks/pinn-protokoll.js`, `pb_hooks/protokoll.pb.js`, `einrichtung.js`, `js/fehlerprotokoll.js`, `js/familie.js`, `js/familienkachel.js`, `js/versionslog.js`, `js/sprachen.js`, `i18n/`, `src/`, `index.html`, README.
-
-## 1.153.1의 새 소식
-
-**건강: 새 블록 5개, 내 프로필에는 “나” 표시**
-
-- 건강 페이지 신규: **선크림**(집의 오늘 자외선 지수, 맑은 날만 알림), **수면**(취침 전 알림, 아침에 “잘 잤나요?”), **과일 및 채소**(하루 섭취량), **진드기 확인**(4~10월), **건강검진**(치과, 종합 검진 … 주기 설정; 아이는 나이별 독일 U 검진). 아이의 알림은 부모에게도 갑니다.
-- 신규: 내 프로필에서는 이름 대신 “나”로 표시 – 캘린더 필터, 작업, 가족 등 모든 곳에서, 문장 안에서도 자연스럽게. 그 밖에: 복원 화살표를 선 아이콘으로, 새 휠 아이콘, 다크 모드에서 노란 안내 문구를 같은 금색으로.
-- 변경: `pb_hooks/pinn-gesundheit.js`, `js/gesundheit.js`, `css/gesundheit.css`, `js/mitglieder.js`, `js/symbole.js`, `css/dunkelfarbe.css`, `js/aufgaben.js`, `js/termine.js`, `js/listen.js`, `js/sparen.js`, `js/vertraege.js`, `js/familie.js`, `js/hinweise.js`, `js/kassen.js`, `js/zuhause.js`, `js/dokumente.js`, `js/fahrzeuge.js`, `js/ausblick.js`, `js/sterne.js`, `js/vorrat2.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `index.html`.
-
-## 1.153.0의 새 소식
-
-**Home Assistant 보안 현황**
-
-- 새 기능: **보안** – 가족 관리자는 설정 → 보안에서 Home Assistant 기기를 이름 있는 그룹으로 묶을 수 있습니다: 창문 및 문, 도어락, 카메라, 차고 문 및 셔터, 연기 및 누수 감지기, 경보 시스템, 동작 감지기. 가족 대시보드 하단에 상태 표시줄이 나타나고(예: “모두 닫힘”, “주방 창문 열림”, “카메라 1대 켜짐”, 경보 시 빨간색), 개요에는 “보안” 타일이 추가되어 성인은 열린 도어락을 잠글 수 있습니다(열기는 불가). 선택 사항 **저녁 점검**: 지정한 시각에 아직 열려 있거나 잠기지 않았거나 경보가 해제된 것이 있으면 모든 관리자에게 푸시 알림이 갑니다. 조건: 설정 → 스마트홈에서 Home Assistant 연결.
-- 수정: 다크 모드에서 작업 제목 아래 버튼(스마트홈 시작, 계량기 검침 …)이 파란 바탕에 파란 글씨였던 문제 – 이제 금색입니다.
-- 변경: `pb_hooks/pinn-sicherheit.js` (new), `pb_hooks/sicherheit.pb.js` (new), `pb_hooks/pinn-smarthome.js`, `pb_hooks/pinn-schema.js`, `js/sicherheit.js` (new), `css/sicherheit.css` (new), `js/uebersicht.js`, `js/profilauswahl.js`, `js/einstellungen.js`, `css/dunkelfarbe.css`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `pinn-setup.sh`, `src/`, `index.html`.
-
-## 1.152.1의 새 소식
-
-**백업 복원이 다시 돼요**
-
-- 수정: 백업 복원(설정 → 시스템 → 백업 및 업데이트)이 데이터만이든 전체든 항상 "백업 확인"에서 멈췄어요. 바로 전에 만드는 현재 상태 백업이 오래된 백업을 정리하면서 선택한 백업의 이름을 덮어써서 찾지 못했기 때문이에요. 실패할 때마다 "복원 전" 백업이 남았는데, 해가 없고 저절로 정리돼요(최근 3개 유지). 업데이트로 `pinn-wartung.sh`가 바뀌고, "wartung" 컨테이너는 저절로 다시 시작해요.
-- Portainer 스택: 이제 백업이 제대로 돼요. 저장소에 1.151.0의 일부가 빠져 있어서 스택의 "wartung" 서비스가 시작할 게 없었어요. 이제 이미지에 백업 스크립트가 들어 있고, 스택의 pinn 컨테이너를 스스로 찾아요. 야간 백업, "지금 백업", "복원"(데이터와 설정)이 스크립트 설치와 똑같이 돼요. 업데이트는 계속 Portainer에서 해요. 업데이트 후: Portainer에서 "Update the stack"을 "Re-pull image and redeploy"를 켜고 실행하세요.
-- 변경: `pinn-wartung.sh`, `docker/Dockerfile`, `.github/workflows/image.yml`, `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `js/serverzugriff.js`, `i18n/`, `js/versionslog.js`, `js/sprachen.js`, `src/`, `index.html`.
-
 ## 작동 방식
 
 ```mermaid
@@ -261,7 +167,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.160.1` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.161.0` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

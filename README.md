@@ -135,128 +135,6 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk, 🇳🇴 Norsk, 🇫🇮 Suomi and 🇭🇺 Magyar**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
-## What's new in 1.160.1
-
-**Fix: untranslated texts**
-
-- Fixed: the document categories (e.g. “Receipts & warranty”) and the “paid out” note under Finance → Pocket money are now shown in the app language everywhere.
-
-## What's new in 1.160.0
-
-**Hungarian**
-
-- New: Hungarian (Magyar) is a new app language – all roughly 7,500 texts of the app, the setup assistant, the data export, the push messages from the server and the Hungarian emergency number (112). The flat-share wording is included too (“háztartás”, “lakótárs”), with Hungarian suffixes. Choose it under Settings → Language and region.
-- Note: the translation has not been checked by native speakers – suggestions are welcome as a GitHub issue. Voice control via Siri/Android does not understand Hungarian yet and answers in English.
-- Changed: `i18n/hu.i18n.js` (new), `README.hu.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## What's new in 1.159.0
-
-**Finnish**
-
-- New: Finnish (Suomi) is a new app language – all roughly 7,500 texts of the app, the setup assistant, the data export, the push messages from the server and the Finnish emergency number (112). The flat-share wording is included too (“kotitalous”, “asukas”), with Finnish case endings. Choose it under Settings → Language and region.
-- Note: the translation has not been checked by native speakers – suggestions are welcome as a GitHub issue. Voice control via Siri/Android does not understand Finnish yet and answers in English.
-- Changed: `i18n/fi.i18n.js` (new), `README.fi.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## What's new in 1.158.0
-
-**Norwegian**
-
-- New: Norwegian (Norsk, Bokmål) is a new app language – all roughly 7,500 texts of the app, the setup assistant, the data export, the push messages from the server and the Norwegian emergency number (112). The flat-share wording is included too (“husstand”, “bofelle”). Choose it under Settings → Language and region.
-- Note: the translation has not been checked by native speakers – suggestions are welcome as a GitHub issue. Voice control via Siri/Android does not understand Norwegian yet and answers in English.
-- Changed: `i18n/nb.i18n.js` (new), `README.nb.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## What's new in 1.157.0
-
-**Danish**
-
-- New: Danish (Dansk) is a new app language – all roughly 7,500 texts of the app, the setup assistant, the data export, the push messages from the server and the Danish emergency number (112). The flat-share wording is included too (“husstand”, “bofælle”). Choose it under Settings → Language and region.
-- Note: the translation has not been checked by native speakers – suggestions are welcome as a GitHub issue. Voice control via Siri/Android does not understand Danish yet and answers in English.
-- Changed: `i18n/da.i18n.js` (new), `README.da.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## What's new in 1.156.0
-
-**Swedish**
-
-- New: Swedish (Svenska) is a new app language – all roughly 7,500 texts of the app, the setup assistant, the data export, the push messages from the server and the Swedish emergency number (112). The flat-share wording is included too (“hushåll”, “medboende”). Choose it under Settings → Language and region.
-- Note: the translation has not been checked by native speakers – suggestions are welcome as a GitHub issue. Voice control via Siri/Android does not understand Swedish yet and answers in English.
-- Changed: `i18n/sv.i18n.js` (new), `README.sv.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## What's new in 1.155.0
-
-**Czech**
-
-- New: Czech (Čeština) is a new app language – all roughly 7,500 texts of the app, the setup assistant, the data export, the push messages from the server and the Czech emergency numbers (112, police 158, ambulance 155, fire brigade 150). The flat-share wording is included too. Choose it under Settings → Language and region.
-- Note: the translation has not been checked by native speakers – suggestions are welcome as a GitHub issue. Voice control via Siri/Android does not understand Czech yet and answers in English.
-- Changed: `i18n/cs.i18n.js` (new), `README.cs.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## What's new in 1.154.0
-
-**Security fix for calendar addresses**
-
-- Fixed: calendar addresses are now checked. When an event is deleted, changed or read in iCloud or Google, the server uses the family's calendar login and may send it only to the servers of Apple and Google. Before, a signed-in profile could have sent the login to any other server with a manipulated request. Calendars that already work are not affected.
-- Changed: `pb_hooks/calendar-sync.js`, `js/versionslog.js`, `js/sprachen.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, README.
-
-## What's new in 1.153.2
-
-**Gemini keys with “AQ.”, status texts, error log**
-
-- Fixed: the set-up wizard accepts the new Google Gemini keys that start with `AQ.` (they contain a dot). Before, “Check” said the key was valid but “Next” refused it.
-- Fixed: the status of a family member (“on the way”, “last seen”) was always German – now it is in every language.
-- Changed: the error log shows its messages in German for German and in English for every other language.
-- Changed: `pb_hooks/pinn-einrichtung.js`, `pb_hooks/pinn-protokoll.js`, `pb_hooks/protokoll.pb.js`, `einrichtung.js`, `js/fehlerprotokoll.js`, `js/familie.js`, `js/familienkachel.js`, `js/versionslog.js`, `js/sprachen.js`, `i18n/`, `src/`, `index.html`, README.
-
-## What's new in 1.153.1
-
-**Health: five new blocks, “Me” in your own profile**
-
-- New on the health page: **sunscreen** (today's UV index at home, reminder only on sunny days), **sleep** (bedtime reminder, “How did you sleep?” in the morning), **fruit & vegetables** (portions per day), **tick check** (April–October) and **check-ups** (dentist, check-up … with an interval; for children the German U examinations by age). For children the reminders go to the parents too.
-- New: in your own profile pinn. says “Me” instead of your name – calendar filter, tasks, family and everywhere else, inflected to fit in sentences. Plus: line icon for the restore arrow, new rim icon, same gold for yellow hints in dark mode.
-- Changed: `pb_hooks/pinn-gesundheit.js`, `js/gesundheit.js`, `css/gesundheit.css`, `js/mitglieder.js`, `js/symbole.js`, `css/dunkelfarbe.css`, `js/aufgaben.js`, `js/termine.js`, `js/listen.js`, `js/sparen.js`, `js/vertraege.js`, `js/familie.js`, `js/hinweise.js`, `js/kassen.js`, `js/zuhause.js`, `js/dokumente.js`, `js/fahrzeuge.js`, `js/ausblick.js`, `js/sterne.js`, `js/vorrat2.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `index.html`.
-
-## What's new in 1.153.0
-
-**Security from Home Assistant**
-
-- New: **Security** – family admins put Home Assistant devices into named groups under Settings → Security: windows & doors, door locks, cameras, garage door & shutters, smoke & water detectors, alarm system, motion detectors. The family dashboard shows a bar at the bottom (e.g. “All closed”, “Kitchen window is open”, “1 camera is on”, red for an alarm), the overview gets a “Security” tile where adults can lock an unlocked door lock (never unlock). Optional **evening check**: at a time you choose, all admins get a push if something is still open, unlocked or the alarm system is disarmed. Needs Home Assistant connected under Settings → Smart home.
-- Fixed: in dark mode the buttons below the title of a task (smart home start, meter reading …) were blue on blue – now gold.
-- Changed: `pb_hooks/pinn-sicherheit.js` (new), `pb_hooks/sicherheit.pb.js` (new), `pb_hooks/pinn-smarthome.js`, `pb_hooks/pinn-schema.js`, `js/sicherheit.js` (new), `css/sicherheit.css` (new), `js/uebersicht.js`, `js/profilauswahl.js`, `js/einstellungen.js`, `css/dunkelfarbe.css`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `pinn-setup.sh`, `src/`, `index.html`.
-
-## What's new in 1.152.1
-
-**Restoring backups works again**
-
-- Fixed: restoring a backup (Settings → System → Backups & updates) always stopped at “Check backup”, no matter whether only data or everything was chosen. The backup of the current state made just before cleaned up old backups and in doing so overwrote the name of the chosen backup, which was then not found. Each failed attempt left a backup “Before a restore” behind – these are harmless and are cleaned up by themselves (the last 3 are kept). Needs an update of `pinn-wartung.sh`; the container “wartung” restarts by itself.
-- Portainer stack: backups really work now. The service “wartung” of the stack had nothing to start, because part of 1.151.0 was missing in the repository. Now the image contains the backup script, which finds the pinn container of the stack by itself – nightly backups, “Back up now” and “Restore” (data and set-up) work as in the script installation. Updates stay in Portainer. After the update: in Portainer “Update the stack” with “Re-pull image and redeploy”.
-- Changed: `pinn-wartung.sh`, `docker/Dockerfile`, `.github/workflows/image.yml`, `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `js/serverzugriff.js`, `i18n/`, `js/versionslog.js`, `js/sprachen.js`, `src/`, `index.html`.
-
-## What's new in 1.152.0
-
-**Your own reverse proxy instead of Tailscale**
-
-- New: access from the internet through your own reverse proxy (Nginx Proxy Manager, Traefik, Cloudflare Tunnel …) – see “Access from the internet with your own reverse proxy” under Installation. pinn. now only believes the visitor address from trusted proxies (`PINN_PROXY_NETZE`), so the lock after wrong passwords cannot be dodged (IPv6: per /64). From the internet the PocketBase administration and PocketBase's own sign-in ways are blocked, the start password `Admin` does not work, and guessing tracker IDs is slowed down. Admins get a push “🚨 Security warning” for such attempts (address, home network or internet, device); all details are in the error log under “Security”. Nothing changes in the home network.
-- Changed: `pb_hooks/pinn-netz.js` (new), `pb_hooks/netz.pb.js` (new), `pb_hooks/pinn-alarm.js` (new), `pb_hooks/pinn-sitzungen.js`, `pb_hooks/benutzer.pb.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/zuhause.pb.js`, `pb_hooks/sprache.pb.js`, `pb_hooks/smarthome.pb.js`, `pb_hooks/pinn-ortung.js`, `pb_hooks/pinn-protokoll.js`, `pb_hooks/pinn-pushtext.js`, `js/anmeldemaske.js`, `js/fehlerprotokoll.js`, `js/hinweise.js`, `js/appstart.js`, `i18n/`, `docker/docker-compose.portainer.yaml`, `env.txt`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
-
-## What's new in 1.151.0
-
-**Portainer stack, ready-made image**
-
-- New: pinn. can be installed from the Portainer Stack UI without SSH and without the setup script. A ready-made image (amd64, arm64) is built on every release and published at `ghcr.io/pinn-shost/pinn`; the new file `docker/docker-compose.portainer.yaml` uses it with volumes and no fixed container names (no more clash with an existing Tailscale container). The stack also has a backup service (nightly backups, “Back up now” and “Restore” in the app; updates stay in Portainer) and optional, commented-out blocks for Traccar and the Home Assistant detour. See “Portainer stack (no script)” under Installation.
-- Changed: `docker/` (new), `.github/workflows/image.yml` (new), `pinn-wartung.sh`, `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
-
-## What's new in 1.150.11
-
-**Icons and small fixes**
-
-- Comb icon for “Comb hair” on the kids page; no emoji field next to the depot name any more; fund drop-down lists without emoji; the tool is now an open-end spanner; “Menus for guests” with the two-people icon; a tap on the logo next to the family name leads to the overview; the Notifications card is filled first so “Activate on this device” always shows; shortcut icons are grey in dark mode.
-- Changed: `js/symbole.js`, `js/symbole3.js`, `js/ansichten.js`, `js/konto.js`, `css/dunkelfarbe.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`.
-
-## What's new in 1.150.10
-
-**Dark mode, more icons, new pets banner, pet diary**
-
-- **Dark mode.** Blue text is now gold (devices, lists, “Plan shopping”, ticks for pets, health and tasks); the bars in Household have the colour of the room; chat banner and notes, contract hints and “In view” texts are readable. **More icons instead of emoji:** profile pictures (baby, boy, girl, man, woman, grandpa, grandma), family and flat share, animals (dog, cat, rabbit, hamster, bird, chick, fish, horse, turtle, snake) – also for the hospital bag, the gift list “Easter”, checklists and finance categories; drop-down lists show the text only. **New pets banner** with colourful animals. **Pet diary:** a ticked-off check-up appears in the diary, a × undoes an accidental tick.
-- Changed: `css/dunkelfarbe.css` (new), `js/symbole3.js` (new), `js/symbole.js`, `js/szenen.js`, `js/familie.js`, `js/haushalt.js`, `css/symbolfarbe.css`, `css/haustierewetter.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
-
 ## How it works
 
 ```mermaid
@@ -283,7 +161,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.160.1` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.161.0` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

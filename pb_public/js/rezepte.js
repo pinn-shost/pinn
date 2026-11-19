@@ -288,6 +288,7 @@ function renderRecipesForCurrentView() {
   if (currentView === 'uebersicht') {
     titleEl.textContent = tk('recipe.plannedThisWeek');
     document.getElementById('recipeFavSliderWrap').classList.add('hidden');
+    document.getElementById('recipeCookSliderWrap').classList.add('hidden');
     document.getElementById('recipeList').innerHTML = '';
     renderRecipeWeekSlider();
     const noneThisWeek = document.getElementById('recipeWeekSliderWrap').classList.contains('hidden');
@@ -313,6 +314,7 @@ function renderPublicRecipeList() {
   const empty = document.getElementById('emptyRecipes');
   const count = document.getElementById('recipeCount');
   document.getElementById('recipeWeekSliderWrap').classList.add('hidden');
+  document.getElementById('recipeCookSliderWrap').classList.add('hidden');
   document.getElementById('recipeFavSliderWrap').classList.add('hidden');
   list.innerHTML = '';
   if (!publicRecipesLoadedAt) {
@@ -430,6 +432,7 @@ function renderFullRecipeList() {
   // When searching or filtering only the result list counts - "Diese Woche geplant" and the
   // favourites bar are left out then.
   renderRecipeWeekSlider();
+  renderRecipeCookSlider();
   renderRecipeFavSlider();
 }
 

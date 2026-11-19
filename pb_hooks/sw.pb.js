@@ -285,13 +285,33 @@ async function applyBadge(n) {
   } catch (e) { /* ignore */ }
 }
 
+// iOS (and Safari) cancel the push subscription of a device when a wake-up call does not show a
+// notification in time - after an update the server is often still starting. So the message is fetched
+// with an overall time limit (including reading the answer), and a notification is shown in every case
+// (since 1.160.2).
+function withDeadline(promise, ms) {
+  let timer = null;
+  return Promise.race([promise, new Promise(res => { timer = setTimeout(() => res(null), ms); })])
+    .finally(() => clearTimeout(timer));
+}
 async function showNextNotification(event) {
+  try {
+    await showNextNotificationInner(event);
+  } catch (e) {
+    // Last resort: a plain note, so the device keeps its registration
+    try { await self.registration.showNotification('pinn.', { body: FALLBACK_TEXT.de, tag: 'pinn-allgemein', icon: '/apple-touch-icon.png', data: { url: '/' } }); } catch (e2) { /* nothing left to do */ }
+  }
+}
+async function showNextNotificationInner(event) {
   let msg = null;
   try { if (event.data) msg = event.data.json(); } catch (e) { msg = null; }
   if (!msg) {
-    try { msg = await fetchPendingMessage(); } catch (e) { msg = null; }
+    try { msg = await withDeadline(fetchPendingMessage().catch(() => null), 7000); } catch (e) { msg = null; }
   }
-  if (!msg) msg = await fallbackMessage();
+  if (!msg) {
+    try { msg = await withDeadline(fallbackMessage(), 1500); } catch (e) { msg = null; }
+  }
+  if (!msg) msg = { titel: 'pinn.', text: FALLBACK_TEXT.de, tag: 'pinn-allgemein', url: '/' };
   const sos = String(msg.tag || '').indexOf('sos-') === 0;
   const opts = {
     body: msg.text || '',
@@ -310,7 +330,12 @@ async function showNextNotification(event) {
     opts.vibrate = [600, 200, 600, 200, 600, 200, 1200, 300, 600, 200, 600];
     opts.timestamp = Date.now();
   }
-  await self.registration.showNotification(msg.titel || 'pinn.', opts);
+  try {
+    await self.registration.showNotification(msg.titel || 'pinn.', opts);
+  } catch (e) {
+    // e.g. an option the device does not support: show it once more without extras
+    await self.registration.showNotification(msg.titel || 'pinn.', { body: opts.body, tag: opts.tag, icon: opts.icon, data: opts.data });
+  }
   if (sos) await tellWindows({ type: 'pinn-sos', url: msg.url || '/' });
   // Open pinn. windows: reload the bell right away (the message is there now as well)
   await tellWindows({ type: 'pinn-push', url: msg.url || '/' });

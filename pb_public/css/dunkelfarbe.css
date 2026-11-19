@@ -124,9 +124,9 @@ html.dark .chat-row.mine .chat-text.chat-muted { color: #E9D9A6; }
 /* ---------- Pantry: "on the list" tag ---------- */
 html.dark .bg-pine\/10.text-pine { background: var(--dk-gold-soft) !important; color: var(--dk-gold) !important; }
 
-/* ---------- Shortcut app icons: grey only in dark mode (since 1.150.11), light mode keeps its colours ---------- */
-html.dark .kz-ico,
-html.dark .kz-set-row.is-off .kz-ico { filter: grayscale(1); }
+/* ---------- Shortcut app icons in dark mode: colours again, but muted (since 1.160.2; 1.150.11–1.160.1 grey) ---------- */
+html.dark .kz-ico { filter: saturate(.5) brightness(.88); }
+html.dark .kz-set-row.is-off .kz-ico { filter: grayscale(.8) brightness(.85); }
 
 /* Mustard hint texts (e.g. "Required as long as your family has a dashboard" at the dashboard PIN) use the same gold
    as everything else in dark mode (since 1.153.1; before they were the darker mustard of the light mode) */

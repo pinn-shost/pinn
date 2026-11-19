@@ -669,6 +669,61 @@ function analyzeMeter(input) {
 }
 
 // ---------------------------------------------------------------------------------------------
+// Medicine pack from a photo (Health -> medication supply, since 1.161.0)
+// ---------------------------------------------------------------------------------------------
+// input: { dateien: [{ mime, daten }] }
+// -> { name, staerke, packung, einheit, rezeptpflichtig, verfall, hinweis }
+const PACK_SCHEMA = {
+    type: "OBJECT",
+    properties: {
+        ist_packung: { type: "BOOLEAN" },
+        name: { type: "STRING" },
+        staerke: { type: "STRING" },
+        packung: { type: "NUMBER" },
+        einheit: { type: "STRING" },
+        rezeptpflichtig: { type: "BOOLEAN" },
+        verfall: { type: "STRING" },
+        hinweis: { type: "STRING" },
+    },
+    required: ["ist_packung", "name", "staerke", "packung", "einheit", "rezeptpflichtig", "verfall", "hinweis"],
+    propertyOrdering: ["ist_packung", "name", "staerke", "packung", "einheit", "rezeptpflichtig", "verfall", "hinweis"],
+};
+function packInstructions() {
+    return [
+        "Du liest die Angaben einer Medikamenten- oder Vitamin-Packung für die Familien-App pinn. von einem Foto ab.",
+        "Regeln:",
+        "- name: Name des Präparats ohne Stärke und ohne Packungsgröße.",
+        "- staerke: Wirkstoffmenge je Einheit, z. B. \"400 mg\", sonst leer.",
+        "- packung: Inhalt der Packung als Zahl (z. B. 20 bei \"20 Tabletten\" oder 100 bei \"100 ml\"), sonst 0.",
+        "- einheit: genau eines von Tablette, Kapsel, Stück, ml, Beutel (die passende Einheit zur Packungsgröße), sonst leer.",
+        "- rezeptpflichtig: true nur, wenn \"Rp\", \"verschreibungspflichtig\" oder ein Rezeptvermerk zu sehen ist; ohne Hinweis false.",
+        "- verfall: Verfalldatum als YYYY-MM-DD (bei Monat/Jahr den letzten Tag des Monats), sonst leer.",
+        "- ist_packung: false, wenn keine Packung zu sehen ist.",
+        "- hinweis: kurzer deutscher Hinweis, falls etwas unklar ist, sonst leer. Keine Dosierungsempfehlung geben.",
+    ].join("\n");
+}
+function analyzePack(input) {
+    const data = input && typeof input === "object" ? input : {};
+    const parts = schoolParts(data, 2);
+    parts.unshift({ text: "Bitte die Packung auf diesem Foto auslesen." });
+    const r = callGemini(parts, [], [], { system: packInstructions(), schema: PACK_SCHEMA });
+    if (r.ist_packung === false || !cleanText(r.name, 80)) throw new Error("Auf dem Foto war keine Packung zu erkennen.");
+    const units = ["Tablette", "Kapsel", "Stück", "ml", "Beutel"];
+    const unit = cleanText(r.einheit, 12);
+    const pack = Number(r.packung);
+    return {
+        name: cleanText(r.name, 80),
+        staerke: cleanText(r.staerke, 40),
+        packung: isFinite(pack) && pack > 0 && pack < 100000 ? Math.round(pack * 100) / 100 : 0,
+        einheit: units.indexOf(unit) >= 0 ? unit : "",
+        rezeptpflichtig: r.rezeptpflichtig === true,
+        verfall: isIso(r.verfall) ? r.verfall : "",
+        hinweis: cleanText(r.hinweis, 200),
+        modell: String(r.__modell || ""),
+    };
+}
+
+// ---------------------------------------------------------------------------------------------
 // School & daycare: shared file check (photos and PDF)
 // ---------------------------------------------------------------------------------------------
 function schoolParts(data, maxFiles) {
@@ -807,4 +862,4 @@ function status() {
     return { aktiv: isAvailable(), modell: readEnv(MODEL_ENV) || DEFAULT_MODELS[0] };
 }
 
-module.exports = { isAvailable, status, analyzeRecipe, analyzeMeter, analyzeTimetable, analyzeLetter };
+module.exports = { isAvailable, status, analyzeRecipe, analyzeMeter, analyzePack, analyzeTimetable, analyzeLetter };

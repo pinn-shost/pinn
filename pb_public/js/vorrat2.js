@@ -825,6 +825,7 @@ const PCOOK_SYN = { ei: 'eier' };
 const PCOOK_OPTIONAL = /nach belieben|optional|zum garnieren|zum bestreuen|zum servieren|zum anbraten|zum braten|evtl\.?|n\. ?b\./i;
 let pcookOnlyExpiring = false;
 let pcookOnlyFav = false;
+let pcookOnlyQuick = false; // since 1.161.0: only recipes that are ready within 30 minutes
 let pcookShowAll = false;
 let pcookResults = [];
 
@@ -884,9 +885,14 @@ function pcookFindPantry(words, avail) {
   const part = avail.find(a => words.some(w => a.words.some(pw => pcookWordMatch(w, pw))));
   return part ? { p: part.p, exact: false } : null;
 }
+const PCOOK_QUICK_MIN = 30;
 function pcookCompute() {
   const avail = pantryItems.filter(p => (pantryNum(p.qty) || 0) > 0).map(p => ({ p, words: pcookWords(p.name) }));
   const out = [];
+  const todayIso = isoDate(new Date());
+  // Last day each recipe was cooked (meals ticked off as cooked in the plan)
+  const cooked = {};
+  mealPlan.forEach(m => { if (m && m.cooked && m.recipeId && m.date && m.date <= todayIso && (!cooked[String(m.recipeId)] || m.date > cooked[String(m.recipeId)])) cooked[String(m.recipeId)] = m.date; });
   recipes.forEach(r => {
     const lines = (r.ingredients || []).map(pcookParseLine).filter(Boolean);
     const counted = lines.filter(l => !l.optional && !l.basic);
@@ -907,12 +913,28 @@ function pcookCompute() {
       }
       have.push({ line: l, p });
     });
-    out.push({ r, total: counted.length, have, short, missing, expiring, fav: isRecipeFavorite(String(r.id)) });
+    // since 1.161.0: how urgent is it to use the expiring items (days until the soonest best-before date), when was it
+    // cooked last, is it planned this week already, is it quick
+    const urgency = expiring.length ? Math.min(...expiring.map(p => pantryExpiryDays(p))) : null;
+    const lastCooked = cooked[String(r.id)] || '';
+    const sinceCooked = lastCooked ? Math.max(0, pantryDaysUntil(todayIso) - pantryDaysUntil(lastCooked)) : null;
+    const minutes = (Number(r.prepTime) || 0) + (Number(r.cookTime) || 0);
+    out.push({
+      r, total: counted.length, have, short, missing, expiring, fav: isRecipeFavorite(String(r.id)),
+      urgency, sinceCooked, planned: isPlannedThisWeek(r.id), quick: minutes > 0 && minutes <= PCOOK_QUICK_MIN,
+    });
   });
-  out.sort((a, b) => (a.missing.length + a.short.length) - (b.missing.length + b.short.length)
-    || b.expiring.length - a.expiring.length
+  // Order inside a group: use up what expires first, then what is not planned this week and was not cooked
+  // lately, then favourites, then quick ones, then by title
+  const lacks = x => x.missing.length + x.short.length;
+  const recent = x => x.sinceCooked !== null && x.sinceCooked <= 7 ? 2 : (x.sinceCooked !== null && x.sinceCooked <= 14 ? 1 : 0);
+  out.sort((a, b) => lacks(a) - lacks(b)
+    || (a.urgency === null ? 999 : a.urgency) - (b.urgency === null ? 999 : b.urgency)
+    || (a.planned ? 1 : 0) - (b.planned ? 1 : 0)
+    || recent(a) - recent(b)
     || (b.fav ? 1 : 0) - (a.fav ? 1 : 0)
-    || b.have.length - a.have.length
+    || (b.quick ? 1 : 0) - (a.quick ? 1 : 0)
+    || b.have.length / b.total - a.have.length / a.total
     || String(a.r.title || '').localeCompare(String(b.r.title || ''), 'de', { sensitivity: 'base' }));
   return out;
 }
@@ -925,7 +947,10 @@ function pcookCardHtml(x, idx) {
   const ok = x.have.length;
   const pct = Math.round(ok / x.total * 100);
   const lack = [...x.missing.map(l => ({ t: l.core, cls: 'pcook-miss' })), ...x.short.map(s => ({ t: s.line.core, cls: 'pcook-short' }))];
-  const meta = [tk('pantry.cook.have', { n: ok, total: x.total }), pcookTimeText(r)].filter(Boolean).join(' · ');
+  const meta = [tk('pantry.cook.have', { n: ok, total: x.total }), pcookTimeText(r),
+    x.planned ? '📅 ' + tk('recipe.plannedThisWeek') : '',
+    x.sinceCooked !== null && x.sinceCooked <= 14 ? tk('pantry.cook.cookedDaysAgo', { n: x.sinceCooked }) : '',
+  ].filter(Boolean).join(' · ');
   return `
     <div class="pcook-card" data-idx="${idx}">
       <div class="flex items-start gap-3">
@@ -948,6 +973,7 @@ function pcookCardHtml(x, idx) {
 function openPantryCook(opts = {}) {
   pcookOnlyExpiring = !!opts.expiring;
   pcookOnlyFav = false;
+  pcookOnlyQuick = false;
   pcookShowAll = false;
   renderPantryCook();
   document.getElementById('pantryCookModal').classList.remove('hidden');
@@ -958,6 +984,7 @@ function renderPantryCook() {
   const sub = document.getElementById('pantryCookSub');
   document.getElementById('pantryCookExpOnly').classList.toggle('active', pcookOnlyExpiring);
   document.getElementById('pantryCookFavOnly').classList.toggle('active', pcookOnlyFav);
+  document.getElementById('pantryCookQuickOnly').classList.toggle('active', pcookOnlyQuick);
   const stock = pantryItems.filter(p => (pantryNum(p.qty) || 0) > 0).length;
   if (!recipes.length) {
     sub.textContent = '';
@@ -973,22 +1000,30 @@ function renderPantryCook() {
   let rows = pcookResults;
   if (pcookOnlyExpiring) rows = rows.filter(x => x.expiring.length);
   if (pcookOnlyFav) rows = rows.filter(x => x.fav);
+  if (pcookOnlyQuick) rows = rows.filter(x => x.quick);
   sub.textContent = tk('pantry.cook.stock', { n: stock }) + ' · ' + tk('pantry.cook.checked', { n: pcookResults.length });
   if (!rows.length) {
     list.innerHTML = `<p class="text-sm text-ink/45 italic text-center py-6">${escapeHtml(pcookOnlyExpiring ? tk('pantry.cook.noneExpiring') : tk('pantry.cook.noneMatch'))}</p>`;
     return;
   }
-  const all = rows.filter(x => !x.missing.length && !x.short.length);
-  const near = rows.filter(x => (x.missing.length || x.short.length) && x.missing.length + x.short.length <= 2);
-  const rest = rows.filter(x => x.missing.length + x.short.length > 2);
+  // since 1.161.0: without a filter the recipes that use up soon-expiring items come first (at most 3, only if
+  // nearly everything is there), the others follow in their groups
+  const urgent = !pcookOnlyExpiring && !pcookOnlyFav && !pcookOnlyQuick
+    ? rows.filter(x => x.expiring.length && x.missing.length + x.short.length <= 2)
+      .sort((a, b) => a.urgency - b.urgency || (a.missing.length + a.short.length) - (b.missing.length + b.short.length)).slice(0, 3)
+    : [];
+  const rest0 = rows.filter(x => !urgent.includes(x));
+  const all = rest0.filter(x => !x.missing.length && !x.short.length);
+  const near = rest0.filter(x => (x.missing.length || x.short.length) && x.missing.length + x.short.length <= 2);
+  const rest = rest0.filter(x => x.missing.length + x.short.length > 2);
   const sec = (title, items) => items.length ? `
     <div>
       <h4 class="text-xs uppercase tracking-wide text-ink/40 mb-2">${escapeHtml(title)} <span class="normal-case tracking-normal text-ink/30">· ${items.length}</span></h4>
       <div class="flex flex-col gap-2">${items.map(x => pcookCardHtml(x, pcookResults.indexOf(x))).join('')}</div>
     </div>` : '';
-  let html = sec(tk('pantry.cook.allThere'), all) + sec(tk('pantry.cook.nearly'), near);
+  let html = sec(tk('pantry.cook.useFirst'), urgent) + sec(tk('pantry.cook.allThere'), all) + sec(tk('pantry.cook.nearly'), near);
   if (rest.length) {
-    html += pcookShowAll || (!all.length && !near.length)
+    html += pcookShowAll || (!all.length && !near.length && !urgent.length)
       ? sec(tk('pantry.cook.more'), rest.slice(0, 30))
       : `<button type="button" id="pcookMoreBtn" class="self-center px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine">${escapeHtml(tk('pantry.cook.showMore', { n: rest.length }))}</button>`;
   }
@@ -999,6 +1034,50 @@ function renderPantryCook() {
     const x = pcookResults[Number(card.dataset.idx)];
     if (!x) return;
     card.querySelectorAll('[data-pc]').forEach(b => b.addEventListener('click', () => pcookAction(b.dataset.pc, x, card)));
+  });
+}
+// Bar "Cook from your pantry" in the recipes tab (since 1.161.0): the best matches of the pantry check - everything
+// there or at most two things missing, recipes that use up soon-expiring items first. Only for the own recipe list
+// without search or filter, and only if the pantry has something in it.
+function renderRecipeCookSlider() {
+  const wrap = document.getElementById('recipeCookSliderWrap');
+  const slider = document.getElementById('recipeCookSlider');
+  if (!wrap || !slider) return;
+  if (currentView !== 'rezepte' || recipeListSource !== 'eigene' || recipeIsFiltered() || !recipes.length
+      || !pantryItems.some(p => (pantryNum(p.qty) || 0) > 0)) {
+    wrap.classList.add('hidden');
+    return;
+  }
+  const lacks = x => x.missing.length + x.short.length;
+  const best = pcookCompute().filter(x => lacks(x) <= 2 && x.have.length > 0);
+  // soon-expiring first (they are already sorted by "lacks"), at most 8 cards
+  const items = [...best.filter(x => x.expiring.length), ...best.filter(x => !x.expiring.length)].slice(0, 8);
+  if (!items.length) {
+    wrap.classList.add('hidden');
+    slider.innerHTML = '';
+    return;
+  }
+  wrap.classList.remove('hidden');
+  const edgeSpacer = `<div class="shrink-0" style="width:${WEEK_SLIDER_PEEK_PX}px" aria-hidden="true"></div>`;
+  slider.innerHTML = edgeSpacer + items.map((x, i) => {
+    const r = x.r;
+    const lack = [...x.missing.map(l => l.core), ...x.short.map(s => s.line.core)];
+    const status = lack.length
+      ? `<span class="pcook-chip pcook-miss">${escapeHtml(tk('pantry.cook.lacks', { name: lack.slice(0, 2).join(', ') }))}</span>`
+      : `<span class="pcook-ok">${escapeHtml(tk('pantry.cook.allThere'))}</span>`;
+    return `
+      <button type="button" class="fav-slider-card shrink-0 w-32 text-left rounded-xl border border-ink/10 bg-white p-2 fade-in" data-index="${i}" style="scroll-snap-align: start;">
+        <div class="recipe-thumb w-full aspect-square rounded-lg overflow-hidden bg-ink/5">${r.image ? `<img src="${recipeImageSrc(r.image, true, r.imageFrame)}" loading="lazy" class="w-full h-full object-cover" alt="" onerror="this.remove()"${recipeImgStyleAttr(r)} />` : '<div class="w-full h-full grid place-items-center text-2xl opacity-30">🍽️</div>'}</div>
+        <div class="font-serif text-sm font-bold mt-1.5 line-clamp-2 leading-tight min-h-[2.25rem]">${escapeHtml(r.title)}</div>
+        <div class="text-[11px] mt-0.5 min-h-[1rem]">${status}</div>
+        ${x.expiring.length ? `<div class="pcook-exp mt-0.5">⏳ ${escapeHtml(tk('pantry.cook.usesUp'))}</div>` : ''}
+      </button>`;
+  }).join('') + edgeSpacer;
+  slider.querySelectorAll('.fav-slider-card').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const x = items[Number(btn.dataset.index)];
+      if (x) openRecipeDetailPage(x.r.id);
+    });
   });
 }
 function pcookAction(act, x, card) {
@@ -1052,6 +1131,7 @@ function pcookToShopping(x, listId) {
 document.getElementById('openPantryScanBtn').addEventListener('click', openPantryScan);
 document.getElementById('openPantryCookBtn').addEventListener('click', () => openPantryCook());
 document.getElementById('openRecipeCookBtn').addEventListener('click', () => openPantryCook());
+document.getElementById('recipeCookAllBtn').addEventListener('click', () => openPantryCook());
 document.getElementById('pantryExpCookBtn').addEventListener('click', () => openPantryCook({ expiring: true }));
 document.getElementById('pantryExpToggle').addEventListener('click', () => { pantryOnlyExpiring = !pantryOnlyExpiring; renderPantry(); });
 document.getElementById('pantryBestBeforeClear').addEventListener('click', () => { document.getElementById('pantryBestBeforeInput').value = ''; });
@@ -1100,6 +1180,7 @@ document.getElementById('pantryCookClose').addEventListener('click', closePantry
 document.getElementById('pantryCookModal').addEventListener('click', (e) => { if (e.target.id === 'pantryCookModal') closePantryCook(); });
 document.getElementById('pantryCookExpOnly').addEventListener('click', () => { pcookOnlyExpiring = !pcookOnlyExpiring; renderPantryCook(); });
 document.getElementById('pantryCookFavOnly').addEventListener('click', () => { pcookOnlyFav = !pcookOnlyFav; renderPantryCook(); });
+document.getElementById('pantryCookQuickOnly').addEventListener('click', () => { pcookOnlyQuick = !pcookOnlyQuick; renderPantryCook(); });
 // App in the background: camera off (battery); back again: continue as long as nothing is displayed
 document.addEventListener('visibilitychange', () => {
   if (!pantryScanModalOpen()) return;

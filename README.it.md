@@ -139,100 +139,6 @@ Tocca un’immagine per aprirla a dimensione intera.
 
 pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk, 🇳🇴 Norsk, 🇫🇮 Suomi e 🇭🇺 Magyar**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
 
-## Novità della 1.160.1
-
-**Correzione: testi non tradotti**
-
-- Corretto: le categorie dei documenti (ad es. «Scontrini e garanzia») e la dicitura «erogato» in Finanze → Paghetta ora compaiono ovunque nella lingua dell'app.
-
-## Novità della 1.160.0
-
-**Ungherese**
-
-- Novità: l’ungherese (Magyar) è una nuova lingua dell’app – tutti i circa 7.500 testi dell’app, l’assistente di configurazione, l’esportazione dei dati, i messaggi push dal server e il numero di emergenza ungherese (112). È inclusa anche la variante per casa condivisa («háztartás», «lakótárs») con i suffissi ungheresi. Si sceglie in Impostazioni → Lingua e regione.
-- Nota: la traduzione non è stata verificata da madrelingua – i suggerimenti sono benvenuti come issue su GitHub. Il controllo vocale tramite Siri/Android non capisce ancora l’ungherese e risponde in inglese.
-- Modificato: `i18n/hu.i18n.js` (new), `README.hu.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## Novità della 1.159.0
-
-**Finlandese**
-
-- Novità: il finlandese (Suomi) è una nuova lingua dell’app – tutti i circa 7.500 testi dell’app, l’assistente di configurazione, l’esportazione dei dati, i messaggi push dal server e il numero di emergenza finlandese (112). È inclusa anche la variante per casa condivisa («kotitalous», «asukas») con le desinenze di caso finlandesi. Si sceglie in Impostazioni → Lingua e regione.
-- Nota: la traduzione non è stata verificata da madrelingua – i suggerimenti sono benvenuti come issue su GitHub. Il controllo vocale tramite Siri/Android non capisce ancora il finlandese e risponde in inglese.
-- Modificato: `i18n/fi.i18n.js` (new), `README.fi.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## Novità della 1.158.0
-
-**Norvegese**
-
-- Novità: il norvegese (Norsk, bokmål) è una nuova lingua dell’app – tutti i circa 7.500 testi dell’app, l’assistente di configurazione, l’esportazione dei dati, i messaggi push dal server e il numero di emergenza norvegese (112). È inclusa anche la variante per casa condivisa («husstand», «bofelle»). Si sceglie in Impostazioni → Lingua e regione.
-- Nota: la traduzione non è stata verificata da madrelingua – i suggerimenti sono benvenuti come issue su GitHub. Il controllo vocale tramite Siri/Android non capisce ancora il norvegese e risponde in inglese.
-- Modificato: `i18n/nb.i18n.js` (new), `README.nb.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## Novità della 1.157.0
-
-**Danese**
-
-- Novità: il danese (Dansk) è una nuova lingua dell’app – tutti i circa 7.500 testi dell’app, l’assistente di configurazione, l’esportazione dei dati, i messaggi push dal server e il numero di emergenza danese (112). È inclusa anche la variante per casa condivisa («husstand», «bofælle»). Si sceglie in Impostazioni → Lingua e regione.
-- Nota: la traduzione non è stata verificata da madrelingua – i suggerimenti sono benvenuti come issue su GitHub. Il controllo vocale tramite Siri/Android non capisce ancora il danese e risponde in inglese.
-- Modificato: `i18n/da.i18n.js` (new), `README.da.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## Novità della 1.156.0
-
-**Svedese**
-
-- Novità: lo svedese (Svenska) è una nuova lingua dell’app – tutti i circa 7.500 testi dell’app, l’assistente di configurazione, l’esportazione dei dati, i messaggi push dal server e il numero di emergenza svedese (112). È inclusa anche la variante per casa condivisa («hushåll», «medboende»). Si sceglie in Impostazioni → Lingua e regione.
-- Nota: la traduzione non è stata verificata da madrelingua – i suggerimenti sono benvenuti come issue su GitHub. Il controllo vocale tramite Siri/Android non capisce ancora lo svedese e risponde in inglese.
-- Modificato: `i18n/sv.i18n.js` (new), `README.sv.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## Novità della 1.155.0
-
-**Ceco**
-
-- Novità: il ceco (Čeština) è una nuova lingua dell’app – tutti i circa 7.500 testi dell’app, l’assistente di configurazione, l’esportazione dei dati, i messaggi push dal server e i numeri di emergenza cechi (112, polizia 158, ambulanza 155, vigili del fuoco 150). È inclusa anche la variante per casa condivisa. Si sceglie in Impostazioni → Lingua e regione.
-- Nota: la traduzione non è stata verificata da madrelingua – i suggerimenti sono benvenuti come issue su GitHub. Il controllo vocale tramite Siri/Android non capisce ancora il ceco e risponde in inglese.
-- Modificato: `i18n/cs.i18n.js` (new), `README.cs.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## Novità della 1.154.0
-
-**Correzione di sicurezza per gli indirizzi del calendario**
-
-- Corretto: gli indirizzi del calendario ora vengono controllati. Quando un evento viene eliminato, modificato o letto in iCloud o Google, il server usa le credenziali del calendario familiare e può inviarle solo ai server di Apple e Google. Prima un profilo connesso poteva, con una richiesta manipolata, inviare le credenziali a un altro server qualsiasi. I calendari che già funzionano non sono interessati.
-- Modificato: `pb_hooks/calendar-sync.js`, `js/versionslog.js`, `js/sprachen.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, README.
-
-## Novità della 1.153.2
-
-**Chiavi Gemini con «AQ.», testi di stato, registro errori**
-
-- Corretto: la configurazione guidata accetta le nuove chiavi Google Gemini che iniziano con `AQ.` (contengono un punto). Prima «Verifica» diceva che la chiave era valida, ma «Avanti» la rifiutava.
-- Corretto: lo stato di un familiare («in movimento», «ultima posizione») era sempre in tedesco; ora è in tutte le lingue.
-- Modificato: il registro errori mostra i suoi messaggi in tedesco per il tedesco e in inglese per tutte le altre lingue.
-- Modificato: `pb_hooks/pinn-einrichtung.js`, `pb_hooks/pinn-protokoll.js`, `pb_hooks/protokoll.pb.js`, `einrichtung.js`, `js/fehlerprotokoll.js`, `js/familie.js`, `js/familienkachel.js`, `js/versionslog.js`, `js/sprachen.js`, `i18n/`, `src/`, `index.html`, README.
-
-## Novità della 1.153.1
-
-**Salute: cinque nuovi blocchi, «Io» nel tuo profilo**
-
-- Novità nella pagina salute: **crema solare** (indice UV di oggi a casa, promemoria solo nei giorni di sole), **sonno** (promemoria prima di dormire, al mattino «Come hai dormito?»), **frutta e verdura** (porzioni al giorno), **controllo zecche** (aprile–ottobre) e **controlli** (dentista, check-up … con intervallo; per i bambini gli esami U tedeschi in base all'età). Per i bambini i promemoria arrivano anche ai genitori.
-- Novità: nel tuo profilo pinn. mostra «Io» invece del tuo nome – filtro del calendario, attività, famiglia e ovunque, adattato nelle frasi. Inoltre: icona a linee per la freccia di ripristino, nuova icona del cerchione, lo stesso oro per i testi gialli in modalità scura.
-- Modificato: `pb_hooks/pinn-gesundheit.js`, `js/gesundheit.js`, `css/gesundheit.css`, `js/mitglieder.js`, `js/symbole.js`, `css/dunkelfarbe.css`, `js/aufgaben.js`, `js/termine.js`, `js/listen.js`, `js/sparen.js`, `js/vertraege.js`, `js/familie.js`, `js/hinweise.js`, `js/kassen.js`, `js/zuhause.js`, `js/dokumente.js`, `js/fahrzeuge.js`, `js/ausblick.js`, `js/sterne.js`, `js/vorrat2.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `index.html`.
-
-## Novità della 1.153.0
-
-**Sicurezza da Home Assistant**
-
-- Novità: **Sicurezza** – gli admin della famiglia raggruppano i dispositivi di Home Assistant in Impostazioni → Sicurezza: finestre e porte, serrature, telecamere, garage e tapparelle, rilevatori di fumo e acqua, allarme, sensori di movimento. La dashboard di famiglia mostra una barra in basso (es. «Tutto chiuso», «Finestra cucina è aperto», «1 telecamera è accesa», in rosso in caso di allarme) e la panoramica riceve il riquadro «Sicurezza», dove gli adulti possono chiudere a chiave una serratura aperta (mai aprirla). **Controllo serale** facoltativo: all'ora scelta tutti gli admin ricevono una notifica se qualcosa è ancora aperto, non chiuso a chiave o se l'allarme è disinserito. Requisito: Home Assistant collegato in Impostazioni → Domotica.
-- Corretto: in modalità scura i pulsanti sotto il titolo di un'attività (avvio domotica, lettura contatori …) erano blu su blu – ora sono dorati.
-- Modificato: `pb_hooks/pinn-sicherheit.js` (new), `pb_hooks/sicherheit.pb.js` (new), `pb_hooks/pinn-smarthome.js`, `pb_hooks/pinn-schema.js`, `js/sicherheit.js` (new), `css/sicherheit.css` (new), `js/uebersicht.js`, `js/profilauswahl.js`, `js/einstellungen.js`, `css/dunkelfarbe.css`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `pinn-setup.sh`, `src/`, `index.html`.
-
-## Novità della 1.152.1
-
-**Il ripristino dei backup funziona di nuovo**
-
-- Corretto: il ripristino di un backup (Impostazioni → Sistema → Backup e aggiornamenti) si fermava sempre a «Controlla backup», sia con solo i dati sia con tutto. Il backup dello stato attuale fatto subito prima puliva i vecchi backup e sovrascriveva il nome del backup scelto, che poi non veniva trovato. Ogni tentativo fallito lasciava un backup «Prima di un ripristino»: sono innocui e vengono eliminati da soli (restano gli ultimi 3). L’aggiornamento rinnova `pinn-wartung.sh`; il container «wartung» si riavvia da solo.
-- Stack Portainer: i backup ora funzionano davvero. Il servizio «wartung» dello stack non aveva nulla da avviare, perché nel repository mancava una parte della 1.151.0. Ora l’immagine contiene lo script dei backup, che trova da solo il container pinn dello stack: backup notturno, «Esegui backup ora» e «Ripristina» (dati e configurazione) funzionano come nell’installazione con script. Gli aggiornamenti restano in Portainer. Dopo: in Portainer «Update the stack» con «Re-pull image and redeploy».
-- Modificato: `pinn-wartung.sh`, `docker/Dockerfile`, `.github/workflows/image.yml`, `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `js/serverzugriff.js`, `i18n/`, `js/versionslog.js`, `js/sprachen.js`, `src/`, `index.html`.
-
 ## Come funziona
 
 ```mermaid
@@ -261,7 +167,7 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 ## Installazione
 
 1. Scarica lo ZIP dell’[ultima release](https://github.com/pinn-shost/pinn/releases/latest) e decomprimilo.
-2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.160.1` o `pinn-main`) così com’è.
+2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.161.0` o `pinn-main`) così com’è.
 3. Accedi via SSH ed esegui:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

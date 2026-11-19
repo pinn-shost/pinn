@@ -65,6 +65,23 @@ routerAdd("POST", "/api/pinn/ki/zaehler", (e) => {
     }
 }, $apis.requireAuth("benutzer"));
 
+routerAdd("POST", "/api/pinn/ki/packung", (e) => {
+    e.response.header().set("Cache-Control", "no-store");
+    const lib = require(`${__hooks}/pinn-ki.js`);
+    if (!lib.isAvailable()) return e.json(503, { error: "Die KI ist auf dem Server nicht eingerichtet." });
+    if (!e.auth.getString("familie") || e.auth.getString("rolle") === "gast") return e.json(403, { error: "Nur für Profile einer Familie." });
+    let body = {};
+    try { body = e.requestInfo().body || {}; } catch (err) { body = {}; }
+    try {
+        const z = lib.analyzePack(body);
+        console.log("[KI] Packung gelesen (" + z.modell + ").");
+        return e.json(200, { packung: z });
+    } catch (err) {
+        console.log("[KI] Packung nicht lesbar: " + err.message);
+        return e.json(422, { error: err.message });
+    }
+}, $apis.requireAuth("benutzer"));
+
 routerAdd("POST", "/api/pinn/ki/stundenplan", (e) => {
     e.response.header().set("Cache-Control", "no-store");
     const lib = require(`${__hooks}/pinn-ki.js`);

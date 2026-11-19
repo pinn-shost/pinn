@@ -116,67 +116,6 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk, 🇳🇴 Norsk, 🇫🇮 Suomi en 🇭🇺 Magyar**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
-## Nieuw in 1.160.1
-
-**Correctie: onvertaalde teksten**
-
-- Opgelost: de documentcategorieën (bijv. “Bonnen & garantie”) en de aanduiding “uitbetaald” onder Financiën → Zakgeld worden nu overal in de taal van de app getoond.
-
-## Nieuw in 1.160.0
-
-**Hongaars**
-
-- Nieuw: Hongaars (Magyar) is een nieuwe app-taal – alle ruim 7.500 teksten van de app, de installatiewizard, de data-export, de pushberichten van de server en het Hongaarse alarmnummer (112). De variant voor een gedeelde woning zit er ook bij (“háztartás”, “lakótárs”), met Hongaarse uitgangen. Kies het onder Instellingen → Taal en regio.
-- Let op: de vertaling is niet gecontroleerd door moedertaalsprekers – suggesties zijn welkom als GitHub-issue. Spraakbesturing via Siri/Android begrijpt nog geen Hongaars en antwoordt in het Engels.
-- Gewijzigd: `i18n/hu.i18n.js` (new), `README.hu.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## Nieuw in 1.159.0
-
-**Fins**
-
-- Nieuw: Fins (Suomi) is een nieuwe app-taal – alle ruim 7.500 teksten van de app, de installatiewizard, de data-export, de pushberichten van de server en het Finse alarmnummer (112). De variant voor een gedeelde woning zit er ook bij (“kotitalous”, “asukas”), met Finse naamvaluitgangen. Kies het onder Instellingen → Taal en regio.
-- Let op: de vertaling is niet gecontroleerd door moedertaalsprekers – suggesties zijn welkom als GitHub-issue. Spraakbesturing via Siri/Android begrijpt nog geen Fins en antwoordt in het Engels.
-- Gewijzigd: `i18n/fi.i18n.js` (new), `README.fi.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## Nieuw in 1.158.0
-
-**Noors**
-
-- Nieuw: Noors (Norsk, bokmål) is een nieuwe app-taal – alle ruim 7.500 teksten van de app, de installatiewizard, de data-export, de pushberichten van de server en het Noorse alarmnummer (112). De variant voor een gedeelde woning zit er ook bij (“husstand”, “bofelle”). Kies het onder Instellingen → Taal en regio.
-- Let op: de vertaling is niet gecontroleerd door moedertaalsprekers – suggesties zijn welkom als GitHub-issue. Spraakbesturing via Siri/Android begrijpt nog geen Noors en antwoordt in het Engels.
-- Gewijzigd: `i18n/nb.i18n.js` (new), `README.nb.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## Nieuw in 1.157.0
-
-**Deens**
-
-- Nieuw: Deens (Dansk) is een nieuwe app-taal – alle ruim 7.500 teksten van de app, de installatiewizard, de data-export, de pushberichten van de server en het Deense alarmnummer (112). De variant voor een gedeelde woning zit er ook bij (“husstand”, “bofælle”). Kies het onder Instellingen → Taal en regio.
-- Let op: de vertaling is niet gecontroleerd door moedertaalsprekers – suggesties zijn welkom als GitHub-issue. Spraakbesturing via Siri/Android begrijpt nog geen Deens en antwoordt in het Engels.
-- Gewijzigd: `i18n/da.i18n.js` (new), `README.da.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## Nieuw in 1.156.0
-
-**Zweeds**
-
-- Nieuw: Zweeds (Svenska) is een nieuwe app-taal – alle ruim 7.500 teksten van de app, de installatiewizard, de data-export, de pushberichten van de server en het Zweedse alarmnummer (112). De variant voor een gedeelde woning zit er ook bij (“hushåll”, “medboende”). Kies het onder Instellingen → Taal en regio.
-- Let op: de vertaling is niet gecontroleerd door moedertaalsprekers – suggesties zijn welkom als GitHub-issue. Spraakbesturing via Siri/Android begrijpt nog geen Zweeds en antwoordt in het Engels.
-- Gewijzigd: `i18n/sv.i18n.js` (new), `README.sv.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## Nieuw in 1.155.0
-
-**Tsjechisch**
-
-- Nieuw: Tsjechisch (Čeština) is een nieuwe app-taal – alle ruim 7.500 teksten van de app, de installatiewizard, de data-export, de pushberichten van de server en de Tsjechische alarmnummers (112, politie 158, ambulance 155, brandweer 150). De variant voor een gedeelde woning zit er ook bij. Kies het onder Instellingen → Taal en regio.
-- Let op: de vertaling is niet gecontroleerd door moedertaalsprekers – suggesties zijn welkom als GitHub-issue. Spraakbesturing via Siri/Android begrijpt nog geen Tsjechisch en antwoordt in het Engels.
-- Gewijzigd: `i18n/cs.i18n.js` (new), `README.cs.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## Nieuw in 1.154.0
-
-**Beveiligingsfix voor agenda-adressen**
-
-- Opgelost: agenda-adressen worden nu gecontroleerd. Bij het verwijderen, wijzigen of lezen van een afspraak in iCloud of Google gebruikt de server de inloggegevens van de gezinsagenda en mag die alleen naar de servers van Apple en Google sturen. Eerder kon een ingelogd profiel met een gemanipuleerd verzoek de inloggegevens naar een willekeurige andere server laten sturen. Agenda's die al werken, merken hier niets van.
-- Gewijzigd: `pb_hooks/calendar-sync.js`, `js/versionslog.js`, `js/sprachen.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, README.
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -186,7 +125,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.160.1` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.161.0` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -3,13 +3,24 @@
    language other than German. One entry per version of PINN_CHANGELOG: t = title, p = points in the same order
    (null = no translation, the German text is shown). Older versions are not translated. */
 window.PINN_CHANGELOG_EN = {
+  "1.161": {"t": "Cook from your pantry, medicine supply", "p": [
+"1.161.0: Medicine supply: under Family → Health → Medication every medicine can have a supply. Enter the amount by hand or read the pack from a photo (AI, if set up). pinn. subtracts the planned doses by itself, shows how long it lasts and warns by push in good time – earlier with a prescription (14 days), otherwise 7 days ahead.",
+"1.161.0: Medicines as needed (house pharmacy) with a “Taken” button, best-before date of the pack in use with a warning, a “New pack” button and an optional link with the pantry (amounts are matched in both directions; medicines without prescription go on the shopping list automatically when running low, prescription ones do not).",
+"1.161.0: Barcode scan of a pack (photo of the code): EAN codes are looked up online like in the pantry (name, amount), the browser reads PZN and best-before date where it can; a known pack fills in the whole entry. When a prescription medicine runs low, a task “Get a prescription” is created automatically.",
+"1.161.0: Recipes page: new strip “Cook from your pantry” with the best matches from recipes and pantry.",
+"1.161.0: “What to cook?” in the pantry refined: recipes that use up soon-expiring items come first (“Use up first”), new “Quick” filter, hints “planned this week” and “cooked … days ago”.",
+"1.161.0 changed: js/gesundheit.js, js/vorrat2.js, js/rezepte.js, teile/seiten/rezepte.html, teile/popups/vorrat.html, css/finanzen.css, pb_hooks/pinn-gesundheit.js, pb_hooks/pinn-ki.js, pb_hooks/ki.pb.js, i18n/*.i18n.js, README*.md, js/sprachen.js, version log",
+]},
   "1.160": {"t": "Hungarian", "p": [
 "1.160.0: Hungarian (Magyar) joins as a new app language – all roughly 7,500 texts of the app, the setup assistant, the data export, the push messages from the server (including the weekly outlook, birthdays, pets, chat and emergency) and the Hungarian emergency number (112 for everything). The flat-share wording (“háztartás”, “lakótárs”) is included too, with Hungarian suffixes and plural rules. Choose it under Settings → Language and region.",
 "1.160.0 note: the translation has not been checked by native speakers – suggestions are welcome as a GitHub issue. Voice control via Siri/Android (“Hey Siri, pinn”) does not understand Hungarian yet and answers in English.",
 "1.160.0: New README.hu.md (short Hungarian introduction), language bar in all READMEs extended by Hungarian.",
 "1.160.0 changed: i18n/hu.i18n.js (new), README.hu.md (new), js/sprachen.js, js/textkern.js, js/einrichten.js, js/exportieren.js, einrichtung.js, datenexport.js, js/versionslog.js, i18n/versionslog.en.js, pb_hooks/pinn-textkern.js, pinn-pushtext.js, pinn-chat.js, pinn-ausblick.js, pinn-familie-geburtstag.js, pinn-haustiere.js, pinn-ortung.js, pinn-wobistdu.js, pinn-packliste.js, pinn-aufgaben.js, pinn-einrichtung.js, .github/scripts (i18n-keys.js, check-hooks.js), src/version.txt, index.html, all READMEs.",
 "1.160.1: Two spots were still untranslated: the document categories (e.g. “Receipts & warranty”) and “paid out” under Finance → Pocket money. Both now appear in the app language everywhere.",
-"1.160.1 changed: js/dokumente.js, js/sparen.js, js/chatmedien.js, js/fahrzeuge.js, js/listen.js, js/zuhause.js, i18n/*.i18n.js (new key depot.paidOut), README (all languages)."
+"1.160.1 changed: js/dokumente.js, js/sparen.js, js/chatmedien.js, js/fahrzeuge.js, js/listen.js, js/zuhause.js, i18n/*.i18n.js (new key depot.paidOut), README (all languages).",
+"1.160.2: Push notifications no longer switch themselves off on the device after an update: the device registers again by itself (also on iPhone, as soon as the new version has taken over), and every wake-up call always shows a message – otherwise iOS cancels the registration.",
+"1.160.2: Notifications: the card under Settings → My account now stays complete even if the server does not answer for a moment (last settings and buttons stay visible, new attempt after a few seconds). Tapping the push message “How did you sleep?” opens a small window at the bottom with the three faces. Shortcut icons in dark mode are coloured again, but less saturated.",
+"1.160.2 changed: js/mitteilungen.js, js/gesundheit.js, css/dunkelfarbe.css, pb_hooks/pinn-gesundheit.js, pb_hooks/sw.pb.js, README (all languages)."
 ]},
   "1.159": {"t": "Finnish", "p": [
 "1.159.0: Finnish (Suomi) joins as a new app language – all roughly 7,500 texts of the app, the setup assistant, the data export, the push messages from the server (including the weekly outlook, birthdays, pets, chat and emergency) and the Finnish emergency number (112 for everything). The flat-share wording (“kotitalous”, “asukas”) is included too, with Finnish case endings and plural rules. Choose it under Settings → Language and region.",

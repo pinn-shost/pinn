@@ -175,6 +175,7 @@ const DRINK_EVERY = [30, 45, 60, 90, 120, 150, 180, 240];
 const UV_MIN = 3;                          // same as GH_UV_MIN in js/gesundheit.js
 const TICK_MONTHS = [4, 5, 6, 7, 8, 9, 10];
 const CHECKUP_AT = 10 * 60;                // check-up reminders at 10:00
+const STOCK_AT = 10 * 60;                  // medication supply warnings at 10:00 (since 1.161.0)
 const CHECKUP_KINDS = ["dentist", "general", "eyes", "skin", "gyn"];
 // German children's examinations, window in days after birth (same as GH_U_EXAMS in js/gesundheit.js)
 const U_EXAMS = [
@@ -233,6 +234,8 @@ function remindSettings(daten) {
     out.fruit = { on: rem("fruit").on === true, times: ft.map(toMin).filter(v => v !== null).filter((v, i, a) => a.indexOf(v) === i).sort((a, b) => a - b).slice(0, 6) };
     out.tick = { on: rem("tick").on === true, at: minOr(rem("tick").time, 1140) };
     out.checkup = { on: rem("checkup").on === true };
+    // since 1.161.0: medication supply - on as soon as one medicine tracks its supply with warnings (switch per medicine)
+    out.stock = { on: !!(d.meds && Array.isArray(d.meds.list) && d.meds.list.some(m => m && m.stock && m.stock.on === true && m.stock.warn !== false)) };
     return out;
 }
 
@@ -352,7 +355,7 @@ function dueReminders(rec, daten, rs, w, lang, extra) {
             out.push({
                 key: "w|" + rec.id, kind: "sleep", skip: false,
                 titel: text(lang, "push.health.morningTitle"), text: text(lang, "push.health.morningText"),
-                url: "/?gesundheit=schlaf&person=" + person, tag: "gesundheit-morgen-" + today,
+                url: "/?gesundheit=geschlafen&person=" + person, tag: "gesundheit-morgen-" + today,
             });
         }
     }
@@ -399,6 +402,30 @@ function dueReminders(rec, daten, rs, w, lang, extra) {
             });
         }
     }
+    // ----- since 1.161.0: medication supply (dates are calculated by the app, see ghStockStamp in gesundheit.js) -----
+    if (rs.stock && rs.stock.on && inSlot(STOCK_AT) && daten.meds && Array.isArray(daten.meds.list)) {
+        const isoOk = (v) => /^\d{4}-\d{2}-\d{2}$/.test(String(v || ""));
+        daten.meds.list.forEach(med => {
+            const st = med && med.stock;
+            if (!st || st.on !== true || st.warn === false || !med.id) return;
+            const name = String(med.name || "").slice(0, 60);
+            const url = "/?gesundheit=medikamente&person=" + person;
+            const add = (kind, key, tx, vals) => out.push({
+                key: "s|" + rec.id + "|" + med.id + "|" + kind + "|" + today, kind: "stock", skip: false,
+                titel: text(lang, "push.health.stockTitle"), text: text(lang, key, vals),
+                url: url, tag: "gesundheit-vorrat-" + med.id + "-" + kind,
+            });
+            // empty beats "running low": only one message per medicine and day
+            if (isoOk(st.emptyOn) && dueToday(st.emptyOn, today)) add("e", "push.health.stockEmptyText", "", { name: name });
+            else if (isoOk(st.soonOn) && dueToday(st.soonOn, today)) add("s", st.rx ? "push.health.stockSoonRxText" : "push.health.stockSoonText", "", { name: name });
+            if (isoOk(st.exp)) {
+                const e = dayNum(st.exp), t = dayNum(today);
+                if (e !== null && t !== null && t >= e - 30 && dueToday(isoOfDay(e - 30), today)) {
+                    add("x", t > e ? "push.health.stockExpText" : "push.health.stockExpSoonText", "", { name: name, date: st.exp });
+                }
+            }
+        });
+    }
     return out;
 }
 
@@ -428,7 +455,7 @@ function runCron() {
     recs.forEach(rec => {
         const daten = parse(rec.get("daten"));
         const rs = remindSettings(daten);
-        if (!rs.drink.on && !rs.meds.on && !rs.hands.on && !rs.sun.on && !rs.sleep.on && !rs.fruit.on && !rs.tick.on && !rs.checkup.on) return;
+        if (!rs.drink.on && !rs.meds.on && !rs.hands.on && !rs.sun.on && !rs.sleep.on && !rs.fruit.on && !rs.tick.on && !rs.checkup.on && !rs.stock.on) return;
         const familyId = rec.getString("familie");
         let own = [];
         try { own = $app.findRecordsByFilter("benutzer", "familie = {:f} && mitglied = {:m}", "", 5, 0, { f: familyId, m: rec.getString("mitglied") }); } catch (e) { own = []; }

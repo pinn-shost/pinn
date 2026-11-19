@@ -22,6 +22,17 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.161', datum: '19.11.2026', titel: 'Aus dem Vorrat kochen, Medikamentenvorrat',
+    punkte: [
+      ['neu', '1.161.0: Medikamentenvorrat: Unter Familie → Gesundheit → Medikamente kann zu jedem Mittel ein Vorrat geführt werden. Die Menge wird von Hand eingetragen oder die Packung per Foto eingelesen (KI, falls eingerichtet). pinn. zieht die geplanten Einnahmen selbst ab, zeigt, wie lange es reicht, und warnt per Push rechtzeitig – bei Rezeptpflicht früher (14 Tage), sonst 7 Tage vorher.'],
+      ['neu', '1.161.0: Medikamente bei Bedarf (Hausapotheke) mit Knopf „Genommen“, Haltbarkeit der angebrochenen Packung mit Warnung, „Neue Packung“-Knopf und optionale Verknüpfung mit dem Vorrat (Mengen gleichen sich in beide Richtungen ab; nicht rezeptpflichtige Mittel landen bei knappem Bestand automatisch auf der Einkaufsliste, rezeptpflichtige nicht).'],
+      ['neu', '1.161.0: Barcode-Scan einer Packung (Foto vom Code): EAN-Codes werden wie im Vorrat online nachgeschlagen (Name, Menge), PZN und Haltbarkeit liest der Browser, wo er es kann; eine bekannte Packung füllt den ganzen Eintrag aus. Wird ein rezeptpflichtiges Mittel knapp, entsteht automatisch die Aufgabe „Rezept holen“.'],
+      ['neu', '1.161.0: Seite Rezepte: neuer Streifen „Aus dem Vorrat kochen“ mit den besten Treffern aus Rezepten und Vorrat.'],
+      ['info', '1.161.0: „Was kochen?“ im Vorrat verfeinert: Rezepte, die bald ablaufende Zutaten verbrauchen, stehen vorn („Zuerst verbrauchen“), neuer Filter „Schnell“, Hinweise „diese Woche geplant“ und „vor … Tagen gekocht“.'],
+      ['info', '1.161.0 geändert: js/gesundheit.js, js/vorrat2.js, js/rezepte.js, teile/seiten/rezepte.html, teile/popups/vorrat.html, css/finanzen.css, pb_hooks/pinn-gesundheit.js, pb_hooks/pinn-ki.js, pb_hooks/ki.pb.js, i18n/*.i18n.js, README*.md, js/sprachen.js, versionslog'],
+    ],
+  },
+  {
     v: '1.160', datum: '18.11.2026', titel: 'Ungarisch',
     punkte: [
       ['neu', '1.160.0: Ungarisch (Magyar) ist als neue App-Sprache dabei – alle rund 7.500 Texte der App, der Einrichtungs-Assistent, der Datenexport, die Push-Nachrichten vom Server (inklusive Wochenvorschau, Geburtstage, Haustiere, Chat und Notfall) und die ungarische Notrufnummer (112 für alle). Auch die WG-Variante („háztartás“, „lakótárs“) gibt es, samt ungarischer Endungen und Pluralregeln. Auswählbar unter Einstellungen → Sprache und Region.'],
@@ -30,6 +41,9 @@ const PINN_CHANGELOG = [
       ['info', '1.160.0 geändert: i18n/hu.i18n.js (neu), README.hu.md (neu), js/sprachen.js, js/textkern.js, js/einrichten.js, js/exportieren.js, einrichtung.js, datenexport.js, js/versionslog.js, i18n/versionslog.en.js, pb_hooks/pinn-textkern.js, pinn-pushtext.js, pinn-chat.js, pinn-ausblick.js, pinn-familie-geburtstag.js, pinn-haustiere.js, pinn-ortung.js, pinn-wobistdu.js, pinn-packliste.js, pinn-aufgaben.js, pinn-einrichtung.js, .github/scripts (i18n-keys.js, check-hooks.js), src/version.txt, index.html, alle READMEs.'],
       ['fix', '1.160.1: Zwei Stellen waren noch nicht übersetzt: die Dokument-Kategorien (z. B. „Kaufbelege & Garantie“) und „ausgezahlt“ unter Finanzen → Taschengeld. Beides erscheint jetzt überall in der App-Sprache.'],
       ['info', '1.160.1 geändert: js/dokumente.js, js/sparen.js, js/chatmedien.js, js/fahrzeuge.js, js/listen.js, js/zuhause.js, i18n/*.i18n.js (neuer Schlüssel depot.paidOut), README (alle Sprachen).'],
+      ['fix', '1.160.2: Push-Mitteilungen schalten sich nach einem Update nicht mehr auf dem Gerät ab: Das Gerät meldet sich selbst wieder an (auch am iPhone, sobald die neue Version übernommen ist), und jeder Weckruf zeigt immer eine Nachricht – sonst hebt iOS die Anmeldung auf.'],
+      ['fix', '1.160.2: Mitteilungen: Die Karte unter Einstellungen → Mein Konto bleibt jetzt vollständig, auch wenn der Server kurz nicht antwortet (letzte Einstellungen und Knöpfe bleiben sichtbar, neuer Versuch nach wenigen Sekunden). „Wie hast du geschlafen?“ öffnet beim Antippen der Push-Nachricht direkt ein kleines Fenster unten mit den drei Gesichtern. Shortcut-Symbole im Dunkelmodus wieder farbig, aber mit weniger Sättigung.'],
+      ['info', '1.160.2 geändert: js/mitteilungen.js, js/gesundheit.js, css/dunkelfarbe.css, pb_hooks/pinn-gesundheit.js, pb_hooks/sw.pb.js, README (alle Sprachen).'],
     ],
   },
   {

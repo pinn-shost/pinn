@@ -139,100 +139,6 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski、🇺🇦 Українська、🇨🇿 Čeština、🇸🇪 Svenska、🇩🇰 Dansk、🇳🇴 Norsk、🇫🇮 Suomi和 🇭🇺 Magyar**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
-## 1.160.1 新功能
-
-**修复：未翻译的文本**
-
-- 已修复：文档分类（例如“购物凭证与保修”）以及“财务 → 零花钱”中的“已发放”提示，现在在应用各处都以应用语言显示。
-
-## 1.160.0 新功能
-
-**匈牙利语**
-
-- 新增：匈牙利语（Magyar）成为新的应用语言——应用的约 7,500 条文字、设置向导、数据导出、服务器推送消息以及匈牙利紧急电话（112）。同时包含合租版用语（“háztartás”“lakótárs”）及匈牙利语词尾变化。可在设置 → 语言和地区中选择。
-- 说明：该翻译尚未经母语者审校，欢迎通过 GitHub issue 提出改进建议。通过 Siri/Android 的语音控制暂不支持匈牙利语，会用英语回答。
-- 变更: `i18n/hu.i18n.js` (new), `README.hu.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## 1.159.0 新功能
-
-**芬兰语**
-
-- 新增：芬兰语（Suomi）成为新的应用语言——应用的约 7,500 条文字、设置向导、数据导出、服务器推送消息以及芬兰紧急电话（112）。同时包含合租版用语（“kotitalous”“asukas”）及芬兰语格词尾。可在设置 → 语言和地区中选择。
-- 说明：该翻译尚未经母语者审校，欢迎通过 GitHub issue 提出改进建议。通过 Siri/Android 的语音控制暂不支持芬兰语，会用英语回答。
-- 变更: `i18n/fi.i18n.js` (new), `README.fi.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## 1.158.0 新功能
-
-**挪威语**
-
-- 新增：挪威语（Norsk，书面挪威语 Bokmål）成为新的应用语言——应用的约 7,500 条文字、设置向导、数据导出、服务器推送消息以及挪威紧急电话（112）。同时包含合租版用语（“husstand”“bofelle”）。可在设置 → 语言和地区中选择。
-- 说明：该翻译尚未经母语者审校，欢迎通过 GitHub issue 提出改进建议。通过 Siri/Android 的语音控制暂不支持挪威语，会用英语回答。
-- 变更: `i18n/nb.i18n.js` (new), `README.nb.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## 1.157.0 新功能
-
-**丹麦语**
-
-- 新增：丹麦语（Dansk）成为新的应用语言——应用的约 7,500 条文字、设置向导、数据导出、服务器推送消息以及丹麦紧急电话（112）。同时包含合租版用语（“husstand”“bofælle”）。可在设置 → 语言和地区中选择。
-- 说明：该翻译尚未经母语者审校，欢迎通过 GitHub issue 提出改进建议。通过 Siri/Android 的语音控制暂不支持丹麦语，会用英语回答。
-- 变更: `i18n/da.i18n.js` (new), `README.da.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## 1.156.0 新功能
-
-**瑞典语**
-
-- 新增：瑞典语（Svenska）成为新的应用语言——应用的约 7,500 条文字、设置向导、数据导出、服务器推送消息以及瑞典紧急电话（112）。同时包含合租版用语（“hushåll”“medboende”）。可在设置 → 语言和地区中选择。
-- 说明：该翻译尚未经母语者审校，欢迎通过 GitHub issue 提出改进建议。通过 Siri/Android 的语音控制暂不支持瑞典语，会用英语回答。
-- 变更: `i18n/sv.i18n.js` (new), `README.sv.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## 1.155.0 新功能
-
-**捷克语**
-
-- 新增：捷克语（Čeština）成为新的应用语言——应用的约 7,500 条文字、设置向导、数据导出、服务器推送消息以及捷克紧急电话（112、警察 158、救护车 155、消防 150）。同时包含合租版用语。可在设置 → 语言和地区中选择。
-- 说明：该翻译尚未经母语者审校，欢迎通过 GitHub issue 提出改进建议。通过 Siri/Android 的语音控制暂不支持捷克语，会用英语回答。
-- 变更: `i18n/cs.i18n.js` (new), `README.cs.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## 1.154.0 新功能
-
-**日历地址的安全修复**
-
-- 修复：现在会检查日历地址。在 iCloud 或 Google 中删除、修改或读取日程时，服务器会使用家庭日历的登录信息，且只能把它发送给 Apple 和 Google 的服务器。以前，已登录的档案可以通过伪造的请求把登录信息发送到任意其他服务器。已正常工作的日历不受影响。
-- 更改: `pb_hooks/calendar-sync.js`, `js/versionslog.js`, `js/sprachen.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, README.
-
-## 1.153.2 新功能
-
-**以 “AQ.” 开头的 Gemini 密钥、状态文字、错误日志**
-
-- 修复：设置向导现在接受以 `AQ.` 开头的新版 Google Gemini 密钥（其中含有一个点）。之前“检查”提示密钥有效，但“下一步”却拒绝它。
-- 修复：家庭成员的状态（“在路上”“最后位置”）一直是德语，现在所有语言都能正确显示。
-- 更改：错误日志的消息对德语显示德语，对其他所有语言显示英语。
-- 更改: `pb_hooks/pinn-einrichtung.js`, `pb_hooks/pinn-protokoll.js`, `pb_hooks/protokoll.pb.js`, `einrichtung.js`, `js/fehlerprotokoll.js`, `js/familie.js`, `js/familienkachel.js`, `js/versionslog.js`, `js/sprachen.js`, `i18n/`, `src/`, `index.html`, README.
-
-## 1.153.1 新功能
-
-**健康：五个新模块，自己的资料显示“我”**
-
-- 健康页新增：**防晒霜**（住址今日紫外线指数，仅晴天提醒）、**睡眠**（就寝前提醒，早上询问“睡得怎么样？”）、**水果和蔬菜**（每日份数）、**蜱虫检查**（4–10 月）和**体检**（牙医、全面体检 … 按周期；儿童按年龄的德国 U 检查）。儿童的提醒同样发送给父母。
-- 新增：在自己的资料中，pinn. 显示“我”而不是自己的名字——日历筛选、任务、家庭及其他各处，句子中会相应调整。另外：恢复箭头改为线条图标、新的轮毂图标、深色模式下黄色提示使用相同的金色。
-- 更改: `pb_hooks/pinn-gesundheit.js`, `js/gesundheit.js`, `css/gesundheit.css`, `js/mitglieder.js`, `js/symbole.js`, `css/dunkelfarbe.css`, `js/aufgaben.js`, `js/termine.js`, `js/listen.js`, `js/sparen.js`, `js/vertraege.js`, `js/familie.js`, `js/hinweise.js`, `js/kassen.js`, `js/zuhause.js`, `js/dokumente.js`, `js/fahrzeuge.js`, `js/ausblick.js`, `js/sterne.js`, `js/vorrat2.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `index.html`.
-
-## 1.153.0 新功能
-
-**来自 Home Assistant 的安全概览**
-
-- 新增：**安全** – 家庭管理员可在 设置 → 安全 中把 Home Assistant 设备分成命名的分组：门窗、门锁、摄像头、车库门和卷帘、烟雾和漏水探测器、报警系统、人体感应器。家庭看板底部显示一条状态栏（例如“全部关闭”“厨房窗户 未关”“1 个摄像头已开启”，报警时为红色），概览新增“安全”卡片，成人可在此锁上未锁的门锁（从不开锁）。可选**晚间检查**：在设定时间，如仍有东西未关、未上锁或报警系统未布防，所有管理员都会收到推送。前提：已在 设置 → 智能家居 中连接 Home Assistant。
-- 修复：深色模式下任务标题下方的按钮（智能家居启动、抄表 …）是蓝底蓝字——现在为金色。
-- 更改: `pb_hooks/pinn-sicherheit.js` (new), `pb_hooks/sicherheit.pb.js` (new), `pb_hooks/pinn-smarthome.js`, `pb_hooks/pinn-schema.js`, `js/sicherheit.js` (new), `css/sicherheit.css` (new), `js/uebersicht.js`, `js/profilauswahl.js`, `js/einstellungen.js`, `css/dunkelfarbe.css`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `pinn-setup.sh`, `src/`, `index.html`.
-
-## 1.152.1 新功能
-
-**恢复备份重新可用**
-
-- 已修复：恢复备份（设置 → 系统 → 备份与更新）总是在“检查备份”这一步失败，无论选择仅数据还是全部。恢复前对当前状态的备份会清理旧备份，同时覆盖了所选备份的文件名，导致找不到该备份。每次失败都会留下一个“恢复前”备份——它们无害，会自动清理（保留最近 3 个）。此更新会替换 `pinn-wartung.sh`；“wartung”容器会自动重启。
-- Portainer 堆栈：备份现在真正可用了。由于仓库中缺少 1.151.0 的一部分，堆栈的“wartung”服务此前无法启动。现在镜像中包含备份脚本，它会自动找到堆栈中的 pinn 容器——夜间备份、“立即备份”和“恢复”（数据和设置）与脚本安装方式一样可用。更新仍在 Portainer 中进行。更新后：在 Portainer 中点“Update the stack”并勾选“Re-pull image and redeploy”。
-- 更改: `pinn-wartung.sh`, `docker/Dockerfile`, `.github/workflows/image.yml`, `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `js/serverzugriff.js`, `i18n/`, `js/versionslog.js`, `js/sprachen.js`, `src/`, `index.html`.
-
 ## 工作原理
 
 ```mermaid
@@ -261,7 +167,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.160.1` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.161.0` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

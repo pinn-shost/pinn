@@ -168,6 +168,7 @@ function ghDrinkTotal(d, day) { return (d.drink.log[day || ghToday()] || []).red
 function ghMedSlots(d) {
   const out = [];
   d.meds.list.forEach(med => {
+    if (med.prn === true) return; // as-needed medicines have no plan
     const times = (Array.isArray(med.times) && med.times.length) ? med.times.slice().sort() : [''];
     times.forEach(t => out.push({ med, time: t, key: med.id + '@' + t }));
   });
@@ -194,6 +195,8 @@ async function ghLoad() {
     ghState.loading = false;
     ghState.at = Date.now();
   }
+  try { ghSyncPantry(); } catch (e) { /* pantry link is optional */ }
+  try { ghRunRxTasks(); } catch (e) { /* tasks are optional */ }
   if (currentView === 'familie' && famTab === 'gesundheit' && !famDetailId) renderFamily();
   try { if (currentView === 'uebersicht') renderShortcutsTile(); } catch (e) { /* shortcuts not loaded */ }
 }
@@ -239,6 +242,8 @@ function ghChange(memberId, mutate) {
 function ghRefresh() {
   try { if (currentView === 'uebersicht') renderShortcutsTile(); } catch (e) { /* shortcuts not loaded */ }
   if (currentView === 'familie' && famTab === 'gesundheit' && !famDetailId) renderFamily();
+  // keep the linked pantry entries up to date after every change of a supply
+  setTimeout(() => { try { ghSyncPantry(); } catch (e) { /* pantry link is optional */ } }, 0);
 }
 
 /* ---------- Pictures of glasses and cups ---------- */
@@ -563,59 +568,568 @@ function ghLogDrink(memberId, kind, ml) {
   });
 }
 
+/* ---------- Quick window "How did you sleep?" (since 1.160.2) ----------
+   Opened by the morning push message: a small window at the bottom with the three faces, like the other quick
+   windows. One tap saves the answer for today and closes the window. */
+function ghOpenSleepPopup(memberId) {
+  if (!ghCanEdit(memberId)) return;
+  let ov = document.getElementById('hpSleepOverlay');
+  if (!ov) {
+    ov = document.createElement('div');
+    ov.id = 'hpSleepOverlay';
+    ov.className = 'hp-overlay';
+    ov.addEventListener('click', (e) => {
+      if (e.target === ov) { ghCloseSleepPopup(); return; }
+      const b = e.target.closest('[data-hpsleep],[data-hpclose]');
+      if (!b) return;
+      if (b.dataset.hpclose !== undefined) { ghCloseSleepPopup(); return; }
+      const v = Number(b.dataset.hpsleep) || 0;
+      const mid = ov.dataset.member;
+      ghCloseSleepPopup();
+      if (!v || !mid) return;
+      const day = ghToday();
+      ghChange(mid, (d) => { d.sleep.log[day] = v; });
+      try { finShowToast(tk('common.saved')); } catch (err) { /* no toast */ }
+    });
+    document.body.appendChild(ov);
+  }
+  ov.dataset.member = memberId;
+  const d = ghData(memberId);
+  const cur = d && d.sleep ? Number(d.sleep.log[ghToday()]) || 0 : 0;
+  const faces = GH_SLEEP_FACES.map(f => `<button type="button" class="hp-face${cur === f.v ? ' on' : ''}" data-hpsleep="${f.v}"><span class="hp-face-ic">${f.icon}</span><span>${tk(f.key)}</span></button>`).join('');
+  ov.innerHTML = `<div class="hp-sheet" role="dialog" aria-modal="true">
+    <div class="flex items-center justify-between gap-2 mb-3">
+      <div class="font-serif text-lg">😴 ${escapeHtml(tk('gh.sleep.question'))}</div>
+      <button type="button" class="hp-x big" data-hpclose aria-label="${ghAttr(tk('common.close'))}">×</button>
+    </div>
+    <div class="hp-faces">${faces}</div>
+  </div>`;
+  ov.classList.remove('hidden');
+}
+function ghCloseSleepPopup() {
+  const ov = document.getElementById('hpSleepOverlay');
+  if (ov) ov.classList.add('hidden');
+}
+
+/* ---------- Medicine supply (since 1.161.0) ----------
+   A medicine can have a supply: med.stock = { on, qty, at, unit, per, pack, rx, lead, min, exp, pantry, pantryId, synced, soonOn, emptyOn }
+   - qty/at:  amount that was there at the time "at" (ms). From then on the planned doses (times of the plan, "per" each)
+              are subtracted automatically - nothing has to be ticked off for that
+   - per:     amount per intake; pack: amount per pack (0 = unknown); rx: needs a prescription
+   - lead:    warn this many days before it runs out (default 14 days with, 7 days without prescription)
+   - min:     only for "as needed" medicines (med.prn): warn at or below this amount; reduced with "taken"
+   - exp:     best-before date of the pack in use
+   - pantry/pantryId/synced: link with the page Vorrat (ghSyncPantry)
+   - soonOn/emptyOn: dates (YYYY-MM-DD) from which the server sends the push messages (pb_hooks/pinn-gesundheit.js);
+              set again on every change (ghStockStamp) */
+const GH_STOCK_UNITS = ['Tablette', 'Kapsel', 'Stück', 'ml', 'Beutel'];
+const GH_STOCK_EXP_DAYS = 30;
+function ghStockOn(med) { return !!(med && med.stock && med.stock.on === true); }
+function ghRound(n) { return Math.round(n * 100) / 100; }
+function ghDayShift(iso, n) { const d = new Date(iso + 'T12:00:00'); d.setDate(d.getDate() + n); return isoDate(d); }
+function ghDaysBetween(aIso, bIso) { return Math.round((new Date(bIso + 'T12:00:00') - new Date(aIso + 'T12:00:00')) / 86400000); }
+function ghIsoOk(v) { return /^\d{4}-\d{2}-\d{2}$/.test(String(v || '')); }
+// Times of the plan as [hour, minute]; without a time the intake counts at 08:00
+function ghMedClock(med) {
+  const t = (Array.isArray(med.times) ? med.times : []).filter(v => /^\d{2}:\d{2}$/.test(v));
+  return (t.length ? Array.from(new Set(t)).sort() : ['08:00']).map(v => [Number(v.slice(0, 2)), Number(v.slice(3))]);
+}
+// Date of the k-th upcoming intake (k >= 1); k <= 0 means today
+function ghDoseDate(med, k, nowMs) {
+  const now = nowMs || Date.now();
+  if (k <= 0) return isoDate(new Date(now));
+  const clock = ghMedClock(med);
+  const base = new Date(now);
+  let n = 0;
+  for (let i = 0; i < 1500; i++) {
+    const day = new Date(base.getFullYear(), base.getMonth(), base.getDate() + i);
+    for (let j = 0; j < clock.length; j++) {
+      const inst = new Date(day.getFullYear(), day.getMonth(), day.getDate(), clock[j][0], clock[j][1]).getTime();
+      if (inst > now && ++n >= k) return isoDate(day);
+    }
+  }
+  return '';
+}
+// What is left, for how long it lasts and how urgent it is. null if the medicine has no supply.
+function ghStockInfo(med, nowMs) {
+  if (!ghStockOn(med)) return null;
+  const s = med.stock;
+  const now = nowMs || Date.now();
+  const per = Math.max(0, Number(s.per) || 0);
+  const qty = Math.max(0, Number(s.qty) || 0);
+  const prn = med.prn === true;
+  const clock = ghMedClock(med);
+  let used = 0;
+  if (!prn && per > 0) {
+    const at = Number(s.at) || now;
+    const a = new Date(at);
+    for (let i = 0; i < 1500; i++) {
+      const day = new Date(a.getFullYear(), a.getMonth(), a.getDate() + i);
+      if (day.getTime() > now) break;
+      for (let j = 0; j < clock.length; j++) {
+        const inst = new Date(day.getFullYear(), day.getMonth(), day.getDate(), clock[j][0], clock[j][1]).getTime();
+        if (inst > at && inst <= now) used++;
+      }
+    }
+  }
+  const left = ghRound(Math.max(0, qty - used * per));
+  const perDay = prn ? 0 : per * clock.length;
+  const lead = Number(s.lead) > 0 ? Number(s.lead) : (s.rx ? 14 : 7);
+  const today = isoDate(new Date(now));
+  const days = perDay > 0 ? Math.floor(left / perDay + 1e-9) : null;
+  let state = 'ok';
+  if (left <= 0) state = 'empty';
+  else if (prn) state = (Number(s.min) > 0 && left <= Number(s.min)) ? 'soon' : 'ok';
+  else if (days !== null && days <= lead) state = 'soon';
+  const expDays = ghIsoOk(s.exp) ? ghDaysBetween(today, s.exp) : null;
+  const expState = expDays === null ? '' : (expDays < 0 ? 'expired' : (expDays <= GH_STOCK_EXP_DAYS ? 'soon' : ''));
+  return { left, per, perDay, days, until: days !== null ? ghDayShift(today, days) : '', lead, state, expDays, expState, prn };
+}
+// Writes the dates for the server push into the medicine (call after every change of the supply)
+function ghStockStamp(med) {
+  if (!ghStockOn(med)) return med;
+  const s = med.stock;
+  const info = ghStockInfo(med);
+  s.soonOn = ''; s.emptyOn = '';
+  if (info && !info.prn && info.perDay > 0 && info.left > 0) {
+    const doses = Math.floor(info.left / info.per + 1e-9);
+    const k0 = Math.ceil((info.left - info.perDay * info.lead) / info.per - 1e-9);
+    s.soonOn = ghDoseDate(med, k0);
+    s.emptyOn = ghDoseDate(med, doses + 1);
+  } else if (info && info.left <= 0 && !info.prn) {
+    s.emptyOn = isoDate(new Date());
+  }
+  if (info && info.prn) {
+    if (info.left <= 0) s.emptyOn = isoDate(new Date());
+    else if (info.state === 'soon') s.soonOn = isoDate(new Date());
+  }
+  return med;
+}
+// Text under a medicine: amount and how long it lasts
+function ghStockLine(med, info) {
+  const s = med.stock;
+  const parts = [info.left > 0 ? tk('gh.stock.left', { amount: fmtQtyUnit(info.left, s.unit) }) : tk('gh.stock.empty')];
+  if (info.days !== null && info.left > 0) parts.push(tk('gh.stock.lasts', { n: info.days, date: ghFmtDate(info.until) }));
+  return parts.join(' · ');
+}
+function ghStockHint(med, info) {
+  const out = [];
+  if (info.state === 'soon' || info.state === 'empty') out.push(tk(med.stock.rx ? 'gh.stock.hintRx' : 'gh.stock.hintBuy'));
+  if (info.expState === 'expired') out.push(tk('gh.stock.expired', { date: ghFmtDate(med.stock.exp) }));
+  else if (info.expState === 'soon') out.push(tk('gh.stock.expSoon', { date: ghFmtDate(med.stock.exp) }));
+  return out;
+}
+
 /* ---------- Block: medication & vitamins ---------- */
+function ghMedIcon(med) { return med.kind === 'vit' ? '🍊' : (med.kind === 'other' ? '🌿' : '💊'); }
+function ghUnitLabel(u) { return u ? i18nT(u) : ''; }
 function ghMedsHtml(m, d, edit) {
   const today = ghToday();
   const taken = d.meds.taken[today] || [];
   const slots = ghMedSlots(d);
+  const mem = `data-member="${famAttr(m.id)}"`;
   const rows = slots.map(s => {
     const on = taken.includes(s.key);
-    const icon = s.med.kind === 'vit' ? '🍊' : (s.med.kind === 'other' ? '🌿' : '💊');
     return `<div class="hp-row">
-      <label class="hp-tick"><input type="checkbox" data-ghchange="med-taken" data-member="${famAttr(m.id)}" data-key="${famAttr(s.key)}"${on ? ' checked' : ''}${edit ? '' : ' disabled'} />
+      <label class="hp-tick"><input type="checkbox" data-ghchange="med-taken" ${mem} data-key="${famAttr(s.key)}"${on ? ' checked' : ''}${edit ? '' : ' disabled'} />
         <span class="hp-time">${escapeHtml(s.time || tk('gh.meds.anyTime'))}</span>
-        <span class="min-w-0 flex-1 ${on ? 'line-through text-ink/40' : ''}">${icon} ${escapeHtml(s.med.name)}${s.med.dose ? `<span class="text-ink/50"> · ${escapeHtml(s.med.dose)}</span>` : ''}</span>
+        <span class="min-w-0 flex-1 ${on ? 'line-through text-ink/40' : ''}">${ghMedIcon(s.med)} ${escapeHtml(s.med.name)}${s.med.dose ? `<span class="text-ink/50"> · ${escapeHtml(s.med.dose)}</span>` : ''}</span>
       </label>
-      ${edit ? `<button type="button" class="hp-edit" data-ghact="med-edit" data-member="${famAttr(m.id)}" data-id="${famAttr(s.med.id)}" aria-label="${ghAttr(tk('common.edit'))}">✏️</button>` : ''}
+      ${edit ? `<button type="button" class="hp-edit" data-ghact="med-edit" ${mem} data-id="${famAttr(s.med.id)}" aria-label="${ghAttr(tk('common.edit'))}">✏️</button>` : ''}
     </div>`;
   }).join('');
-  const body = rows
-    ? `<div class="hp-list">${rows}</div>`
-    : `<p class="text-sm text-ink/50">${tk('gh.meds.empty')}</p>`;
+  // As-needed medicines (house pharmacy): no fixed plan, only listed with their supply
+  const prn = d.meds.list.filter(x => x.prn === true);
+  const prnRows = prn.map(med => {
+    const info = ghStockInfo(med);
+    return `<div class="hp-row">
+      <span class="min-w-0 flex-1 text-sm">${ghMedIcon(med)} ${escapeHtml(med.name)}${med.dose ? `<span class="text-ink/50"> · ${escapeHtml(med.dose)}</span>` : ''}
+        ${info ? `<span class="block text-[11px] ${info.state === 'ok' ? 'text-ink/50' : 'text-mustard font-medium'}">${escapeHtml(ghStockLine(med, info))}</span>` : ''}</span>
+      ${edit && info ? `<button type="button" class="fz-mini-btn" data-ghact="med-take" ${mem} data-id="${famAttr(med.id)}">${tk('gh.stock.take')}</button>` : ''}
+      ${edit ? `<button type="button" class="hp-edit" data-ghact="med-edit" ${mem} data-id="${famAttr(med.id)}" aria-label="${ghAttr(tk('common.edit'))}">✏️</button>` : ''}
+    </div>`;
+  }).join('');
+  // Supply of the medicines with a plan: remaining amount, how long it lasts, hints
+  const stockRows = d.meds.list.filter(x => !x.prn && ghStockOn(x)).map(med => {
+    const info = ghStockInfo(med);
+    const hints = ghStockHint(med, info);
+    return `<div class="hp-row" style="align-items:flex-start">
+      <span class="min-w-0 flex-1 text-sm">${ghMedIcon(med)} ${escapeHtml(med.name)}
+        <span class="block text-[11px] ${info.state === 'ok' ? 'text-ink/50' : 'text-mustard font-medium'}">${escapeHtml(ghStockLine(med, info))}</span>
+        ${hints.map(h => `<span class="block text-[11px] text-mustard">⚠️ ${escapeHtml(h)}</span>`).join('')}</span>
+      ${edit && Number(med.stock.pack) > 0 ? `<button type="button" class="fz-mini-btn" data-ghact="med-restock" ${mem} data-id="${famAttr(med.id)}">${tk('gh.stock.restock', { n: ghNum(Number(med.stock.pack)) })}</button>` : ''}
+    </div>`;
+  }).join('');
+  let body = rows ? `<div class="hp-list">${rows}</div>` : (prnRows || stockRows ? '' : `<p class="text-sm text-ink/50">${tk('gh.meds.empty')}</p>`);
+  if (prnRows) body += `<div class="text-[11px] uppercase tracking-wide text-ink/40 mt-3">${tk('gh.meds.prnList')}</div><div class="hp-list">${prnRows}</div>`;
+  if (stockRows) body += `<div class="text-[11px] uppercase tracking-wide text-ink/40 mt-3">${tk('gh.stock.title')}</div><div class="hp-list">${stockRows}</div>`;
   const rem = ghRemindHtml('meds', m, d.meds.remind, edit);
-  const add = edit ? `<button type="button" class="fz-mini-btn" data-ghact="med-new" data-member="${famAttr(m.id)}">+ ${tk('gh.add')}</button>` : '';
+  const add = edit ? `<button type="button" class="fz-mini-btn" data-ghact="med-new" ${mem}>+ ${tk('gh.add')}</button>` : '';
   return ghCard('💊', tk('gh.block.meds'), body + rem, add);
 }
 function ghMedForm(memberId, medId) {
   const d = ghData(memberId);
   const med = d.meds.list.find(x => x.id === medId) || { name: '', kind: 'med', dose: '', times: ['08:00'] };
   const times = (med.times || []).concat(['', '', '']).slice(0, 4);
+  const on = ghStockOn(med);
+  const info = on ? ghStockInfo(med) : null;
+  const s = on ? med.stock : { qty: 0, unit: 'Tablette', per: 1, pack: 0, rx: false, lead: 0, min: 0, exp: '', pantry: false, warn: true };
   ghModal = { type: 'med', memberId, id: medId || '' };
+  const unitOpts = GH_STOCK_UNITS.concat(s.unit && !GH_STOCK_UNITS.includes(s.unit) ? [s.unit] : []);
   famOpenModal(`
     <h3 class="font-serif text-lg mb-3">${tk(medId ? 'gh.meds.edit' : 'gh.meds.new')}</h3>
+    <div class="mb-3 flex flex-wrap gap-2">
+      ${skKiOn() ? `<button type="button" id="hpMedScan" class="fz-mini-btn">📷 ${tk('gh.stock.scan')}</button><input id="hpMedFile" type="file" accept="image/*" capture="environment" class="hidden" />` : ''}
+      <button type="button" id="hpMedCode" class="fz-mini-btn">▦ ${tk('gh.stock.barcode')}</button><input id="hpMedCodeFile" type="file" accept="image/*" capture="environment" class="hidden" />
+      <input id="hpStockPzn" type="hidden" value="${ghAttr(on && s.pzn ? s.pzn : '')}" />
+      <p id="hpMedScanInfo" class="hidden text-xs w-full"></p>
+    </div>
     <label class="hp-lbl">${tk('gh.meds.name')}<input id="hpMedName" type="text" maxlength="80" value="${ghAttr(med.name)}" class="hp-in" /></label>
     <label class="hp-lbl">${tk('gh.meds.kind')}<select id="hpMedKind" class="hp-in">
       ${[['med', 'gh.meds.kindMed'], ['vit', 'gh.meds.kindVit'], ['other', 'gh.meds.kindOther']].map(k => `<option value="${k[0]}"${med.kind === k[0] ? ' selected' : ''}>${tk(k[1])}</option>`).join('')}
     </select></label>
     <label class="hp-lbl">${tk('gh.meds.dose')}<input id="hpMedDose" type="text" maxlength="60" value="${ghAttr(med.dose)}" class="hp-in" /></label>
-    <div class="hp-lbl">${tk('gh.meds.times')}<div class="grid grid-cols-4 gap-2">${times.map((t, i) => `<input type="time" class="hp-in hp-med-time" data-i="${i}" value="${ghAttr(t)}" />`).join('')}</div></div>
-    ${ghModalButtons(!!medId)}`);
+    <label class="fz-check mb-2"><input id="hpMedPrn" type="checkbox"${med.prn ? ' checked' : ''} /><span>${tk('gh.meds.prn')}</span></label>
+    <div class="hp-lbl" id="hpMedTimesWrap"${med.prn ? ' style="display:none"' : ''}>${tk('gh.meds.times')}<div class="grid grid-cols-4 gap-2">${times.map((t, i) => `<input type="time" class="hp-in hp-med-time" data-i="${i}" value="${ghAttr(t)}" />`).join('')}</div></div>
+    <details class="hp-stock mt-2"${on ? ' open' : ''}>
+      <summary class="text-sm font-medium cursor-pointer">📦 ${tk('gh.stock.title')}</summary>
+      <label class="fz-check mt-2"><input id="hpStockOn" type="checkbox"${on ? ' checked' : ''} /><span>${tk('gh.stock.track')}</span></label>
+      <div class="grid grid-cols-2 gap-2 mt-2">
+        <label class="hp-lbl" style="margin-bottom:0">${tk('gh.stock.qty')}<input id="hpStockQty" type="text" inputmode="decimal" value="${ghAttr(on && info ? String(info.left) : '')}" class="hp-in" /></label>
+        <label class="hp-lbl" style="margin-bottom:0">${tk('gh.stock.unit')}<select id="hpStockUnit" class="hp-in">${unitOpts.map(u => `<option value="${ghAttr(u)}"${u === s.unit ? ' selected' : ''}>${escapeHtml(ghUnitLabel(u))}</option>`).join('')}</select></label>
+        <label class="hp-lbl" style="margin-bottom:0">${tk('gh.stock.per')}<input id="hpStockPer" type="text" inputmode="decimal" value="${ghAttr(String(Number(s.per) || 1))}" class="hp-in" /></label>
+        <label class="hp-lbl" style="margin-bottom:0">${tk('gh.stock.pack')}<input id="hpStockPack" type="text" inputmode="decimal" value="${ghAttr(Number(s.pack) > 0 ? String(Number(s.pack)) : '')}" class="hp-in" /></label>
+      </div>
+      <label class="fz-check mt-2"><input id="hpStockRx" type="checkbox"${s.rx ? ' checked' : ''} /><span>${tk('gh.stock.rx')}</span></label>
+      <div class="grid grid-cols-2 gap-2 mt-2">
+        <label class="hp-lbl" style="margin-bottom:0">${tk('gh.stock.lead')}<select id="hpStockLead" class="hp-in">
+          <option value="0"${!Number(s.lead) ? ' selected' : ''}>${tk('gh.stock.leadAuto')}</option>
+          ${[3, 7, 14, 21, 28].map(n => `<option value="${n}"${Number(s.lead) === n ? ' selected' : ''}>${tk('gh.stock.leadOpt', { n })}</option>`).join('')}
+        </select></label>
+        <label class="hp-lbl" style="margin-bottom:0">${tk('gh.stock.min')}<input id="hpStockMin" type="text" inputmode="decimal" value="${ghAttr(Number(s.min) > 0 ? String(Number(s.min)) : '')}" class="hp-in" /></label>
+      </div>
+      <label class="hp-lbl mt-2">${tk('gh.stock.exp')}<input id="hpStockExp" type="date" value="${ghAttr(ghIsoOk(s.exp) ? s.exp : '')}" class="hp-in" /></label>
+      <label class="fz-check"><input id="hpStockWarn" type="checkbox"${s.warn === false ? '' : ' checked'} /><span>🔔 ${tk('gh.stock.warn')}</span></label>
+      <label class="fz-check mt-1"><input id="hpStockPantry" type="checkbox"${s.pantry ? ' checked' : ''} /><span>🧺 ${tk('gh.stock.pantry')}</span></label>
+      <p class="text-[11px] text-ink/50 mt-1">${tk('gh.stock.pantryNote')}</p>
+    </details>
+    ${ghModalButtons(!!medId)}`, (body) => {
+      const prnEl = body.querySelector('#hpMedPrn');
+      prnEl.addEventListener('change', () => { body.querySelector('#hpMedTimesWrap').style.display = prnEl.checked ? 'none' : ''; });
+      const code = body.querySelector('#hpMedCode');
+      if (code) {
+        code.addEventListener('click', () => body.querySelector('#hpMedCodeFile').click());
+        body.querySelector('#hpMedCodeFile').addEventListener('change', (e) => { const f = e.target.files && e.target.files[0]; e.target.value = ''; if (f) ghScanBarcode(f, body); });
+      }
+      const scan = body.querySelector('#hpMedScan');
+      if (scan) {
+        scan.addEventListener('click', () => body.querySelector('#hpMedFile').click());
+        body.querySelector('#hpMedFile').addEventListener('change', (e) => { const f = e.target.files && e.target.files[0]; e.target.value = ''; if (f) ghScanPack(f, body); });
+      }
+    });
+  try { if (!skKiOn()) Promise.resolve(recipeKiLoadStatus()).then(() => { if (skKiOn() && ghModal && ghModal.type === 'med' && !document.getElementById('hpMedScan') && document.getElementById('hpMedName')) ghMedFormRefresh(); }).catch(() => { /* offline */ }); } catch (e) { /* no AI */ }
+}
+// The AI status can arrive after the form opened: reopen it once with the entered values kept
+function ghMedFormRefresh() {
+  const st = ghModal;
+  if (!st) return;
+  const keep = ['hpMedName', 'hpMedDose'].map(id => (document.getElementById(id) || {}).value || '');
+  ghMedForm(st.memberId, st.id);
+  if (keep[0]) document.getElementById('hpMedName').value = keep[0];
+  if (keep[1]) document.getElementById('hpMedDose').value = keep[1];
+}
+// Photo of the pack: the AI fills name, strength, pack size, unit, prescription and best-before date (always to be checked)
+async function ghScanPack(file, body) {
+  const info = body.querySelector('#hpMedScanInfo');
+  const btn = body.querySelector('#hpMedScan');
+  const show = (txt, bad) => { info.textContent = txt; info.classList.remove('hidden'); info.classList.toggle('text-red-500', !!bad); info.classList.toggle('text-ink/55', !bad); };
+  if (!navigator.onLine) { show(tk('gh.stock.scanOffline'), true); return; }
+  btn.disabled = true;
+  show(tk('gh.stock.scanBusy'));
+  try {
+    const part = await recipeKiImagePart(file);
+    const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    const timer = ctrl ? setTimeout(() => ctrl.abort(), 120000) : null;
+    let res;
+    try {
+      res = await apiFetch('/api/pinn/ki/packung', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ dateien: [part] }), signal: ctrl ? ctrl.signal : undefined });
+    } finally { if (timer) clearTimeout(timer); }
+    let data = {};
+    try { data = await res.json(); } catch (e) { data = {}; }
+    if (res.status === 404) throw new Error(tk('school.newFilesKiPb'));
+    if (!res.ok || !data.packung) throw new Error(data.error || tk('common.actionFailed'));
+    const z = data.packung;
+    if (!document.getElementById('hpMedName')) return;
+    const set = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
+    if (!document.getElementById('hpMedName').value.trim()) set('hpMedName', z.name);
+    if (z.staerke && !document.getElementById('hpMedDose').value.trim()) set('hpMedDose', z.staerke);
+    const on = document.getElementById('hpStockOn');
+    if (z.packung > 0) { on.checked = true; set('hpStockPack', String(z.packung)); if (!document.getElementById('hpStockQty').value.trim()) set('hpStockQty', String(z.packung)); }
+    if (z.einheit) set('hpStockUnit', z.einheit);
+    if (z.rezeptpflichtig) document.getElementById('hpStockRx').checked = true;
+    if (z.verfall) set('hpStockExp', z.verfall);
+    const det = body.querySelector('details.hp-stock'); if (det) det.open = true;
+    show([tk('gh.stock.scanDone', { name: z.name }), z.hinweis].filter(Boolean).join(' '));
+  } catch (err) {
+    show(tk('gh.stock.scanFail', { msg: err && err.name === 'AbortError' ? tk('school.aiTookTooLong') : (err && err.message ? err.message : tk('home.unknownError')) }), true);
+  } finally { btn.disabled = false; }
+}
+function ghFormNum(id) {
+  const el = document.getElementById(id);
+  const v = el ? parseFloat(String(el.value || '').replace(',', '.')) : NaN;
+  return isFinite(v) && v >= 0 ? ghRound(v) : 0;
 }
 function ghSaveMed() {
   const name = document.getElementById('hpMedName').value.trim().slice(0, 80);
   if (!name) { document.getElementById('hpMedName').focus(); return; }
   const kind = document.getElementById('hpMedKind').value;
   const dose = document.getElementById('hpMedDose').value.trim().slice(0, 60);
-  const times = Array.from(document.querySelectorAll('.hp-med-time')).map(i => i.value).filter(v => /^\d{2}:\d{2}$/.test(v));
+  const prn = document.getElementById('hpMedPrn').checked;
+  const times = prn ? [] : Array.from(document.querySelectorAll('.hp-med-time')).map(i => i.value).filter(v => /^\d{2}:\d{2}$/.test(v));
   const uniq = Array.from(new Set(times)).sort();
+  const stockOn = document.getElementById('hpStockOn').checked;
+  const pzn = String((document.getElementById('hpStockPzn') || {}).value || '').replace(/\D/g, '').slice(0, 14);
+  let stock = null;
+  if (stockOn) {
+    const exp = document.getElementById('hpStockExp').value;
+    stock = {
+      on: true, qty: ghFormNum('hpStockQty'), at: Date.now(), unit: document.getElementById('hpStockUnit').value,
+      per: ghFormNum('hpStockPer') || 1, pack: ghFormNum('hpStockPack'), rx: document.getElementById('hpStockRx').checked,
+      lead: Math.round(ghFormNum('hpStockLead')), min: ghFormNum('hpStockMin'), exp: ghIsoOk(exp) ? exp : '',
+      warn: document.getElementById('hpStockWarn').checked, pantry: document.getElementById('hpStockPantry').checked,
+    };
+    if (pzn) stock.pzn = pzn;
+  }
   const st = ghModal;
   famCloseModal();
   ghChange(st.memberId, (d) => {
     const id = st.id || ghId();
+    const old = d.meds.list.find(x => x.id === id);
     const med = { id, name, kind: ['med', 'vit', 'other'].includes(kind) ? kind : 'med', dose, times: uniq };
+    if (prn) med.prn = true;
+    if (stock) {
+      if (old && old.stock) { if (old.stock.pantryId) stock.pantryId = old.stock.pantryId; if (old.stock.synced !== undefined) stock.synced = old.stock.synced; if (old.stock.taskAt && stock.qty <= ghStockInfo(old).left + 0.004) stock.taskAt = old.stock.taskAt; }
+      med.stock = stock;
+      ghStockStamp(med);
+    } else if (old && old.stock) {
+      med.stock = Object.assign({}, old.stock, { on: false, soonOn: '', emptyOn: '' });
+    }
     const i = d.meds.list.findIndex(x => x.id === id);
     if (i >= 0) d.meds.list[i] = med; else d.meds.list.push(med);
   });
+}
+// New pack: adds the pack size to what is left (the best-before date of the old pack is dropped)
+function ghRestock(memberId, medId) {
+  ghChange(memberId, (d) => {
+    const med = d.meds.list.find(x => x.id === medId);
+    if (!ghStockOn(med)) return;
+    const info = ghStockInfo(med);
+    med.stock.qty = ghRound(info.left + (Number(med.stock.pack) || 0));
+    med.stock.at = Date.now();
+    med.stock.exp = '';
+    delete med.stock.taskAt;
+    ghStockStamp(med);
+  });
+}
+// As-needed medicine taken: subtracts one dose
+function ghTakePrn(memberId, medId) {
+  ghChange(memberId, (d) => {
+    const med = d.meds.list.find(x => x.id === medId);
+    if (!ghStockOn(med)) return;
+    const info = ghStockInfo(med);
+    med.stock.qty = ghRound(Math.max(0, info.left - (Number(med.stock.per) || 1)));
+    med.stock.at = Date.now();
+    ghStockStamp(med);
+  });
+}
+
+
+/* ---------- Barcode of a pack (since 1.161.0) ----------
+   German packs carry the PZN as a code 39 or, since securPharm, a Data Matrix with PZN, best-before date and batch.
+   Only the PZN number and the best-before date can be read from it - there is no name in the code and pinn. has no
+   drug database. So the first scan of a pack fills in the best-before date and remembers the PZN; once the entry is
+   saved, the next pack with the same PZN fills in everything (name, unit, pack size, prescription) by itself.
+   The code is read with the detector of the browser (not available everywhere), from a photo. */
+function ghParseCode(raw) {
+  const out = { pzn: '', exp: '' };
+  const t = String(raw || '').replace(/[\u001d\u001e]/g, '|');
+  let m = t.match(/(?:^|[|(])01\)?0?4150(\d{8})\d/) || t.match(/(?:^|\|)9N(\d{8})/);
+  if (m) out.pzn = m[1];
+  else { m = t.match(/^-?(\d{7,8})$/); if (m) out.pzn = m[1].padStart(8, '0'); }
+  m = t.match(/\(17\)(\d{6})/) || t.match(/\|17(\d{6})/) || t.match(/\|D(\d{6})/) || t.match(/^01\d{14}17(\d{6})/);
+  if (m) {
+    const yy = Number(m[1].slice(0, 2)), mm = Number(m[1].slice(2, 4)); let dd = Number(m[1].slice(4, 6));
+    if (mm >= 1 && mm <= 12) {
+      if (!dd) dd = new Date(2000 + yy, mm, 0).getDate();
+      out.exp = `${2000 + yy}-${pad2(mm)}-${pad2(dd)}`;
+    }
+  }
+  return out;
+}
+function ghKnownPzn(pzn) {
+  let hit = null;
+  Object.keys(ghState.people).forEach(mid => {
+    const list = (ghState.people[mid].daten && ghState.people[mid].daten.meds && ghState.people[mid].daten.meds.list) || [];
+    list.forEach(med => { if (!hit && med && med.stock && med.stock.pzn === pzn) hit = med; });
+  });
+  return hit;
+}
+async function ghScanBarcode(file, body) {
+  const info = body.querySelector('#hpMedScanInfo');
+  const show = (txt, bad) => { info.textContent = txt; info.classList.remove('hidden'); info.classList.toggle('text-red-500', !!bad); info.classList.toggle('text-ink/55', !bad); };
+  const url = URL.createObjectURL(file);
+  try {
+    const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = () => rej(new Error('image')); i.src = url; });
+    let res = { pzn: '', exp: '' };
+    let ean = '';
+    // 1) detector of the browser (PZN, Data Matrix with best-before date, EAN) - not available everywhere
+    if ('BarcodeDetector' in window) {
+      try {
+        const formats = (await window.BarcodeDetector.getSupportedFormats()).filter(f => ['data_matrix', 'code_39', 'code_128', 'ean_13', 'ean_8', 'qr_code'].includes(f));
+        const found = await new window.BarcodeDetector({ formats }).detect(img);
+        (found || []).forEach(f => {
+          const r = ghParseCode(f.rawValue);
+          if (r.pzn && !res.pzn) res.pzn = r.pzn;
+          if (r.exp && !res.exp) res.exp = r.exp;
+          if (!ean && f.format && f.format.indexOf('ean') === 0) ean = String(f.rawValue || '').replace(/\D/g, '');
+        });
+      } catch (e) { /* fall back to the own EAN reader */ }
+    }
+    // 2) own EAN reader of the pantry scanner (works on every device)
+    if (!res.pzn && !ean && typeof pantryScanDecodePhoto === 'function') { try { ean = await pantryScanDecodePhoto(img); } catch (e) { ean = ''; } }
+    if (!res.pzn && !res.exp && !ean) { show(tk('gh.stock.barcodeNone'), true); return; }
+    const set = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
+    const det = body.querySelector('details.hp-stock'); if (det) det.open = true;
+    document.getElementById('hpStockOn').checked = true;
+    const code = res.pzn || ean;
+    if (res.exp) set('hpStockExp', res.exp);
+    if (code) set('hpStockPzn', code);
+    const known = code ? ghKnownPzn(code) : null;
+    if (known) {
+      set('hpMedName', known.name); set('hpMedDose', known.dose || '');
+      const k = known.stock;
+      set('hpStockUnit', k.unit || 'Tablette'); set('hpStockPer', String(k.per || 1)); set('hpStockPack', k.pack > 0 ? String(k.pack) : '');
+      if (k.pack > 0 && !document.getElementById('hpStockQty').value.trim()) set('hpStockQty', String(k.pack));
+      document.getElementById('hpStockRx').checked = !!k.rx;
+      show(tk('gh.stock.barcodeKnown', { name: known.name }));
+      return;
+    }
+    // 3) EAN: online lookup through the server (same databases as the pantry: Open Food/Products/Beauty Facts)
+    if (!res.pzn && ean && typeof pantryLookupBarcode === 'function') {
+      show(tk('gh.stock.barcodeSearching'));
+      const hit = await pantryLookupBarcode(ean);
+      if (hit && hit.gefunden && hit.name) {
+        if (!document.getElementById('hpMedName').value.trim()) set('hpMedName', hit.name);
+        const q = String(hit.menge || '').match(/(\d+(?:[.,]\d+)?)\s*(tabl\w*|kaps\w*|caps\w*|ml|stk|st[üu]ck|pcs|beutel)?/i);
+        if (q) {
+          const n = parseFloat(q[1].replace(',', '.'));
+          const u = (q[2] || '').toLowerCase();
+          if (n > 0) { set('hpStockPack', String(n)); if (!document.getElementById('hpStockQty').value.trim()) set('hpStockQty', String(n)); }
+          if (u) set('hpStockUnit', /^tabl/.test(u) ? 'Tablette' : (/^(kaps|caps)/.test(u) ? 'Kapsel' : (u === 'ml' ? 'ml' : (/^beutel/.test(u) ? 'Beutel' : 'Stück'))));
+        }
+        show(tk('gh.stock.barcodeOnline', { name: hit.name }));
+        return;
+      }
+      show(tk('gh.stock.barcodeNoHit', { code: ean }));
+      return;
+    }
+    show(tk('gh.stock.barcodeFound', { pzn: res.pzn || '–' }));
+  } catch (err) {
+    show(tk('gh.stock.barcodeNone'), true);
+  } finally { URL.revokeObjectURL(url); }
+}
+
+/* ---------- Task "get a prescription" (since 1.161.0) ----------
+   Once for each running-low phase of a prescription medicine a task is created (due 3 days before it runs out, at the
+   earliest today) for the person; restocking starts the next phase (ghRestock / ghSaveMed clear stock.taskAt). */
+function ghRunRxTasks() {
+  if (typeof queueTaskSave !== 'function' || typeof fzTaskId !== 'function' || !familyRecordId || isCurrentUserGuest()) return;
+  let created = 0;
+  Object.keys(ghState.people).forEach(mid => {
+    if (!ghCanEdit(mid)) return;
+    const p = ghState.people[mid];
+    const d = ghNorm(p.daten, p.kind);
+    d.meds.list.forEach(med => {
+      if (!ghStockOn(med) || !med.stock.rx || med.stock.warn === false || med.stock.taskAt || created >= 6) return;
+      const info = ghStockInfo(med);
+      if (info.state === 'ok') return;
+      const today = isoDate(new Date());
+      const due = info.until && info.until > ghDayShift(today, 3) ? ghDayShift(info.until, -3) : today;
+      const label = memberLabel(memberById(mid));
+      const id = fzTaskId('gh|' + (typeof finFamilyKey === 'function' ? finFamilyKey() : '') + '|' + mid + '|' + med.id + '|' + today);
+      queueTaskSave({ id, title: tk('gh.stock.taskTitle', { name: med.name }).slice(0, 200), notes: buildAssignedNotes(tk('gh.stock.taskNotes', { name: label }), [mid]), dueDate: due, fromTime: '', toTime: '', remindAt: '' }, true);
+      created++;
+      ghChange(mid, (dd) => { const mm = dd.meds.list.find(x => x.id === med.id); if (mm && mm.stock) mm.stock.taskAt = today; });
+    });
+  });
+  if (created) { try { rebuildAufgaben(); renderTasks(); flushOutbox(); } catch (e) { /* tasks not ready */ } }
+}
+
+/* ---------- Link with the page Vorrat (since 1.161.0) ----------
+   A medicine with "med.stock.pantry" has an entry in the pantry (name, amount, unit). The amount there follows the
+   calculated amount; if someone changes it in the pantry (e.g. after buying), that value is taken over. Without
+   prescription the pantry gets a minimum amount (lead time x use per day), so the shopping list fills itself; with
+   prescription there is no minimum (it cannot be bought without one) - the warning comes as a push message instead. */
+let ghSyncBusy = false;
+function ghSyncPantry() {
+  if (ghSyncBusy || typeof pantryItems === 'undefined' || !ghState.loaded) return;
+  ghSyncBusy = true;
+  try {
+    let pantryChanged = false;
+    Object.keys(ghState.people).forEach(mid => {
+      if (!ghCanEdit(mid)) return;
+      const p = ghState.people[mid];
+      const d = ghNorm(p.daten, p.kind);
+      const todo = d.meds.list.filter(x => ghStockOn(x) && x.stock.pantry === true);
+      todo.forEach(med => {
+        const s = med.stock;
+        const info = ghStockInfo(med);
+        let item = s.pantryId ? pantryItems.find(x => x.id === s.pantryId) : null;
+        const minQty = (!s.rx && !info.prn && info.perDay > 0) ? ghRound(info.perDay * info.lead) : ((!s.rx && info.prn && Number(s.min) > 0) ? Number(s.min) : null);
+        if (s.pantryId && !item) {
+          // Entry was deleted in the pantry: stop the link
+          ghChange(mid, (dd) => { const mm = dd.meds.list.find(x => x.id === med.id); if (mm && mm.stock) { mm.stock.pantry = false; delete mm.stock.pantryId; delete mm.stock.synced; } });
+          return;
+        }
+        if (!item) {
+          const label = memberLabel(memberById(mid));
+          const created = {
+            id: 'pv' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+            name: med.name, qty: info.left, unit: s.unit || '', minQty, category: 'sonstiges', location: '', stores: [],
+            note: tk('gh.stock.pantryItemNote', { name: label }), bestBefore: ghIsoOk(s.exp) && info.left > 0 ? s.exp : '', barcodes: [], updatedAt: Date.now(),
+          };
+          pantryItems = [...pantryItems, created];
+          pantryChanged = true;
+          ghChange(mid, (dd) => { const mm = dd.meds.list.find(x => x.id === med.id); if (mm && mm.stock) { mm.stock.pantryId = created.id; mm.stock.synced = info.left; } });
+          return;
+        }
+        const pq = Number(item.qty) || 0;
+        if (s.synced !== undefined && Math.abs(pq - Number(s.synced)) > 0.004) {
+          // Changed in the pantry: take that amount over as the new starting point
+          ghChange(mid, (dd) => {
+            const mm = dd.meds.list.find(x => x.id === med.id);
+            if (!mm || !mm.stock) return;
+            mm.stock.qty = ghRound(pq); mm.stock.at = Date.now(); mm.stock.synced = ghRound(pq);
+            ghStockStamp(mm);
+          });
+          return;
+        }
+        const wantMin = minQty === null ? null : minQty;
+        const same = Math.abs(pq - info.left) < 0.004 && (item.minQty === null || item.minQty === undefined ? wantMin === null : Math.abs(Number(item.minQty) - wantMin) < 0.004) && String(item.name) === String(med.name);
+        if (!same) {
+          pantryItems = pantryItems.map(x => x.id === item.id ? { ...x, name: med.name, qty: info.left, unit: s.unit || x.unit, minQty: wantMin, updatedAt: Date.now() } : x);
+          pantryChanged = true;
+        }
+        if (Math.abs((Number(s.synced) || 0) - info.left) > 0.004 || s.synced === undefined) {
+          // Remember what was written (silently, without a save of its own: it is saved with the next change)
+          s.synced = info.left;
+          const live = ghState.people[mid] && ghState.people[mid].daten && ghState.people[mid].daten.meds && ghState.people[mid].daten.meds.list.find(x => x.id === med.id);
+          if (live && live.stock) live.stock.synced = info.left;
+        }
+      });
+    });
+    if (pantryChanged) { try { pantryCommit(); } catch (e) { /* pantry not ready */ } }
+  } finally { ghSyncBusy = false; }
 }
 
 /* ---------- Block: hand washing ---------- */
@@ -998,8 +1512,8 @@ function ghModalButtons(withDelete) {
 }
 
 /* ---------- Link from a push message ---------- */
-// ?gesundheit=<trinken|medikamente|haende>&person=<member ID>: opens the health page of that person;
-// "trinken" opens the drink popup on top of it.
+// ?gesundheit=<trinken|medikamente|haende|schlaf|geschlafen|…>&person=<member ID>: opens the health page of that person;
+// "trinken" opens the drink popup on top of it, "geschlafen" the quick window "How did you sleep?".
 async function ghOpenFromLink(kind, memberId) {
   if (isCurrentUserGuest()) return;
   const idle = async () => { for (let i = 0; i < 40 && ghState.loading; i++) await new Promise(r => setTimeout(r, 150)); };
@@ -1009,6 +1523,13 @@ async function ghOpenFromLink(kind, memberId) {
   if (!id) { setView('familie'); famSetTab('gesundheit'); return; }
   ghOpenPerson(id);
   if (kind === 'trinken' && ghCanEdit(id)) ghOpenDrinkPopup(id);
+  // Morning message "How did you sleep?" (since 1.160.2 its own link "geschlafen"; older messages with "schlaf"
+  // open the window too if they are tapped before noon and today has no answer yet)
+  const morning = kind === 'geschlafen' || (kind === 'schlaf' && new Date().getHours() < 12);
+  if (morning && ghCanEdit(id)) {
+    const d = ghData(id);
+    if (kind === 'geschlafen' || !(d && d.sleep && d.sleep.log[ghToday()])) ghOpenSleepPopup(id);
+  }
 }
 
 /* ---------- Wiring ---------- */
@@ -1033,6 +1554,8 @@ async function ghOpenFromLink(kind, memberId) {
       }
       case 'med-new': ghMedForm(mid, ''); break;
       case 'med-edit': ghMedForm(mid, id); break;
+      case 'med-restock': ghRestock(mid, id); break;
+      case 'med-take': ghTakePrn(mid, id); break;
       case 'hands-plus': case 'hands-minus': {
         const day = ghToday();
         const step = act.dataset.ghact === 'hands-plus' ? 1 : -1;

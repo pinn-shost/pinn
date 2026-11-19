@@ -116,20 +116,6 @@ Napauta kuvaa avataksesi sen täysikokoisena.
 
 pinn. puhuu **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk, 🇳🇴 Norsk, 🇫🇮 Suomi ja 🇭🇺 Magyar**, mukauttaa valuutan ja hätänumerot alueellesi ja vaihtaa käsitteiden **perhe** ja **kotitalous** välillä. Yksi palvelin voi sisältää useita perheitä, joilla kullakin on omat ylläpitäjänsä.
 
-## Uutta versiossa 1.160.1
-
-**Korjaus: kääntämättömät tekstit**
-
-- Korjattu: asiakirjaluokat (esim. ”Kuitit ja takuu”) ja merkintä ”maksettu” kohdassa Talous → Viikkoraha näkyvät nyt kaikkialla sovelluksen kielellä.
-
-## Uutta versiossa 1.160.0
-
-**Unkari**
-
-- Uutta: unkari (Magyar) on uusi sovelluskieli – kaikki noin 7 500 sovelluksen tekstiä, käyttöönottoavustaja, tietojen vienti, palvelimen push-viestit ja Unkarin hätänumero (112). Myös yhteisasumisen muoto on mukana (”háztartás”, ”lakótárs”) unkarin päätteineen. Valitset sen kohdassa Asetukset → Kieli ja alue.
-- Huomio: käännöstä eivät ole tarkistaneet äidinkielenään unkaria puhuvat – parannusehdotukset ovat tervetulleita GitHub-issuena. Äänohjaus Sirin/Androidin kautta ei vielä ymmärrä unkaria ja vastaa englanniksi.
-- Muutettu: `i18n/hu.i18n.js` (new), `README.hu.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
 ## Vaatimukset
 
 - NAS tai minitietokone, johon on asennettu **Docker** ja **Docker Compose** (esim. Synology, UGREEN, QNAP tai tavallinen Linux-palvelin)
@@ -139,7 +125,7 @@ pinn. puhuu **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 ## Asennus
 
 1. Lataa ja pura [uusimman version](https://github.com/pinn-shost/pinn/releases/latest) ZIP-tiedosto.
-2. Luo NAS-laitteelle kansio, esim. `/volume1/docker/Pocketbase`, ja siirrä purettu kansio (esim. `pinn-1.160.1` tai `pinn-main`) siihen muuttamattomana.
+2. Luo NAS-laitteelle kansio, esim. `/volume1/docker/Pocketbase`, ja siirrä purettu kansio (esim. `pinn-1.161.0` tai `pinn-main`) siihen muuttamattomana.
 3. Yhdistä SSH:lla ja suorita:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -116,20 +116,6 @@ Trykk på et bilde for å åpne det i full størrelse.
 
 pinn. snakker **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk, 🇳🇴 Norsk, 🇫🇮 Suomi og 🇭🇺 Magyar**, tilpasser valuta og nødnumre til regionen din og bytter mellom begrepene **familie** og **husstand**. Én server kan rumme flere familier, hver med egne administratorer.
 
-## Nyheter i 1.160.1
-
-**Rettelse: uoversatte tekster**
-
-- Rettet: dokumentkategoriene (f.eks. «Kvitteringer og garanti») og merknaden «utbetalt» under Økonomi → Lommepenger vises nå overalt på appens språk.
-
-## Nyheter i 1.160.0
-
-**Ungarsk**
-
-- Nytt: ungarsk (Magyar) er et nytt appspråk – alle omtrent 7 500 tekstene i appen, oppsettsveiviseren, dataeksporten, push-varslene fra serveren og det ungarske nødnummeret (112). Varianten for bofellesskap er også med («háztartás», «lakótárs») med ungarske endelser. Velg det under Innstillinger → Språk og region.
-- Merk: oversettelsen er ikke kontrollert av morsmålsbrukere – forslag til forbedringer er velkomne som GitHub-issue. Stemmestyringen via Siri/Android forstår ennå ikke ungarsk og svarer på engelsk.
-- Endret: `i18n/hu.i18n.js` (new), `README.hu.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
 ## Krav
 
 - En NAS eller mini-PC med **Docker** og **Docker Compose** installert (f.eks. Synology, UGREEN, QNAP eller en vanlig Linux-server)
@@ -139,7 +125,7 @@ pinn. snakker **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installasjon
 
 1. Last ned og pakk ut ZIP-filen til [den nyeste versjonen](https://github.com/pinn-shost/pinn/releases/latest).
-2. Opprett en mappe på NAS-en, f.eks. `/volume1/docker/Pocketbase`, og legg den utpakkede mappen (f.eks. `pinn-1.160.1` eller `pinn-main`) i den uten endringer.
+2. Opprett en mappe på NAS-en, f.eks. `/volume1/docker/Pocketbase`, og legg den utpakkede mappen (f.eks. `pinn-1.161.0` eller `pinn-main`) i den uten endringer.
 3. Koble til via SSH og kjør:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

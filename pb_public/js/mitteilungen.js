@@ -129,9 +129,28 @@ async function sendSubscriptionToServer(sub) {
     if (worker) worker.postMessage({ type: 'pinn-endpoint', endpoint: j.endpoint });
   } catch (e) { /* ignore */ }
 }
+// Last known notification settings of this profile (since 1.160.2): if the server cannot be reached for a moment,
+// the settings card still shows the switches instead of an empty card
+const LS_PUSH_SETTINGS = 'pinn.pushEinstellungen';
+function cachedPushSettings() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(LS_PUSH_SETTINGS) || 'null');
+    const u = currentUser();
+    return raw && raw.settings && u && raw.user === u.id ? raw.settings : null;
+  } catch (e) { return null; }
+}
+function cachePushSettings(settings) {
+  try {
+    const u = currentUser();
+    if (u && settings) localStorage.setItem(LS_PUSH_SETTINGS, JSON.stringify({ user: u.id, settings }));
+  } catch (e) { /* ignore */ }
+}
 async function loadPushConfig() {
   const res = await apiFetch('/api/pinn/push/config', { cache: 'no-store' });
-  pushConfig = await res.json();
+  const cfg = await res.json();
+  if (!cfg || typeof cfg !== 'object' || !cfg.settings) throw new Error((cfg && (cfg.error || cfg.message)) || tk('common.noConnection'));
+  pushConfig = cfg;
+  cachePushSettings(cfg.settings);
   return pushConfig;
 }
 
@@ -219,6 +238,13 @@ async function disablePushOnThisDevice() {
 // Result: the current subscription or null.
 // opts.offer: if the device wants notifications but cannot be registered again by itself (e.g. iOS
 // asks for a tap), show the one-tap offer at the bottom (only at app start, see js/appstart.js).
+// May this device register again without a tap? Yes if the permission is "granted"; on an iPhone/iPad web app
+// also with "default", because iOS reports the permission of web apps unreliably after an update (since 1.160.2)
+function pushMayResubscribe() {
+  if (!('Notification' in window)) return false;
+  if (Notification.permission === 'granted') return true;
+  return Notification.permission === 'default' && isAppleMobile() && isStandaloneApp() && pushWanted();
+}
 function syncPushSubscription(opts) {
   if (!pushSupported() || !window.isSecureContext) return Promise.resolve(null);
   if (pushSyncRunning) return pushSyncRunning;
@@ -245,7 +271,9 @@ function syncPushSubscription(opts) {
         try { await sub.unsubscribe(); } catch (e) { /* ignore */ }
         sub = null;
       }
-      if (!sub && serverKey && Notification.permission === 'granted') {
+      // iOS web apps do not always report a permission that was given (it may say "default") - there the
+      // device tries to register again by itself as well; a refusal just ends in the one-tap offer below
+      if (!sub && serverKey && pushMayResubscribe()) {
         try {
           sub = await pushWithTimeout(reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: serverKey }),
             20000, tk('account.push.err.timeout'));
@@ -319,6 +347,16 @@ function syncPushSubscriptionSoon() {
   syncPushSubscription();
 }
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') syncPushSubscriptionSoon(); });
+// After an update a new service worker takes over - check right away that this device is still registered
+// for notifications (and register it again if not), instead of only on the next app start (since 1.160.2)
+try {
+  if ('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('controllerchange', () => {
+    pushRegPromise = null;
+    if (!pushAutoSyncEnabled || !pb.authStore.isValid) return;
+    pushLastAutoSync = Date.now();
+    setTimeout(() => { syncPushSubscription({ offer: true }); }, 1500);
+  });
+} catch (e) { /* ignore */ }
 window.addEventListener('online', () => { pushLastAutoSync = 0; syncPushSubscriptionSoon(); });
 
 function fillPushSettingsForm(st) {
@@ -373,7 +411,14 @@ function readPushSettingsForm() {
   };
 }
 
+let pushRenderSeq = 0;
+let pushRenderRetry = null;
 async function renderPushSettings(knownSub) {
+  // Several callers may render at the same time (settings, profile switch, dashboard) - only the newest run
+  // may change the card, an older one that finishes later must not hide its buttons again
+  const seq = ++pushRenderSeq;
+  const stale = () => seq !== pushRenderSeq;
+  clearTimeout(pushRenderRetry);
   const status = document.getElementById('pushStatus');
   const who = document.getElementById('pushWhoText');
   const enableBtn = document.getElementById('pushEnableBtn');
@@ -391,10 +436,28 @@ async function renderPushSettings(knownSub) {
   const me = currentMember();
   who.textContent = me ? tk('account.push.who', { name: me.name }) : tk('account.push.notLinked');
 
+  let configOk = true;
   try {
     await loadPushConfig();
   } catch (e) {
-    status.textContent = tk('common.noConnection');
+    configOk = false;
+  }
+  if (stale()) return;
+  if (!configOk) {
+    // No answer from the server right now: keep the card complete with the last known settings and the
+    // state of this device, and try again shortly
+    const known = (pushConfig && pushConfig.settings) || cachedPushSettings();
+    if (known) { fillPushSettingsForm(known); box.classList.remove('hidden'); }
+    let sub = null;
+    if (pushSupported() && window.isSecureContext && Notification.permission !== 'denied') sub = knownSub || await currentPushSubscription();
+    if (stale()) return;
+    status.textContent = (sub ? tk('account.push.activeHere') + ' · ' : '') + tk('common.noConnection');
+    if (sub) { disableBtn.classList.remove('hidden'); testBtn.classList.remove('hidden'); }
+    else if (pushSupported() && window.isSecureContext) enableBtn.classList.remove('hidden');
+    pushRenderRetry = setTimeout(() => {
+      const card = document.getElementById('pushSection');
+      if (card && !card.classList.contains('hidden') && card.offsetParent !== null) renderPushSettings();
+    }, 4000);
     return;
   }
   fillPushSettingsForm(pushConfig.settings || {});
@@ -421,12 +484,14 @@ async function renderPushSettings(knownSub) {
   // Check the subscription independently of Notification.permission - iOS does not always report the
   // permission in web apps reliably.
   let sub = knownSub || (Notification.permission !== 'denied' ? await currentPushSubscription() : null);
+  if (stale()) return;
   let lostSub = false;
-  if (!sub && pushWanted() && Notification.permission === 'granted') {
+  if (!sub && pushWanted() && pushMayResubscribe()) {
     // Wanted, but the registration got lost -> silently register again
     sub = await syncPushSubscription();
     if (sub) { try { await loadPushConfig(); } catch (e) { /* ignore */ } }
     else lostSub = true;
+    if (stale()) return;
   }
 
   if (sub) {
@@ -439,6 +504,7 @@ async function renderPushSettings(knownSub) {
     } catch (e) {
       serverErr = e.message || tk('common.unknownError');
     }
+    if (stale()) return;
     const others = Math.max(0, (pushConfig.geraete || 0) - 1);
     if (serverErr) {
       status.textContent = tk('account.push.onButNotRegistered', { error: serverErr });
@@ -559,6 +625,7 @@ document.querySelectorAll('.push-opt').forEach(el => el.addEventListener('change
     try {
       const r = await postJson('/api/pinn/push/einstellungen', { settings: st });
       if (pushConfig) pushConfig.settings = r.settings;
+      cachePushSettings(r.settings || st);
       info.textContent = tk('common.saved');
       setTimeout(() => { info.textContent = ''; }, 1500);
     } catch (e) {
