@@ -1516,6 +1516,7 @@ window.PINN_I18N && window.PINN_I18N.keys("ru", {
   "depot.paidInLower": "внесено: {amount}",
   "depot.paidInPlus": "+ внесено {amount}",
   "depot.paidInTotal": "Внесено: {amount}",
+  "depot.paidOut": "выплачено",
   "depot.pays": "Платит",
   "depot.pdfImportNotPossible": "Импорт PDF невозможен: на NAS отсутствует pdf.js (pb_public/vendor/pdfjs/pdf.min.mjs и pdf.worker.min.mjs).",
   "depot.pdfReadFailed": "Не удалось прочитать файл PDF.",

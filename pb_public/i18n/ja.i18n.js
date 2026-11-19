@@ -1499,6 +1499,7 @@ window.PINN_I18N && window.PINN_I18N.keys("ja", {
   "depot.paidInLower": "入金額 {amount}",
   "depot.paidInPlus": "+ {amount} 入金",
   "depot.paidInTotal": "入金額 {amount}",
+  "depot.paidOut": "支給済み",
   "depot.pays": "支払い",
   "depot.pdfImportNotPossible": "PDFを取り込めません：NASにpdf.jsがありません（pb_public/vendor/pdfjs/pdf.min.mjsとpdf.worker.min.mjs）。",
   "depot.pdfReadFailed": "PDFファイルを読み取れませんでした.",

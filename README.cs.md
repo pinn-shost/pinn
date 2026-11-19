@@ -117,6 +117,12 @@ Klepnutím na obrázek ho otevřeš v plné velikosti.
 
 pinn. mluví jazyky: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk, 🇳🇴 Norsk, 🇫🇮 Suomi a 🇭🇺 Magyar**; přizpůsobí měnu a tísňová čísla tvému regionu a přepíná mezi pojmy **rodina** a **společná domácnost**. Jeden server může hostit více rodin, každou s vlastními správci.
 
+## Co je nového v 1.160.1
+
+**Oprava: nepřeložené texty**
+
+- Opraveno: kategorie dokumentů (např. „Doklady o koupi a záruka“) a poznámka „vyplaceno“ v Finance → Kapesné se nyní všude zobrazují v jazyce aplikace.
+
 ## Co je nového v 1.160.0
 
 **Maďarština**
@@ -124,14 +130,6 @@ pinn. mluví jazyky: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, �
 - Nové: maďarština (Magyar) je nový jazyk aplikace – všechny asi 7 500 textů aplikace, průvodce nastavením, export dat, push zprávy ze serveru a maďarské tísňové číslo (112). Je k dispozici i varianta pro společnou domácnost („háztartás“, „lakótárs“) s maďarskými koncovkami. Vybírá se v Nastavení → Jazyk a region.
 - Poznámka: překlad nezkontrolovali rodilí mluvčí – návrhy na zlepšení jsou vítány jako GitHub issue. Hlasové ovládání přes Siri/Android zatím maďarštině nerozumí a odpovídá anglicky.
 - Změněno: `i18n/hu.i18n.js` (new), `README.hu.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## Co je nového v 1.159.0
-
-**Finština**
-
-- Nové: finština (Suomi) je nový jazyk aplikace – všechny asi 7 500 textů aplikace, průvodce nastavením, export dat, push zprávy ze serveru a finské tísňové číslo (112). Je k dispozici i varianta pro společnou domácnost („kotitalous“, „asukas“) s finskými pádovými koncovkami. Vybereš ji v Nastavení → Jazyk a region.
-- Poznámka: překlad nezkontrolovali rodilí mluvčí – návrhy na zlepšení jsou vítány jako GitHub issue. Hlasové ovládání přes Siri/Android zatím finštině nerozumí a odpovídá anglicky.
-- Změněno: `i18n/fi.i18n.js` (new), `README.fi.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
 
 ## Požadavky
 
@@ -142,7 +140,7 @@ pinn. mluví jazyky: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, �
 ## Instalace
 
 1. Stáhni a rozbal ZIP [nejnovější verze](https://github.com/pinn-shost/pinn/releases/latest).
-2. Vytvoř na NAS složku, např. `/volume1/docker/Pocketbase`, a vlož do ní rozbalenou složku (např. `pinn-1.160.0` nebo `pinn-main`) beze změn.
+2. Vytvoř na NAS složku, např. `/volume1/docker/Pocketbase`, a vlož do ní rozbalenou složku (např. `pinn-1.160.1` nebo `pinn-main`) beze změn.
 3. Připoj se přes SSH a spusť:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -1572,7 +1572,7 @@ function hsDocRowHtml(x) {
   const today = finTodayIso();
   const cat = docCategory(x.kategorie);
   const dl = docDeadline(x, today);
-  const meta = [cat.label, vtIsIso(x.datum) ? vtFmt(x.datum) : '', x.aussteller].filter(Boolean).join(' · ');
+  const meta = [i18nT(cat.label), vtIsIso(x.datum) ? vtFmt(x.datum) : '', x.aussteller].filter(Boolean).join(' · ');
   const chips = [];
   if (dl) chips.push(`<span class="vt-chip ${dl.tone}">${hsEsc(dl.label)}</span>`);
   if (x.betrag > 0) chips.push(`<span class="text-[11px] text-ink/45">${hsEsc(fmtEur(x.betrag))}</span>`);
@@ -2944,7 +2944,7 @@ function hsOpenDocLink() {
     const all = docAll().slice().sort((a, b) => (a.kategorie === 'wohnen' ? 0 : 1) - (b.kategorie === 'wohnen' ? 0 : 1) || String(a.titel || '').localeCompare(String(b.titel || ''), 'de'));
     return all.map(x => `<button type="button" class="fz-pick-row${links.has(x.id) ? ' active' : ''}" data-d="${hsEsc(x.id)}">
       <span class="text-xl shrink-0">${hsEsc(docCategory(x.kategorie).icon || '📄')}</span>
-      <span class="flex-1 min-w-0"><span class="block text-sm font-medium truncate">${hsEsc(x.titel || tk('search.type.doc'))}</span><span class="block text-[11px] text-ink/45 truncate">${hsEsc(docCategory(x.kategorie).label + (x.datum ? ' · ' + vtFmt(x.datum) : ''))}</span></span>
+      <span class="flex-1 min-w-0"><span class="block text-sm font-medium truncate">${hsEsc(x.titel || tk('search.type.doc'))}</span><span class="block text-[11px] text-ink/45 truncate">${hsEsc(i18nT(docCategory(x.kategorie).label) + (x.datum ? ' · ' + vtFmt(x.datum) : ''))}</span></span>
       <span class="shrink-0 text-lg">${links.has(x.id) ? '✓' : ''}</span>
     </button>`).join('');
   };

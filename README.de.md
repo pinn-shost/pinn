@@ -139,6 +139,12 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk, 🇳🇴 Norsk, 🇫🇮 Suomi und 🇭🇺 Magyar**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.160.1
+
+**Korrektur: unübersetzte Texte**
+
+- Korrigiert: Die Dokument-Kategorien (z. B. „Kaufbelege & Garantie“) und der Hinweis „ausgezahlt“ unter Finanzen → Taschengeld werden jetzt überall in der App-Sprache angezeigt.
+
 ## Neu in 1.160.0
 
 **Ungarisch**
@@ -234,13 +240,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - Neu: Zugriff aus dem Internet über einen eigenen Reverse Proxy (Nginx Proxy Manager, Traefik, Cloudflare Tunnel …) – siehe „Zugriff aus dem Internet mit eigenem Reverse Proxy“ unter Installation. pinn. glaubt die Besucher-Adresse nur noch von vertrauten Proxys (`PINN_PROXY_NETZE`), die Sperre nach falschen Passwörtern lässt sich so nicht umgehen (IPv6: je /64). Aus dem Internet sind die PocketBase-Verwaltung und PocketBases eigene Anmeldewege gesperrt, das Start-Passwort `Admin` funktioniert nicht, und das Erraten von Tracker-IDs wird gebremst. Bei solchen Versuchen bekommen die Admins eine Push-Mitteilung „🚨 Sicherheitswarnung“ (Adresse, Heimnetz oder Internet, Gerät); alle Angaben stehen im Fehlerprotokoll unter „Sicherheit“. Im Heimnetz ändert sich nichts.
 - Geändert: `pb_hooks/pinn-netz.js` (new), `pb_hooks/netz.pb.js` (new), `pb_hooks/pinn-alarm.js` (new), `pb_hooks/pinn-sitzungen.js`, `pb_hooks/benutzer.pb.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/zuhause.pb.js`, `pb_hooks/sprache.pb.js`, `pb_hooks/smarthome.pb.js`, `pb_hooks/pinn-ortung.js`, `pb_hooks/pinn-protokoll.js`, `pb_hooks/pinn-pushtext.js`, `js/anmeldemaske.js`, `js/fehlerprotokoll.js`, `js/hinweise.js`, `js/appstart.js`, `i18n/`, `docker/docker-compose.portainer.yaml`, `env.txt`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
 
-## Neu in 1.151.0
-
-**Portainer-Stack, fertiges Image**
-
-- Neu: pinn. lässt sich ohne SSH und ohne Setup-Skript über die Portainer-Stack-Oberfläche installieren. Bei jedem Release wird ein fertiges Image (amd64, arm64) gebaut und unter `ghcr.io/pinn-shost/pinn` veröffentlicht; die neue Datei `docker/docker-compose.portainer.yaml` nutzt es mit Volumes und ohne feste Container-Namen (kein Konflikt mehr mit einem vorhandenen Tailscale-Container). Der Stack enthält außerdem einen Sicherungsdienst (nächtliche Sicherung, „Jetzt sichern“ und „Wiederherstellen“ in der App; Updates bleiben in Portainer) sowie auskommentierte, optionale Blöcke für Traccar und den Umweg zu Home Assistant. Siehe „Portainer-Stack (ohne Skript)“ unter Installation.
-- Geändert: `docker/` (new), `.github/workflows/image.yml` (new), `pinn-wartung.sh`, `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
-
 ## So funktioniert’s
 
 ```mermaid
@@ -269,7 +268,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.160.0` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.160.1` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

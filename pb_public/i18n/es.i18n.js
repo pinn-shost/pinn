@@ -1504,6 +1504,7 @@ window.PINN_I18N && window.PINN_I18N.keys("es", {
   "depot.paidInLower": "aportado {amount}",
   "depot.paidInPlus": "+ {amount} aportados",
   "depot.paidInTotal": "Aportado {amount}",
+  "depot.paidOut": "pagado",
   "depot.pays": "Paga",
   "depot.pdfImportNotPossible": "Importación PDF imposible: falta pdf.js en el NAS (pb_public/vendor/pdfjs/pdf.min.mjs y pdf.worker.min.mjs).",
   "depot.pdfReadFailed": "No se pudo leer el archivo PDF.",

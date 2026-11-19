@@ -511,7 +511,7 @@ function chatMPinnSheet(blob, mm, m) {
     const type = chatEl('select', 'chat-select'); targets.forEach(t => { const o = document.createElement('option'); o.value = t.id; o.textContent = t.label; type.appendChild(o); });
     mk('chat.media.pinn.where', type);
     const obj = chatEl('select', 'chat-select'); const objW = mk('chat.media.pinn.which', obj);
-    const cat = chatEl('select', 'chat-select'); (typeof docCategories === 'function' ? docCategories() : []).forEach(c => { const o = document.createElement('option'); o.value = c.id; o.textContent = (c.icon || '') + ' ' + c.label; cat.appendChild(o); });
+    const cat = chatEl('select', 'chat-select'); (typeof docCategories === 'function' ? docCategories() : []).forEach(c => { const o = document.createElement('option'); o.value = c.id; o.textContent = (c.icon || '') + ' ' + i18nT(c.label); cat.appendChild(o); });
     const catW = mk('chat.media.pinn.category', cat);
     const title = chatEl('input', 'chat-compose-cap'); title.type = 'text'; title.maxLength = 200; title.setAttribute('aria-label', tk('chat.media.pinn.name'));
     title.value = (m && chatS.plain.get(m.id) && chatS.plain.get(m.id).msg && chatS.plain.get(m.id).msg.x) ? String(chatS.plain.get(m.id).msg.x).slice(0, 80) : (mm.k === 'pdf' && mm.n ? String(mm.n).replace(/\.pdf$/i, '') : tk('chat.media.photo') + ' ' + chatDayLabel(Date.now()));

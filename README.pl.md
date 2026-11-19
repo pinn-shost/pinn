@@ -116,6 +116,12 @@ Dotknij obrazu, aby otworzyć go w pełnym rozmiarze.
 
 pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk, 🇳🇴 Norsk, 🇫🇮 Suomi i 🇭🇺 Magyar**; dostosowuje walutę i numery alarmowe do twojego regionu i przełącza się między określeniami **rodzina** i **wspólne mieszkanie**. Jeden serwer może obsługiwać wiele rodzin, każdą z własnymi administratorami.
 
+## Nowości w 1.160.1
+
+**Poprawka: nieprzetłumaczone teksty**
+
+- Naprawiono: kategorie dokumentów (np. „Paragony i gwarancja”) oraz opis „wypłacono” w Finanse → Kieszonkowe są teraz wszędzie wyświetlane w języku aplikacji.
+
 ## Nowości w 1.160.0
 
 **Węgierski**
@@ -171,15 +177,6 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 - Naprawiono: adresy kalendarza są teraz sprawdzane. Przy usuwaniu, zmianie lub odczycie wydarzenia w iCloud albo Google serwer używa danych logowania kalendarza rodzinnego i może je wysyłać tylko do serwerów Apple i Google. Wcześniej zalogowany profil mógł zmanipulowanym żądaniem wysłać te dane na dowolny inny serwer. Kalendarze, które już działają, nie są dotknięte.
 - Zmieniono: `pb_hooks/calendar-sync.js`, `js/versionslog.js`, `js/sprachen.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, README.
 
-## Nowości w 1.153.2
-
-**Klucze Gemini z „AQ.”, teksty statusu, dziennik błędów**
-
-- Naprawiono: kreator konfiguracji przyjmuje nowe klucze Google Gemini zaczynające się od `AQ.` (zawierają kropkę). Wcześniej „Sprawdź” mówiło, że klucz jest prawidłowy, ale „Dalej” go odrzucało.
-- Naprawiono: status członka rodziny („w drodze”, „ostatnio”) był zawsze po niemiecku – teraz jest w każdym języku.
-- Zmieniono: dziennik błędów pokazuje komunikaty po niemiecku dla języka niemieckiego i po angielsku dla wszystkich pozostałych.
-- Zmieniono: `pb_hooks/pinn-einrichtung.js`, `pb_hooks/pinn-protokoll.js`, `pb_hooks/protokoll.pb.js`, `einrichtung.js`, `js/fehlerprotokoll.js`, `js/familie.js`, `js/familienkachel.js`, `js/versionslog.js`, `js/sprachen.js`, `i18n/`, `src/`, `index.html`, README.
-
 ## Wymagania
 
 - NAS lub mini PC z zainstalowanym **Dockerem** i **Docker Compose** (np. Synology, UGREEN, QNAP albo zwykły serwer z Linuksem)
@@ -189,7 +186,7 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 ## Instalacja
 
 1. Pobierz i rozpakuj plik ZIP [najnowszej wersji](https://github.com/pinn-shost/pinn/releases/latest).
-2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.160.0` lub `pinn-main`) bez zmian.
+2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.160.1` lub `pinn-main`) bez zmian.
 3. Połącz się przez SSH i uruchom:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

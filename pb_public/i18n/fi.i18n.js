@@ -1519,6 +1519,7 @@ window.PINN_I18N && window.PINN_I18N.keys("fi", {
   "depot.paidInLower": "maksettu sisään {amount}",
   "depot.paidInPlus": "+ {amount} maksettu sisään",
   "depot.paidInTotal": "Maksettu sisään {amount}",
+  "depot.paidOut": "maksettu",
   "depot.pays": "Maksaa",
   "depot.pdfImportNotPossible": "PDF-tuonti ei ole mahdollinen: pdf.js puuttuu NAS-laitteelta (pb_public/vendor/pdfjs/pdf.min.mjs ja pdf.worker.min.mjs).",
   "depot.pdfReadFailed": "PDF-tiedostoa ei voitu lukea.",

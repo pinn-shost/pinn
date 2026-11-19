@@ -117,6 +117,12 @@ Koppints a képre a teljes méretű megnyitáshoz.
 
 A pinn. **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk, 🇳🇴 Norsk, 🇫🇮 Suomi és 🇭🇺 Magyar** nyelven beszél, a pénznemet és a segélyhívó számokat a te régiódhoz igazítja, és váltani tud a **család** és a **háztartás** fogalma között. Egy szerver több családot is kiszolgálhat, mindegyik saját adminisztrátorokkal.
 
+## Újdonságok az 1.160.1 verzióban
+
+**Javítás: lefordítatlan szövegek**
+
+- Javítva: a dokumentumkategóriák (pl. „Vásárlási bizonylatok és garancia”) és a „kifizetve” megjegyzés a Pénzügyek → Zsebpénz alatt mostantól mindenhol az alkalmazás nyelvén jelenik meg.
+
 ## Újdonságok az 1.160.0 verzióban
 
 **Magyar**
@@ -124,14 +130,6 @@ A pinn. **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Franç
 - Újdonság: a magyar (Magyar) új alkalmazásnyelvként érkezik – az alkalmazás mind a kb. 7 500 szövege, a beüzemelési asszisztens, az adatexport, a szerver push-üzenetei és a magyar segélyhívó szám (112). A lakóközösségi változat is benne van („háztartás”, „lakótárs”) a magyar ragozással. A Beállítások → Nyelv és régió alatt választhatod ki.
 - Figyelem: a fordítást nem ellenőrizték anyanyelvi beszélők – a fejlesztési javaslatokat szívesen fogadjuk GitHub-issue formájában. A Siri/Android-alapú hangvezérlés még nem érti a magyart, és angolul válaszol.
 - Módosítva: `i18n/hu.i18n.js` (new), `README.hu.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## Újdonságok az 1.159.0 verzióban
-
-**Finn**
-
-- Újdonság: a finn (Suomi) új alkalmazásnyelvként érkezik – az alkalmazás mind a kb. 7 500 szövege, a beüzemelési asszisztens, az adatexport, a szerver push-üzenetei és a finn segélyhívó szám (112). A lakóközösségi változat is benne van („kotitalous”, „asukas”) a finn esetragokkal. A Beállítások → Nyelv és régió alatt választhatod ki.
-- Figyelem: a fordítást nem ellenőrizték anyanyelvi beszélők – a fejlesztési javaslatokat szívesen fogadjuk GitHub-issue formájában. A Siri/Android-alapú hangvezérlés még nem érti a finnt, és angolul válaszol.
-- Módosítva: `i18n/fi.i18n.js` (new), `README.fi.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
 
 ## Követelmények
 
@@ -142,7 +140,7 @@ A pinn. **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Franç
 ## Telepítés
 
 1. Töltsd le és csomagold ki a [legújabb kiadás](https://github.com/pinn-shost/pinn/releases/latest) ZIP-fájlját.
-2. Hozz létre egy mappát a NAS-on, pl. `/volume1/docker/Pocketbase`, és másold bele a kicsomagolt mappát (pl. `pinn-1.160.0` vagy `pinn-main`) változtatás nélkül.
+2. Hozz létre egy mappát a NAS-on, pl. `/volume1/docker/Pocketbase`, és másold bele a kicsomagolt mappát (pl. `pinn-1.160.1` vagy `pinn-main`) változtatás nélkül.
 3. Csatlakozz SSH-n, és futtasd:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

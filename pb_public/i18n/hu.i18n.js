@@ -1507,6 +1507,7 @@ window.PINN_I18N && window.PINN_I18N.keys("hu", {
   "depot.paidInLower": "befizetve: {amount}",
   "depot.paidInPlus": "+ {amount} befizetve",
   "depot.paidInTotal": "Befizetve: {amount}",
+  "depot.paidOut": "kifizetve",
   "depot.pays": "Fizet",
   "depot.pdfImportNotPossible": "A PDF-importálás nem lehetséges: a NAS-on hiányzik a pdf.js (pb_public/vendor/pdfjs/pdf.min.mjs és pdf.worker.min.mjs).",
   "depot.pdfReadFailed": "A PDF-fájlt nem sikerült beolvasni.",

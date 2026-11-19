@@ -1507,6 +1507,7 @@ window.PINN_I18N && window.PINN_I18N.keys("cs", {
   "depot.paidInLower": "vloženo {amount}",
   "depot.paidInPlus": "+ {amount} vloženo",
   "depot.paidInTotal": "Vloženo {amount}",
+  "depot.paidOut": "vyplaceno",
   "depot.pays": "Platí",
   "depot.pdfImportNotPossible": "Import PDF není možný: na NAS chybí pdf.js (pb_public/vendor/pdfjs/pdf.min.mjs a pdf.worker.min.mjs).",
   "depot.pdfReadFailed": "Soubor PDF se nepodařilo přečíst.",

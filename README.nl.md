@@ -116,6 +116,12 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk, 🇳🇴 Norsk, 🇫🇮 Suomi en 🇭🇺 Magyar**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.160.1
+
+**Correctie: onvertaalde teksten**
+
+- Opgelost: de documentcategorieën (bijv. “Bonnen & garantie”) en de aanduiding “uitbetaald” onder Financiën → Zakgeld worden nu overal in de taal van de app getoond.
+
 ## Nieuw in 1.160.0
 
 **Hongaars**
@@ -171,15 +177,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - Opgelost: agenda-adressen worden nu gecontroleerd. Bij het verwijderen, wijzigen of lezen van een afspraak in iCloud of Google gebruikt de server de inloggegevens van de gezinsagenda en mag die alleen naar de servers van Apple en Google sturen. Eerder kon een ingelogd profiel met een gemanipuleerd verzoek de inloggegevens naar een willekeurige andere server laten sturen. Agenda's die al werken, merken hier niets van.
 - Gewijzigd: `pb_hooks/calendar-sync.js`, `js/versionslog.js`, `js/sprachen.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, README.
 
-## Nieuw in 1.153.2
-
-**Gemini-sleutels met “AQ.”, statusteksten, foutenlogboek**
-
-- Opgelost: de installatiewizard accepteert de nieuwe Google Gemini-sleutels die met `AQ.` beginnen (ze bevatten een punt). Eerder zei “Controleren” dat de sleutel geldig was, maar “Volgende” weigerde hem.
-- Opgelost: de status van een gezinslid (“onderweg”, “laatst gezien”) was altijd Duits – nu in elke taal.
-- Gewijzigd: het foutenlogboek toont zijn meldingen in het Duits voor Duits en in het Engels voor alle andere talen.
-- Gewijzigd: `pb_hooks/pinn-einrichtung.js`, `pb_hooks/pinn-protokoll.js`, `pb_hooks/protokoll.pb.js`, `einrichtung.js`, `js/fehlerprotokoll.js`, `js/familie.js`, `js/familienkachel.js`, `js/versionslog.js`, `js/sprachen.js`, `i18n/`, `src/`, `index.html`, README.
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -189,7 +186,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.160.0` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.160.1` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

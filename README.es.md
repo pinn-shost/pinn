@@ -135,6 +135,12 @@ Pulsa cualquier imagen para verla en tamaño completo.
 
 pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk, 🇳🇴 Norsk, 🇫🇮 Suomi y 🇭🇺 Magyar**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades de la 1.160.1
+
+**Corrección: textos sin traducir**
+
+- Corregido: las categorías de documentos (p. ej. «Comprobantes y garantía») y la indicación «pagado» en Finanzas → Paga semanal ahora se muestran en todas partes en el idioma de la app.
+
 ## Novedades de la 1.160.0
 
 **Húngaro**
@@ -251,13 +257,6 @@ pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Modo oscuro.** El texto azul ahora es dorado (dispositivos, listas, «Planificar compra», marcas en mascotas, salud y tareas); las barras de Hogar tienen el color de la habitación; los avisos del chat, de contratos y «De un vistazo» se leen bien. **Más iconos en lugar de emojis:** fotos de perfil (bebé, niño, niña, hombre, mujer, abuelo, abuela), familia y piso compartido, animales (perro, gato, conejo, hámster, pájaro, pollito, pez, caballo, tortuga, serpiente); las listas desplegables solo muestran el texto. **Nuevo banner de mascotas** con animales de colores. **Diario de mascotas:** una revisión marcada aparece en el diario y con la × se deshace una marca accidental.
 - Cambiado: `css/dunkelfarbe.css` (new), `js/symbole3.js` (new), `js/symbole.js`, `js/szenen.js`, `js/familie.js`, `js/haushalt.js`, `css/symbolfarbe.css`, `css/haustierewetter.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
 
-## Novedades de la 1.150.9
-
-**Color en los iconos, iconos de vehículos y plantas**
-
-- **Color de día.** Los iconos llevan ahora un ligero relleno (superficies blancas, sol amarillo, lluvia azul, coche rojo, herramientas grises, plantas verdes) con el mismo estilo de línea; el modo oscuro no cambia. **Iconos de vehículo:** en lugar del emoji de coche eliges un icono de línea (berlina, SUV, taxi, furgoneta, pickup, tractor, caravana, bicicleta, e-bike …). Los **iconos de plantas** también se eligen en la app, con nuevos iconos de cactus, palmera, tulipán, girasol, rosa y más. En los banners de Vehículos y Hogar los coches solo brillan de noche: amarillento delante, rojo detrás.
-- Cambiado: `js/symbole2.js`, `css/symbolfarbe.css` (new), `js/symbole.js`, `js/wetterlogos.js`, `js/symbolwahl.js`, `js/fahrzeuge.js`, `js/zuhause.js`, `js/dokumente.js`, `css/fahrzeuge.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
-
 ## Cómo funciona
 
 ```mermaid
@@ -284,7 +283,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.160.0` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.160.1` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -139,6 +139,12 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski、🇺🇦 Українська、🇨🇿 Čeština、🇸🇪 Svenska、🇩🇰 Dansk、🇳🇴 Norsk、🇫🇮 Suomi和 🇭🇺 Magyar**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.160.1 新功能
+
+**修复：未翻译的文本**
+
+- 已修复：文档分类（例如“购物凭证与保修”）以及“财务 → 零花钱”中的“已发放”提示，现在在应用各处都以应用语言显示。
+
 ## 1.160.0 新功能
 
 **匈牙利语**
@@ -227,13 +233,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 - Portainer 堆栈：备份现在真正可用了。由于仓库中缺少 1.151.0 的一部分，堆栈的“wartung”服务此前无法启动。现在镜像中包含备份脚本，它会自动找到堆栈中的 pinn 容器——夜间备份、“立即备份”和“恢复”（数据和设置）与脚本安装方式一样可用。更新仍在 Portainer 中进行。更新后：在 Portainer 中点“Update the stack”并勾选“Re-pull image and redeploy”。
 - 更改: `pinn-wartung.sh`, `docker/Dockerfile`, `.github/workflows/image.yml`, `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `js/serverzugriff.js`, `i18n/`, `js/versionslog.js`, `js/sprachen.js`, `src/`, `index.html`.
 
-## 1.152.0 新功能
-
-**用自己的反向代理代替 Tailscale**
-
-- 新功能：通过自己的反向代理（Nginx Proxy Manager、Traefik、Cloudflare Tunnel 等）从互联网访问——见安装部分的“通过自己的反向代理从互联网访问”。pinn. 只相信来自受信任代理（`PINN_PROXY_NETZE`）的访客地址，因此无法绕过密码错误后的锁定（IPv6：按 /64 计算）。来自互联网时，PocketBase 管理界面及其自带的登录方式被屏蔽，初始密码 `Admin` 无效，猜测追踪器 ID 会被减速。遇到这类尝试时，管理员会收到“🚨 安全警告”推送（地址、家庭网络或互联网、设备）；完整信息在错误日志的“安全”分类中。家庭网络中一切照旧。
-- 已更改: `pb_hooks/pinn-netz.js` (new), `pb_hooks/netz.pb.js` (new), `pb_hooks/pinn-alarm.js` (new), `pb_hooks/pinn-sitzungen.js`, `pb_hooks/benutzer.pb.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/zuhause.pb.js`, `pb_hooks/sprache.pb.js`, `pb_hooks/smarthome.pb.js`, `pb_hooks/pinn-ortung.js`, `pb_hooks/pinn-protokoll.js`, `pb_hooks/pinn-pushtext.js`, `js/anmeldemaske.js`, `js/fehlerprotokoll.js`, `js/hinweise.js`, `js/appstart.js`, `i18n/`, `docker/docker-compose.portainer.yaml`, `env.txt`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
-
 ## 工作原理
 
 ```mermaid
@@ -262,7 +261,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.160.0` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.160.1` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

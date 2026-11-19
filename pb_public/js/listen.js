@@ -1774,9 +1774,9 @@ function gsCollect(q) {
       if (!d) return;
       const cat = docCategory(d.kategorie);
       add('doc', {
-        icon: cat.icon || '🗂️', typeLabel: tk('search.type.doc'), sub: [cat.label, d.aussteller, vtFmt(d.datum)].filter(Boolean).join(' · '),
+        icon: cat.icon || '🗂️', typeLabel: tk('search.type.doc'), sub: [i18nT(cat.label), d.aussteller, vtFmt(d.datum)].filter(Boolean).join(' · '),
         run: () => { setView('dokumente'); openDocDetail(d.id); },
-      }, d.titel || tk('search.type.doc'), [d.aussteller, d.notiz, cat.label, ...(d.dateien || [])].join(' '));
+      }, d.titel || tk('search.type.doc'), [d.aussteller, d.notiz, i18nT(cat.label), ...(d.dateien || [])].join(' '));
     });
   });
 

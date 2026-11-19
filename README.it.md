@@ -139,6 +139,12 @@ Tocca un’immagine per aprirla a dimensione intera.
 
 pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk, 🇳🇴 Norsk, 🇫🇮 Suomi e 🇭🇺 Magyar**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
 
+## Novità della 1.160.1
+
+**Correzione: testi non tradotti**
+
+- Corretto: le categorie dei documenti (ad es. «Scontrini e garanzia») e la dicitura «erogato» in Finanze → Paghetta ora compaiono ovunque nella lingua dell'app.
+
 ## Novità della 1.160.0
 
 **Ungherese**
@@ -227,13 +233,6 @@ pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Stack Portainer: i backup ora funzionano davvero. Il servizio «wartung» dello stack non aveva nulla da avviare, perché nel repository mancava una parte della 1.151.0. Ora l’immagine contiene lo script dei backup, che trova da solo il container pinn dello stack: backup notturno, «Esegui backup ora» e «Ripristina» (dati e configurazione) funzionano come nell’installazione con script. Gli aggiornamenti restano in Portainer. Dopo: in Portainer «Update the stack» con «Re-pull image and redeploy».
 - Modificato: `pinn-wartung.sh`, `docker/Dockerfile`, `.github/workflows/image.yml`, `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `js/serverzugriff.js`, `i18n/`, `js/versionslog.js`, `js/sprachen.js`, `src/`, `index.html`.
 
-## Novità della 1.152.0
-
-**Un tuo reverse proxy al posto di Tailscale**
-
-- Novità: accesso da Internet tramite un tuo reverse proxy (Nginx Proxy Manager, Traefik, Cloudflare Tunnel …) – vedi «Accesso da Internet con un tuo reverse proxy» in Installazione. pinn. crede all’indirizzo del visitatore solo da proxy fidati (`PINN_PROXY_NETZE`), così il blocco dopo password errate non si aggira (IPv6: per /64). Da Internet l’amministrazione di PocketBase e le sue vie di accesso sono bloccate, la password iniziale `Admin` non funziona e indovinare gli ID dei localizzatori viene rallentato. Per questi tentativi gli admin ricevono una notifica «🚨 Avviso di sicurezza» (indirizzo, rete di casa o Internet, dispositivo); tutti i dettagli sono nel registro errori sotto «Sicurezza». Nella rete di casa non cambia nulla.
-- Modificato: `pb_hooks/pinn-netz.js` (new), `pb_hooks/netz.pb.js` (new), `pb_hooks/pinn-alarm.js` (new), `pb_hooks/pinn-sitzungen.js`, `pb_hooks/benutzer.pb.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/zuhause.pb.js`, `pb_hooks/sprache.pb.js`, `pb_hooks/smarthome.pb.js`, `pb_hooks/pinn-ortung.js`, `pb_hooks/pinn-protokoll.js`, `pb_hooks/pinn-pushtext.js`, `js/anmeldemaske.js`, `js/fehlerprotokoll.js`, `js/hinweise.js`, `js/appstart.js`, `i18n/`, `docker/docker-compose.portainer.yaml`, `env.txt`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
-
 ## Come funziona
 
 ```mermaid
@@ -262,7 +261,7 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 ## Installazione
 
 1. Scarica lo ZIP dell’[ultima release](https://github.com/pinn-shost/pinn/releases/latest) e decomprimilo.
-2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.160.0` o `pinn-main`) così com’è.
+2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.160.1` o `pinn-main`) così com’è.
 3. Accedi via SSH ed esegui:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

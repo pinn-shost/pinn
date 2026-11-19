@@ -521,7 +521,7 @@ function docRowHtml(d, today) {
   const cat = docCategory(d.kategorie);
   const dl = docDeadline(d, today);
   const meta = [];
-  if (docGroupMode !== 'category') meta.push(`${cat.icon || ''} ${cat.label}`.trim());
+  if (docGroupMode !== 'category') meta.push(`${cat.icon || ''} ${i18nT(cat.label)}`.trim());
   const who = docMemberName(d.mitglied);
   if (who) meta.push(who);
   const veh = docVehicleNames(d.id);
@@ -572,7 +572,7 @@ function docMatchesSearch(d, q) {
   if (!q) return true;
   const cat = docCategory(d.kategorie);
   const veh = isCurrentUserGuest() ? [] : fzVehiclesForDoc(d.id).flatMap(v => [fzName(v), fzPlateText(v.plate), v.make, v.model]);
-  const hay = [d.titel, d.aussteller, d.notiz, cat.label, docMemberName(d.mitglied), vtFmt(d.datum), ...veh, ...(d.dateien || []).map(docFileLabel)].join(' ').toLowerCase();
+  const hay = [d.titel, d.aussteller, d.notiz, i18nT(cat.label), docMemberName(d.mitglied), vtFmt(d.datum), ...veh, ...(d.dateien || []).map(docFileLabel)].join(' ').toLowerCase();
   return q.split(/\s+/).filter(Boolean).every(w => hay.includes(w));
 }
 
@@ -667,7 +667,7 @@ function renderDocuments() {
     groups = [...map.entries()].map(([k, v]) => ({ title: k, icon: '📅', items: v }));
   } else {
     groups = docCategories()
-      .map(c => ({ title: c.label, icon: c.icon, items: items.filter(d => docCategory(d.kategorie).id === c.id).sort((a, b) => dateKey(b).localeCompare(dateKey(a)) || byTitle(a, b)) }))
+      .map(c => ({ title: i18nT(c.label), icon: c.icon, items: items.filter(d => docCategory(d.kategorie).id === c.id).sort((a, b) => dateKey(b).localeCompare(dateKey(a)) || byTitle(a, b)) }))
       .filter(g => g.items.length);
   }
 
@@ -1260,7 +1260,7 @@ async function saveDocFromModal() {
   const cat = docCategory(docDraft.catId);
   let titel = docVal('docTitleInput').replace(/\s+/g, ' ').trim().slice(0, 200);
   const datum = vtIsIso(docVal('docDateInput')) ? docVal('docDateInput') : '';
-  if (!titel) titel = datum ? tk('doc.titleDated', { cat: cat.label, date: vtFmt(datum) }) : cat.label;
+  if (!titel) titel = datum ? tk('doc.titleDated', { cat: i18nT(cat.label), date: vtFmt(datum) }) : i18nT(cat.label);
   const fields = {
     titel,
     kategorie: cat.id,

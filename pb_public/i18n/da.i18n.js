@@ -1507,6 +1507,7 @@ window.PINN_I18N && window.PINN_I18N.keys("da", {
   "depot.paidInLower": "indbetalt {amount}",
   "depot.paidInPlus": "+ {amount} indbetalt",
   "depot.paidInTotal": "Indbetalt {amount}",
+  "depot.paidOut": "udbetalt",
   "depot.pays": "Betaler",
   "depot.pdfImportNotPossible": "PDF-import er ikke mulig: pdf.js mangler på NAS'en (pb_public/vendor/pdfjs/pdf.min.mjs og pdf.worker.min.mjs).",
   "depot.pdfReadFailed": "PDF-filen kunne ikke læses.",

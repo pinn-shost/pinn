@@ -2101,7 +2101,7 @@ function renderAllowances() {
       tiles = `<div class="grid grid-cols-3 gap-2 mt-3">
         ${finTile(tk('depot.next'), next ? escapeHtml(finDayLabel(next)) : '–', next ? fmtEur(finRecurringAmountFor(plan, next)) : '')}
         ${finTile(tk('depot.perMonth2'), fmtEur(finRecMonthly(plan, todayIso)), tk('depot.converted'))}
-        ${finTile(tk('depot.sinceJan'), fmtEur(finRound(paidYear)), 'ausgezahlt')}
+        ${finTile(tk('depot.sinceJan'), fmtEur(finRound(paidYear)), tk('depot.paidOut'))}
       </div>`;
     }
     const others = ausgaben.filter(e => e.category === FIN_KIDS_CATEGORY && e.link === 'kind:' + m.id && e.date && e.date.slice(0, 4) === year && e.date <= todayIso)

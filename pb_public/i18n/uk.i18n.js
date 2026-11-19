@@ -1499,6 +1499,7 @@ window.PINN_I18N && window.PINN_I18N.keys("uk", {
   "depot.paidInLower": "внесено {amount}",
   "depot.paidInPlus": "+ {amount} внесено",
   "depot.paidInTotal": "Внесено {amount}",
+  "depot.paidOut": "виплачено",
   "depot.pays": "Платить",
   "depot.pdfImportNotPossible": "Імпорт PDF неможливий: на NAS немає pdf.js (pb_public/vendor/pdfjs/pdf.min.mjs і pdf.worker.min.mjs).",
   "depot.pdfReadFailed": "Не вдалося прочитати файл PDF.",

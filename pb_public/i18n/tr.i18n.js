@@ -1506,6 +1506,7 @@ window.PINN_I18N && window.PINN_I18N.keys("tr", {
   "depot.paidInLower": "yatırılan {amount}",
   "depot.paidInPlus": "+ {amount} yatırıldı",
   "depot.paidInTotal": "Yatırılan {amount}",
+  "depot.paidOut": "ödendi",
   "depot.pays": "Öder",
   "depot.pdfImportNotPossible": "PDF içe aktarma mümkün değil: pdf.js NAS'ta eksik (pb_public/vendor/pdfjs/pdf.min.mjs ve pdf.worker.min.mjs).",
   "depot.pdfReadFailed": "PDF dosyası okunamadı.",

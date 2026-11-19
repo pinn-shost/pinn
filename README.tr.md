@@ -116,6 +116,12 @@ Tam boyutta açmak için bir resme dokun.
 
 pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk, 🇳🇴 Norsk, 🇫🇮 Suomi ve 🇭🇺 Magyar**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
 
+## 1.160.1 sürümündeki yenilikler
+
+**Düzeltme: çevrilmemiş metinler**
+
+- Düzeltildi: belge kategorileri (ör. “Fişler ve garanti”) ve Finans → Harçlık altındaki “ödendi” notu artık uygulamanın her yerinde uygulama dilinde gösteriliyor.
+
 ## 1.160.0 sürümündeki yenilikler
 
 **Macarca**
@@ -171,15 +177,6 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 - Düzeltildi: takvim adresleri artık denetleniyor. iCloud veya Google'da bir etkinlik silinirken, değiştirilirken ya da okunurken sunucu aile takviminin oturum bilgilerini kullanır ve bunları yalnızca Apple ve Google sunucularına gönderebilir. Önceden oturum açmış bir profil, değiştirilmiş bir istekle bu bilgileri başka bir sunucuya gönderebilirdi. Zaten çalışan takvimler etkilenmez.
 - Değiştirildi: `pb_hooks/calendar-sync.js`, `js/versionslog.js`, `js/sprachen.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, README.
 
-## 1.153.2 sürümündeki yenilikler
-
-**“AQ.” ile başlayan Gemini anahtarları, durum metinleri, hata günlüğü**
-
-- Düzeltildi: kurulum sihirbazı `AQ.` ile başlayan yeni Google Gemini anahtarlarını (içlerinde bir nokta vardır) kabul eder. Daha önce “Kontrol et” anahtarın geçerli olduğunu söylüyor, “İleri” ise reddediyordu.
-- Düzeltildi: bir aile üyesinin durumu (“yolda”, “son konum”) hep Almancaydı – artık her dilde.
-- Değiştirildi: hata günlüğü iletilerini Almanca için Almanca, diğer tüm diller için İngilizce gösterir.
-- Değiştirildi: `pb_hooks/pinn-einrichtung.js`, `pb_hooks/pinn-protokoll.js`, `pb_hooks/protokoll.pb.js`, `einrichtung.js`, `js/fehlerprotokoll.js`, `js/familie.js`, `js/familienkachel.js`, `js/versionslog.js`, `js/sprachen.js`, `i18n/`, `src/`, `index.html`, README.
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -189,7 +186,7 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.160.0` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.160.1` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

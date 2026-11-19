@@ -116,6 +116,12 @@ Tryk på et billede for at åbne det i fuld størrelse.
 
 pinn. taler **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk, 🇳🇴 Norsk, 🇫🇮 Suomi og 🇭🇺 Magyar**, tilpasser valuta og nødnumre efter din region og skifter mellem ordene **familie** og **husstand**. En server kan rumme flere familier, hver med egne administratorer.
 
+## Nyheder i 1.160.1
+
+**Rettelse: uoversatte tekster**
+
+- Rettet: dokumentkategorierne (fx ”Kvitteringer & garanti”) og angivelsen ”udbetalt” under Økonomi → Lommepenge vises nu overalt på appens sprog.
+
 ## Nyheder i 1.160.0
 
 **Ungarsk**
@@ -123,14 +129,6 @@ pinn. taler **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Nyt: ungarsk (Magyar) er et nyt appsprog – alle omkring 7.500 tekster i appen, opsætningsguiden, dataeksporten, push-beskederne fra serveren og det ungarske nødnummer (112). Varianten til bofællesskab er også med (»háztartás«, »lakótárs«), med ungarske endelser. Vælg det under Indstillinger → Sprog og region.
 - Bemærk: oversættelsen er ikke kontrolleret af modersmålstalende – forslag til forbedringer er velkomne som GitHub-issue. Stemmestyringen via Siri/Android forstår endnu ikke ungarsk og svarer på engelsk.
 - Ændret: `i18n/hu.i18n.js` (new), `README.hu.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## Nyheder i 1.159.0
-
-**Finsk**
-
-- Nyt: finsk (Suomi) er et nyt appsprog – alle omkring 7.500 tekster i appen, opsætningsguiden, dataeksporten, push-beskederne fra serveren og det finske nødnummer (112). Varianten til bofællesskab er også med (»kotitalous«, »asukas«), med finske kasusendelser. Du vælger det under Indstillinger → Sprog og område.
-- Bemærk: oversættelsen er ikke kontrolleret af modersmålstalende – forslag til forbedringer er velkomne som GitHub-issue. Stemmestyringen via Siri/Android forstår endnu ikke finsk og svarer på engelsk.
-- Ændret: `i18n/fi.i18n.js` (new), `README.fi.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
 
 ## Krav
 
@@ -141,7 +139,7 @@ pinn. taler **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 ## Installation
 
 1. Download og pak ZIP-filen til [den seneste version](https://github.com/pinn-shost/pinn/releases/latest) ud.
-2. Opret en mappe på NAS'en, fx `/volume1/docker/Pocketbase`, og læg den udpakkede mappe (fx `pinn-1.160.0` eller `pinn-main`) i den uden ændringer.
+2. Opret en mappe på NAS'en, fx `/volume1/docker/Pocketbase`, og læg den udpakkede mappe (fx `pinn-1.160.1` eller `pinn-main`) i den uden ændringer.
 3. Opret forbindelse via SSH, og kør:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

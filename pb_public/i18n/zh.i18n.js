@@ -1497,6 +1497,7 @@ window.PINN_I18N && window.PINN_I18N.keys("zh", {
   "depot.paidInLower": "已存入 {amount}",
   "depot.paidInPlus": "存入 + {amount}",
   "depot.paidInTotal": "已存入 {amount}",
+  "depot.paidOut": "已发放",
   "depot.pays": "付款",
   "depot.pdfImportNotPossible": "无法导入 PDF：NAS 上缺少 pdf.js（pb_public/vendor/pdfjs/pdf.min.mjs 和 pdf.worker.min.mjs）。",
   "depot.pdfReadFailed": "无法读取该 PDF 文件.",

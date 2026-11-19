@@ -1506,6 +1506,7 @@ window.PINN_I18N && window.PINN_I18N.keys("ko", {
   "depot.paidInLower": "입금액 {amount}",
   "depot.paidInPlus": "+ {amount} 입금",
   "depot.paidInTotal": "입금액 {amount}",
+  "depot.paidOut": "지급됨",
   "depot.pays": "결제",
   "depot.pdfImportNotPossible": "PDF를 가져올 수 없어요: NAS에 pdf.js가 없어요(pb_public/vendor/pdfjs/pdf.min.mjs와 pdf.worker.min.mjs).",
   "depot.pdfReadFailed": "PDF 파일을 읽을 수 없었어요.",

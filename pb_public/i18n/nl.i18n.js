@@ -1506,6 +1506,7 @@ window.PINN_I18N && window.PINN_I18N.keys("nl", {
   "depot.paidInLower": "ingelegd {amount}",
   "depot.paidInPlus": "+ {amount} ingelegd",
   "depot.paidInTotal": "Ingelegd {amount}",
+  "depot.paidOut": "uitbetaald",
   "depot.pays": "Betaalt",
   "depot.pdfImportNotPossible": "Pdf-import niet mogelijk: pdf.js ontbreekt op de NAS (pb_public/vendor/pdfjs/pdf.min.mjs en pdf.worker.min.mjs).",
   "depot.pdfReadFailed": "Het pdf-bestand kon niet worden gelezen.",
