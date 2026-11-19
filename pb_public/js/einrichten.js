@@ -2,7 +2,7 @@
    Part of the app code that used to be a single block in index.html. Classic script, no build step:
    it is loaded right after the inline script of index.html and before the other files in js/
    (the load order is listed at the bottom of index.html and in pinn-setup.sh).
-   Contents: the texts of the setup in fourteen languages (PINN_SETUP_TEXTE, pinnSetupText) and loading and opening the assistant (loadPinnSetupScript, openPinnSetup). The assistant itself lives in pb_public/einrichtung.js and is only loaded when first opened. The notice about the open setup is in js/hauptadminseite.js. */
+   Contents: the texts of the setup in sixteen languages (PINN_SETUP_TEXTE, pinnSetupText) and loading and opening the assistant (loadPinnSetupScript, openPinnSetup). The assistant itself lives in pb_public/einrichtung.js and is only loaded when first opened. The notice about the open setup is in js/hauptadminseite.js. */
 
 /* ==========================================================
    Setup (assistant for the main admin)
@@ -186,6 +186,18 @@ const PINN_SETUP_TEXTE = {
     loginBtn: 'Přihlásit se jako hlavní správce',
     loginMain: 'Poprvé je heslo „Admin“ – pak si nastavíš vlastní a nastavení začne.',
     laden: 'Nastavení se nepodařilo načíst (chybí pb_public/einrichtung.js?).',
+  },
+  sv: {
+    btn: '⚙︎ Inställning',
+    offen: 'Inställningen av pinn. är inte klar än. Utan den fungerar inte HTTPS, push-notiser och appen på hemskärmen.',
+    fortsetzen: 'Fortsätt inställningen',
+    neustart: 'De sparade inställningarna gäller först efter en omstart av pinn.',
+    neustartBtn: 'Tillämpa nu (kort omstart)',
+    neustartLaeuft: 'pinn. startar om …',
+    loginHint: 'Ny här? Den första inställningen startar när du loggar in som huvudadministratör.',
+    loginBtn: 'Logga in som huvudadministratör',
+    loginMain: 'Första gången är lösenordet ”Admin” – sedan anger du ett eget och inställningen startar.',
+    laden: 'Inställningen kunde inte laddas (pb_public/einrichtung.js saknas?).',
   },
   uk: {
     btn: '⚙︎ Конфігурація',

@@ -26,7 +26,8 @@
   <a href="README.tr.md">🇹🇷 Türkçe</a> ·
   <a href="README.pl.md">🇵🇱 Polski</a> ·
   <a href="README.uk.md">🇺🇦 Українська</a> ·
-  <a href="README.cs.md">🇨🇿 Čeština</a>
+  <a href="README.cs.md">🇨🇿 Čeština</a> ·
+  <a href="README.sv.md">🇸🇪 Svenska</a>
 </p>
 
 ---
@@ -109,7 +110,15 @@ Tik op een plaatje om het op volledige grootte te openen.
 - 💬 **Chat** – gezins- en privéchat, end-to-end versleuteld, met push en leesvinkjes
 - 🔔 **Meldingen** – persoonlijke pushberichten op iPhone, iPad en Android en een meldingenbel met alle wijzigingen in het gezin
 
-pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська en 🇨🇿 Čeština**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
+pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština en 🇸🇪 Svenska**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
+
+## Nieuw in 1.156.0
+
+**Zweeds**
+
+- Nieuw: Zweeds (Svenska) is een nieuwe app-taal – alle ruim 7.500 teksten van de app, de installatiewizard, de data-export, de pushberichten van de server en het Zweedse alarmnummer (112). De variant voor een gedeelde woning zit er ook bij (“hushåll”, “medboende”). Kies het onder Instellingen → Taal en regio.
+- Let op: de vertaling is niet gecontroleerd door moedertaalsprekers – suggesties zijn welkom als GitHub-issue. Spraakbesturing via Siri/Android begrijpt nog geen Zweeds en antwoordt in het Engels.
+- Gewijzigd: `i18n/sv.i18n.js` (new), `README.sv.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
 
 ## Nieuw in 1.155.0
 
@@ -166,13 +175,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - Nieuw: toegang vanaf internet via je eigen reverse proxy (Nginx Proxy Manager, Traefik, Cloudflare Tunnel …) – zie “Toegang vanaf internet met je eigen reverse proxy” onder Installatie. pinn. gelooft het bezoekersadres alleen nog van vertrouwde proxy’s (`PINN_PROXY_NETZE`), zo is de blokkade na verkeerde wachtwoorden niet te omzeilen (IPv6: per /64). Vanaf internet zijn het PocketBase-beheer en de eigen inlogwegen van PocketBase geblokkeerd, werkt het startwachtwoord `Admin` niet en wordt het raden van tracker-ID’s afgeremd. Bij zulke pogingen krijgen de beheerders een melding “🚨 Beveiligingswaarschuwing” (adres, thuisnetwerk of internet, apparaat); alle details staan in het foutenlogboek onder “Beveiliging”. In het thuisnetwerk verandert niets.
 - Gewijzigd: `pb_hooks/pinn-netz.js` (new), `pb_hooks/netz.pb.js` (new), `pb_hooks/pinn-alarm.js` (new), `pb_hooks/pinn-sitzungen.js`, `pb_hooks/benutzer.pb.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/zuhause.pb.js`, `pb_hooks/sprache.pb.js`, `pb_hooks/smarthome.pb.js`, `pb_hooks/pinn-ortung.js`, `pb_hooks/pinn-protokoll.js`, `pb_hooks/pinn-pushtext.js`, `js/anmeldemaske.js`, `js/fehlerprotokoll.js`, `js/hinweise.js`, `js/appstart.js`, `i18n/`, `docker/docker-compose.portainer.yaml`, `env.txt`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
 
-## Nieuw in 1.151.0
-
-**Portainer-stack, kant-en-klare image**
-
-- Nieuw: pinn. is te installeren via de stack-omgeving van Portainer, zonder SSH en zonder installatiescript. Bij elke release wordt een kant-en-klare image (amd64, arm64) gebouwd en gepubliceerd op `ghcr.io/pinn-shost/pinn`; het nieuwe bestand `docker/docker-compose.portainer.yaml` gebruikt die met volumes en zonder vaste containernamen (geen botsing meer met een bestaande Tailscale-container). De stack bevat ook een back-upservice (nachtelijke back-up, “Nu back-uppen” en “Herstellen” in de app; updates blijven in Portainer) en optionele, uitgecommentarieerde blokken voor Traccar en de omleiding naar Home Assistant. Zie “Portainer-stack (zonder script)” onder Installatie.
-- Gewijzigd: `docker/` (new), `.github/workflows/image.yml` (new), `pinn-wartung.sh`, `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -182,13 +184,13 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.155.0` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.156.0` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
 4. Open `http://<IP-adres van de NAS>:8090` → **Inloggen als hoofdbeheerder** → wachtwoord `Admin` → stel je eigen wachtwoord in.
-5. De **installatiewizard** leidt je door de rest – HTTPS, toegang op afstand, Google, AI, locatie en Home Assistant – stap voor stap, in vijftien talen.
+5. De **installatiewizard** leidt je door de rest – HTTPS, toegang op afstand, Google, AI, locatie en Home Assistant – stap voor stap, in zestien talen.
 6. Open pinn. op elke telefoon via het HTTPS-adres en voeg het toe aan het beginscherm:
    - **iPhone/iPad (Safari):** “Deel” → *Zet op beginscherm* (voor meldingen is iOS 16.4 of nieuwer nodig)
    - **Android (Chrome):** Instellingen → Meldingen → *pinn. als app installeren* of Chrome-menu ⋮ → *App installeren*

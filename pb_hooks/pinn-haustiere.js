@@ -120,7 +120,7 @@ function langOf(u) {
     let w = {};
     try { w = require(`${__hooks}/pinn-design.js`).readDesign(u).werte || {}; } catch (e) { w = {}; }
     const s = String(w.sprache || "");
-    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr", "pl", "uk", "cs"].indexOf(s) >= 0) return s;
+    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr", "pl", "uk", "cs", "sv"].indexOf(s) >= 0) return s;
     if (/^[a-z]{2}$/.test(s)) return "en";
     const land = String(w.land || "").toUpperCase();
     if (["DE", "AT", "CH", "LI", "LU"].indexOf(land) >= 0) return "de";
@@ -137,6 +137,7 @@ function langOf(u) {
     if (["PL"].indexOf(land) >= 0) return "pl";
     if (["UA"].indexOf(land) >= 0) return "uk";
     if (["CZ"].indexOf(land) >= 0) return "cs";
+    if (["SE", "AX"].indexOf(land) >= 0) return "sv";
     return "en";
 }
 const T = {
@@ -174,6 +175,8 @@ const T = {
     // Czech: numbers without inflection (word before the number), pet ages as "věk: {n}"
     cs: { futter: "Doplnit krmítko", futterHeute: "doplnit dnes", futterUeber: "po termínu (dnů: {n})", leer: "Krmítko je skoro prázdné", leerText: "Úroveň {v} – doplň prosím.", leerText0: "Doplň prosím.", heute: "termín dnes", in3: "termín za 3 dny", ueber: "po termínu (dnů: {n})", geb: "Dnes má narozeniny: {name}!", gebAlt: "{name} – věk: {n} 🐾",
           gebText: "Dnes extra pamlsek 🦴", mehr: "🐾 U tvých mazlíčků se něco blíží", kurzHeute: "dnes", kurzIn3: "za 3 dny", kurzUeber: "po termínu" },
+    sv: { futter: "Fyll på foderautomaten", futterHeute: "fyll på i dag", futterUeber: "försenad ({n} dagar)", leer: "Foderautomaten är nästan tom", leerText: "Nivå {v} – fyll på.", leerText0: "Fyll på.", heute: "aktuellt i dag", in3: "aktuellt om 3 dagar", ueber: "försenad ({n} dagar)", geb: "{name} fyller år i dag!", gebAlt: "{name} – ålder: {n} 🐾",
+          gebText: "Extra godis i dag 🦴", mehr: "🐾 Något närmar sig hos dina husdjur", kurzHeute: "i dag", kurzIn3: "om 3 dagar", kurzUeber: "försenad" },
 };
 function tx(lang, k, vars) {
     let s = (T[lang] || T.en)[k] || T.en[k] || k;

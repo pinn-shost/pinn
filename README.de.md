@@ -26,7 +26,8 @@
   <a href="README.tr.md">🇹🇷 Türkçe</a> ·
   <a href="README.pl.md">🇵🇱 Polski</a> ·
   <a href="README.uk.md">🇺🇦 Українська</a> ·
-  <a href="README.cs.md">🇨🇿 Čeština</a>
+  <a href="README.cs.md">🇨🇿 Čeština</a> ·
+  <a href="README.sv.md">🇸🇪 Svenska</a>
 </p>
 
 <p align="center">
@@ -132,7 +133,15 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 | 🔔 **Benachrichtigungen** | Persönliche Push-Nachrichten auf iPhone, iPad und Android sowie eine Glocke, die jede Änderung in der Familie sammelt. |
 | 🧩 **Und mehr** | Familien-Pinnwand mit verschiebbaren Zetteln, globale Suche, Offline-Modus mit automatischem Abgleich, Dunkelmodus, iPad-Dashboard mit Profil-PINs, Gastzugang, Kindersicherung. |
 
-pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська und 🇨🇿 Čeština**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
+pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština und 🇸🇪 Svenska**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
+
+## Neu in 1.156.0
+
+**Schwedisch**
+
+- Neu: Schwedisch (Svenska) ist als neue App-Sprache dabei – alle rund 7.500 Texte der App, der Einrichtungsassistent, der Datenexport, die Push-Nachrichten vom Server und die schwedische Notrufnummer (112). Auch die WG-Variante ist enthalten („hushåll“, „medboende“). Auswählbar unter Einstellungen → Sprache und Region.
+- Hinweis: Die Übersetzung wurde nicht von Muttersprachlern geprüft – Verbesserungsvorschläge gern als GitHub-Issue. Die Sprachsteuerung über Siri/Android versteht Schwedisch noch nicht und antwortet auf Englisch.
+- Geändert: `i18n/sv.i18n.js` (new), `README.sv.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
 
 ## Neu in 1.155.0
 
@@ -224,14 +233,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Eigene Symbole überall.** Auch Essen, Haushalt, Fahrzeuge, Pflanzen, Kleidung, Spielzeug und Sport haben jetzt eigene Linien-Symbole (Räume, Müll-Arten, Fahrzeug-Arten, Garten, Wecker, Kalender-Umschalter, Countdown). **Kategorie-Symbole** in Finanzen, Verträgen, Dokumenten und Vorrat wählst du aus rund 150 fertigen Symbolen statt mit der Emoji-Tastatur; gleiche Kategorien haben überall dasselbe Symbol. Die Szenen von Zuhause und Fahrzeuge zeigen neue bunte Fahrzeuge. Kleinigkeiten: Wetter „Jetzt“ ohne gestrichelten Rand, Uhr-Schrift am Dashboard, Symbol der Essensplanungs-Liste, Symbole sitzen auf der Textlinie.
 - Geändert: `js/szenen.js`, `js/symbolwahl.js` (new), `js/symbole.js`, `css/wetterlogos.css`, `js/zustand.js`, `js/zuhause.js`, `js/fahrzeuge.js`, `js/gesundheit.js`, `js/finanzen.js`, `js/vertraege.js`, `js/dokumente.js`, `js/vorrat.js`, `js/vorrat2.js`, `js/einkauf.js`, `js/profilauswahl.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
 
-## Neu in 1.150.7
-
-**Eigene Wetter-Symbole**
-
-- **Wetter-Symbole.** Die Wetter-Ansichten haben jetzt eigene, schlichte Linien-Symbole statt der Apple-Emojis – im gleichen Stil wie die Shortcut-Symbole: Sonne, Mond, Wolken, Regen, Schnee, Gewitter, Wind, UV, Sonnenaufgang, Wasser und die Kleidungs-Tipps. Im Dunkelmodus wechseln sie mit.
-- **Eigene Symbole überall.** Rund 150 schlichte Linien-Symbole ersetzen jetzt in der ganzen App die Apple-Emojis (Sterne, Haken, Warnungen, Orte, Geschenke, Uhr, Kalender, Schloss, Post, Werkzeug, Gesundheit, Haus, Geld und mehr). Tiere, Essen, Kleidung, Pflanzen, Fahrzeuge, Sport und Spielzeug, selbst gewählte oder getippte Emojis (Profilbilder, Chat-Texte, Eingabefelder) und Push-Nachrichten bleiben Emojis.
-- Geändert: `js/symbole.js` (new), `js/wetterlogos.js`, `css/wetterlogos.css` (new), `js/familie.js`, `js/grundlagen.js`, `js/profilauswahl.js`, `js/wetterkachel.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
-
 ## So funktioniert’s
 
 ```mermaid
@@ -260,14 +261,14 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.155.0` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.156.0` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
    Das Skript kopiert jede Datei an ihren Platz, lädt die Bibliotheken für PDF-Import und Texterkennung in Fotos herunter und startet pinn.
 4. Öffne `http://<NAS-IP>:8090` → **Als Hauptadmin anmelden** → Passwort `Admin` → wähle dein eigenes Passwort.
-5. Der **Einrichtungsassistent** führt dich durch den Rest – HTTPS, Fernzugriff über WireGuard oder Tailscale, Google, KI, Standort und Home Assistant – Schritt für Schritt, in fünfzehn Sprachen.
+5. Der **Einrichtungsassistent** führt dich durch den Rest – HTTPS, Fernzugriff über WireGuard oder Tailscale, Google, KI, Standort und Home Assistant – Schritt für Schritt, in sechzehn Sprachen.
 6. Öffne pinn. auf jedem Handy über die HTTPS-Adresse und füge es zum Home-Bildschirm hinzu:
    - **iPhone/iPad (Safari):** Teilen → *Zum Home-Bildschirm* (für Benachrichtigungen iOS 16.4 oder neuer)
    - **Android (Chrome):** Einstellungen → Benachrichtigungen → *pinn. als App installieren* oder Chrome-Menü ⋮ → *App installieren*

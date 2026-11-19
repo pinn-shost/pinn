@@ -22,6 +22,15 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.156', datum: '18.11.2026', titel: 'Schwedisch',
+    punkte: [
+      ['neu', '1.156.0: Schwedisch (Svenska) ist als neue App-Sprache dabei – alle rund 7.500 Texte der App, der Einrichtungs-Assistent, der Datenexport, die Push-Nachrichten vom Server (inklusive Wochenvorschau, Geburtstage, Haustiere, Chat und Notfall) und die schwedischen Notrufnummern (112 für alle). Auch die WG-Variante („hushåll“, „medboende“) gibt es. Auswählbar unter Einstellungen → Sprache und Region.'],
+      ['info', '1.156.0: Hinweis: Die Übersetzung wurde nicht von Muttersprachlern geprüft – Verbesserungsvorschläge gerne als GitHub-Issue. Die Sprachsteuerung per Siri/Android („Hey Siri, pinn“) versteht Schwedisch noch nicht und antwortet auf Englisch.'],
+      ['info', '1.156.0: Neue README.sv.md (kurze schwedische Einführung), Sprachleiste in allen READMEs um Schwedisch ergänzt.'],
+      ['info', '1.156.0 geändert: i18n/sv.i18n.js (neu), README.sv.md (neu), js/sprachen.js, js/textkern.js, js/einrichten.js, js/exportieren.js, einrichtung.js, datenexport.js, js/versionslog.js, i18n/versionslog.en.js, pb_hooks/pinn-textkern.js, pinn-pushtext.js, pinn-chat.js, pinn-ausblick.js, pinn-familie-geburtstag.js, pinn-haustiere.js, pinn-ortung.js, pinn-wobistdu.js, pinn-packliste.js, pinn-aufgaben.js, pinn-einrichtung.js, .github/scripts (i18n-keys.js, check-hooks.js), src/version.txt, index.html, alle READMEs.'],
+    ],
+  },
+  {
     v: '1.155', datum: '18.11.2026', titel: 'Tschechisch',
     punkte: [
       ['neu', '1.155.0: Tschechisch (Čeština) ist als neue App-Sprache dabei – alle rund 7.500 Texte der App, der Einrichtungs-Assistent, der Datenexport, die Push-Nachrichten vom Server (inklusive Wochenvorschau, Geburtstage, Haustiere, Chat und Notfall) und die tschechischen Notrufnummern (112, Polizei 158, Rettung 155, Feuerwehr 150). Auch die WG-Variante („společná domácnost“, „spolubydlící“) gibt es. Auswählbar unter Einstellungen → Sprache und Region.'],

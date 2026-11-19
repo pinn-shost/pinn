@@ -34,6 +34,8 @@ const PINN_EXPORT_TEXTE = {
   // Ukrainian (since 1.135.17, offered in the app since the release that enables it): {F} is the bare noun ("export: family" = "Експорт: сім’я"), {Fd} the genitive form
   uk: { btn: '📦 Експорт: {F}', kurz: '📦 Експорт', text: 'Усі дані {Fd} як файл ZIP – разом із документами, чеками та зображеннями. Наприклад, щоб перенести на інший NAS або як власну резервну копію.', laden: 'Не вдалося завантажити експорт (бракує pb_public/datenexport.js?).', F: 'сім’я', FW: 'спільна квартира', Fd: 'сім’ї', FWd: 'спільної квартири' },
   cs: { btn: '📦 Export: {F}', kurz: '📦 Export', text: 'Všechna data {Fd} jako soubor ZIP – včetně dokumentů, účtenek a obrázků. Například pro přechod na jiný NAS nebo jako vlastní záloha.', laden: 'Export se nepodařilo načíst (chybí pb_public/datenexport.js?).', F: 'rodina', FW: 'společná domácnost', Fd: 'rodiny', FWd: 'společné domácnosti' },
+  // Swedish (since 1.156.0): {F} is the bare noun ("export: family" = "Export: familj"), {Fd} the definite form
+  sv: { btn: '📦 Export: {F}', kurz: '📦 Export', text: 'Alla data för {Fd} som en ZIP-fil – inklusive dokument, kvitton och bilder. Till exempel för att flytta till en annan NAS eller som egen säkerhetskopia.', laden: 'Exporten kunde inte laddas (pb_public/datenexport.js saknas?).', F: 'familj', FW: 'hushåll', Fd: 'familjen', FWd: 'hushållet' },
 };
 function pinnExportText(key) {
   const l = (window.PINN_I18N && window.PINN_I18N.current) || 'en';

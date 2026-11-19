@@ -119,7 +119,7 @@ function langOf(u) {
     let w = {};
     try { w = require(`${__hooks}/pinn-design.js`).readDesign(u).werte || {}; } catch (e) { w = {}; }
     const s = String(w.sprache || "");
-    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr", "pl", "uk", "cs"].indexOf(s) >= 0) return s;
+    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr", "pl", "uk", "cs", "sv"].indexOf(s) >= 0) return s;
     if (/^[a-z]{2}$/.test(s)) return "en";
     const land = String(w.land || "").toUpperCase();
     if (["DE", "AT", "CH", "LI", "LU"].indexOf(land) >= 0) return "de";
@@ -136,6 +136,7 @@ function langOf(u) {
     if (["PL"].indexOf(land) >= 0) return "pl";
     if (["UA"].indexOf(land) >= 0) return "uk";
     if (["CZ"].indexOf(land) >= 0) return "cs";
+    if (["SE", "AX"].indexOf(land) >= 0) return "sv";
     return "en";
 }
 
@@ -158,6 +159,7 @@ const MONTHS = {
     pl: ["styczeń", "luty", "marzec", "kwiecień", "maj", "czerwiec", "lipiec", "sierpień", "wrzesień", "październik", "listopad", "grudzień"],
     uk: ["січень", "лютий", "березень", "квітень", "травень", "червень", "липень", "серпень", "вересень", "жовтень", "листопад", "грудень"],
     cs: ["leden", "únor", "březen", "duben", "květen", "červen", "červenec", "srpen", "září", "říjen", "listopad", "prosinec"],
+    sv: ["januari", "februari", "mars", "april", "maj", "juni", "juli", "augusti", "september", "oktober", "november", "december"],
 };
 // Russian needs the genitive for date ranges and the prepositional case for "in the month" (the list above is the nominative)
 const MONTHS_RU_GEN = ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"];
@@ -191,6 +193,8 @@ function rangeText(lang, mondayIso) {
     if (lang === "pl") return a[1] === b[1] ? ("od " + a[2] + " do " + b[2] + " " + MONTHS_PL_GEN[b[1] - 1]) : ("od " + a[2] + " " + MONTHS_PL_GEN[a[1] - 1] + " do " + b[2] + " " + MONTHS_PL_GEN[b[1] - 1]);
     if (lang === "uk") return a[1] === b[1] ? ("з " + a[2] + " по " + b[2] + " " + MONTHS_UK_GEN[b[1] - 1]) : ("з " + a[2] + " " + MONTHS_UK_GEN[a[1] - 1] + " по " + b[2] + " " + MONTHS_UK_GEN[b[1] - 1]);
     if (lang === "cs") return a[1] === b[1] ? ("od " + a[2] + ". do " + b[2] + ". " + MONTHS_CS_GEN[b[1] - 1]) : ("od " + a[2] + ". " + MONTHS_CS_GEN[a[1] - 1] + " do " + b[2] + ". " + MONTHS_CS_GEN[b[1] - 1]);
+    // Swedish (since 1.156.0): months are not declined, "2–8 november" / "30 oktober – 5 november"
+    if (lang === "sv") return a[1] === b[1] ? (a[2] + "–" + b[2] + " " + M[b[1] - 1]) : (a[2] + " " + M[a[1] - 1] + " – " + b[2] + " " + M[b[1] - 1]);
     return a[1] === b[1] ? ("du " + a[2] + " au " + b[2] + " " + M[b[1] - 1]) : ("du " + a[2] + " " + M[a[1] - 1] + " au " + b[2] + " " + M[b[1] - 1]);
 }
 function weekMessage(lang, mondayIso) {
@@ -209,6 +213,7 @@ function weekMessage(lang, mondayIso) {
     if (lang === "pl") return { titel: "🗓️ Twój tydzień jest gotowy", text: "Wydarzenia, zadania, posiłki i więcej – " + r + " – wszystko na jednym ekranie." };
     if (lang === "uk") return { titel: "🗓️ Ваш тиждень готовий", text: "Події, завдання, харчування та багато іншого на період " + r + " – усе на одному екрані." };
     if (lang === "cs") return { titel: "🗓️ Tvůj týden je připraven", text: "Události, úkoly, jídla a další na období " + r + " – vše na jedné obrazovce." };
+    if (lang === "sv") return { titel: "🗓️ Din vecka är här", text: "Händelser, uppgifter, måltider och mer för " + r + " – allt på ett ställe." };
     return { titel: "🗓️ Your week is ready", text: "Events, tasks, meals and more for " + r + " – all at a glance." };
 }
 function monthMessage(lang, key) {
@@ -229,6 +234,7 @@ function monthMessage(lang, key) {
     if (lang === "pl") return { titel: "💶 Zapowiedź finansów: " + next, text: "Co czeka w " + MONTHS_PL_LOC[m - 1] + " – i jak minął " + prev + "." };
     if (lang === "uk") return { titel: "💶 Фінансовий огляд: " + next, text: "Що очікується у " + MONTHS_UK_LOC[m - 1] + " – і як минув " + prev + "." };
     if (lang === "cs") return { titel: "💶 Výhled financí: " + next, text: "Co přijde v " + MONTHS_CS_LOC[m - 1] + " – a rekapitulace: " + prev + "." };
+    if (lang === "sv") return { titel: "💶 Ekonomiutblick: " + next, text: "Vad som väntar i " + next + " – och hur " + prev + " blev." };
     return { titel: "💶 Finance outlook: " + next.charAt(0).toUpperCase() + next.slice(1), text: "What's coming up in " + next + " – and how " + prev + " went." };
 }
 
@@ -247,6 +253,7 @@ function yearMessage(lang, year) {
     if (lang === "pl") return { titel: "🎁 Wasze podsumowanie roku " + year, text: "Wydatki, ugotowane dania i wyjazdy – tak wyglądał wasz rok." };
     if (lang === "uk") return { titel: "🎁 Підсумки вашого " + year + " року", text: "Витрати, приготовані страви та подорожі – таким був ваш рік." };
     if (lang === "cs") return { titel: "🎁 Tvůj rok " + year + " v přehledu", text: "Výdaje, uvařená jídla a cesty – takový byl tvůj rok." };
+    if (lang === "sv") return { titel: "🎁 Ditt år " + year + " i översikt", text: "Utgifter, lagade måltider och resor – så var ditt år." };
     return { titel: "🎁 Your year in review " + year, text: "Expenses, meals cooked and trips – this was your year." };
 }
 

@@ -63,6 +63,9 @@ window.PINN_LANGUAGES = [
   // Czech (since 1.155.0, offered in the app since 1.155.0)
   { code: 'cs', name: 'Čeština', locale: 'cs-CZ',
     flag: '<svg viewBox=\"0 0 3 2\" aria-hidden=\"true\"><path d=\"M0,0h3v1H0z\" fill=\"#fff\"/><path d=\"M0,1h3v1H0z\" fill=\"#D7141A\"/><path d=\"M0,0L1.5,1L0,2z\" fill=\"#11457E\"/></svg>' },
+  // Swedish (since 1.156.0, offered in the app since 1.156.0)
+  { code: 'sv', name: 'Svenska', locale: 'sv-SE',
+    flag: '<svg viewBox=\"0 0 16 10\" aria-hidden=\"true\"><path d=\"M0,0h16v10H0z\" fill=\"#006AA7\"/><path d=\"M5,0h2v10H5z\" fill=\"#FECC02\"/><path d=\"M0,4h16v2H0z\" fill=\"#FECC02\"/></svg>' },
 ];
 (function () {
   var KEY = 'pinn.sprache';
@@ -149,7 +152,7 @@ window.PINN_LANGUAGES = [
 
   // Raise with every change to a text file in i18n/, otherwise devices keep using the old file.
   // .github/scripts/check-keys.js makes sure it matches src/version.txt.
-  var FILE_VERSION = '1.155.0';
+  var FILE_VERSION = '1.156.0';
 
   // Invisible until the texts are in place (no short flash of English placeholder texts)
   var style = document.createElement('style');

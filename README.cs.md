@@ -26,7 +26,8 @@
   <a href="README.tr.md">🇹🇷 Türkçe</a> ·
   <a href="README.pl.md">🇵🇱 Polski</a> ·
   <a href="README.uk.md">🇺🇦 Українська</a> ·
-  <b>🇨🇿 Čeština</b>
+  <b>🇨🇿 Čeština</b> ·
+  <a href="README.sv.md">🇸🇪 Svenska</a>
 </p>
 
 
@@ -110,7 +111,15 @@ Klepnutím na obrázek ho otevřeš v plné velikosti.
 - 💬 **Chat** – rodinný a soukromý chat s koncovým šifrováním, push oznámeními a potvrzením o přečtení
 - 🔔 **Oznámení** – osobní push zprávy na iPhonu, iPadu a Androidu a zvonek, který sbírá všechny změny v rodině
 
-pinn. mluví jazyky: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська a 🇨🇿 Čeština**; přizpůsobí měnu a tísňová čísla tvému regionu a přepíná mezi pojmy **rodina** a **společná domácnost**. Jeden server může hostit více rodin, každou s vlastními správci.
+pinn. mluví jazyky: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština a 🇸🇪 Svenska**; přizpůsobí měnu a tísňová čísla tvému regionu a přepíná mezi pojmy **rodina** a **společná domácnost**. Jeden server může hostit více rodin, každou s vlastními správci.
+
+## Co je nového v 1.156.0
+
+**Švédština**
+
+- Nové: švédština (Svenska) je nový jazyk aplikace – všechny asi 7 500 textů aplikace, průvodce nastavením, export dat, push zprávy ze serveru a švédské tísňové číslo (112). Je k dispozici i varianta pro společnou domácnost („hushåll“, „medboende“). Vybereš ji v Nastavení → Jazyk a region.
+- Poznámka: překlad nezkontrolovali rodilí mluvčí – návrhy na zlepšení jsou vítány jako GitHub issue. Hlasové ovládání přes Siri/Android zatím švédštině nerozumí a odpovídá anglicky.
+- Změněno: `i18n/sv.i18n.js` (new), `README.sv.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
 
 ## Co je nového v 1.155.0
 
@@ -119,13 +128,6 @@ pinn. mluví jazyky: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, �
 - Nové: čeština (Čeština) je nový jazyk aplikace – všechny asi 7 500 textů aplikace, průvodce nastavením, export dat, push zprávy ze serveru (včetně týdenního náhledu, narozenin, mazlíčků, chatu a nouze) a česká tísňová čísla (112, policie 158, záchranná služba 155, hasiči 150). Je k dispozici i varianta pro společnou domácnost („společná domácnost“, „spolubydlící“). Vybereš ji v Nastavení → Jazyk a region.
 - Poznámka: překlad nezkontrolovali rodilí mluvčí – návrhy na zlepšení jsou vítány jako GitHub issue. Hlasové ovládání přes Siri/Android zatím češtině nerozumí a odpovídá anglicky.
 - Změněno: `i18n/cs.i18n.js` (new), `README.cs.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## Co je nového v 1.154.0
-
-**Oprava zabezpečení adres kalendáře**
-
-- Opraveno: adresy kalendáře se nyní kontrolují. Při mazání, změně nebo čtení události v iCloudu či Googlu používá server přihlašovací údaje rodinného kalendáře a smí je posílat jen na servery Apple a Google. Dříve mohl přihlášený profil zmanipulovaným požadavkem poslat tyto údaje na jakýkoli jiný server. Kalendáře, které už fungují, se to netýká.
-- Změněno: `pb_hooks/calendar-sync.js`, `js/versionslog.js`, `js/sprachen.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, README.
 
 ## Požadavky
 
@@ -136,13 +138,13 @@ pinn. mluví jazyky: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, �
 ## Instalace
 
 1. Stáhni a rozbal ZIP [nejnovější verze](https://github.com/pinn-shost/pinn/releases/latest).
-2. Vytvoř na NAS složku, např. `/volume1/docker/Pocketbase`, a vlož do ní rozbalenou složku (např. `pinn-1.155.0` nebo `pinn-main`) beze změn.
+2. Vytvoř na NAS složku, např. `/volume1/docker/Pocketbase`, a vlož do ní rozbalenou složku (např. `pinn-1.156.0` nebo `pinn-main`) beze změn.
 3. Připoj se přes SSH a spusť:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
 4. Otevři `http://<IP adresa NAS>:8090` → **Přihlásit se jako hlavní správce** → heslo `Admin` → nastav si vlastní heslo.
-5. **Průvodce nastavením** tě provede zbytkem krok za krokem – HTTPS, přístup zvenčí, Google, umělá inteligence, poloha a Home Assistant – v 15 jazycích.
+5. **Průvodce nastavením** tě provede zbytkem krok za krokem – HTTPS, přístup zvenčí, Google, umělá inteligence, poloha a Home Assistant – v 16 jazycích.
 6. Otevři pinn. na každém telefonu přes adresu HTTPS a přidej na plochu:
    - **iPhone/iPad (Safari):** „Sdílet“ → *Přidat na plochu* (pro oznámení je potřeba iOS 16.4 nebo novější)
    - **Android (Chrome):** Nastavení → Oznámení → *nainstalovat pinn. jako aplikaci* nebo menu Chrome ⋮ → *Nainstalovat aplikaci*
