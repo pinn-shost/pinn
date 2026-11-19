@@ -10,7 +10,7 @@
   if (window.PinnSetup) return;
 
   // Russian (prepared since 1.120.0, enabled since 1.121.0); hidden languages are only selectable if the app offers them
-  var LANGS = ['de', 'en', 'fr', 'es', 'it', 'pt', 'zh', 'ja', 'ko', 'ru', 'nl', 'tr', 'pl', 'uk', 'cs', 'sv', 'da', 'nb'];
+  var LANGS = ['de', 'en', 'fr', 'es', 'it', 'pt', 'zh', 'ja', 'ko', 'ru', 'nl', 'tr', 'pl', 'uk', 'cs', 'sv', 'da', 'nb', 'fi'];
   var T = {};
   T.de = {
     titel: "Einrichtung", lade: "Einrichtung wird geladen …",
@@ -3706,6 +3706,218 @@
     nochmalPruefen: "Kontroller på nytt", zurVerwaltung: "Til familieadministrasjonen",
   };
 
+  // Finnish (since 1.159.0)
+  T.fi = {
+    titel: "Käyttöönotto", lade: "Käyttöönottoa ladataan …",
+    weiter: "Seuraava", zurueck: "Takaisin", ueberspringen: "Ohita", spaeter: "Myöhemmin", schliessen: "Sulje",
+    pruefen: "Tarkista", pruefe: "Tarkistetaan …", speichere: "Tallennetaan …", kopieren: "Kopioi", kopiert: "Kopioitu ✓",
+    anleitung: "Vaiheittainen ohje", optional: "valinnainen", erweitert: "Lisäasetukset", zeigen: "Näytä",
+    gespeichertGeheim: "tallennettu: ••••{0}", leerLassen: "tyhjä kenttä = ei muutosta", ausEnv: "Arvo tiedostosta .env tai docker-compose.yaml",
+    entfernen: "Poista", wirdEntfernt: "poistetaan tallennettaessa", entfernenFrage: "Poistetaanko tämä tallennettu arvo?",
+    schritt: "Vaihe {0} / {1}", fehlerFeld: "Tarkista ”{0}”.", fehler: "Se ei onnistunut.", ok: "OK ✓",
+    fehlerNetz: "Ei yhteyttä pinn.:iin – varmista, että olet kotiverkossasi.",
+    ordnerFehlt: "NAS-laitteeltasi puuttuu kansio ”konfig”. Käytä uutta docker-compose.yaml-tiedostoa ja suorita skripti pinn-setup.sh (tai ”docker compose up -d”). Ilman tätä kansiota käyttöönotto ei voi tallentaa mitään.",
+    ordnerSchreibschutz: "Kansio ”konfig” on kirjoitussuojattu – suorita pinn-setup.sh uudelleen.",
+    serverFehlt: "Tiedostot einrichtung.pb.js ja pinn-einrichtung.js (pb_hooks) puuttuvat vielä palvelimelta.",
+    erkannt: "Löytyi osoiterivistä: {0}", deineAdresse: "pinn.-osoitteesi:", ph_sub: "esim. virtanen",
+    L_PORT: "HTTPS-portti", h_port: "Muuta vain, jos olet muuttanut portin 8443 tiedostossa docker-compose.yaml.",
+    pflichtInfo: "Vain ”Kotiverkko” ja ”DuckDNS” ovat pakollisia. Kaiken muun voit ohittaa ja palata siihen milloin tahansa: Pääylläpitäjä → Käyttöönotto.",
+    serverOk: "pinn. on käynnissä ja voi tallentaa asetukset ✓",
+    schonFertig: "Käyttöönotto on jo tehty. Voit tarkistaa ja muuttaa kaiken – ota muutokset lopuksi käyttöön painikkeella ”Tallenna ja käynnistä”.",
+    bitteWaehlen: "Valitse vaihtoehto (tai ”Ohita”).",
+    skipPflicht: "Ilman tätä vaihetta HTTPS, push-ilmoitukset ja kotinäytön sovellus eivät toimi. Ohitetaanko silti?",
+    pflichtFehlt: "Täytä kentät – tai napauta ”Ohita”.",
+    speichernStarten: "Tallenna ja käynnistä", neu: "uusi", nichtGesetzt: "ei asetettu", erledigtKurz: "valmis", offen: "avoin",
+    eingerichtet: "otettu käyttöön", aus: "pois",
+
+    t_sprache: "Tervetuloa pinn.:iin 👋",
+    i_sprache: "Valitse käyttöönoton kieli. Sitä käytetään myös pinn.:ssä tällä laitteella – jokainen profiili voi myöhemmin valita oman kielensä.",
+
+    t_start: "Tarvitset nämä",
+    i_start: "pinn. on valmis käyttöön noin 20–30 minuutissa. Jokainen vaihe tallentuu, kun napautat ”Seuraava” – voit siis keskeyttää milloin tahansa ja jatkaa siitä, mihin jäit.",
+    l_start: [
+      "pääsy reitittimeesi (FRITZ!Boxissa: laitteen pohjassa oleva salasana tai oma salasanasi)",
+      "tämä laite kotiverkossa (Wi-Fi) – tietokone on helpoin, mutta puhelinkin käy",
+      "Google-, GitHub- tai Reddit-tili ilmaista DuckDNS-palvelua varten",
+      "valinnaisesti: Google-tili Android-kalentereita ja tekoälyä varten",
+    ],
+
+    t_netz: "Kotiverkko: NAS-osoite",
+    i_netz: "pinn.:n täytyy tuntea NAS-laitteesi osoite kotiverkossa. Jotta osoite ei koskaan muutu, reititin varaa sen pysyvästi.",
+    L_NAS_IP: "NAS-laitteen IP-osoite",
+    g_netz: [
+      "Katso selaimen osoiteriviä: jos siinä lukee esimerkiksi `http://192.168.178.20:8090`, kaksoispistettä edeltävä luku on jo NAS-laitteesi IP-osoite.",
+      "Muuten katso FRITZ!Boxistasi: avaa [fritz.box](http://fritz.box) selaimessa ja kirjaudu sisään FRITZ!Boxin salasanalla.",
+      "Avaa vasemmalta ”Home Network” → ”Network” → välilehti ”Network Connections”.",
+      "Etsi NAS-laitteesi luettelosta (yleensä ”UGREEN…” tai ”DXP…”) ja napauta oikealla kynää (muokkaa).",
+      "Kirjoita IPv4-osoite muistiin ja rastita ”Always assign this network device the same IPv4 address” → ”Apply”.",
+      "Muut reitittimet: etsi kohtaa ”Kotiverkko”, ”LAN” tai ”DHCP” – usein se on nimeltään ”varaa osoite” tai ”kiinteä IP”. UGREEN-sovelluksessa osoite löytyy kohdasta Ohjauspaneeli → Verkko.",
+    ],
+
+    t_duckdns: "Osoitteesi HTTPS:llä (DuckDNS)",
+    i_duckdns: "DuckDNS on ilmainen palvelu, joka antaa pinn.:lle kiinteän osoitteen ja suojausvarmenteen. pinn. tarvitsee sitä push-ilmoituksiin, kotinäytön sovellukseen ja Google-kirjautumiseen. Porttiohjausta ei tarvita – pinn. pysyy ulkopuolelta näkymättömänä.",
+    L_DUCKDNS_SUBDOMAIN: "Aliverkkotunnus (vapaavalintainen nimi)", L_DUCKDNS_TOKEN: "DuckDNS-token", L_PINN_ADRESSE: "pinn.-osoite",
+    g_duckdns: [
+      "Avaa [duckdns.org](https://www.duckdns.org).",
+      "Kirjaudu oikealta ylhäältä jollakin tarjotuista tileistä (esimerkiksi Google, GitHub tai Reddit) – DuckDNS:llä ei ole omaa salasanaa.",
+      "Kirjoita kenttään ”sub domain” nimi, esimerkiksi `virtanen` (vain pieniä kirjaimia, numeroita ja yhdysmerkkejä), ja napauta ”add domain”. Jos nimi on jo varattu, kokeile toista.",
+      "Sivun yläreunassa näkyy ”token” – pitkä merkkijono yhdysmerkkeineen. Valitse ja kopioi se.",
+      "Liitä aliverkkotunnus ja token tähän ja napauta ”Tarkista”. pinn. rekisteröi NAS-laitteesi osoitteen itse DuckDNS:ään – sinun ei pidä muuttaa verkkosivun kenttää ”current ip”.",
+      "Token on kuin salasana – älä jaa sitä. Jos niin on käynyt: napauta duckdns.org:ssa ”recreate token” ja kirjoita uusi token tähän.",
+    ],
+    test_duckdns_ok: "DuckDNS hyväksyi osoitteen ✓ – {0} osoittaa nyt NAS-laitteeseesi ({1}).",
+    test_duckdns_ko: "DuckDNS hylkäsi sen. Tarkista aliverkkotunnus ja token – aliverkkotunnuksen on oltava DuckDNS-tililläsi.",
+    test_duckdns_netz: "duckdns.org ei ole tavoitettavissa NAS-laitteelta. Onko NAS-laitteella internetyhteys?",
+    test_duckdns_fehlt: "Kirjoita aliverkkotunnus ja token.",
+    test_duckdns_ungueltig: "Aliverkkotunnus tai token ei näytä oikealta.",
+    test_duckdns_ip_fehlt: "Kirjoita ensin NAS-laitteen IP-osoite vaiheeseen ”Kotiverkko”.",
+
+    t_rebind: "Reititin: DNS-rebind-suojaus",
+    i_rebind: "pinn.-osoitteesi osoittaa kotiverkkosi laitteeseen. Monet reitittimet – myös FRITZ!Box – estävät sen suojaustoimena. Silloin pinn. ei avaudu osoitteella. Poikkeus juuri tälle osoitteelle ratkaisee asian:",
+    g_rebind: [
+      "Avaa [fritz.box](http://fritz.box) ja kirjaudu sisään.",
+      "”Home Network” → ”Network” → välilehti ”Network Settings”.",
+      "Vieritä aivan alas ja avaa ”additional settings”.",
+      "Kirjoita kohdassa ”DNS Rebind Protection” tämä rivi kenttään ”Host name exceptions”: `{SUB}.duckdns.org`",
+      "Napauta ”Apply” ja – jos FRITZ!Box kysyy – vahvista laitteella.",
+      "Muut reitittimet: etsi asetuksista ”DNS rebind” ja lisää sama osoite poikkeukseksi. Jos asetusta ei ole, sinun ei yleensä tarvitse tehdä mitään.",
+    ],
+    rebindErledigt: "Valmis – poikkeus on lisätty",
+
+    t_fern: "Käyttö matkalla (VPN)",
+    i_fern: "pinn.:iä ei tarkoituksella avata internetiin. Matkalla puhelin yhdistää turvallisesti kotiisi VPN:n kautta – ikään kuin olisit Wi-Fi-verkossasi. Miten haluat tehdä sen?",
+    c_wg: "FRITZ!Box ja WireGuard", c_wg_d: "Suositus, jos sinulla on FRITZ!Box, jossa on FRITZ!OS 7.50 tai uudempi. Ilmainen, ei lisätiliä.",
+    c_ts: "Tailscale", c_ts_d: "Muille reitittimille – tai jos WireGuard ei toimi (esimerkiksi DS-Lite-liittymillä). Vaatii ilmaisen tilin osoitteessa tailscale.com.",
+    c_kein: "Vain kotona", c_kein_d: "Käytä pinn.:iä vain kotona Wi-Fi-verkossasi. Voidaan lisätä milloin tahansa.",
+    L_TS_AUTHKEY: "Tailscale-avain (auth key)",
+    g_wireguard: [
+      "Avaa [fritz.box](http://fritz.box) ja kirjaudu sisään. Kohdassa ”System” → ”Update” pitäisi lukea FRITZ!OS 7.50 tai uudempi (päivitä siellä tarvittaessa).",
+      "”Internet” → ”Permit Access” → välilehti ”VPN (WireGuard)” → ”Add connection”.",
+      "Valitse ”Simplified setup (recommended)” → ”Next”. Kysymykseen, yhdistetäänkö yksittäinen laite, vastaa ”Yes”.",
+      "Anna puhelimelle nimi (esimerkiksi `Annan puhelin`) → ”Finish”. Jos FRITZ!Box pyytää vahvistusta: paina laitteen painiketta tai vahvista puhelimella.",
+      "Jos FRITZ!Box kysyy MyFRITZ!-tiliä: luo se ilmaiseksi – silloin puhelin löytää laitteesi matkalla.",
+      "Näkyviin tulee QR-koodi. Asenna puhelimeen sovellus ”WireGuard”: [iPhone](https://apps.apple.com/app/wireguard/id1441195209) · [Android](https://play.google.com/store/apps/details?id=com.wireguard.android).",
+      "Napauta WireGuard-sovelluksessa ”+” → ”Scan from QR code” (iPhone: ”Create from QR code”) → skannaa näytön koodi → anna nimi → salli VPN-määrityksen lisääminen.",
+      "Testi: kytke puhelimen Wi-Fi pois, kytke WireGuard päälle ja avaa {ADRESSE}.",
+      "Toista vaiheet kohdasta ”Add connection” jokaiselle muulle puhelimelle – jokainen laite saa oman yhteytensä.",
+    ],
+    wgNurPinnT: "Salli vain pinn. (esimerkiksi omaisille)",
+    wgNurPinn: "Jos laitteen on määrä tavoittaa VPN:llä vain pinn., ei koko kotiverkkoasi: napauta WireGuard-sovelluksessa yhteyttä → ”Edit” → korvaa kohdassa ”Allowed IPs” kaikki arvolla `{NAS_IP}/32, {ROUTER_IP}/32` → ”Save”. Toinen osoite on reititin (nimihakuja varten). Huomaa: rajoitus koskee kyseistä laitetta.",
+    wgDsLite: "Eikö se toimi matkalla? Joillakin liittymillä (DS-Lite, yleinen kaapeli- ja kuituyhteyksissä) ei ole omaa IPv4-osoitetta – silloin WireGuard toimii vain, jos puhelimella on matkalla IPv6. Käytä siinä tapauksessa Tailscalea.",
+    g_tailscale: [
+      "Avaa [login.tailscale.com](https://login.tailscale.com/start) ja luo ilmainen tili (esimerkiksi kirjautumalla Googlella, Microsoftilla tai Applella).",
+      "Hallintakonsolissa: ”Settings” ylhäällä → ”Keys” vasemmalla → ”Generate auth key…”.",
+      "Pidä oletusarvot → ”Generate key” → kopioi avain (alkaa `tskey-auth-`) ja liitä se yllä olevaan kenttään.",
+      "Napauta ”Seuraava”. NAS-laitteen kontti ”tailscale” käyttää sitä kirjautumiseen minuutin kuluessa.",
+      "Takaisin Tailscalen hallintakonsoliin: välilehti ”Machines” → laitteen ”pinn” kohdalla napauta ”…” → ”Edit route settings…” → rastita `{NAS_IP}/32` → ”Save”.",
+      "Myös kohdassa ”pinn” valikosta ”…” → valitse ”Disable key expiry” – muuten NAS-laitteen on kirjauduttava uudelleen 180 päivän välein.",
+      "Asenna sovellus ”Tailscale” jokaiseen puhelimeen ([iPhone](https://apps.apple.com/app/tailscale/id1470499037) · [Android](https://play.google.com/store/apps/details?id=com.tailscale.ipn)) ja kirjaudu samalla tilillä. Kutsu omaiset hallintakonsolin kohdasta ”Users”.",
+      "Testi: kytke puhelimen Wi-Fi pois, yhdistä Tailscale ja avaa {ADRESSE}.",
+    ],
+    keinFern: "Ei hätää – silloin pinn. toimii kotona Wi-Fi-verkossasi. Voit lisätä etäyhteyden milloin tahansa kohdassa Pääylläpitäjä → Käyttöönotto.",
+
+    t_google: "Google: Android-kalenterit ja yhteystiedot",
+    i_google: "Valinnainen. Tarvitaan, jos haluat nähdä Google-kalenterit (Android) tai Google-yhteystietojen syntymäpäivät pinn.:ssä. Tämä asetetaan kerran koko palvelimelle – sen jälkeen jokainen henkilö kirjautuu pinn.:iin omalla Google-tilillään. iPhonella/iCloudilla ei tarvitse tehdä mitään.",
+    googleBrauchtHttps: "Google tarvitsee HTTPS-osoitteen vaiheesta ”DuckDNS”.",
+    L_REDIRECT: "Redirect URI (Google Cloud Consolea varten)",
+    L_PINN_GOOGLE_CLIENT_ID: "Asiakastunnus", L_PINN_GOOGLE_CLIENT_SECRET: "Asiakassalaisuus",
+    g_google: [
+      "Avaa [console.cloud.google.com](https://console.cloud.google.com) ja kirjaudu sisään Google-tilillä (hyväksy ehdot ensimmäisellä kerralla).",
+      "Napauta ylhäällä projektinvalitsinta → ”New project” → nimi `pinn` → ”Create”. Valitse sen jälkeen ylhäältä projekti ”pinn”.",
+      "Ota käyttöön kolme rajapintaa – avaa jokainen ja napauta ”Enable”: [Google Calendar API](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com) · [CalDAV API](https://console.cloud.google.com/apis/library/caldav.googleapis.com) · [People API](https://console.cloud.google.com/apis/library/people.googleapis.com).",
+      "Avaa [Google Auth Platform](https://console.cloud.google.com/auth/overview) → ”Get started”: sovelluksen nimi `pinn.`, tukiosoite = osoitteesi → kohdeyleisö ”External” → yhteysosoite → hyväksy → ”Create”.",
+      "Vasemmalta ”Audience” → ”Publish app” → vahvista. Tärkeää: tilassa ”Testing” jokainen Google-yhteys vanhenee 7 päivän kuluttua.",
+      "Vasemmalta ”Clients” → ”Create client” → sovellustyyppi ”Web application”, nimi `pinn.`.",
+      "Kohdassa ”Authorized redirect URIs” → ”Add URI” ja liitä täsmälleen tämä osoite: `{REDIRECT}` → ”Create”.",
+      "Kopioi asiakastunnus ja asiakassalaisuus, liitä ne tähän ja napauta ”Tarkista”. (Google näyttää salaisuuden vain kerran – muuten käytä asiakkaan kohdassa ”Add secret”.)",
+      "Kun myöhemmin yhdistät, Google näyttää ”Google hasn't verified this app”. Se on normaalia yksityiselle sovelluksellesi: ”Advanced” → ”Go to pinn.”.",
+    ],
+    test_google_ok: "Google tunnistaa tämän asiakkaan ✓",
+    test_google_uri: "Asiakastunnus ja salaisuus ovat oikein, mutta asiakkaasta puuttuu redirect-URI: {0}",
+    test_google_ungueltig: "Google ei tunnista tätä asiakastunnusta tai salaisuutta – kopioi ne uudelleen.",
+    test_google_netz: "Google ei ole tavoitettavissa NAS-laitteelta.",
+    test_google_fehlt: "Kirjoita asiakastunnus ja asiakassalaisuus.",
+
+    t_ki: "Tekoäly resepteille (Google Gemini)",
+    i_ki: "Valinnainen. Tekoäly lukee reseptit tekstistä, kuvista, PDF-tiedostoista ja linkeistä paljon paremmin ja löytää jätekalenterisi. Avain on ilmainen ja pysyy NAS-laitteella – sovellukset eivät koskaan puhu suoraan Googlen kanssa.",
+    L_PINN_GEMINI_KEY: "Gemini API -avain", L_PINN_GEMINI_MODELL: "Kiinteä malli",
+    h_modell: "Tyhjä = nykyinen Flash-malli automaattisesti.",
+    g_ki: [
+      "Avaa [aistudio.google.com/apikey](https://aistudio.google.com/apikey) ja kirjaudu sisään Google-tilillä.",
+      "Napauta ”Create API key”. Jos Google kysyy projektia, valitse edellisen vaiheen projekti ”pinn” tai luo uusi.",
+      "Kopioi avain (alkaa yleensä `AIza` tai `AQ.`), liitä se tähän ja napauta ”Tarkista”.",
+      "Hyvä tietää: ilmaisessa versiossa Google voi käyttää lähetettyjä reseptitekstejä palveluidensa parantamiseen.",
+    ],
+    test_gemini_ok: "Avain on kelvollinen ✓",
+    test_gemini_ungueltig: "Google hylkää avaimen – kopioi se uudelleen.",
+    test_gemini_gesperrt: "Avain on estetty Gemini API:lle. Luo uusi avain AI Studiossa.",
+    test_gemini_netz: "Google ei ole tavoitettavissa NAS-laitteelta.",
+    test_gemini_fehlt: "Kirjoita avain.",
+
+    t_ortung: "Sijainti (Perhe → reaaliaikaiset sijainnit)",
+    i_ortung: "Valinnainen. Puhelimet jakavat sijaintinsa suoraan pinn.:ssä – tässä ei tarvitse antaa mitään. Konttia ”traccar” tarvitaan vain SIM-korttia käyttäville GPS-seuraimille.",
+    l_ortung: [
+      "Sijainnin jako toimii suoraan pinn.:ssä (Perhe → Sijainti). Jotta lähetys jatkuu pinn.:n ollessa suljettuna, voit asentaa sovelluksen ”Traccar Client” – se lähettää suoraan pinn.:iin.",
+      "pinn. näyttää myöhemmin palvelinosoitteen ja laitetunnuksen jokaiselle henkilölle kohdassa Perhe → ⚙︎ Sijainti.",
+      "Matkalla puhelimen on käytettävä VPN:ää vaiheesta ”Käyttö matkalla”.",
+      "SIM-korttia käyttävät GPS-seuraimet (esimerkiksi koiran pannassa) lähettävät matkapuhelinverkon kautta – se vaatii porttiohjauksen reitittimessä. pinn. näyttää ohjeen, kun lisäät seuraimen.",
+    ],
+    appTraccar: "Sovellus ”Traccar Client”:",
+    h_traccar: "Täytä vain, jos olet jo luonut tilin Traccarissa itse. Tyhjä = pinn. luo sellaisen itse.",
+    L_PINN_TRACCAR_EMAIL: "Traccar-sähköposti", L_PINN_TRACCAR_PASSWORT: "Traccar-salasana",
+    test_traccar_ok: "Traccar on käynnissä ✓",
+    test_traccar_aus: "Kontti ”traccar” ei ole käynnissä – sitä ei tarvita puhelimille. Vain GPS-seuraimia varten: lisää tiedostoon .env rivi COMPOSE_PROFILES=tracker.",
+
+    t_ha: "Älykoti: Home Assistant",
+    i_ha: "Valinnainen. Missä Home Assistant pyörii luonasi?",
+    c_ha_kein: "Ei Home Assistantia",
+    c_ha_geraet: "Erillisellä laitteella", c_ha_geraet_d: "esimerkiksi Raspberry Pi tai Home Assistant Green.",
+    c_ha_vm: "Virtuaalikoneena tällä NAS-laitteella", c_ha_vm_d: "Silloin pinn. rakentaa pienen verkkokiertotien – muuten NAS ei tavoita virtuaalikonetta.",
+    haGeraetInfo: "Tässä ei tarvitse antaa mitään. Jokainen perhe määrittää yhteyden pinn.:ssä kohdassa Asetukset → Älykoti.",
+    L_HA_IP: "Home Assistantin IP-osoite", L_HILFS_IP: "Vapaa apuosoite", L_NAS_NETZWERKKARTE: "NAS-laitteen verkkokortti",
+    h_karte: "”auto” = pinn. löytää verkkokortin itse.",
+    g_ha: [
+      "Home Assistantin IP: Home Assistantissa ”Settings” → ”System” → ”Network” – tai etsi FRITZ!Boxista laite ”homeassistant” kohdasta ”Home Network” → ”Network”. Rastita sielläkin ”always assign the same IPv4 address”.",
+      "Apuosoite: kotiverkkosi osoite, jota mikään laite ei käytä ja jota reititin ei koskaan jaa. FRITZ!Boxissa ”Home Network” → ”Network” → ”Network Settings” → ”IPv4 settings” näyttää alueen, jonka reititin jakaa (esimerkiksi .20–.200). Valitse osoite sen yläpuolelta, esimerkiksi `{VORSCHLAG}`.",
+      "Napauta ”Seuraava” – kontti ”ha-netz” rakentaa kiertotien minuutin kuluessa. ”Tarkista” näyttää, tavoittaako pinn. Home Assistantin.",
+      "Jokainen perhe kirjoittaa Home Assistantin käyttöoikeustunnuksen myöhemmin pinn.:ssä kohdassa Asetukset → Älykoti.",
+    ],
+    haAktiv: "Kiertotie käytössä liitännän {0} kautta (apuosoite {1}) ✓", haWartet: "Kiertotie odottaa asetuksia.", haFehler: "Kiertotietä ei voitu rakentaa (verkkokortti: {0}).",
+    test_homeassistant_ok: "Home Assistant on tavoitettavissa ✓",
+    test_homeassistant_aus: "Home Assistant ei ole tavoitettavissa (vielä). Odota ”Seuraava”-painalluksen jälkeen enintään minuutti ja tarkista uudelleen.",
+    test_homeassistant_fehlt: "Kirjoita Home Assistantin IP-osoite.",
+
+    t_apps: "Sovellukset ja laitteet",
+    i_apps: "Melkein valmista! Näitä perheenjäsenet tarvitsevat puhelimiinsa:",
+    a_home_t: "pinn. kotinäytöllä (kaikille)",
+    a_home: [
+      "iPhone/iPad: avaa {ADRESSE} Safarissa → jakokuvake (neliö ja nuoli) → ”Lisää Koti-valikkoon” → ”Lisää”. Vain näin push-ilmoitukset toimivat (iOS 16.4 tai uudempi).",
+      "Android: avaa {ADRESSE} Chromessa → ⋮ oikealta ylhäältä → ”Asenna sovellus” tai ”Lisää aloitusnäyttöön”.",
+      "Käytä aina https-osoitetta – ei osoitetta, jossa on :8090.",
+    ],
+    a_vpn: "Matkalla käyttöä varten – käyttöönotto, katso vaihe ”Käyttö matkalla”:",
+    a_traccar: "Vain sijainnin seurantaa varten:",
+    a_icloud_t: "iCloud-kalenteri (iPhone)",
+    a_icloud: "Jokainen perhe yhdistää iCloud-kalenterinsa itse pinn.:ssä kohdassa Asetukset → Kalenteri. Se vaatii sovelluskohtaisen salasanan: [account.apple.com](https://account.apple.com) → ”Kirjautuminen ja turvallisuus” → ”Sovelluskohtaiset salasanat” → ”+” → nimi `pinn.` → kirjoita näkyviin tuleva salasana (xxxx-xxxx-xxxx-xxxx) pinn.:iin.",
+    a_push_t: "Push-ilmoitukset",
+    a_push: "Jokainen ottaa ne käyttöön pinn.:ssä kohdassa Asetukset → Ilmoitukset → ”Ota käyttöön tällä laitteella” – iPhonessa vain kotinäytön sovelluksessa.",
+
+    t_fertig: "Yhteenveto",
+    i_fertig: "Tarkista tiedot. Painikkeella ”Tallenna ja käynnistä” pinn. ottaa kaiken käyttöön ja käynnistyy kerran lyhyesti uudelleen (noin 10–20 sekuntia).",
+    S_ADRESSE: "Osoite", S_REBIND: "DNS-rebind-poikkeus", S_FERN: "Matkalla", S_KI: "Tekoäly", S_ORTUNG: "Sijainti",
+    L_PINN_PUSH_KONTAKT: "Yhteystieto push-palveluille",
+    h_push: "Apple ja Google vaativat push-ilmoituksille yhteysosoitteen (sähköposti). Tyhjä = pinn. käyttää omaa osoitettaan.",
+    neustart: "pinn. käynnistyy uudelleen …", neustartOk: "käynnistetty uudelleen ✓", neustartFehler: "pinn. ei vastaa. Lataa sivu uudelleen minuutin tai kahden kuluttua.",
+    pruefeHttps: "Tarkistetaan HTTPS:ää …", pruefeAlles: "Tarkistetaan kaikki …",
+    zertifikatDauert: "Suojausvarmenne haetaan ensimmäisellä kerralla – se voi kestää 1–2 minuuttia …",
+    httpsOk: "{0} on tavoitettavissa ✓",
+    httpsFehler: "{0} ei vastaa vielä. Tavallisia syitä: reitittimen DNS-rebind-suojaus (vaihe 5), tämä laite ei ole kotiverkossa tai varmenne tarvitsee hieman enemmän aikaa. Yritä myöhemmin uudelleen painikkeella ”Tarkista uudelleen”.",
+    httpsAus: "HTTPS-osoitetta ei ole annettu (vaihe DuckDNS).",
+    t_geschafft: "Valmis! 🎉",
+    geschafftText: "pinn. on otettu käyttöön. Tästä lähtien avaat pinn.:n tällä osoitteella ja tallennat sen kaikkiin puhelimiin (katso ”Sovellukset ja laitteet”). Luo sen jälkeen ensimmäinen perheesi perhehallinnassa.",
+    nochmalPruefen: "Tarkista uudelleen", zurVerwaltung: "Perhehallintaan",
+  };
+
   T.uk = {
     titel: "Конфігурація", lade: "Завантаження конфігурації …",
     weiter: "Далі", zurueck: "Назад", ueberspringen: "Пропустити", spaeter: "Пізніше", schliessen: "Закрити",
@@ -4211,7 +4423,7 @@
   var R = {};
   R.sprache = function () {
     var langs = (window.PINN_LANGUAGES || []).slice();
-    var order = { de: 0, en: 1, fr: 2, es: 3, it: 4, pt: 5, zh: 6, ja: 7, ko: 8, ru: 9, nl: 10, tr: 11, pl: 12, uk: 13, cs: 14, sv: 15, da: 16, nb: 17 };
+    var order = { de: 0, en: 1, fr: 2, es: 3, it: 4, pt: 5, zh: 6, ja: 7, ko: 8, ru: 9, nl: 10, tr: 11, pl: 12, uk: 13, cs: 14, sv: 15, da: 16, nb: 17, fi: 18 };
     // Hidden languages only if they are enabled on this device for testing (PINN_I18N.find)
     var I = window.PINN_I18N;
     langs = langs.filter(function (l) { return order[l.code] != null && (!l.hidden || (I && I.find && I.find(l.code))); })

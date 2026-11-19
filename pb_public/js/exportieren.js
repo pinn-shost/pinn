@@ -40,6 +40,8 @@ const PINN_EXPORT_TEXTE = {
   da: { btn: '📦 Eksport: {F}', kurz: '📦 Eksport', text: 'Alle data for {Fd} som en ZIP-fil – inklusive dokumenter, kvitteringer og billeder. For eksempel til flytning til en anden NAS eller som egen sikkerhedskopi.', laden: 'Eksporten kunne ikke indlæses (mangler pb_public/datenexport.js?).', F: 'familie', FW: 'husstand', Fd: 'familien', FWd: 'husstanden' },
   // Norwegian Bokmål (since 1.158.0): {F} is the bare noun ("Eksporter: familie"), {Fd} the definite form
   nb: { btn: '📦 Eksporter: {F}', kurz: '📦 Eksporter', text: 'Alle data for {Fd} som en ZIP-fil – inkludert dokumenter, kvitteringer og bilder. For eksempel for flytting til en annen NAS eller som egen sikkerhetskopi.', laden: 'Eksporten kunne ikke lastes (mangler pb_public/datenexport.js?).', F: 'familie', FW: 'husstand', Fd: 'familien', FWd: 'husstanden' },
+  // Finnish (since 1.159.0): {F} is the bare noun ("Vie: perhe"), {Fd} the possessive form
+  fi: { btn: '📦 Vie: {F}', kurz: '📦 Vie', text: 'Kaikki {Fd} tiedot ZIP-tiedostona – myös asiakirjat, kuitit ja kuvat. Esimerkiksi siirtoa varten toiselle NAS-laitteelle tai omana varmuuskopiona.', laden: 'Vientiä ei voitu ladata (puuttuuko pb_public/datenexport.js?).', F: 'perhe', FW: 'kotitalous', Fd: 'perheesi', FWd: 'kotitaloutesi' },
 };
 function pinnExportText(key) {
   const l = (window.PINN_I18N && window.PINN_I18N.current) || 'en';

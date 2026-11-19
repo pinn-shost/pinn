@@ -29,7 +29,8 @@
   <a href="README.cs.md">🇨🇿 Čeština</a> ·
   <a href="README.sv.md">🇸🇪 Svenska</a> ·
   <a href="README.da.md">🇩🇰 Dansk</a> ·
-  <a href="README.nb.md">🇳🇴 Norsk</a>
+  <a href="README.nb.md">🇳🇴 Norsk</a> ·
+  <a href="README.fi.md">🇫🇮 Suomi</a>
 </p>
 
 <p align="center">
@@ -131,7 +132,15 @@ Pulsa cualquier imagen para verla en tamaño completo.
 | 🔔 **Notificaciones** | Mensajes push personales en iPhone, iPad y Android, y una campana que recoge todos los cambios de la familia. |
 | 🧩 **Todo lo demás** | Tablón familiar con notas movibles, búsqueda global, modo sin conexión con sincronización automática, modo oscuro, panel para iPad con PIN por perfil, cuenta de invitado, control parental. |
 
-pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk y 🇳🇴 Norsk**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
+pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk, 🇳🇴 Norsk y 🇫🇮 Suomi**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
+
+## Novedades de la 1.159.0
+
+**Finés**
+
+- Nuevo: el finés (Suomi) es un nuevo idioma de la app – los unos 7.500 textos de la app, el asistente de configuración, la exportación de datos, los mensajes push del servidor y el número de emergencia finlandés (112). También incluye la variante de piso compartido («kotitalous», «asukas») con las terminaciones de caso finesas. Se elige en Ajustes → Idioma y región.
+- Nota: la traducción no ha sido revisada por hablantes nativos – las sugerencias son bienvenidas como issue de GitHub. El control por voz con Siri/Android aún no entiende finés y responde en inglés.
+- Cambiado: `i18n/fi.i18n.js` (new), `README.fi.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
 
 ## Novedades de la 1.158.0
 
@@ -247,14 +256,6 @@ pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Iconos propios en todas partes.** Comida, hogar, vehículos, plantas, ropa, juguetes y deporte también tienen ahora iconos de línea propios (habitaciones, tipos de residuos, tipos de vehículo, jardín, despertador, selector de calendario, cuenta atrás). Los **iconos de categoría** en Finanzas, Contratos, Documentos y Despensa se eligen entre unos 150 iconos listos en lugar del teclado de emojis, y el mismo tipo de categoría tiene el mismo icono en todas partes. Las escenas de Hogar y Vehículos muestran vehículos nuevos y coloridos. Detalles: el tiempo «Ahora» sin borde discontinuo, tipo de letra del reloj del panel, icono de la lista del plan de comidas, iconos sobre la línea del texto.
 - Cambiado: `js/szenen.js`, `js/symbolwahl.js` (new), `js/symbole.js`, `css/wetterlogos.css`, `js/zustand.js`, `js/zuhause.js`, `js/fahrzeuge.js`, `js/gesundheit.js`, `js/finanzen.js`, `js/vertraege.js`, `js/dokumente.js`, `js/vorrat.js`, `js/vorrat2.js`, `js/einkauf.js`, `js/profilauswahl.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
 
-## Novedades de la 1.150.7
-
-**Iconos propios del tiempo**
-
-- **Iconos del tiempo.** Las vistas del tiempo tienen ahora sus propios iconos de línea sencillos en lugar de los emojis de Apple, con el mismo aspecto que los iconos de los atajos: sol, luna, nubes, lluvia, nieve, tormenta, viento, UV, amanecer, agua y los consejos de ropa. En el modo oscuro cambian de color.
-- **Iconos propios en todas partes.** Unos 150 iconos de línea sencillos sustituyen ahora los emojis de Apple en toda la app (estrellas, marcas, avisos, lugares, regalos, reloj, calendario, candado, correo, herramientas, salud, casa, dinero y más). Animales, comida, ropa, plantas, vehículos, deporte y juguetes, los emojis que eliges o escribes tú (fotos de miembros, textos del chat, campos de entrada) y las notificaciones push siguen siendo emojis.
-- Cambiado: `js/symbole.js` (new), `js/wetterlogos.js`, `css/wetterlogos.css` (new), `js/familie.js`, `js/grundlagen.js`, `js/profilauswahl.js`, `js/wetterkachel.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`.
-
 ## Cómo funciona
 
 ```mermaid
@@ -281,14 +282,14 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.158.0` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.159.0` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
    El script coloca cada archivo en su sitio, descarga las bibliotecas para importar PDF y reconocer texto en fotos, e inicia pinn.
 4. Abre `http://<IP-del-NAS>:8090` → **Iniciar sesión como admin principal** → contraseña `Admin` → elige tu propia contraseña.
-5. El **asistente de configuración** te guía en el resto – HTTPS, acceso remoto con WireGuard o Tailscale, Google, IA, ubicación y Home Assistant – paso a paso, en dieciocho idiomas.
+5. El **asistente de configuración** te guía en el resto – HTTPS, acceso remoto con WireGuard o Tailscale, Google, IA, ubicación y Home Assistant – paso a paso, en diecinueve idiomas.
 6. Abre pinn. en cada móvil con su dirección HTTPS y añádelo a la pantalla de inicio:
    - **iPhone/iPad (Safari):** Compartir → *Añadir a pantalla de inicio* (iOS 16.4 o posterior para las notificaciones)
    - **Android (Chrome):** Ajustes → Notificaciones → *Instalar pinn. como app*, o menú de Chrome ⋮ → *Instalar app*

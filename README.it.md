@@ -29,7 +29,8 @@
   <a href="README.cs.md">🇨🇿 Čeština</a> ·
   <a href="README.sv.md">🇸🇪 Svenska</a> ·
   <a href="README.da.md">🇩🇰 Dansk</a> ·
-  <a href="README.nb.md">🇳🇴 Norsk</a>
+  <a href="README.nb.md">🇳🇴 Norsk</a> ·
+  <a href="README.fi.md">🇫🇮 Suomi</a>
 </p>
 
 <p align="center">
@@ -135,7 +136,15 @@ Tocca un’immagine per aprirla a dimensione intera.
 | 🔔 **Notifiche** | Messaggi push personali su iPhone, iPad e Android, più una campanella che raccoglie ogni modifica in famiglia. |
 | 🧩 **Tutto il resto** | Bacheca di famiglia con note spostabili, ricerca globale, modalità offline con sincronizzazione automatica, modalità scura, dashboard su iPad con PIN dei profili, account ospite, blocco bambini. |
 
-pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk e 🇳🇴 Norsk**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
+pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk, 🇳🇴 Norsk e 🇫🇮 Suomi**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
+
+## Novità della 1.159.0
+
+**Finlandese**
+
+- Novità: il finlandese (Suomi) è una nuova lingua dell’app – tutti i circa 7.500 testi dell’app, l’assistente di configurazione, l’esportazione dei dati, i messaggi push dal server e il numero di emergenza finlandese (112). È inclusa anche la variante per casa condivisa («kotitalous», «asukas») con le desinenze di caso finlandesi. Si sceglie in Impostazioni → Lingua e regione.
+- Nota: la traduzione non è stata verificata da madrelingua – i suggerimenti sono benvenuti come issue su GitHub. Il controllo vocale tramite Siri/Android non capisce ancora il finlandese e risponde in inglese.
+- Modificato: `i18n/fi.i18n.js` (new), `README.fi.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
 
 ## Novità della 1.158.0
 
@@ -223,13 +232,6 @@ pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Novità: pinn. si può installare dall’interfaccia degli stack di Portainer, senza SSH e senza lo script di installazione. A ogni versione viene creata un’immagine pronta (amd64, arm64) e pubblicata su `ghcr.io/pinn-shost/pinn`; il nuovo file `docker/docker-compose.portainer.yaml` la usa con volumi e senza nomi di container fissi (niente più conflitti con un container Tailscale esistente). Lo stack include anche un servizio di backup (backup notturno, «Salva ora» e «Ripristina» nell’app; gli aggiornamenti restano in Portainer) e blocchi facoltativi commentati per Traccar e la deviazione verso Home Assistant. Vedi «Stack di Portainer (senza script)» in Installazione.
 - Modificato: `docker/` (new), `.github/workflows/image.yml` (new), `pinn-wartung.sh`, `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
 
-## Novità della 1.150.11
-
-**Icone e piccole correzioni**
-
-- Icona del pettine per «Pettinarsi» nella pagina dei bambini; niente più campo emoji accanto al nome del deposito; elenchi a discesa delle casse senza emoji; lo strumento ora è una chiave fissa; «Menu per gli ospiti» con l’icona di due persone; un tocco sul logo accanto al nome della famiglia porta alla panoramica; la scheda Notifiche viene riempita per prima, così «Attiva su questo dispositivo» compare sempre; icone dei collegamenti grigie in modalità scura.
-- Modificato: `js/symbole.js`, `js/symbole3.js`, `js/ansichten.js`, `js/konto.js`, `css/dunkelfarbe.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`.
-
 ## Come funziona
 
 ```mermaid
@@ -258,14 +260,14 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 ## Installazione
 
 1. Scarica lo ZIP dell’[ultima release](https://github.com/pinn-shost/pinn/releases/latest) e decomprimilo.
-2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.158.0` o `pinn-main`) così com’è.
+2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.159.0` o `pinn-main`) così com’è.
 3. Accedi via SSH ed esegui:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
    Lo script copia ogni file al suo posto, scarica le librerie per l’importazione dei PDF e il riconoscimento del testo nelle foto e avvia pinn.
 4. Apri `http://<IP-NAS>:8090` → **Accedi come amministratore principale** → password `Admin` → scegli la tua password.
-5. L’**assistente di configurazione** ti guida nel resto – HTTPS, accesso remoto con WireGuard o Tailscale, Google, IA, posizione e Home Assistant – passo dopo passo, in diciotto lingue.
+5. L’**assistente di configurazione** ti guida nel resto – HTTPS, accesso remoto con WireGuard o Tailscale, Google, IA, posizione e Home Assistant – passo dopo passo, in diciannove lingue.
 6. Apri pinn. dal suo indirizzo HTTPS su ogni telefono e aggiungilo alla schermata Home:
    - **iPhone/iPad (Safari):** Condividi → *Aggiungi alla schermata Home* (iOS 16.4 o successivo per le notifiche)
    - **Android (Chrome):** Impostazioni → Notifiche → *Installa pinn. come app*, oppure menu di Chrome ⋮ → *Installa app*

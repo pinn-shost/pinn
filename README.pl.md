@@ -29,7 +29,8 @@
   <a href="README.cs.md">🇨🇿 Čeština</a> ·
   <a href="README.sv.md">🇸🇪 Svenska</a> ·
   <a href="README.da.md">🇩🇰 Dansk</a> ·
-  <a href="README.nb.md">🇳🇴 Norsk</a>
+  <a href="README.nb.md">🇳🇴 Norsk</a> ·
+  <a href="README.fi.md">🇫🇮 Suomi</a>
 </p>
 
 ---
@@ -112,7 +113,15 @@ Dotknij obrazu, aby otworzyć go w pełnym rozmiarze.
 - 💬 **Czat** – czat rodzinny i prywatny, szyfrowany end-to-end, z powiadomieniami push i potwierdzeniem odczytu
 - 🔔 **Powiadomienia** – osobiste powiadomienia push na iPhonie, iPadzie i Androidzie oraz dzwonek powiadomień ze wszystkimi zmianami w rodzinie
 
-pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk i 🇳🇴 Norsk**; dostosowuje walutę i numery alarmowe do twojego regionu i przełącza się między określeniami **rodzina** i **wspólne mieszkanie**. Jeden serwer może obsługiwać wiele rodzin, każdą z własnymi administratorami.
+pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk, 🇳🇴 Norsk i 🇫🇮 Suomi**; dostosowuje walutę i numery alarmowe do twojego regionu i przełącza się między określeniami **rodzina** i **wspólne mieszkanie**. Jeden serwer może obsługiwać wiele rodzin, każdą z własnymi administratorami.
+
+## Nowości w 1.159.0
+
+**Fiński**
+
+- Nowe: fiński (Suomi) to nowy język aplikacji – wszystkie około 7 500 tekstów aplikacji, kreator konfiguracji, eksport danych, wiadomości push z serwera i fiński numer alarmowy (112). Jest też wariant dla wspólnego mieszkania („kotitalous”, „asukas”) z fińskimi końcówkami przypadków. Wybierzesz go w Ustawienia → Język i region.
+- Uwaga: tłumaczenie nie zostało sprawdzone przez native speakerów – propozycje poprawek mile widziane jako GitHub issue. Sterowanie głosowe przez Siri/Android jeszcze nie rozumie fińskiego i odpowiada po angielsku.
+- Zmieniono: `i18n/fi.i18n.js` (new), `README.fi.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
 
 ## Nowości w 1.158.0
 
@@ -170,14 +179,6 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 - Nowość: we własnym profilu pinn. pokazuje „Ja” zamiast imienia – filtr kalendarza, zadania, rodzina i wszędzie indziej, odpowiednio odmienione w zdaniach. Do tego: ikona liniowa dla strzałki przywracania, nowa ikona felgi, ten sam złoty dla żółtych wskazówek w trybie ciemnym.
 - Zmieniono: `pb_hooks/pinn-gesundheit.js`, `js/gesundheit.js`, `css/gesundheit.css`, `js/mitglieder.js`, `js/symbole.js`, `css/dunkelfarbe.css`, `js/aufgaben.js`, `js/termine.js`, `js/listen.js`, `js/sparen.js`, `js/vertraege.js`, `js/familie.js`, `js/hinweise.js`, `js/kassen.js`, `js/zuhause.js`, `js/dokumente.js`, `js/fahrzeuge.js`, `js/ausblick.js`, `js/sterne.js`, `js/vorrat2.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `index.html`.
 
-## Nowości w 1.153.0
-
-**Bezpieczeństwo z Home Assistant**
-
-- Nowość: **Bezpieczeństwo** – admini rodziny grupują urządzenia z Home Assistant w Ustawienia → Bezpieczeństwo: okna i drzwi, zamki drzwi, kamery, brama garażowa i rolety, czujniki dymu i wody, system alarmowy, czujniki ruchu. Panel rodziny pokazuje na dole pasek (np. „Wszystko zamknięte”, „Okno kuchnia jest otwarte”, „1 kamera jest włączona”, na czerwono przy alarmie), a przegląd dostaje kafelek „Bezpieczeństwo”, w którym dorośli mogą zamknąć otwarty zamek (nigdy otworzyć). Opcjonalna **kontrola wieczorna**: o wybranej godzinie wszyscy admini dostają powiadomienie, jeśli coś jest jeszcze otwarte, niezamknięte na klucz lub alarm jest rozbrojony. Warunek: Home Assistant połączony w Ustawienia → Inteligentny dom.
-- Naprawiono: w trybie ciemnym przyciski pod tytułem zadania (start inteligentnego domu, odczyt liczników …) były niebieskie na niebieskim – teraz złote.
-- Zmieniono: `pb_hooks/pinn-sicherheit.js` (new), `pb_hooks/sicherheit.pb.js` (new), `pb_hooks/pinn-smarthome.js`, `pb_hooks/pinn-schema.js`, `js/sicherheit.js` (new), `css/sicherheit.css` (new), `js/uebersicht.js`, `js/profilauswahl.js`, `js/einstellungen.js`, `css/dunkelfarbe.css`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `pinn-setup.sh`, `src/`, `index.html`.
-
 ## Wymagania
 
 - NAS lub mini PC z zainstalowanym **Dockerem** i **Docker Compose** (np. Synology, UGREEN, QNAP albo zwykły serwer z Linuksem)
@@ -187,13 +188,13 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 ## Instalacja
 
 1. Pobierz i rozpakuj plik ZIP [najnowszej wersji](https://github.com/pinn-shost/pinn/releases/latest).
-2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.158.0` lub `pinn-main`) bez zmian.
+2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.159.0` lub `pinn-main`) bez zmian.
 3. Połącz się przez SSH i uruchom:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
 4. Otwórz `http://<adres IP NAS-a>:8090` → **Zaloguj się jako główny administrator** → hasło `Admin` → ustaw własne hasło.
-5. **Kreator konfiguracji** poprowadzi cię krok po kroku przez resztę – HTTPS, dostęp z zewnątrz, Google, sztuczną inteligencję, lokalizację i Home Assistant – w 18 językach.
+5. **Kreator konfiguracji** poprowadzi cię krok po kroku przez resztę – HTTPS, dostęp z zewnątrz, Google, sztuczną inteligencję, lokalizację i Home Assistant – w 19 językach.
 6. Otwórz pinn. na każdym telefonie pod adresem HTTPS i dodaj do ekranu głównego:
    - **iPhone/iPad (Safari):** „Udostępnij” → *Dodaj do ekranu początkowego* (powiadomienia wymagają iOS 16.4 lub nowszego)
    - **Android (Chrome):** Ustawienia → Powiadomienia → *zainstaluj pinn. jako aplikację* albo menu Chrome ⋮ → *Zainstaluj aplikację*

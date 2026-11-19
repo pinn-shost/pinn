@@ -1066,6 +1066,7 @@ const REWARD_TEXT = {
     sv: { t: "⭐ Önskemål om belöning", b: "{k} vill byta {n} stjärnor mot ”{w}”." },
     da: { t: "⭐ Ønske om belønning", b: "{k} vil bytte {n} stjerner til »{w}«." },
     nb: { t: "⭐ Ønske om belønning", b: "{k} vil bytte {n} stjerner mot «{w}»." },
+    fi: { t: "⭐ Palkintotoive", b: "{k} haluaa vaihtaa {n} tähteä palkintoon ”{w}”." },
 };
 function notifyReward(familyId, actorUserId, body) {
     if (!familyId) return 0;

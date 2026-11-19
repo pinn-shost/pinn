@@ -38,7 +38,7 @@ function langOf(u) {
     let w = {};
     try { w = require(`${__hooks}/pinn-design.js`).readDesign(u).werte || {}; } catch (e) { w = {}; }
     const s = String(w.sprache || "");
-    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr", "pl", "uk", "cs", "sv", "da", "nb"].indexOf(s) >= 0) return s;
+    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr", "pl", "uk", "cs", "sv", "da", "nb", "fi"].indexOf(s) >= 0) return s;
     if (/^[a-z]{2}$/.test(s)) return "en";
     const land = String(w.land || "").toUpperCase();
     if (["DE", "AT", "CH", "LI", "LU"].indexOf(land) >= 0) return "de";
@@ -58,6 +58,7 @@ function langOf(u) {
     if (["SE", "AX"].indexOf(land) >= 0) return "sv";
     if (["DK", "GL", "FO"].indexOf(land) >= 0) return "da";
     if (["NO", "SJ"].indexOf(land) >= 0) return "nb";
+    if (["FI"].indexOf(land) >= 0) return "fi";
     return "en";
 }
 const CODE_TEXT = {
@@ -79,9 +80,10 @@ const CODE_TEXT = {
     sv: { zuhause: "🏠 Jag är hemma", unterwegs: "🚶 Jag är på väg", gleich: "⏱️ Jag är där snart", gut: "👍 Allt är bra", anrufen: "📞 Ring mig" },
     da: { zuhause: "🏠 Jeg er hjemme", unterwegs: "🚶 Jeg er på vej", gleich: "⏱️ Jeg er der snart", gut: "👍 Alt er godt", anrufen: "📞 Ring til mig" },
     nb: { zuhause: "🏠 Jeg er hjemme", unterwegs: "🚶 Jeg er på vei", gleich: "⏱️ Jeg er snart der", gut: "👍 Alt er bra", anrufen: "📞 Ring meg" },
+    fi: { zuhause: "🏠 Olen kotona", unterwegs: "🚶 Olen matkalla", gleich: "⏱️ Olen kohta perillä", gut: "👍 Kaikki hyvin", anrufen: "📞 Soita minulle" },
 };
 function askMessage(lang, name) {
-    const n = name || ({ de: "Jemand", en: "Someone", fr: "Quelqu'un", es: "Alguien", it: "Qualcuno", pt: "Alguém", zh: "有人", ja: "誰か", ko: "누군가", ru: "Кто-то", nl: "Iemand", tr: "Biri", pl: "Ktoś", uk: "Хтось", cs: "Někdo", sv: "Någon", da: "Nogen", nb: "Noen" }[lang]);
+    const n = name || ({ de: "Jemand", en: "Someone", fr: "Quelqu'un", es: "Alguien", it: "Qualcuno", pt: "Alguém", zh: "有人", ja: "誰か", ko: "누군가", ru: "Кто-то", nl: "Iemand", tr: "Biri", pl: "Ktoś", uk: "Хтось", cs: "Někdo", sv: "Någon", da: "Nogen", nb: "Noen", fi: "Joku" }[lang]);
     if (lang === "de") return { titel: "📍 " + n + " fragt: Wo bist du?", text: "Tippe hier, um deinen Standort zu schicken oder kurz zu antworten." };
     if (lang === "fr") return { titel: "📍 " + n + " demande : où es-tu ?", text: "Touche ici pour envoyer ta position ou répondre en un mot." };
     if (lang === "es") return { titel: "📍 " + n + " pregunta: ¿dónde estás?", text: "Toca aquí para enviar tu ubicación o responder rápido." };
@@ -99,10 +101,11 @@ function askMessage(lang, name) {
     if (lang === "sv") return { titel: "📍 " + n + " frågar: var är du?", text: "Tryck här för att skicka din position eller svara kort." };
     if (lang === "da") return { titel: "📍 " + n + " spørger: hvor er du?", text: "Tryk her for at sende din position eller svar kort." };
     if (lang === "nb") return { titel: "📍 " + n + " spør: hvor er du?", text: "Trykk her for å sende posisjonen din eller svar kort." };
+    if (lang === "fi") return { titel: "📍 " + n + " kysyy: missä olet?", text: "Napauta tästä lähettääksesi sijaintisi tai vastaa lyhyesti." };
     return { titel: "📍 " + n + " asks: where are you?", text: "Tap here to send your location or a quick reply." };
 }
 function answerMessage(lang, name, a) {
-    const n = name || ({ de: "Jemand", en: "Someone", fr: "Quelqu'un", es: "Alguien", it: "Qualcuno", pt: "Alguém", zh: "有人", ja: "誰か", ko: "누군가", ru: "Кто-то", nl: "Iemand", tr: "Biri", pl: "Ktoś", uk: "Хтось", cs: "Někdo", sv: "Någon", da: "Nogen", nb: "Noen" }[lang]);
+    const n = name || ({ de: "Jemand", en: "Someone", fr: "Quelqu'un", es: "Alguien", it: "Qualcuno", pt: "Alguém", zh: "有人", ja: "誰か", ko: "누군가", ru: "Кто-то", nl: "Iemand", tr: "Biri", pl: "Ktoś", uk: "Хтось", cs: "Někdo", sv: "Någon", da: "Nogen", nb: "Noen", fi: "Joku" }[lang]);
     const t = a.text ? ((CODE_TEXT[lang] || CODE_TEXT.en)[a.text] || ("„" + a.text + "“")) : "";
     if (lang === "de") return { titel: "📍 " + n + " hat geantwortet", text: a.lat != null ? "Standort geschickt – tippe zum Ansehen." : t };
     if (lang === "fr") return { titel: "📍 " + n + " a répondu", text: a.lat != null ? "Position envoyée – touche pour la voir." : t };
@@ -121,6 +124,7 @@ function answerMessage(lang, name, a) {
     if (lang === "sv") return { titel: "📍 " + n + ": svar", text: a.lat != null ? "Position skickad – tryck för att visa." : t };
     if (lang === "da") return { titel: "📍 " + n + ": svar", text: a.lat != null ? "Position sendt – tryk for at se." : t };
     if (lang === "nb") return { titel: "📍 " + n + ": svar", text: a.lat != null ? "Posisjon sendt – trykk for å se." : t };
+    if (lang === "fi") return { titel: "📍 " + n + ": vastaus", text: a.lat != null ? "Sijainti lähetetty – napauta nähdäksesi." : t };
     return { titel: "📍 " + n + " replied", text: a.lat != null ? "Location sent – tap to view." : t };
 }
 

@@ -29,7 +29,8 @@
   <a href="README.cs.md">🇨🇿 Čeština</a> ·
   <a href="README.sv.md">🇸🇪 Svenska</a> ·
   <a href="README.da.md">🇩🇰 Dansk</a> ·
-  <a href="README.nb.md">🇳🇴 Norsk</a>
+  <a href="README.nb.md">🇳🇴 Norsk</a> ·
+  <a href="README.fi.md">🇫🇮 Suomi</a>
 </p>
 
 <p align="center">
@@ -135,7 +136,15 @@ Toque em qualquer imagem para abri-la em tamanho real.
 | 🔔 **Notificações** | Mensagens push pessoais no iPhone, iPad e Android, além de um sino que reúne cada mudança na família. |
 | 🧩 **E mais** | Mural da família com notas móveis, busca global, modo offline com sincronização automática, modo escuro, painel no iPad com PINs de perfil, conta de convidado, bloqueio infantil. |
 
-O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk e 🇳🇴 Norsk**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
+O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk, 🇳🇴 Norsk e 🇫🇮 Suomi**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
+
+## Novidades da 1.159.0
+
+**Finlandês**
+
+- Novo: o finlandês (Suomi) é um novo idioma do app – os cerca de 7.500 textos do app, o assistente de configuração, a exportação de dados, as mensagens push do servidor e o número de emergência finlandês (112). A variante de moradia compartilhada também está incluída (“kotitalous”, “asukas”), com as terminações de caso finlandesas. Escolha em Ajustes → Idioma e região.
+- Nota: a tradução não foi revisada por falantes nativos – sugestões são bem-vindas como issue no GitHub. O controle por voz via Siri/Android ainda não entende finlandês e responde em inglês.
+- Alterado: `i18n/fi.i18n.js` (new), `README.fi.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
 
 ## Novidades da 1.158.0
 
@@ -223,13 +232,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - Novidade: o pinn. pode ser instalado a partir da interface de stacks do Portainer, sem SSH e sem o script de instalação. A cada versão é criada uma imagem pronta (amd64, arm64) e publicada em `ghcr.io/pinn-shost/pinn`; o novo ficheiro `docker/docker-compose.portainer.yaml` usa-a com volumes e sem nomes de contentor fixos (acabou o conflito com um contentor Tailscale existente). O stack inclui ainda um serviço de cópias (cópia noturna, «Guardar agora» e «Restaurar» na app; as atualizações continuam no Portainer) e blocos opcionais comentados para o Traccar e o desvio para o Home Assistant. Veja «Stack do Portainer (sem script)» em Instalação.
 - Alterado: `docker/` (new), `.github/workflows/image.yml` (new), `pinn-wartung.sh`, `pb_hooks/pinn-system.js`, `js/sicherungen.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `src/`, `index.html`.
 
-## Novidades da 1.150.11
-
-**Ícones e pequenas correções**
-
-- Ícone de pente em «Pentear o cabelo» na página das crianças; sem campo de emoji ao lado do nome do depósito; listas de caixas sem emoji; a ferramenta agora é uma chave de boca; «Menus para convidados» com o ícone de duas pessoas; tocar no logótipo ao lado do nome da família leva à visão geral; o cartão Notificações é preenchido primeiro para que «Ativar neste dispositivo» apareça sempre; ícones dos atalhos em cinzento no modo escuro.
-- Alterado: `js/symbole.js`, `js/symbole3.js`, `js/ansichten.js`, `js/konto.js`, `css/dunkelfarbe.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`.
-
 ## Como funciona
 
 ```mermaid
@@ -258,14 +260,14 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.158.0` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.159.0` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
    O script copia cada arquivo para o lugar certo, baixa as bibliotecas para importação de PDF e reconhecimento de texto em fotos e inicia o pinn.
 4. Abra `http://<IP-do-NAS>:8090` → **Entrar como administrador principal** → senha `Admin` → escolha a sua própria senha.
-5. O **assistente de configuração** guia você pelo resto – HTTPS, acesso remoto por WireGuard ou Tailscale, Google, IA, localização e Home Assistant – passo a passo, em dezoito idiomas.
+5. O **assistente de configuração** guia você pelo resto – HTTPS, acesso remoto por WireGuard ou Tailscale, Google, IA, localização e Home Assistant – passo a passo, em dezenove idiomas.
 6. Abra o pinn. pelo endereço HTTPS em cada celular e adicione-o à tela inicial:
    - **iPhone/iPad (Safari):** Compartilhar → *Adicionar à Tela de Início* (iOS 16.4 ou posterior para notificações)
    - **Android (Chrome):** Configurações → Notificações → *Instalar o pinn. como app*, ou menu do Chrome ⋮ → *Instalar app*

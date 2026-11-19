@@ -29,7 +29,8 @@
   <a href="README.cs.md">🇨🇿 Čeština</a> ·
   <a href="README.sv.md">🇸🇪 Svenska</a> ·
   <a href="README.da.md">🇩🇰 Dansk</a> ·
-  <a href="README.nb.md">🇳🇴 Norsk</a>
+  <a href="README.nb.md">🇳🇴 Norsk</a> ·
+  <a href="README.fi.md">🇫🇮 Suomi</a>
 </p>
 
 ---
@@ -112,7 +113,15 @@ Tam boyutta açmak için bir resme dokun.
 - 💬 **Sohbet** – aile ve özel sohbet, uçtan uca şifreli, anlık bildirim ve okundu işaretiyle
 - 🔔 **Bildirimler** – iPhone, iPad ve Android'de kişiye özel anlık bildirimler ve ailedeki tüm değişiklikleri gösteren bir bildirim zili
 
-pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk ve 🇳🇴 Norsk**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
+pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk, 🇳🇴 Norsk ve 🇫🇮 Suomi**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
+
+## 1.159.0 sürümündeki yenilikler
+
+**Fince**
+
+- Yeni: Fince (Suomi) yeni bir uygulama dili olarak eklendi – uygulamanın yaklaşık 7.500 metni, kurulum sihirbazı, veri dışa aktarma, sunucudan gelen push mesajları ve Finlandiya acil durum numarası (112). Ortak ev (WG) ifadeleri de dahil (“kotitalous”, “asukas”), Fince hâl ekleriyle birlikte. Ayarlar → Dil ve bölge altından seçilir.
+- Not: çeviri ana dili konuşanlar tarafından kontrol edilmedi – önerilerinizi GitHub issue olarak bekleriz. Siri/Android ile sesli kontrol henüz Fince anlamıyor ve İngilizce yanıt veriyor.
+- Değişenler: `i18n/fi.i18n.js` (new), `README.fi.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
 
 ## 1.158.0 sürümündeki yenilikler
 
@@ -170,14 +179,6 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 - Yeni: kendi profilinde pinn. adın yerine “Ben” gösterir – takvim filtresi, görevler, aile ve her yerde, cümle içinde uygun biçimde. Ayrıca: geri yükleme oku için çizgi simge, yeni jant simgesi, karanlık modda sarı ipuçları için aynı altın rengi.
 - Değiştirildi: `pb_hooks/pinn-gesundheit.js`, `js/gesundheit.js`, `css/gesundheit.css`, `js/mitglieder.js`, `js/symbole.js`, `css/dunkelfarbe.css`, `js/aufgaben.js`, `js/termine.js`, `js/listen.js`, `js/sparen.js`, `js/vertraege.js`, `js/familie.js`, `js/hinweise.js`, `js/kassen.js`, `js/zuhause.js`, `js/dokumente.js`, `js/fahrzeuge.js`, `js/ausblick.js`, `js/sterne.js`, `js/vorrat2.js`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `index.html`.
 
-## 1.153.0 sürümündeki yenilikler
-
-**Home Assistant'tan güvenlik**
-
-- Yeni: **Güvenlik** – aile yöneticileri Ayarlar → Güvenlik altında Home Assistant cihazlarını adlandırılmış gruplarda toplar: pencereler ve kapılar, kapı kilitleri, kameralar, garaj kapısı ve panjurlar, duman ve su dedektörleri, alarm sistemi, hareket dedektörleri. Aile panosu altta bir şerit gösterir (örn. “Hepsi kapalı”, “Mutfak penceresi açık”, “1 kamera açık”, alarmda kırmızı); genel bakışa “Güvenlik” kutucuğu eklenir, yetişkinler burada açık bir kapı kilidini kilitleyebilir (asla açamaz). İsteğe bağlı **akşam kontrolü**: seçilen saatte hâlâ açık, kilitlenmemiş bir şey varsa veya alarm devre dışıysa tüm yöneticilere anlık bildirim gider. Koşul: Home Assistant, Ayarlar → Akıllı ev altında bağlı olmalı.
-- Düzeltildi: karanlık modda bir görevin başlığının altındaki düğmeler (akıllı ev başlatma, sayaç okuma …) mavi üstüne maviydi – artık altın renginde.
-- Değiştirildi: `pb_hooks/pinn-sicherheit.js` (new), `pb_hooks/sicherheit.pb.js` (new), `pb_hooks/pinn-smarthome.js`, `pb_hooks/pinn-schema.js`, `js/sicherheit.js` (new), `css/sicherheit.css` (new), `js/uebersicht.js`, `js/profilauswahl.js`, `js/einstellungen.js`, `css/dunkelfarbe.css`, `i18n/`, `js/sprachen.js`, `js/versionslog.js`, `pinn-setup.sh`, `src/`, `index.html`.
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -187,13 +188,13 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.158.0` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.159.0` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
 4. `http://<NAS'ın IP adresi>:8090` adresini aç → **Ana yönetici olarak giriş yap** → şifre `Admin` → kendi şifreni belirle.
-5. **Kurulum sihirbazı** gerisinde sana adım adım rehberlik eder – HTTPS, uzaktan erişim, Google, yapay zekâ, konum ve Home Assistant – 18 dilde.
+5. **Kurulum sihirbazı** gerisinde sana adım adım rehberlik eder – HTTPS, uzaktan erişim, Google, yapay zekâ, konum ve Home Assistant – 19 dilde.
 6. pinn.'i her telefonda HTTPS adresinden aç ve ana ekrana ekle:
    - **iPhone/iPad (Safari):** “Paylaş” → *Ana Ekrana Ekle* (bildirimler için iOS 16.4 veya daha yenisi gerekir)
    - **Android (Chrome):** Ayarlar → Bildirimler → *pinn.'i uygulama olarak yükle* veya Chrome menüsü ⋮ → *Uygulamayı yükle*

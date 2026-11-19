@@ -24,7 +24,7 @@
   'use strict';
   if (window.PinnExport) return;
 
-  var LANGS = ['de', 'en', 'fr', 'es', 'it', 'pt', 'zh', 'ja', 'ko', 'ru', 'nl', 'tr', 'pl', 'uk', 'cs', 'sv', 'da', 'nb'];
+  var LANGS = ['de', 'en', 'fr', 'es', 'it', 'pt', 'zh', 'ja', 'ko', 'ru', 'nl', 'tr', 'pl', 'uk', 'cs', 'sv', 'da', 'nb', 'fi'];
   var T = {};
   T.de = {
     F: 'Familie', FW: 'WG', Fd: 'der Familie', FWd: 'der WG',
@@ -1055,6 +1055,60 @@
       '',
       'Advarsel: Denne filen inneholder økonomi, dokumenter og nødkort ukryptert.',
       'Oppbevar den trygt.',
+    ],
+  };
+
+  // Finnish (since 1.159.0)
+  T.fi = {
+    F: 'perhe', FW: 'kotitalous', Fd: 'perheesi', FWd: 'kotitaloutesi',
+    titel: 'Vie {F}',
+    intro: 'Kaikki {Fd} tiedot ZIP-tiedostona – myös asiakirjat, kuitit ja kuvat. Esimerkiksi siirtoa varten toiselle NAS-laitteelle tai omana varmuuskopiona.',
+    lade: 'Tarkistetaan sisältöä …', fehler: 'Se ei onnistunut.',
+    fehlerNetz: 'Ei yhteyttä pinn.:iin – varmista, että olet kotiverkossa tai VPN:ssä.',
+    serverFehlt: 'export.pb.js ja pinn-export.js (pb_hooks) puuttuvat vielä palvelimelta.',
+    familieWaehlen: 'Valitse {F}', inhalt: 'Tämä tulee ZIP-tiedostoon', eintraege: '{0} merkintää', dateienN: '{0} tiedostoa',
+    dokumente: 'Tiedostoja yhteensä', groesse: 'Koko (n.)',
+    nichtDrin: 'Ei mukana',
+    nichtDrinText: 'Salasanat, PIN-koodit, iCloudin, Googlen ja Home Assistantin käyttötiedot, kirjautuneet laitteet ja push-tilaukset. Toisella NAS-laitteella kirjaudut vain uudelleen sisään. Traccarin sijaintihistoria ei myöskään ole mukana.',
+    privat: 'Ei mukana, koska yksityinen: {0} kassa(a), joiden jäsen et ole, ja {1} kalenteri(a) ”Vain minulle” muilta profiileilta. Täydellisen viennin – esimerkiksi muuton yhteydessä – tekee pääylläpitäjä.',
+    voll: 'Täydellinen vienti – kaikkien profiilien yksityiset kassat ja ”Vain minulle” -kalenterit ovat mukana.',
+    sicherheit: 'ZIP-tiedosto sisältää talouden, asiakirjat ja hätäkortit salaamattomina. Säilytä se turvallisesti äläkä lähetä sitä sähköpostilla.',
+    gross: 'Se on noin {0}. Puhelimella se voi kestää jonkin aikaa – vie mieluummin tietokoneella ja pidä pinn. auki sillä aikaa.',
+    starten: 'Luo ZIP', abbrechen: 'Peruuta', schliessen: 'Sulje', nochmal: 'Yritä uudelleen',
+    schrittDaten: 'Tiedot: {0}', schrittDatei: 'Tiedosto {0} / {1}', packe: 'Pakataan ZIP-tiedostoa …',
+    offenLassen: 'Pidä pinn. auki, kunnes vienti on valmis.',
+    fertig: 'Vienti on valmis ✓', fertigText: '{0} merkintää ja {1} tiedostoa · {2}',
+    speichern: 'Tallenna ZIP', teilen: 'Jaa tai tallenna Tiedostoihin',
+    speichernTipp: 'iPhone/iPad: ”Jaa” → ”Tallenna Tiedostoihin”. Tietokone: ”Tallenna ZIP” tallentaa tiedoston lataukset-kansioosi.',
+    fehlende: '{0} tiedostoa ei voitu lukea – ne ovat ZIP-tiedoston luettelossa export-fehler.txt.',
+    abgebrochen: 'Vienti keskeytettiin.', zuGross: 'Vienti on yli 4 Gt – tavallinen ZIP-tiedosto ei mahdu sitä.',
+    keinAdmin: 'Vain ylläpitäjät voivat luoda viennin.',
+    S: {
+      familien: '{F}', benutzer: 'Profiilit', familien_daten: 'Kalenteri, listat, reseptit, jäsenet ja asetukset',
+      rezept_bilder: 'Reseptikuvat', oeffentliche_rezepte: 'Jaetut reseptit', aufgaben: 'Tehtävät',
+      haushalt_verlauf: 'Kotitalouden historia', kassen: 'Kassat, salkut ja sopimukset', ausgaben: 'Tapahtumat',
+      finanz_dokumente: 'Sopimusasiakirjat', dokumente: 'Asiakirjat', pinnwand_bilder: 'Ilmoitustaulun kuvat',
+      kalender_eigene: 'Omat kalenterit', kalender_termine: 'Tapaamiset', muellkalender: 'Jätekalenteri',
+      ortung: 'Paikat ja sijainti', zuhause: 'Koti', smarthome_zugaenge: 'Älykoti',
+      dashboard_hintergruende: 'Paneeli', apple_zugaenge: 'iCloud', google_zugaenge: 'Google',
+    },
+    liesmich: 'README.txt',
+    readme: [
+      'pinn. – tietojen vienti',
+      '',
+      '{F}: {0}',
+      'Luotu: {1} / {2} (pinn. {3})',
+      '',
+      'Sisältö:',
+      '  pinn-export.json  viennin kuvaus (muoto, sisältö, tiedostoluettelo)',
+      '  daten/            kaikki merkinnät kokoelmittain JSON-muodossa (sellaisina kuin ne on tallennettu PocketBaseen)',
+      '  dateien/          asiakirjat, kuitit ja kuvat: dateien/<kokoelma>/<merkinnän-id>/<tiedosto>',
+      '',
+      'Ei mukana: salasanat, PIN-koodit, käyttötiedot (iCloud, Google, Home Assistant),',
+      'kirjautuneet laitteet, push-tilaukset ja Traccarin sijaintihistoria.',
+      '',
+      'Varoitus: tämä tiedosto sisältää talouden, asiakirjat ja hätäkortit salaamattomina.',
+      'Säilytä se turvallisesti.',
     ],
   };
 

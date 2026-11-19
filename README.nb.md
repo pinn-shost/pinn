@@ -29,7 +29,8 @@
   <a href="README.cs.md">🇨🇿 Čeština</a> ·
   <a href="README.sv.md">🇸🇪 Svenska</a> ·
   <a href="README.da.md">🇩🇰 Dansk</a> ·
-  <b>🇳🇴 Norsk</b>
+  <b>🇳🇴 Norsk</b> ·
+  <a href="README.fi.md">🇫🇮 Suomi</a>
 </p>
 
 ---
@@ -112,7 +113,15 @@ Trykk på et bilde for å åpne det i full størrelse.
 - 💬 **Chat** – familie- og privatchat med ende-til-ende-kryptering, push-varsler og lesebekreftelser
 - 🔔 **Varsler** – personlige push-varsler på iPhone, iPad og Android samt en klokke som samler alle endringer i familien
 
-pinn. snakker **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk og 🇳🇴 Norsk**, tilpasser valuta og nødnumre til regionen din og bytter mellom begrepene **familie** og **husstand**. Én server kan rumme flere familier, hver med egne administratorer.
+pinn. snakker **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk, 🇳🇴 Norsk og 🇫🇮 Suomi**, tilpasser valuta og nødnumre til regionen din og bytter mellom begrepene **familie** og **husstand**. Én server kan rumme flere familier, hver med egne administratorer.
+
+## Nyheter i 1.159.0
+
+**Finsk**
+
+- Nytt: finsk (Suomi) er et nytt appspråk – alle omtrent 7 500 tekstene i appen, oppsettsveiviseren, dataeksporten, push-varslene fra serveren og det finske nødnummeret (112). Varianten for bofellesskap er også med («kotitalous», «asukas») med finske kasusendelser. Du velger det under Innstillinger → Språk og region.
+- Merk: oversettelsen er ikke kontrollert av morsmålsbrukere – forslag til forbedringer er velkomne som GitHub-issue. Stemmestyringen via Siri/Android forstår ennå ikke finsk og svarer på engelsk.
+- Endret: `i18n/fi.i18n.js` (new), `README.fi.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
 
 ## Nyheter i 1.158.0
 
@@ -121,14 +130,6 @@ pinn. snakker **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - Nytt: norsk (Norsk, bokmål) er et nytt appspråk – alle omtrent 7 500 tekstene i appen, oppsettsveiviseren, dataeksporten, push-varslene fra serveren og det norske nødnummeret (112). Varianten for bofellesskap er også med («husstand», «bofelle»). Du velger det under Innstillinger → Språk og region.
 - Merk: oversettelsen er ikke kontrollert av morsmålsbrukere – forslag til forbedringer er velkomne som GitHub-issue. Stemmestyringen via Siri/Android forstår ennå ikke norsk og svarer på engelsk.
 - Endret: `i18n/nb.i18n.js` (new), `README.nb.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
-
-## Nyheter i 1.157.0
-
-**Dansk**
-
-- Nytt: dansk (Dansk) er et nytt appspråk – alle omtrent 7 500 tekstene i appen, oppsettsveiviseren, dataeksporten, push-varslene fra serveren og det danske nødnummeret (112). Varianten for bofellesskap er også med («husstand», «bofælle»). Du velger det under Innstillinger → Språk og region.
-- Merk: oversettelsen er ikke kontrollert av morsmålsbrukere – forslag til forbedringer er velkomne som GitHub-issue. Stemmestyringen via Siri/Android forstår ennå ikke dansk og svarer på engelsk.
-- Endret: `i18n/da.i18n.js` (new), `README.da.md` (new), `js/`, `pb_hooks/`, `einrichtung.js`, `datenexport.js`, `.github/scripts/`, `src/`, `index.html`, README.
 
 ## Krav
 
@@ -139,13 +140,13 @@ pinn. snakker **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installasjon
 
 1. Last ned og pakk ut ZIP-filen til [den nyeste versjonen](https://github.com/pinn-shost/pinn/releases/latest).
-2. Opprett en mappe på NAS-en, f.eks. `/volume1/docker/Pocketbase`, og legg den utpakkede mappen (f.eks. `pinn-1.158.0` eller `pinn-main`) i den uten endringer.
+2. Opprett en mappe på NAS-en, f.eks. `/volume1/docker/Pocketbase`, og legg den utpakkede mappen (f.eks. `pinn-1.159.0` eller `pinn-main`) i den uten endringer.
 3. Koble til via SSH og kjør:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
 4. Åpne `http://<NAS-ens IP-adresse>:8090` → **Logg inn som hovedadministrator** → passord `Admin` → velg ditt eget passord.
-5. **Oppsettsveiviseren** fører deg gjennom resten trinn for trinn – HTTPS, tilgang utenfra, Google, KI, posisjon og Home Assistant – på 18 språk.
+5. **Oppsettsveiviseren** fører deg gjennom resten trinn for trinn – HTTPS, tilgang utenfra, Google, KI, posisjon og Home Assistant – på 19 språk.
 6. Åpne pinn. på hver telefon via HTTPS-adressen og legg den til på hjem-skjermen:
    - **iPhone/iPad (Safari):** «Del» → *Legg til på Hjem-skjerm* (for varsler kreves iOS 16.4 eller nyere)
    - **Android (Chrome):** Innstillinger → Varsler → *installer pinn. som app* eller Chrome-menyen ⋮ → *Installer app*

@@ -2,7 +2,7 @@
    Part of the app code that used to be a single block in index.html. Classic script, no build step:
    it is loaded right after the inline script of index.html and before the other files in js/
    (the load order is listed at the bottom of index.html and in pinn-setup.sh).
-   Contents: the texts of the setup in eighteen languages (PINN_SETUP_TEXTE, pinnSetupText) and loading and opening the assistant (loadPinnSetupScript, openPinnSetup). The assistant itself lives in pb_public/einrichtung.js and is only loaded when first opened. The notice about the open setup is in js/hauptadminseite.js. */
+   Contents: the texts of the setup in nineteen languages (PINN_SETUP_TEXTE, pinnSetupText) and loading and opening the assistant (loadPinnSetupScript, openPinnSetup). The assistant itself lives in pb_public/einrichtung.js and is only loaded when first opened. The notice about the open setup is in js/hauptadminseite.js. */
 
 /* ==========================================================
    Setup (assistant for the main admin)
@@ -224,6 +224,19 @@ const PINN_SETUP_TEXTE = {
     loginBtn: 'Logg inn som hovedadministrator',
     loginMain: 'Første gang er passordet «Admin» – deretter velger du ditt eget, og oppsettet starter.',
     laden: 'Oppsettet kunne ikke lastes (mangler pb_public/einrichtung.js?).',
+  },
+  // Finnish (since 1.159.0)
+  fi: {
+    btn: '⚙︎ Käyttöönotto',
+    offen: 'pinn.:n käyttöönotto ei ole vielä valmis. Ilman sitä HTTPS, push-ilmoitukset ja kotinäytön sovellus eivät toimi.',
+    fortsetzen: 'Jatka käyttöönottoa',
+    neustart: 'Tallennetut asetukset tulevat voimaan vasta pinn.:n uudelleenkäynnistyksen jälkeen.',
+    neustartBtn: 'Ota käyttöön nyt (lyhyt uudelleenkäynnistys)',
+    neustartLaeuft: 'pinn. käynnistyy uudelleen …',
+    loginHint: 'Uusi täällä? Ensimmäinen käyttöönotto alkaa, kun kirjaudut sisään pääylläpitäjänä.',
+    loginBtn: 'Kirjaudu sisään pääylläpitäjänä',
+    loginMain: 'Ensimmäisellä kerralla salasana on ”Admin” – sen jälkeen valitset oman salasanasi ja käyttöönotto alkaa.',
+    laden: 'Käyttöönottoa ei voitu ladata (puuttuuko pb_public/einrichtung.js?).',
   },
   uk: {
     btn: '⚙︎ Конфігурація',

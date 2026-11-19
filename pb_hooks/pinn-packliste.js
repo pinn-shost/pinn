@@ -113,6 +113,7 @@ const T = {
     sv: { titel: "🧳 Skapa en packlista för ”{t}”?", heute: "Börjar i dag", morgen: "Börjar i morgon", tage: "Börjar om {n} d.", text: "{w} – tryck så skapas listan direkt med ifyllda datum." },
     da: { titel: "🧳 Opret en pakkeliste til »{t}«?", heute: "Starter i dag", morgen: "Starter i morgen", tage: "Starter om {n} d.", text: "{w} – tryk, så oprettes listen med det samme med udfyldte datoer." },
     nb: { titel: "🧳 Opprette en pakkeliste for «{t}»?", heute: "Starter i dag", morgen: "Starter i morgen", tage: "Starter om {n} d.", text: "{w} – trykk, så opprettes listen med en gang med utfylte datoer." },
+    fi: { titel: "🧳 Pakkauslista matkalle ”{t}”?", heute: "Alkaa tänään", morgen: "Alkaa huomenna", tage: "Alkaa {n} päivän päästä", text: "{w} – napauta, niin lista luodaan päivämäärät valmiiksi täytettyinä." },
 };
 function tx(lang, k, vars) {
     let s = (T[lang] || T.en)[k] || T.en[k];
