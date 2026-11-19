@@ -118,6 +118,11 @@ function plDet(stem, end) {
   if (kind === 'gen') return stem + 'ego';
   return stem === 'twoj' ? 'twoim' : stem + 'ym';
 }
+// Czech (since 1.155.0): rodina → domácnost, člen rodiny → spolubydlící, rodinný → společný (all cases, singular and plural)
+const CS_HOME = { '': 'domácností', a: 'domácnost', u: 'domácnost', y: 'domácnosti', 'ě': 'domácnosti', o: 'domácnosti', ou: 'domácností',
+  'ám': 'domácnostem', 'ách': 'domácnostech', ami: 'domácnostmi' };
+const CS_MATE = { '': 'spolubydlící', a: 'spolubydlícího', u: 'spolubydlícímu', ovi: 'spolubydlícímu', em: 'spolubydlícím', 'ové': 'spolubydlící',
+  y: 'spolubydlící', 'ů': 'spolubydlících', 'ům': 'spolubydlícím', ech: 'spolubydlících' };
 const TERMS = {
   de: { keep: /Familienstammbuch|Familienkutsche/g, rules: [
     [/\b([Jj])edes Familienmitglied\b/g, '$1eder Mitbewohner'],
@@ -282,6 +287,20 @@ const TERMS = {
       function (m, c, end) { return cap(c === 'С', 'спільн' + end); }],
     // "з" before the new words needs a vowel ("з співмешканцями" → "зі співмешканцями")
     [/(?<![\p{L}\p{N}])([Зз]) (співмешканц\p{L}*|спільн\p{L}*)/gu, function (m, c, word) { return c + 'і ' + word; }],
+  ] },
+  // Czech (since 1.155.0): Unicode lookarounds (flag u). rodina and domácnost are both feminine, so determiners (vaše, naší, této, celé …)
+  // stay unchanged. Write source texts so that "s členy rodiny" (instrumental plural = accusative plural) does not occur.
+  cs: { keep: /rodinn\p{L}*\s+(?:lékař|auto|rozpočet|doktor)\p{L}*|(?:lékař|auto|rozpočet|doktor)\p{L}*\s+rodinn\p{L}*/giu, rules: [
+    // instrumental plural ("s členy rodiny" → "se spolubydlícími"; the plural accusative "členy" is handled below)
+    [/(?<![\p{L}\p{N}])([Ss]) členy(\s+(?:vaší|tvé|naší|své|této|celé|každé)?\s*)rodiny(?![\p{L}\p{N}])/gu, function (m, c) { return c + 'e spolubydlícími'; }],
+    [/(?<![\p{L}\p{N}])([Čč])len(|a|u|ovi|em|ové|y|ů|ům|ech)(\s+(?:vaší|tvé|naší|své|této|celé|každé)?\s*)rodiny(?![\p{L}\p{N}])/gu,
+      function (m, c, end) { return cap(c === 'Č', CS_MATE[end]); }],
+    [/(?<![\p{L}\p{N}])([Rr])odin(ou|ám|ách|ami|a|u|y|ě|o)?(?![\p{L}\p{N}])/gu,
+      function (m, c, end) { return cap(c === 'R', CS_HOME[end === undefined ? '' : end]); }],
+    [/(?<![\p{L}\p{N}])([Rr])odinn(ý|á|é|í|ého|ému|ém|ým|ou|ých|ými)(?![\p{L}\p{N}])/gu,
+      function (m, c, end) { return cap(c === 'R', 'společn' + end); }],
+    // v / s / z / k before the new words need a vowel ("s společnou" → "se společnou")
+    [/(?<![\p{L}\p{N}])([VvSsZzKk]) (spolubydl\p{L}*|společn\p{L}*)/gu, function (m, c, word) { return c + 'e ' + word; }],
   ] },
 };
 
