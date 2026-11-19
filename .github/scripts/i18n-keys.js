@@ -131,6 +131,11 @@ const SV_END = { '': 'hushåll', en: 'hushållet', ens: 'hushållets', er: 'hush
 const DA_HOME = { '': 'husstand', n: 'husstanden', ns: 'husstandens', r: 'husstande', rne: 'husstandene', rnes: 'husstandenes', rs: 'husstandes' };
 const DA_MATE = { '': 'bofælle', met: 'bofællen', mer: 'bofæller', merne: 'bofællerne', mets: 'bofællens', mers: 'bofællers', mernes: 'bofællernes' };
 const DA_DET = { et: 'en', dit: 'din', mit: 'min', sit: 'sin', hvert: 'hver', ethvert: 'enhver', intet: 'ingen', noget: 'nogen', andet: 'anden', nyt: 'ny', dette: 'denne' };
+// Norwegian Bokmål (since 1.158.0): "familie" -> "husstand" (masculine), "familiemedlem" (neuter) -> "bofelle" (masculine, the word in front
+// changes: "et familiemedlem" -> "en bofelle"), "familie-" (compound prefix) -> "husstands-".
+const NB_HOME = { '': 'husstand', en: 'husstanden', ens: 'husstandens', er: 'husstander', ene: 'husstandene', enes: 'husstandenes', ers: 'husstanders' };
+const NB_MATE = { '': 'bofelle', met: 'bofellen', mer: 'bofeller', mene: 'bofellene', mets: 'bofellens', mers: 'bofellers', menes: 'bofellenes' };
+const NB_DET = { et: 'en', ditt: 'din', mitt: 'min', sitt: 'sin', hvert: 'hver', ethvert: 'enhver', intet: 'ingen', annet: 'annen', nytt: 'ny', dette: 'denne' };
 const SV_DET = { en: 'ett', din: 'ditt', min: 'mitt', sin: 'sitt', er: 'ert', 'vår': 'vårt', ny: 'nytt', annan: 'annat', ingen: 'inget', 'någon': 'något', denna: 'detta' };
 const TERMS = {
   de: { keep: /Familienstammbuch|Familienkutsche/g, rules: [
@@ -324,6 +329,21 @@ const TERMS = {
       function (m, f, end) { return cap(f === 'F', DA_MATE[end === undefined ? '' : end]); }],
     [/(?<![\p{L}\p{N}])([Ff])amili(en|ens|e|erne|ernes|ers|er)(?![\p{L}\p{N}])/gu,
       function (m, f, end) { return cap(f === 'F', DA_HOME[end === 'e' ? '' : end.slice(1)]); }],
+    [/(?<![\p{L}\p{N}])([Ff])amilie(?=\p{L})/gu, function (m, f) { return cap(f === 'F', 'husstands'); }],
+  ] },
+  nb: { keep: /familielege\p{L}*|familiebil\p{L}*|familiebuss\p{L}*/giu, rules: [
+    // "et nytt familiemedlem" -> "en ny bofelle", "det nye familiemedlemmet" -> "den nye bofellen"
+    [/(?<![\p{L}\p{N}])([Ee]t)(\s+)(nytt|annet)(\s+)familiemedlem(?:met)?(?![\p{L}\p{N}])/gu,
+      function (m, d, sp, adj, sp2) { return (d.charAt(0) === 'E' ? 'En' : 'en') + sp + NB_DET[adj] + sp2 + 'bofelle'; }],
+    [/(?<![\p{L}\p{N}])([Dd])et (nye|valgte|aktuelle|andre|øvrige) familiemedlem(?:met)?(?![\p{L}\p{N}])/gu,
+      function (m, c, w) { return (c === 'D' ? 'Den ' : 'den ') + w + ' bofellen'; }],
+    // a masculine noun needs the masculine form of the word in front ("ditt familiemedlem" -> "din bofelle")
+    [/(?<![\p{L}\p{N}])(et|ditt|mitt|sitt|hvert|ethvert|intet|annet|nytt|dette)(\s+)familiemedlem(?![\p{L}\p{N}])/giu,
+      function (m, d, sp) { var r = NB_DET[d.toLowerCase()]; return (d.charAt(0) === d.charAt(0).toUpperCase() ? r.charAt(0).toUpperCase() + r.slice(1) : r) + sp + 'bofelle'; }],
+    [/(?<![\p{L}\p{N}])([Ff])amiliemedlem(met|mer|mene|mets|mers|menes)?(?![\p{L}\p{N}])/gu,
+      function (m, f, end) { return cap(f === 'F', NB_MATE[end === undefined ? '' : end]); }],
+    [/(?<![\p{L}\p{N}])([Ff])amili(ens|en|ene|enes|ers|er|e)(?![\p{L}\p{N}])/gu,
+      function (m, f, end) { return cap(f === 'F', NB_HOME[end === 'e' ? '' : end]); }],
     [/(?<![\p{L}\p{N}])([Ff])amilie(?=\p{L})/gu, function (m, f) { return cap(f === 'F', 'husstands'); }],
   ] },
   cs: { keep: /rodinn\p{L}*\s+(?:lékař|auto|rozpočet|doktor)\p{L}*|(?:lékař|auto|rozpočet|doktor)\p{L}*\s+rodinn\p{L}*/giu, rules: [

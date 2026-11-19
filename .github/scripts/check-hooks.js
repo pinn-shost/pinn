@@ -617,11 +617,11 @@ if (exists(path.join(HOOKS, 'pinn-sprache.js'))) {
 // Dutch (since 1.123.12): every hook with its own language list or text table must know "nl", otherwise it sends English
 {
   const hooksWithTexts = {
-    'pinn-ausblick.js': [/"ru", "nl"(?:, "tr")?(?:, "pl")?(?:, "uk")?(?:, "cs")?(?:, "sv")?(?:, "da")?\]/, /\n    nl: \["januari"/, /lang === "nl"\) return \{ titel: "🗓️/, /lang === "nl"\) return \{ titel: "💶/],
-    'pinn-familie-geburtstag.js': [/"ru", "nl"(?:, "tr")?(?:, "pl")?(?:, "uk")?(?:, "cs")?(?:, "sv")?(?:, "da")?\]/, /nl: " en "/, /lang === "nl"\) return \{ titel: "🎂 " \+ n/, /lang === "nl"\) return \{ titel: "🎂 Vandaag jarig/],
-    'pinn-haustiere.js': [/"ru", "nl"(?:, "tr")?(?:, "pl")?(?:, "uk")?(?:, "cs")?(?:, "sv")?(?:, "da")?\]/, /\n    nl: \{ futter:/],
-    'pinn-ortung.js': [/"ru", "nl"(?:, "tr")?(?:, "pl")?(?:, "uk")?(?:, "cs")?(?:, "sv")?(?:, "da")?\]/, /\n    nl: \{ bei:/],
-    'pinn-wobistdu.js': [/"ru", "nl"(?:, "tr")?(?:, "pl")?(?:, "uk")?(?:, "cs")?(?:, "sv")?(?:, "da")?\]/, /\n    nl: \{ zuhause:/, /nl: "Iemand"/, /lang === "nl"\) return \{ titel: "📍 " \+ n \+ " vraagt/, /lang === "nl"\) return \{ titel: "📍 " \+ n \+ " heeft geantwoord/],
+    'pinn-ausblick.js': [/"ru", "nl"(?:, "tr")?(?:, "pl")?(?:, "uk")?(?:, "cs")?(?:, "sv")?(?:, "da")?(?:, "nb")?\]/, /\n    nl: \["januari"/, /lang === "nl"\) return \{ titel: "🗓️/, /lang === "nl"\) return \{ titel: "💶/],
+    'pinn-familie-geburtstag.js': [/"ru", "nl"(?:, "tr")?(?:, "pl")?(?:, "uk")?(?:, "cs")?(?:, "sv")?(?:, "da")?(?:, "nb")?\]/, /nl: " en "/, /lang === "nl"\) return \{ titel: "🎂 " \+ n/, /lang === "nl"\) return \{ titel: "🎂 Vandaag jarig/],
+    'pinn-haustiere.js': [/"ru", "nl"(?:, "tr")?(?:, "pl")?(?:, "uk")?(?:, "cs")?(?:, "sv")?(?:, "da")?(?:, "nb")?\]/, /\n    nl: \{ futter:/],
+    'pinn-ortung.js': [/"ru", "nl"(?:, "tr")?(?:, "pl")?(?:, "uk")?(?:, "cs")?(?:, "sv")?(?:, "da")?(?:, "nb")?\]/, /\n    nl: \{ bei:/],
+    'pinn-wobistdu.js': [/"ru", "nl"(?:, "tr")?(?:, "pl")?(?:, "uk")?(?:, "cs")?(?:, "sv")?(?:, "da")?(?:, "nb")?\]/, /\n    nl: \{ zuhause:/, /nl: "Iemand"/, /lang === "nl"\) return \{ titel: "📍 " \+ n \+ " vraagt/, /lang === "nl"\) return \{ titel: "📍 " \+ n \+ " heeft geantwoord/],
     'pinn-packliste.js': [/\n    nl: \{ titel:/],
     'pinn-aufgaben.js': [/\n    nl: \{ t: "⭐ Beloning/],
   };
@@ -642,15 +642,15 @@ if (exists(path.join(HOOKS, 'pinn-sprache.js'))) {
 // Turkish (since 1.130.11): the same hooks must know "tr" (language list, country TR and the texts)
 {
   const hooksWithTurkish = {
-    'pinn-ausblick.js': [/"nl", "tr"(?:, "pl")?(?:, "uk")?(?:, "cs")?(?:, "sv")?(?:, "da")?\]/, /\n    tr: \["Ocak"/, /lang === "tr"\) return \{ titel: "🗓️/, /lang === "tr"\) return \{ titel: "💶/, /\["TR"\]\.indexOf\(land\) >= 0\) return "tr"/],
-    'pinn-familie-geburtstag.js': [/"nl", "tr"(?:, "pl")?(?:, "uk")?(?:, "cs")?(?:, "sv")?(?:, "da")?\]/, /tr: " ve "/, /lang === "tr"\) return \{ titel: "🎂 Bugün doğum günü: "/, /lang === "tr"\) return \{ titel: "🎂 Bugün doğum günü olanlar/, /\["TR"\]\.indexOf\(land\) >= 0\) return "tr"/],
-    'pinn-haustiere.js': [/"nl", "tr"(?:, "pl")?(?:, "uk")?(?:, "cs")?(?:, "sv")?(?:, "da")?\]/, /\n    tr: \{ futter:/, /\["TR"\]\.indexOf\(land\) >= 0\) return "tr"/],
-    'pinn-ortung.js': [/"nl", "tr"(?:, "pl")?(?:, "uk")?(?:, "cs")?(?:, "sv")?(?:, "da")?\]/, /\n    tr: \{ bei:/, /\["TR"\]\.indexOf\(land\) >= 0\) return "tr"/],
-    'pinn-wobistdu.js': [/"nl", "tr"(?:, "pl")?(?:, "uk")?(?:, "cs")?(?:, "sv")?(?:, "da")?\]/, /\n    tr: \{ zuhause:/, /tr: "Biri"/, /lang === "tr"\) return \{ titel: "📍 " \+ n \+ " soruyor/, /lang === "tr"\) return \{ titel: "📍 " \+ n \+ " yanıtladı/, /\["TR"\]\.indexOf\(land\) >= 0\) return "tr"/],
+    'pinn-ausblick.js': [/"nl", "tr"(?:, "pl")?(?:, "uk")?(?:, "cs")?(?:, "sv")?(?:, "da")?(?:, "nb")?\]/, /\n    tr: \["Ocak"/, /lang === "tr"\) return \{ titel: "🗓️/, /lang === "tr"\) return \{ titel: "💶/, /\["TR"\]\.indexOf\(land\) >= 0\) return "tr"/],
+    'pinn-familie-geburtstag.js': [/"nl", "tr"(?:, "pl")?(?:, "uk")?(?:, "cs")?(?:, "sv")?(?:, "da")?(?:, "nb")?\]/, /tr: " ve "/, /lang === "tr"\) return \{ titel: "🎂 Bugün doğum günü: "/, /lang === "tr"\) return \{ titel: "🎂 Bugün doğum günü olanlar/, /\["TR"\]\.indexOf\(land\) >= 0\) return "tr"/],
+    'pinn-haustiere.js': [/"nl", "tr"(?:, "pl")?(?:, "uk")?(?:, "cs")?(?:, "sv")?(?:, "da")?(?:, "nb")?\]/, /\n    tr: \{ futter:/, /\["TR"\]\.indexOf\(land\) >= 0\) return "tr"/],
+    'pinn-ortung.js': [/"nl", "tr"(?:, "pl")?(?:, "uk")?(?:, "cs")?(?:, "sv")?(?:, "da")?(?:, "nb")?\]/, /\n    tr: \{ bei:/, /\["TR"\]\.indexOf\(land\) >= 0\) return "tr"/],
+    'pinn-wobistdu.js': [/"nl", "tr"(?:, "pl")?(?:, "uk")?(?:, "cs")?(?:, "sv")?(?:, "da")?(?:, "nb")?\]/, /\n    tr: \{ zuhause:/, /tr: "Biri"/, /lang === "tr"\) return \{ titel: "📍 " \+ n \+ " soruyor/, /lang === "tr"\) return \{ titel: "📍 " \+ n \+ " yanıtladı/, /\["TR"\]\.indexOf\(land\) >= 0\) return "tr"/],
     'pinn-packliste.js': [/\n    tr: \{ titel:/],
     'pinn-aufgaben.js': [/\n    tr: \{ t: "⭐ Ödül/],
-    'pinn-chat.js': [/"nl", "tr"(?:, "pl")?(?:, "uk")?(?:, "cs")?(?:, "sv")?(?:, "da")?\]/, /\n    tr: \{ group:/, /tr: \["TR"\]/],
-    'pinn-pushtext.js': [/"nl", "tr"(?:, "pl")?(?:, "uk")?(?:, "cs")?(?:, "sv")?(?:, "da")?\]/, /\n    tr: \{ keep:/, /TR_HOME/, /TR_MATE/],
+    'pinn-chat.js': [/"nl", "tr"(?:, "pl")?(?:, "uk")?(?:, "cs")?(?:, "sv")?(?:, "da")?(?:, "nb")?\]/, /\n    tr: \{ group:/, /tr: \["TR"\]/],
+    'pinn-pushtext.js': [/"nl", "tr"(?:, "pl")?(?:, "uk")?(?:, "cs")?(?:, "sv")?(?:, "da")?(?:, "nb")?\]/, /\n    tr: \{ keep:/, /TR_HOME/, /TR_MATE/],
   };
   Object.keys(hooksWithTurkish).forEach(name => {
     if (!exists(path.join(HOOKS, name))) return;
@@ -665,16 +665,16 @@ if (exists(path.join(HOOKS, 'pinn-sprache.js'))) {
 // Polish (since 1.132.16): the same hooks must know "pl" (language list, country PL and the texts)
 {
   const hooksWithPolish = {
-    'pinn-ausblick.js': [/"tr", "pl"(?:, "uk")?(?:, "cs")?(?:, "sv")?(?:, "da")?\]/, /\n    pl: \["styczeń"/, /lang === "pl"\) return \{ titel: "🗓️/, /lang === "pl"\) return \{ titel: "💶/, /\["PL"\]\.indexOf\(land\) >= 0\) return "pl"/, /MONTHS_PL_GEN/, /MONTHS_PL_LOC/],
-    'pinn-familie-geburtstag.js': [/"tr", "pl"(?:, "uk")?(?:, "cs")?(?:, "sv")?(?:, "da")?\]/, /pl: " i "/, /lang === "pl"\) return \{ titel: "🎂 Dziś urodziny: "/, /lang === "pl"\) return \{ titel: "🎂 Dziś urodziny mają/, /\["PL"\]\.indexOf\(land\) >= 0\) return "pl"/],
-    'pinn-haustiere.js': [/"tr", "pl"(?:, "uk")?(?:, "cs")?(?:, "sv")?(?:, "da")?\]/, /\n    pl: \{ futter:/, /\["PL"\]\.indexOf\(land\) >= 0\) return "pl"/],
-    'pinn-ortung.js': [/"tr", "pl"(?:, "uk")?(?:, "cs")?(?:, "sv")?(?:, "da")?\]/, /\n    pl: \{ bei:/, /\["PL"\]\.indexOf\(land\) >= 0\) return "pl"/],
-    'pinn-wobistdu.js': [/"tr", "pl"(?:, "uk")?(?:, "cs")?(?:, "sv")?(?:, "da")?\]/, /\n    pl: \{ zuhause:/, /pl: "Ktoś"/, /lang === "pl"\) return \{ titel: "📍 " \+ n \+ " pyta/, /lang === "pl"\) return \{ titel: "📍 " \+ n \+ ": odpowiedź/, /\["PL"\]\.indexOf\(land\) >= 0\) return "pl"/],
+    'pinn-ausblick.js': [/"tr", "pl"(?:, "uk")?(?:, "cs")?(?:, "sv")?(?:, "da")?(?:, "nb")?\]/, /\n    pl: \["styczeń"/, /lang === "pl"\) return \{ titel: "🗓️/, /lang === "pl"\) return \{ titel: "💶/, /\["PL"\]\.indexOf\(land\) >= 0\) return "pl"/, /MONTHS_PL_GEN/, /MONTHS_PL_LOC/],
+    'pinn-familie-geburtstag.js': [/"tr", "pl"(?:, "uk")?(?:, "cs")?(?:, "sv")?(?:, "da")?(?:, "nb")?\]/, /pl: " i "/, /lang === "pl"\) return \{ titel: "🎂 Dziś urodziny: "/, /lang === "pl"\) return \{ titel: "🎂 Dziś urodziny mają/, /\["PL"\]\.indexOf\(land\) >= 0\) return "pl"/],
+    'pinn-haustiere.js': [/"tr", "pl"(?:, "uk")?(?:, "cs")?(?:, "sv")?(?:, "da")?(?:, "nb")?\]/, /\n    pl: \{ futter:/, /\["PL"\]\.indexOf\(land\) >= 0\) return "pl"/],
+    'pinn-ortung.js': [/"tr", "pl"(?:, "uk")?(?:, "cs")?(?:, "sv")?(?:, "da")?(?:, "nb")?\]/, /\n    pl: \{ bei:/, /\["PL"\]\.indexOf\(land\) >= 0\) return "pl"/],
+    'pinn-wobistdu.js': [/"tr", "pl"(?:, "uk")?(?:, "cs")?(?:, "sv")?(?:, "da")?(?:, "nb")?\]/, /\n    pl: \{ zuhause:/, /pl: "Ktoś"/, /lang === "pl"\) return \{ titel: "📍 " \+ n \+ " pyta/, /lang === "pl"\) return \{ titel: "📍 " \+ n \+ ": odpowiedź/, /\["PL"\]\.indexOf\(land\) >= 0\) return "pl"/],
     'pinn-packliste.js': [/\n    pl: \{ titel:/],
     'pinn-aufgaben.js': [/\n    pl: \{ t: "⭐ Prośba/],
-    'pinn-chat.js': [/"tr", "pl"(?:, "uk")?(?:, "cs")?(?:, "sv")?(?:, "da")?\]/, /\n    pl: \{ group:/, /pl: \["PL"\]/],
-    'pinn-pushtext.js': [/"tr", "pl"(?:, "uk")?(?:, "cs")?(?:, "sv")?(?:, "da")?\]/, /\n    pl: \{ keep:/, /PL_HOME/, /PL_MATE/, /plDet/],
-    'pinn-einrichtung.js': [/"tr", "pl"(?:, "uk")?(?:, "cs")?(?:, "sv")?(?:, "da")?, ""\]/],
+    'pinn-chat.js': [/"tr", "pl"(?:, "uk")?(?:, "cs")?(?:, "sv")?(?:, "da")?(?:, "nb")?\]/, /\n    pl: \{ group:/, /pl: \["PL"\]/],
+    'pinn-pushtext.js': [/"tr", "pl"(?:, "uk")?(?:, "cs")?(?:, "sv")?(?:, "da")?(?:, "nb")?\]/, /\n    pl: \{ keep:/, /PL_HOME/, /PL_MATE/, /plDet/],
+    'pinn-einrichtung.js': [/"tr", "pl"(?:, "uk")?(?:, "cs")?(?:, "sv")?(?:, "da")?(?:, "nb")?, ""\]/],
   };
   Object.keys(hooksWithPolish).forEach(name => {
     if (!exists(path.join(HOOKS, name))) return;
@@ -706,16 +706,16 @@ if (exists(path.join(HOOKS, 'pinn-sprache.js'))) {
 // Ukrainian (since 1.135.16): the same hooks must know "uk" (language list, country UA and the texts)
 {
   const hooksWithUkrainian = {
-    'pinn-ausblick.js': [/"pl", "uk"(?:, "cs")?(?:, "sv")?(?:, "da")?\]/, /\n    uk: \["січень"/, /lang === "uk"\) return \{ titel: "🗓️/, /lang === "uk"\) return \{ titel: "💶/, /\["UA"\]\.indexOf\(land\) >= 0\) return "uk"/, /MONTHS_UK_GEN/, /MONTHS_UK_LOC/],
-    'pinn-familie-geburtstag.js': [/"pl", "uk"(?:, "cs")?(?:, "sv")?(?:, "da")?\]/, /uk: " і "/, /lang === "uk"\) return \{ titel: "🎂 Сьогодні день народження: " \+ n/, /lang === "uk"\) return \{ titel: "🎂 Сьогодні день народження: " \+ names/, /\["UA"\]\.indexOf\(land\) >= 0\) return "uk"/],
-    'pinn-haustiere.js': [/"pl", "uk"(?:, "cs")?(?:, "sv")?(?:, "da")?\]/, /\n    uk: \{ futter:/, /\["UA"\]\.indexOf\(land\) >= 0\) return "uk"/],
-    'pinn-ortung.js': [/"pl", "uk"(?:, "cs")?(?:, "sv")?(?:, "da")?\]/, /\n    uk: \{ bei:/, /\["UA"\]\.indexOf\(land\) >= 0\) return "uk"/],
-    'pinn-wobistdu.js': [/"pl", "uk"(?:, "cs")?(?:, "sv")?(?:, "da")?\]/, /\n    uk: \{ zuhause:/, /uk: "Хтось"/, /lang === "uk"\) return \{ titel: "📍 " \+ n \+ " питає/, /lang === "uk"\) return \{ titel: "📍 " \+ n \+ ": відповідь/, /\["UA"\]\.indexOf\(land\) >= 0\) return "uk"/],
+    'pinn-ausblick.js': [/"pl", "uk"(?:, "cs")?(?:, "sv")?(?:, "da")?(?:, "nb")?\]/, /\n    uk: \["січень"/, /lang === "uk"\) return \{ titel: "🗓️/, /lang === "uk"\) return \{ titel: "💶/, /\["UA"\]\.indexOf\(land\) >= 0\) return "uk"/, /MONTHS_UK_GEN/, /MONTHS_UK_LOC/],
+    'pinn-familie-geburtstag.js': [/"pl", "uk"(?:, "cs")?(?:, "sv")?(?:, "da")?(?:, "nb")?\]/, /uk: " і "/, /lang === "uk"\) return \{ titel: "🎂 Сьогодні день народження: " \+ n/, /lang === "uk"\) return \{ titel: "🎂 Сьогодні день народження: " \+ names/, /\["UA"\]\.indexOf\(land\) >= 0\) return "uk"/],
+    'pinn-haustiere.js': [/"pl", "uk"(?:, "cs")?(?:, "sv")?(?:, "da")?(?:, "nb")?\]/, /\n    uk: \{ futter:/, /\["UA"\]\.indexOf\(land\) >= 0\) return "uk"/],
+    'pinn-ortung.js': [/"pl", "uk"(?:, "cs")?(?:, "sv")?(?:, "da")?(?:, "nb")?\]/, /\n    uk: \{ bei:/, /\["UA"\]\.indexOf\(land\) >= 0\) return "uk"/],
+    'pinn-wobistdu.js': [/"pl", "uk"(?:, "cs")?(?:, "sv")?(?:, "da")?(?:, "nb")?\]/, /\n    uk: \{ zuhause:/, /uk: "Хтось"/, /lang === "uk"\) return \{ titel: "📍 " \+ n \+ " питає/, /lang === "uk"\) return \{ titel: "📍 " \+ n \+ ": відповідь/, /\["UA"\]\.indexOf\(land\) >= 0\) return "uk"/],
     'pinn-packliste.js': [/\n    uk: \{ titel:/],
     'pinn-aufgaben.js': [/\n    uk: \{ t: "⭐ Запит/],
-    'pinn-chat.js': [/"pl", "uk"(?:, "cs")?(?:, "sv")?(?:, "da")?\]/, /\n    uk: \{ group:/, /uk: \["UA"\]/],
-    'pinn-pushtext.js': [/"pl", "uk"(?:, "cs")?(?:, "sv")?(?:, "da")?\]/, /\n    uk: \{ keep:/, /UK_MATE/, /UK_FLAT/],
-    'pinn-einrichtung.js': [/"pl", "uk"(?:, "cs")?(?:, "sv")?(?:, "da")?, ""\]/],
+    'pinn-chat.js': [/"pl", "uk"(?:, "cs")?(?:, "sv")?(?:, "da")?(?:, "nb")?\]/, /\n    uk: \{ group:/, /uk: \["UA"\]/],
+    'pinn-pushtext.js': [/"pl", "uk"(?:, "cs")?(?:, "sv")?(?:, "da")?(?:, "nb")?\]/, /\n    uk: \{ keep:/, /UK_MATE/, /UK_FLAT/],
+    'pinn-einrichtung.js': [/"pl", "uk"(?:, "cs")?(?:, "sv")?(?:, "da")?(?:, "nb")?, ""\]/],
   };
   Object.keys(hooksWithUkrainian).forEach(name => {
     if (!exists(path.join(HOOKS, name))) return;
@@ -748,16 +748,16 @@ if (exists(path.join(HOOKS, 'pinn-sprache.js'))) {
 // Czech (since 1.155.0): the same hooks must know "cs" (language list, country CZ and the texts)
 {
   const hooksWithCzech = {
-    'pinn-ausblick.js': [/"uk", "cs"(?:, "sv")?(?:, "da")?\]/, /\n    cs: \["leden"/, /lang === "cs"\) return \{ titel: "🗓️/, /lang === "cs"\) return \{ titel: "💶/, /\["CZ"\]\.indexOf\(land\) >= 0\) return "cs"/, /MONTHS_CS_GEN/, /MONTHS_CS_LOC/],
-    'pinn-familie-geburtstag.js': [/"uk", "cs"(?:, "sv")?(?:, "da")?\]/, /cs: " a "/, /lang === "cs"\) return \{ titel: "🎂 Dnes má narozeniny: " \+ n/, /lang === "cs"\) return \{ titel: "🎂 Dnes mají narozeniny: " \+ names/, /\["CZ"\]\.indexOf\(land\) >= 0\) return "cs"/],
-    'pinn-haustiere.js': [/"uk", "cs"(?:, "sv")?(?:, "da")?\]/, /\n    cs: \{ futter:/, /\["CZ"\]\.indexOf\(land\) >= 0\) return "cs"/],
-    'pinn-ortung.js': [/"uk", "cs"(?:, "sv")?(?:, "da")?\]/, /\n    cs: \{ bei:/, /\["CZ"\]\.indexOf\(land\) >= 0\) return "cs"/],
-    'pinn-wobistdu.js': [/"uk", "cs"(?:, "sv")?(?:, "da")?\]/, /\n    cs: \{ zuhause:/, /cs: "Někdo"/, /lang === "cs"\) return \{ titel: "📍 " \+ n \+ " se ptá/, /lang === "cs"\) return \{ titel: "📍 " \+ n \+ ": odpověď/, /\["CZ"\]\.indexOf\(land\) >= 0\) return "cs"/],
+    'pinn-ausblick.js': [/"uk", "cs"(?:, "sv")?(?:, "da")?(?:, "nb")?\]/, /\n    cs: \["leden"/, /lang === "cs"\) return \{ titel: "🗓️/, /lang === "cs"\) return \{ titel: "💶/, /\["CZ"\]\.indexOf\(land\) >= 0\) return "cs"/, /MONTHS_CS_GEN/, /MONTHS_CS_LOC/],
+    'pinn-familie-geburtstag.js': [/"uk", "cs"(?:, "sv")?(?:, "da")?(?:, "nb")?\]/, /cs: " a "/, /lang === "cs"\) return \{ titel: "🎂 Dnes má narozeniny: " \+ n/, /lang === "cs"\) return \{ titel: "🎂 Dnes mají narozeniny: " \+ names/, /\["CZ"\]\.indexOf\(land\) >= 0\) return "cs"/],
+    'pinn-haustiere.js': [/"uk", "cs"(?:, "sv")?(?:, "da")?(?:, "nb")?\]/, /\n    cs: \{ futter:/, /\["CZ"\]\.indexOf\(land\) >= 0\) return "cs"/],
+    'pinn-ortung.js': [/"uk", "cs"(?:, "sv")?(?:, "da")?(?:, "nb")?\]/, /\n    cs: \{ bei:/, /\["CZ"\]\.indexOf\(land\) >= 0\) return "cs"/],
+    'pinn-wobistdu.js': [/"uk", "cs"(?:, "sv")?(?:, "da")?(?:, "nb")?\]/, /\n    cs: \{ zuhause:/, /cs: "Někdo"/, /lang === "cs"\) return \{ titel: "📍 " \+ n \+ " se ptá/, /lang === "cs"\) return \{ titel: "📍 " \+ n \+ ": odpověď/, /\["CZ"\]\.indexOf\(land\) >= 0\) return "cs"/],
     'pinn-packliste.js': [/\n    cs: \{ titel:/],
     'pinn-aufgaben.js': [/\n    cs: \{ t: "⭐ Žádost/],
-    'pinn-chat.js': [/"uk", "cs"(?:, "sv")?(?:, "da")?\]/, /\n    cs: \{ group:/, /cs: \["CZ"\]/],
-    'pinn-pushtext.js': [/"uk", "cs"(?:, "sv")?(?:, "da")?\]/, /\n    cs: \{ keep:/, /CS_HOME/, /CS_MATE/],
-    'pinn-einrichtung.js': [/"uk", "cs"(?:, "sv")?(?:, "da")?, ""\]/],
+    'pinn-chat.js': [/"uk", "cs"(?:, "sv")?(?:, "da")?(?:, "nb")?\]/, /\n    cs: \{ group:/, /cs: \["CZ"\]/],
+    'pinn-pushtext.js': [/"uk", "cs"(?:, "sv")?(?:, "da")?(?:, "nb")?\]/, /\n    cs: \{ keep:/, /CS_HOME/, /CS_MATE/],
+    'pinn-einrichtung.js': [/"uk", "cs"(?:, "sv")?(?:, "da")?(?:, "nb")?, ""\]/],
   };
   Object.keys(hooksWithCzech).forEach(name => {
     if (!exists(path.join(HOOKS, name))) return;
@@ -790,16 +790,16 @@ if (exists(path.join(HOOKS, 'pinn-sprache.js'))) {
 // Swedish (since 1.156.0): the same hooks must know "sv" (language list, country SE and the texts)
 {
   const hooksWithSwedish = {
-    'pinn-ausblick.js': [/"uk", "cs", "sv"(?:, "da")?\]/, /\n    sv: \["januari"/, /lang === "sv"\) return \{ titel: "🗓️/, /lang === "sv"\) return \{ titel: "💶/, /\["SE", "AX"\]\.indexOf\(land\) >= 0\) return "sv"/],
-    'pinn-familie-geburtstag.js': [/"uk", "cs", "sv"(?:, "da")?\]/, /sv: " och "/, /lang === "sv"\) return \{ titel: "🎂 " \+ n/, /lang === "sv"\) return \{ titel: "🎂 Födelsedagar i dag: " \+ names/, /\["SE", "AX"\]\.indexOf\(land\) >= 0\) return "sv"/],
-    'pinn-haustiere.js': [/"uk", "cs", "sv"(?:, "da")?\]/, /\n    sv: \{ futter:/, /\["SE", "AX"\]\.indexOf\(land\) >= 0\) return "sv"/],
-    'pinn-ortung.js': [/"uk", "cs", "sv"(?:, "da")?\]/, /\n    sv: \{ bei:/, /\["SE", "AX"\]\.indexOf\(land\) >= 0\) return "sv"/],
-    'pinn-wobistdu.js': [/"uk", "cs", "sv"(?:, "da")?\]/, /\n    sv: \{ zuhause:/, /sv: "Någon"/, /lang === "sv"\) return \{ titel: "📍 " \+ n \+ " frågar/, /lang === "sv"\) return \{ titel: "📍 " \+ n \+ ": svar/, /\["SE", "AX"\]\.indexOf\(land\) >= 0\) return "sv"/],
+    'pinn-ausblick.js': [/"uk", "cs", "sv"(?:, "da")?(?:, "nb")?\]/, /\n    sv: \["januari"/, /lang === "sv"\) return \{ titel: "🗓️/, /lang === "sv"\) return \{ titel: "💶/, /\["SE", "AX"\]\.indexOf\(land\) >= 0\) return "sv"/],
+    'pinn-familie-geburtstag.js': [/"uk", "cs", "sv"(?:, "da")?(?:, "nb")?\]/, /sv: " och "/, /lang === "sv"\) return \{ titel: "🎂 " \+ n/, /lang === "sv"\) return \{ titel: "🎂 Födelsedagar i dag: " \+ names/, /\["SE", "AX"\]\.indexOf\(land\) >= 0\) return "sv"/],
+    'pinn-haustiere.js': [/"uk", "cs", "sv"(?:, "da")?(?:, "nb")?\]/, /\n    sv: \{ futter:/, /\["SE", "AX"\]\.indexOf\(land\) >= 0\) return "sv"/],
+    'pinn-ortung.js': [/"uk", "cs", "sv"(?:, "da")?(?:, "nb")?\]/, /\n    sv: \{ bei:/, /\["SE", "AX"\]\.indexOf\(land\) >= 0\) return "sv"/],
+    'pinn-wobistdu.js': [/"uk", "cs", "sv"(?:, "da")?(?:, "nb")?\]/, /\n    sv: \{ zuhause:/, /sv: "Någon"/, /lang === "sv"\) return \{ titel: "📍 " \+ n \+ " frågar/, /lang === "sv"\) return \{ titel: "📍 " \+ n \+ ": svar/, /\["SE", "AX"\]\.indexOf\(land\) >= 0\) return "sv"/],
     'pinn-packliste.js': [/\n    sv: \{ titel:/],
     'pinn-aufgaben.js': [/\n    sv: \{ t: "⭐ Önskemål/],
-    'pinn-chat.js': [/"uk", "cs", "sv"(?:, "da")?\]/, /\n    sv: \{ group:/, /sv: \["SE", "AX"\]/],
-    'pinn-pushtext.js': [/"uk", "cs", "sv"(?:, "da")?\]/, /\n    sv: \{ keep:/, /SV_END/, /SV_DET/],
-    'pinn-einrichtung.js': [/"uk", "cs", "sv"(?:, "da")?, ""\]/],
+    'pinn-chat.js': [/"uk", "cs", "sv"(?:, "da")?(?:, "nb")?\]/, /\n    sv: \{ group:/, /sv: \["SE", "AX"\]/],
+    'pinn-pushtext.js': [/"uk", "cs", "sv"(?:, "da")?(?:, "nb")?\]/, /\n    sv: \{ keep:/, /SV_END/, /SV_DET/],
+    'pinn-einrichtung.js': [/"uk", "cs", "sv"(?:, "da")?(?:, "nb")?, ""\]/],
   };
   Object.keys(hooksWithSwedish).forEach(name => {
     if (!exists(path.join(HOOKS, name))) return;
@@ -833,16 +833,16 @@ if (exists(path.join(HOOKS, 'pinn-sprache.js'))) {
 // Danish (since 1.157.0): the same hooks must know "sv" (language list, country SE and the texts)
 {
   const hooksWithDanish = {
-    'pinn-ausblick.js': [/"cs", "sv", "da"\]/, /\n    da: \["januar"/, /lang === "da"\) return \{ titel: "🗓️/, /lang === "da"\) return \{ titel: "💶/, /\["DK", "GL", "FO"\]\.indexOf\(land\) >= 0\) return "da"/],
-    'pinn-familie-geburtstag.js': [/"cs", "sv", "da"\]/, /da: " og "/, /lang === "da"\) return \{ titel: "🎂 " \+ n/, /lang === "da"\) return \{ titel: "🎂 Fødselsdage i dag: " \+ names/, /\["DK", "GL", "FO"\]\.indexOf\(land\) >= 0\) return "da"/],
-    'pinn-haustiere.js': [/"cs", "sv", "da"\]/, /\n    da: \{ futter:/, /\["DK", "GL", "FO"\]\.indexOf\(land\) >= 0\) return "da"/],
-    'pinn-ortung.js': [/"cs", "sv", "da"\]/, /\n    da: \{ bei:/, /\["DK", "GL", "FO"\]\.indexOf\(land\) >= 0\) return "da"/],
-    'pinn-wobistdu.js': [/"cs", "sv", "da"\]/, /\n    da: \{ zuhause:/, /da: "Nogen"/, /lang === "da"\) return \{ titel: "📍 " \+ n \+ " spørger/, /lang === "da"\) return \{ titel: "📍 " \+ n \+ ": svar/, /\["DK", "GL", "FO"\]\.indexOf\(land\) >= 0\) return "da"/],
+    'pinn-ausblick.js': [/"cs", "sv", "da"(?:, "nb")?\]/, /\n    da: \["januar"/, /lang === "da"\) return \{ titel: "🗓️/, /lang === "da"\) return \{ titel: "💶/, /\["DK", "GL", "FO"\]\.indexOf\(land\) >= 0\) return "da"/],
+    'pinn-familie-geburtstag.js': [/"cs", "sv", "da"(?:, "nb")?\]/, /da: " og "/, /lang === "da"\) return \{ titel: "🎂 " \+ n/, /lang === "da"\) return \{ titel: "🎂 Fødselsdage i dag: " \+ names/, /\["DK", "GL", "FO"\]\.indexOf\(land\) >= 0\) return "da"/],
+    'pinn-haustiere.js': [/"cs", "sv", "da"(?:, "nb")?\]/, /\n    da: \{ futter:/, /\["DK", "GL", "FO"\]\.indexOf\(land\) >= 0\) return "da"/],
+    'pinn-ortung.js': [/"cs", "sv", "da"(?:, "nb")?\]/, /\n    da: \{ bei:/, /\["DK", "GL", "FO"\]\.indexOf\(land\) >= 0\) return "da"/],
+    'pinn-wobistdu.js': [/"cs", "sv", "da"(?:, "nb")?\]/, /\n    da: \{ zuhause:/, /da: "Nogen"/, /lang === "da"\) return \{ titel: "📍 " \+ n \+ " spørger/, /lang === "da"\) return \{ titel: "📍 " \+ n \+ ": svar/, /\["DK", "GL", "FO"\]\.indexOf\(land\) >= 0\) return "da"/],
     'pinn-packliste.js': [/\n    da: \{ titel:/],
     'pinn-aufgaben.js': [/\n    da: \{ t: "⭐ Ønske/],
-    'pinn-chat.js': [/"cs", "sv", "da"\]/, /\n    da: \{ group:/, /da: \["DK", "GL", "FO"\]/],
-    'pinn-pushtext.js': [/"cs", "sv", "da"\]/, /\n    da: \{ keep:/, /DA_HOME/, /DA_MATE/, /DA_DET/],
-    'pinn-einrichtung.js': [/"sv", "da", ""\]/],
+    'pinn-chat.js': [/"cs", "sv", "da"(?:, "nb")?\]/, /\n    da: \{ group:/, /da: \["DK", "GL", "FO"\]/],
+    'pinn-pushtext.js': [/"cs", "sv", "da"(?:, "nb")?\]/, /\n    da: \{ keep:/, /DA_HOME/, /DA_MATE/, /DA_DET/],
+    'pinn-einrichtung.js': [/"sv", "da"(?:, "nb")?, ""\]/],
   };
   Object.keys(hooksWithDanish).forEach(name => {
     if (!exists(path.join(HOOKS, name))) return;
@@ -868,6 +868,50 @@ if (exists(path.join(HOOKS, 'pinn-sprache.js'))) {
       ['Familiekalender for alle familier.', 'Husstandskalender for alle husstande.'],
       ['Familiemedlemmerne og familierne.', 'Bofællerne og husstandene.'],
       ['Familielæge og familiebil.', 'Familielæge og familiebil.'],
+    ];
+    for (const c of cases) { const got = run(c[0]); if (got !== c[1]) return 'got "' + got + '" instead of "' + c[1] + '"'; }
+    return '';
+  });
+}
+
+// Norwegian Bokmål (since 1.158.0): the same hooks must know "nb" (language list, countries NO/SJ and the texts)
+{
+  const hooksWithNorwegian = {
+    'pinn-ausblick.js': [/"sv", "da", "nb"\]/, /\n    nb: \["januar"/, /lang === "nb"\) return \{ titel: "🗓️/, /lang === "nb"\) return \{ titel: "💶/, /\["NO", "SJ"\]\.indexOf\(land\) >= 0\) return "nb"/],
+    'pinn-familie-geburtstag.js': [/"sv", "da", "nb"\]/, /nb: " og "/, /lang === "nb"\) return \{ titel: "🎂 " \+ n/, /lang === "nb"\) return \{ titel: "🎂 Bursdager i dag: " \+ names/, /\["NO", "SJ"\]\.indexOf\(land\) >= 0\) return "nb"/],
+    'pinn-haustiere.js': [/"sv", "da", "nb"\]/, /\n    nb: \{ futter:/, /\["NO", "SJ"\]\.indexOf\(land\) >= 0\) return "nb"/],
+    'pinn-ortung.js': [/"sv", "da", "nb"\]/, /\n    nb: \{ bei:/, /\["NO", "SJ"\]\.indexOf\(land\) >= 0\) return "nb"/],
+    'pinn-wobistdu.js': [/"sv", "da", "nb"\]/, /\n    nb: \{ zuhause:/, /nb: "Noen"/, /lang === "nb"\) return \{ titel: "📍 " \+ n \+ " spør/, /lang === "nb"\) return \{ titel: "📍 " \+ n \+ ": svar/, /\["NO", "SJ"\]\.indexOf\(land\) >= 0\) return "nb"/],
+    'pinn-packliste.js': [/\n    nb: \{ titel:/],
+    'pinn-aufgaben.js': [/\n    nb: \{ t: "⭐ Ønske/],
+    'pinn-chat.js': [/"sv", "da", "nb"\]/, /\n    nb: \{ group:/, /nb: \["NO", "SJ"\]/],
+    'pinn-pushtext.js': [/"sv", "da", "nb"\]/, /\n    nb: \{ keep:/, /NB_HOME/, /NB_MATE/, /NB_DET/],
+    'pinn-einrichtung.js': [/"da", "nb", ""\]/],
+  };
+  Object.keys(hooksWithNorwegian).forEach(name => {
+    if (!exists(path.join(HOOKS, name))) return;
+    test(name + ' knows Norwegian (language list and texts)', () => {
+      const src = read(path.join(HOOKS, name));
+      const missing = hooksWithNorwegian[name].filter(re => !re.test(src)).length;
+      return missing ? missing + ' of ' + hooksWithNorwegian[name].length + ' Norwegian parts missing' : '';
+    });
+  });
+  // The flat share rules for Norwegian must work without lookbehind (the pattern engine of PocketBase has none)
+  test('pinn-pushtext.js: Norwegian flat share rules work (neuter forms, endings, compounds)', () => {
+    const src = read(path.join(HOOKS, 'pinn-pushtext.js'));
+    const a = src.indexOf('function cap('), b = src.indexOf('function applyTerms');
+    if (a < 0 || b < 0) return 'rules not found';
+    let T;
+    try { T = (new Function(src.slice(a, b) + ';return {TERMS, TERM_HINT};'))(); } catch (e) { return 'rules not runnable: ' + e.message; }
+    const run = (s) => { const x = T.TERMS.nb; if (!T.TERM_HINT.test(s)) return s; const kept = []; s = s.replace(x.keep, m => { kept.push(m); return '\u0001' + (kept.length - 1) + '\u0002'; }); x.rules.forEach(q => { s = s.replace(q[0], q[1]); }); return s.replace(/\u0001(\d+)\u0002/g, (m, i) => kept[+i]); };
+    const cases = [
+      ['Familien har et nytt familiemedlem.', 'Husstanden har en ny bofelle.'],
+      ['Din familie ser kalenderen.', 'Din husstand ser kalenderen.'],
+      ['Det er familiens kalender.', 'Det er husstandens kalender.'],
+      ['Det nye familiemedlemmet er klart.', 'Den nye bofellen er klart.'],
+      ['Familiekalender for alle familier.', 'Husstandskalender for alle husstander.'],
+      ['Familiemedlemmene og familiene.', 'Bofellene og husstandene.'],
+      ['Familielege og familiebil.', 'Familielege og familiebil.'],
     ];
     for (const c of cases) { const got = run(c[0]); if (got !== c[1]) return 'got "' + got + '" instead of "' + c[1] + '"'; }
     return '';
