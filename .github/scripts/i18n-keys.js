@@ -136,6 +136,10 @@ const DA_DET = { et: 'en', dit: 'din', mit: 'min', sit: 'sin', hvert: 'hver', et
 const NB_HOME = { '': 'husstand', en: 'husstanden', ens: 'husstandens', er: 'husstander', ene: 'husstandene', enes: 'husstandenes', ers: 'husstanders' };
 const NB_MATE = { '': 'bofelle', met: 'bofellen', mer: 'bofeller', mene: 'bofellene', mets: 'bofellens', mers: 'bofellers', menes: 'bofellenes' };
 const NB_DET = { et: 'en', ditt: 'din', mitt: 'min', sitt: 'sin', hvert: 'hver', ethvert: 'enhver', intet: 'ingen', annet: 'annen', nytt: 'ny', dette: 'denne' };
+// Finnish (since 1.159.0): "perhe" -> "kotitalous", "perheenjäsen" -> "asukas" (case endings are mapped one by one because the stems differ),
+// "perhe-" (compound prefix) -> "kotitalous-". Write source texts without possessive suffixes on "perheenjäsen".
+const FI_HOME = { '': 'kotitalous', en: 'kotitalouden', ttä: 'kotitaloutta', essä: 'kotitaloudessa', estä: 'kotitaloudesta', eseen: 'kotitalouteen', ellä: 'kotitaloudella', eltä: 'kotitaloudelta', elle: 'kotitaloudelle', enä: 'kotitaloutena', eksi: 'kotitaloudeksi', et: 'kotitaloudet', iden: 'kotitalouksien', itä: 'kotitalouksia', issä: 'kotitalouksissa', istä: 'kotitalouksista', isiin: 'kotitalouksiin', illä: 'kotitalouksilla', iltä: 'kotitalouksilta', ille: 'kotitalouksille', iksi: 'kotitalouksiksi', inä: 'kotitalouksina', esi: 'kotitaloutesi', emme: 'kotitaloutemme', enne: 'kotitaloutenne' };
+const FI_MATE = { '': 'asukas', en: 'asukkaan', tä: 'asukasta', essä: 'asukkaassa', estä: 'asukkaasta', een: 'asukkaaseen', ellä: 'asukkaalla', eltä: 'asukkaalta', elle: 'asukkaalle', enä: 'asukkaana', eksi: 'asukkaaksi', et: 'asukkaat', ten: 'asukkaiden', iä: 'asukkaita', issä: 'asukkaissa', istä: 'asukkaista', iin: 'asukkaisiin', illä: 'asukkailla', iltä: 'asukkailta', ille: 'asukkaille', inä: 'asukkaina', iksi: 'asukkaiksi' };
 const SV_DET = { en: 'ett', din: 'ditt', min: 'mitt', sin: 'sitt', er: 'ert', 'vår': 'vårt', ny: 'nytt', annan: 'annat', ingen: 'inget', 'någon': 'något', denna: 'detta' };
 const TERMS = {
   de: { keep: /Familienstammbuch|Familienkutsche/g, rules: [
@@ -345,6 +349,13 @@ const TERMS = {
     [/(?<![\p{L}\p{N}])([Ff])amili(ens|en|ene|enes|ers|er|e)(?![\p{L}\p{N}])/gu,
       function (m, f, end) { return cap(f === 'F', NB_HOME[end === 'e' ? '' : end]); }],
     [/(?<![\p{L}\p{N}])([Ff])amilie(?=\p{L})/gu, function (m, f) { return cap(f === 'F', 'husstands'); }],
+  ] },
+  fi: { keep: /perhelääkäri\p{L}*|perheauto\p{L}*|perhekirja\p{L}*/giu, rules: [
+    [/(?<![\p{L}\p{N}])([Pp])erheenjäsen(en|tä|essä|estä|een|ellä|eltä|elle|enä|eksi|et|ten|iä|issä|istä|iin|illä|iltä|ille|inä|iksi)?(?![\p{L}\p{N}])/gu,
+      function (m, f, end) { return cap(f === 'P', FI_MATE[end === undefined ? '' : end]); }],
+    [/(?<![\p{L}\p{N}])([Pp])erhe(en|ttä|essä|estä|eseen|ellä|eltä|elle|enä|eksi|et|iden|itä|issä|istä|isiin|illä|iltä|ille|iksi|inä|esi|emme|enne)?(?![\p{L}\p{N}])/gu,
+      function (m, f, end) { return cap(f === 'P', FI_HOME[end === undefined ? '' : end]); }],
+    [/(?<![\p{L}\p{N}])([Pp])erhe(?=\p{L})/gu, function (m, f) { return cap(f === 'P', 'kotitalous'); }],
   ] },
   cs: { keep: /rodinn\p{L}*\s+(?:lékař|auto|rozpočet|doktor)\p{L}*|(?:lékař|auto|rozpočet|doktor)\p{L}*\s+rodinn\p{L}*/giu, rules: [
     // instrumental plural ("s členy rodiny" → "se spolubydlícími"; the plural accusative "členy" is handled below)
