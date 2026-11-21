@@ -3704,26 +3704,11 @@ function ptLegacyMembers() {
   const taken = new Set(ptList().map(p => p.fromMember).filter(Boolean));
   return members.filter(m => famIsPet(m) && !taken.has(m.id));
 }
-/* ---------- Banner of the pets page (since 1.138.0): meadow with fence, the pets of the family walk by ---------- */
+/* ---------- Banner of the pets page ----------
+   Since 1.162.0 calm banners (js/banner.js): the list shows the species of the family as thin line icons, every pet has
+   its own banner by species (pnPetBandHtml). (1.138.0 – 1.161.x: meadow with walking figures.) */
 function ptSceneHtml(list) {
-  const night = typeof fzSceneIsNight === 'function' ? fzSceneIsNight() : (new Date().getHours() >= 20 || new Date().getHours() < 6);
-  const sky = night
-    ? [[8, 12], [22, 30], [35, 8], [48, 22], [62, 14], [74, 36], [86, 10], [93, 26], [15, 40], [55, 38]].map(([x, y], i) => `<span class="hs-star${i % 3 === 0 ? ' tw hs-anim' : ''}" style="left:${x}%;top:${y}px;animation-delay:-${i * 0.7}s"></span>`).join('')
-    : '<span class="hs-sun"></span><div class="hs-cloud hs-anim"><i></i></div><div class="hs-cloud c2 hs-anim"><i></i></div>';
-  // Walking figures by species (flat, coloured, see js/szenen.js); the species without a figure walk as a hamster
-  const FIG = { hund: 'dog', katze: 'cat', kaninchen: 'rabbit', meerschweinchen: 'hamster', hamster: 'hamster', vogel: 'bird', fisch: 'turtle', reptil: 'turtle', pferd: 'horse' };
-  const animals = [...new Set((list || []).map(p => FIG[p.species] || 'hamster'))].slice(0, 5);
-  ['dog', 'cat', 'rabbit'].forEach(k => { if (animals.length < 3 && !animals.includes(k)) animals.push(k); });
-  const flyers = night ? [['owl', 17, 4]] : [['butterfly', 15, 3], ['flybird', 21, 11]];
-  const fly = ([kind, dur, delay], i) => `<div class="hs-mover pt-fly ${i % 2 ? '' : 'ltr '}hs-anim" style="top:${14 + i * 18}px;animation-duration:${dur}s;animation-delay:-${delay}s"><span>${scPet(kind, i)}</span></div>`;
-  // far lane walks to the right, near lane to the left
-  const walk = (kind, i) => `<div class="hs-mover pt-walk ${i % 2 ? 'near' : 'far ltr'} hs-anim" style="animation-duration:${9 + i * 3}s;animation-delay:-${i * 4}s"><span>${scPet(kind, i)}</span></div>`;
-  return `<div class="fz-hero-band hs-scene pt-scene${night ? ' is-night' : ''}" aria-hidden="true">
-      ${sky}
-      <svg class="pt-hills" viewBox="0 0 400 34" preserveAspectRatio="none" aria-hidden="true"><path d="M0 34 V18 Q50 4 110 14 T230 10 T400 14 V34Z" class="pt-hill-far"/><path d="M0 34 V26 Q70 14 150 24 T300 20 T400 24 V34Z" class="pt-hill-near"/></svg>
-      <div class="pt-fence"></div><div class="pt-grass"></div>
-      ${flyers.map(fly).join('')}${animals.map(walk).join('')}
-    </div>`;
+  return pnPetsBandHtml(list);
 }
 function ptListHeroHtml(act) {
   const feedAll = act.reduce((n, p) => n + ptFeedTimes(p).length, 0);
@@ -3843,7 +3828,7 @@ function ptProfileHtml(p) {
   const out = [];
   out.push(`<button type="button" class="self-start text-sm text-ink/55 hover:text-pine -mb-1" data-pt="back">${tk('pet.pets2')}</button>`);
   out.push(`<div class="fz-hero pt-hero" style="--fz:${famAttr(color)}">
-    <div class="fam-band pt-band"><span class="pt-trail" aria-hidden="true">🐾 🐾 🐾 🐾 🐾 🐾</span></div>
+    ${pnPetBandHtml(p.species, color)}
     <div class="fam-hero-ava"><span class="fam-ava big" style="--fam:${famAttr(color)}">${ptAvatarInner(p)}</span></div>
     <div class="fam-hero-body">
       <div class="flex items-center gap-2 flex-wrap">

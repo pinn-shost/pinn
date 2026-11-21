@@ -95,6 +95,7 @@ function renderSettings() {
 
   renderShoppingSettings();
   if (typeof secRenderSettingsAccess === 'function') secRenderSettingsAccess(); // Security: family admins only (js/sicherheit.js)
+  if (typeof mlsRenderCardAccess === 'function') mlsRenderCardAccess(); // Lock menus: not for guests / dashboard (js/menuesperre.js)
 }
 
 // Family members in the settings - with their linked profile. Creating and removing only for

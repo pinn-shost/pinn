@@ -3,6 +3,15 @@
    language other than German. One entry per version of PINN_CHANGELOG: t = title, p = points in the same order
    (null = no translation, the German text is shown). Older versions are not translated. */
 window.PINN_CHANGELOG_EN = {
+  "1.162": {"t": "Menu lock, calm banners, arrows on menu bars", "p": [
+"1.162.0: Lock menus: under Settings → “Lock menus” single menus (e.g. Finance, Documents, Chat) can be protected with Face ID / fingerprint or an own PIN – per device and profile. A menu locks again as soon as you leave it or after 1, 5 or 15 minutes. Changes need an unlock first; if you forget the PIN, “Sign in with password” helps.",
+"1.162.0: New banners for Health and Pets: calm, modern and in the pinn. style (colour gradient, fine line icons), without hopping figures. Every species has its own banner (dog, cat, rabbit, guinea pig/hamster, bird, fish, reptile, horse, other); the list shows the species of the family.",
+"1.162.0: Import bookings from a bank file: in Finance (Expenses tab) next to “+ Transaction” choose the file of a bank (CSV, e.g. ING transactions) – income and expenses are recognised, categories are suggested (from earlier bookings and keywords) and can be changed before the import. Bookings already imported are not created twice.",
+"1.162.0: Arrows on every menu bar that scrolls sideways (e.g. Family, Home, Finance, Lists) – like in the Business module. They only appear where there is more in that direction.",
+"1.162.0: Security: cameras are green when at least one is on and red when all are off. The other colours were checked and stay (open / not locked = amber, smoke / water / alarm = red, motion = grey-blue).",
+"1.162.0: The gear icon now looks like a gear (before it looked like a sun).",
+"1.162.0 changed: js/menuesperre.js, js/tabpfeile.js, js/banner.js, js/buchungsimport.js, css/tabpfeile.css, css/banner.css (all new), js/ansichten.js, js/einstellungen.js, js/gesundheit.js, js/familie.js, js/symbole.js, js/sicherheit.js, css/sicherheit.css, css/gesundheit.css, css/haustierewetter.css, pb_hooks/pinn-sicherheit.js, teile/seiten/einstellungen.html, i18n/*.i18n.js, pinn-setup.sh, js/sprachen.js, version log",
+]},
   "1.161": {"t": "Cook from your pantry, medicine supply", "p": [
 "1.161.0: Medicine supply: under Family → Health → Medication every medicine can have a supply. Enter the amount by hand or read the pack from a photo (AI, if set up). pinn. subtracts the planned doses by itself, shows how long it lasts and warns by push in good time – earlier with a prescription (14 days), otherwise 7 days ahead.",
 "1.161.0: Medicines as needed (house pharmacy) with a “Taken” button, best-before date of the pack in use with a warning, a “New pack” button and an optional link with the pantry (amounts are matched in both directions; medicines without prescription go on the shopping list automatically when running low, prescription ones do not).",

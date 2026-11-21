@@ -22,6 +22,18 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.162', datum: '21.11.2026', titel: 'Menüsperre, ruhige Banner, Pfeile an Menüleisten',
+    punkte: [
+      ['neu', '1.162.0: Menüs sperren: Unter Einstellungen → „Menüs sperren“ lassen sich einzelne Menüs (z. B. Finanzen, Dokumente, Chat) mit Face ID / Fingerabdruck oder einer eigenen PIN schützen – je Gerät und Profil. Wieder gesperrt wird sofort beim Verlassen des Menüs oder nach 1, 5 oder 15 Minuten. Änderungen verlangen vorher das Entsperren; bei vergessener PIN hilft „Mit Passwort anmelden“.'],
+      ['neu', '1.162.0: Neue Banner für Gesundheit und Haustiere: ruhig, modern und im pinn.-Stil (Farbverlauf, feine Linien-Symbole), ohne hüpfende Figuren. Jede Tierart hat ihr eigenes Banner (Hund, Katze, Kaninchen, Meerschweinchen/Hamster, Vogel, Fisch, Reptil, Pferd, Sonstiges); die Liste zeigt die Tierarten der Familie.'],
+      ['neu', '1.162.0: Buchungen aus Bankdatei importieren: In Finanzen (Reiter Ausgaben) neben „+ Buchung“ die Datei einer Bank (CSV, z. B. ING-Umsatzanzeige) wählen – Einnahmen und Ausgaben werden erkannt, Kategorien vorgeschlagen (aus früheren Buchungen und Stichwörtern) und lassen sich vor dem Import ändern. Bereits importierte Buchungen werden nicht doppelt angelegt.'],
+      ['neu', '1.162.0: Pfeile an allen Menüleisten, die seitlich weiterlaufen (z. B. Familie, Zuhause, Finanzen, Listen) – wie im Business-Modul. Sie erscheinen nur, wo es in der Richtung weitergeht.'],
+      ['info', '1.162.0: Sicherheit: Kameras sind grün, wenn mindestens eine an ist, und rot, wenn alle aus sind. Die übrigen Farben wurden geprüft und bleiben (offen / nicht abgeschlossen = Gelb, Rauch / Wasser / Alarm = Rot, Bewegung = Grau-Blau).'],
+      ['fix', '1.162.0: Das Zahnrad-Symbol sieht jetzt wie ein Zahnrad aus (vorher wie eine Sonne).'],
+      ['info', '1.162.0 geändert: js/menuesperre.js, js/tabpfeile.js, js/banner.js, js/buchungsimport.js, css/tabpfeile.css, css/banner.css (alle neu), js/ansichten.js, js/einstellungen.js, js/gesundheit.js, js/familie.js, js/symbole.js, js/sicherheit.js, css/sicherheit.css, css/gesundheit.css, css/haustierewetter.css, pb_hooks/pinn-sicherheit.js, teile/seiten/einstellungen.html, i18n/*.i18n.js, pinn-setup.sh, js/sprachen.js, versionslog'],
+    ],
+  },
+  {
     v: '1.161', datum: '19.11.2026', titel: 'Aus dem Vorrat kochen, Medikamentenvorrat',
     punkte: [
       ['neu', '1.161.0: Medikamentenvorrat: Unter Familie → Gesundheit → Medikamente kann zu jedem Mittel ein Vorrat geführt werden. Die Menge wird von Hand eingetragen oder die Packung per Foto eingelesen (KI, falls eingerichtet). pinn. zieht die geplanten Einnahmen selbst ab, zeigt, wie lange es reicht, und warnt per Push rechtzeitig – bei Rezeptpflicht früher (14 Tage), sonst 7 Tage vorher.'],

@@ -1,0 +1,27 @@
+/* pinn. – Arrows on scrolling menu bars (css/tabpfeile.css, since 1.162.0)
+   Plain CSS, no build step; linked in src/rahmen.html right before css/dunkelfarbe.css. Logic: js/tabpfeile.js.
+   .tp-bar  = every menu bar that gets arrows: it scrolls sideways, without a visible scroll bar, entries never shrink.
+   .tp-arrow = small round button laid over the left / right end of the bar (only while there is more in that direction). */
+
+.tp-bar { overflow-x: auto; overflow-y: hidden; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.tp-bar::-webkit-scrollbar { display: none; }
+.tp-bar > * { flex-shrink: 0; white-space: nowrap; }
+
+.tp-arrow {
+  position: absolute; z-index: 3; width: 28px; height: 28px; padding: 0; border-radius: 999px;
+  display: grid; place-items: center; font-size: 19px; line-height: 1; font-weight: 600; cursor: pointer;
+  color: var(--c-pine); background: color-mix(in srgb, var(--c-paper) 94%, transparent);
+  border: 1px solid rgba(37,35,31,.14); box-shadow: 0 2px 8px rgba(37,35,31,.14);
+  -webkit-tap-highlight-color: transparent; transition: opacity .15s, transform .15s;
+}
+.tp-arrow:active { transform: scale(.92); }
+.tp-arrow.tp-hide { opacity: 0; pointer-events: none; transform: scale(.85); }
+/* the glyph sits optically a bit high in most fonts */
+.tp-arrow { padding-bottom: 2px; }
+
+/* Dark mode: pine is hard to read on dark ground, like everywhere else the arrow turns gold (see css/dunkelfarbe.css) */
+html.dark .tp-arrow {
+  color: var(--dk-gold, #E9C46A); background: rgba(42,40,37,.94);
+  border-color: rgba(255,255,255,.14); box-shadow: 0 2px 8px rgba(0,0,0,.45);
+}
+@media (prefers-reduced-motion: reduce) { .tp-arrow { transition: none; } }

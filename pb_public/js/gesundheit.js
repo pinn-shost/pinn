@@ -261,34 +261,12 @@ function ghVesselSvg(drink, fill) {
     + `<path d="${shape}" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>${handle}</svg>`;
 }
 
-/* ---------- Banner of the health pages (since 1.150.5) ----------
-   Water that rises with the drinks of the day (level = share of the daily goal), bubbles, a heartbeat line
-   with a beating heart and a few floating things (pill, apple, soap, leaf). At night: stars instead of the sun.
-   Animated parts carry hs-anim, so energy saving and "reduce motion" stop them (css/energiesparen.css). */
+/* ---------- Banner of the health pages ----------
+   Since 1.162.0 a calm banner (js/banner.js → pnHealthBandHtml): soft gradient in the colour of the person, a
+   heartbeat line, a heart / drop / pill as thin line icons and a quiet water line at the bottom that stands higher the
+   more of the daily drinking goal is reached. (1.150.5 – 1.161.x: animated scene with sun, floating things, beating heart.) */
 function ghSceneHtml(level, color) {
-  const night = typeof fzSceneIsNight === 'function' ? fzSceneIsNight() : (new Date().getHours() >= 20 || new Date().getHours() < 6);
-  const lv = Math.max(0, Math.min(1, Number(level) || 0));
-  const water = Math.round(16 + lv * 34); // px of water: 16 (empty) to 50 (goal reached)
-  const sky = night
-    ? [[6, 10], [18, 24], [31, 8], [44, 30], [57, 12], [69, 22], [82, 6], [91, 18]].map(([x, y], i) => `<span class="hs-star${i % 3 === 0 ? ' tw hs-anim' : ''}" style="left:${x}%;top:${y}px;animation-delay:-${i * 0.6}s"></span>`).join('')
-    : '<span class="gh-sun hs-anim"></span>';
-  // [emoji (shown as our icon), left %, top px, delay s, colour]
-  const floats = [['💊', 30, 14, 0, '#E07A5F'], ['🍎', 50, 26, 1.4, '#D64545'], ['🧼', 64, 10, 2.6, '#8E6BBF'], ['🍃', 41, 36, 3.5, '#5E8C31']]
-    .map(([e, x, y, d, c]) => `<span class="gh-float hs-anim" style="left:${x}%;top:${y}px;animation-delay:-${d}s;color:${c}">${e}</span>`).join('');
-  const bubbles = [8, 19, 33, 47, 58, 72, 86, 93]
-    .map((x, i) => `<span class="gh-bubble hs-anim" style="left:${x}%;bottom:${Math.max(2, water - 18)}px;animation-delay:-${(i * 0.9).toFixed(1)}s;animation-duration:${3 + (i % 3)}s"></span>`).join('');
-  const wave = 'M0 8 Q25 0 50 8 T100 8 T150 8 T200 8 V40 H0Z';
-  return `<div class="fam-band gh-scene${night ? ' is-night' : ''}" style="--fz:${famAttr(color || 'var(--c-pine)')}" aria-hidden="true">
-      ${sky}
-      <svg class="gh-ecg" viewBox="0 0 300 40" preserveAspectRatio="none"><path class="hs-anim" d="M0 22 H95 L104 10 L114 34 L124 4 L136 30 L144 22 H300"></path></svg>
-      <span class="gh-heart hs-anim">❤️</span>
-      ${floats}
-      <div class="gh-water" style="height:${water}px">
-        <svg class="gh-wave back hs-anim" viewBox="0 0 200 40" preserveAspectRatio="none"><path d="${wave}"/></svg>
-        <svg class="gh-wave front hs-anim" viewBox="0 0 200 40" preserveAspectRatio="none"><path d="${wave}"/></svg>
-      </div>
-      ${bubbles}
-    </div>`;
+  return pnHealthBandHtml(level, color);
 }
 // Share of the daily drinking goal of one person (0..1), 0 without the drink block
 function ghDrinkLevel(memberId) {

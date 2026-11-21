@@ -8,14 +8,15 @@
 // Kinds of groups (field "art") and how a device counts:
 //   oeffnung   windows & doors      binary_sensor on / cover open|opening|closing  -> "aktiv" (open)
 //   schloss    door locks           lock locked -> ok, jammed -> alarm, everything else -> "aktiv" (not locked)
-//   kamera     cameras              camera not "off" / switch|binary_sensor on       -> "aktiv" (on, neutral)
+//   kamera     cameras              camera not "off" / switch|binary_sensor on       -> "aktiv" (on = good, green)
 //   rollladen  garage door/shutters cover open|opening|closing / binary_sensor on      -> "aktiv" (open)
 //   melder     smoke & water        binary_sensor on                                   -> alarm
 //   alarm      alarm system         armed_* -> ok, triggered -> alarm, disarmed|arming|pending -> "aktiv"
 //   bewegung   motion               binary_sensor on                                   -> "aktiv" (neutral)
 //   unavailable / unknown / missing entity -> "offline"
-// Level of a group: alarm > warn (something open / unlocked / disarmed) > info (camera on, motion) > ok; "offline" if
-// no device answers. The app builds the sentences itself (language of the device) from the structured answer.
+// Level of a group: alarm > warn (something open / unlocked / disarmed) > info (motion) > ok; "offline" if
+// no device answers. Cameras are the other way round (since 1.162.0): at least one camera on = ok (green),
+// all reachable cameras off = "aus" (red, calm - no pulsing). The app builds the sentences itself (language of the device) from the structured answer.
 //
 // Evening check (optional): at a time of day set by the admin, every family admin gets a push if a device of a
 // group with "abend: true" is still open, unlocked or disarmed. The time follows each admin's own clock
@@ -231,7 +232,11 @@ function deviceState(art, entity, s) {
 }
 function groupLevel(g, counts) {
     if (counts.alarm) return "alarm";
-    if (counts.aktiv) return g.art === "kamera" || g.art === "bewegung" ? "info" : "warn";
+    if (g.art === "kamera") {
+        if (counts.aktiv) return "ok";
+        return counts.ok ? "aus" : (counts.offline ? "offline" : "ok");
+    }
+    if (counts.aktiv) return g.art === "bewegung" ? "info" : "warn";
     if (counts.ok) return "ok";
     return counts.offline ? "offline" : "ok";
 }

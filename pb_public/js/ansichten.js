@@ -89,6 +89,7 @@ document.addEventListener('click', (e) => {
 
 function setView(view) {
   if (!isViewAllowed(view)) view = firstAllowedView(); // Guests: locked menus
+  try { if (typeof mlsCheck === 'function') mlsCheck(view); } catch (e) { /* menu lock (js/menuesperre.js): never block navigation by an error */ }
   if (view !== 'pinnwand' && typeof pwArr !== 'undefined' && pwArr.on) pwArrangeEnd(); // Board: end arranging
   const isNavigatingToNewView = view !== currentView;
   if (isNavigatingToNewView && (view === 'uebersicht' || view === 'rezepte')) {

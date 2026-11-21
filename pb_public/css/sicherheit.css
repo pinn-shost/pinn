@@ -4,7 +4,7 @@
    Settings → Security (.sec-set-row, .sec-need-ha) and the group editor popup (.sec-ents).
    Colours of a group state (class lvl-<state> on the pill / row):
      ok = green, warn = amber (open / not locked / disarmed), alarm = red (smoke, water, alarm, jammed lock),
-     info = slate (camera on, motion), offline = grey. The accent colour pine is not used as a text colour here,
+     cameras (since 1.162.0): at least one on = green (ok), all off = red but calm (no pulsing); info = slate (motion), offline = grey. The accent colour pine is not used as a text colour here,
    so the dark mode needs no extra entry in css/dunkelfarbe.css. */
 
 :root {
@@ -28,6 +28,7 @@ html.dark {
 .lvl-alarm .sec-dot { background: var(--sec-alarm); box-shadow: 0 0 0 3px color-mix(in srgb, var(--sec-alarm) 25%, transparent); animation: sec-pulse 1.2s ease-in-out infinite; }
 .lvl-info .sec-dot { background: var(--sec-info); box-shadow: 0 0 0 3px color-mix(in srgb, var(--sec-info) 20%, transparent); }
 .lvl-offline .sec-dot { background: var(--sec-off); box-shadow: none; }
+.lvl-aus .sec-dot { background: var(--sec-alarm); box-shadow: 0 0 0 3px color-mix(in srgb, var(--sec-alarm) 22%, transparent); }
 @keyframes sec-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
 @media (prefers-reduced-motion: reduce) { .lvl-alarm .sec-dot { animation: none; } }
 
@@ -46,6 +47,8 @@ html.dark {
 .sec-pill.lvl-warn .sec-pill-ico { background: color-mix(in srgb, var(--sec-warn) 16%, transparent); color: var(--sec-warn); }
 .sec-pill.lvl-alarm .sec-pill-ico { background: color-mix(in srgb, var(--sec-alarm) 16%, transparent); color: var(--sec-alarm); }
 .sec-pill.lvl-info .sec-pill-ico { background: color-mix(in srgb, var(--sec-info) 15%, transparent); color: var(--sec-info); }
+.sec-pill.lvl-aus .sec-pill-ico { background: color-mix(in srgb, var(--sec-alarm) 14%, transparent); color: var(--sec-alarm); }
+.sec-pill.lvl-aus .sec-pill-sum { color: var(--sec-alarm); font-weight: 600; }
 .sec-pill.lvl-offline .sec-pill-ico { background: rgba(127,127,127,.12); color: var(--sec-off); }
 .sec-pill-txt { display: flex; flex-direction: column; min-width: 0; line-height: 1.2; }
 .sec-pill-name { font-size: 11px; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; opacity: .5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -72,6 +75,8 @@ html.dark .sec-row { background: rgba(255,255,255,.03); border-color: rgba(255,2
 .sec-row.lvl-warn .sec-row-ico { background: color-mix(in srgb, var(--sec-warn) 15%, transparent); color: var(--sec-warn); }
 .sec-row.lvl-alarm .sec-row-ico { background: color-mix(in srgb, var(--sec-alarm) 15%, transparent); color: var(--sec-alarm); }
 .sec-row.lvl-info .sec-row-ico { background: color-mix(in srgb, var(--sec-info) 14%, transparent); color: var(--sec-info); }
+.sec-row.lvl-aus .sec-row-ico { background: color-mix(in srgb, var(--sec-alarm) 13%, transparent); color: var(--sec-alarm); }
+.sec-row.lvl-aus .sec-row-sum { color: var(--sec-alarm); font-weight: 600; }
 .sec-row.lvl-offline .sec-row-ico { background: rgba(127,127,127,.12); color: var(--sec-off); }
 .sec-row.lvl-alarm { border-color: color-mix(in srgb, var(--sec-alarm) 50%, transparent); background: color-mix(in srgb, var(--sec-alarm) 7%, transparent); }
 .sec-row-txt { flex: 1; min-width: 0; }

@@ -7,7 +7,7 @@
    - Overview tile "Security" (renderSecurityTile, secTileAvailable) with a lock button for adults.
    - Bottom bar of the family dashboard (secDashStart / secDashStop, called from js/profilauswahl.js).
    The server (pb_hooks/pinn-sicherheit.js) reads Home Assistant and answers with structured groups:
-   { id, name, art, icon, stufe: ok | warn | alarm | info | offline, anzahl, aktiv: [{ name, zustand, alarm, entity? }], offline: [...] }.
+   { id, name, art, icon, stufe: ok | warn | alarm | aus | info | offline, anzahl, aktiv: [{ name, zustand, alarm, entity? }], offline: [...] }.
    The sentences ("All closed", "Kitchen window is open", "1 camera is on" …) are built here in the language of the device. */
 
 const SEC_KINDS = [
@@ -96,7 +96,8 @@ function secErrorText(st) {
 function secOverall(groups) {
   const order = ['alarm', 'warn', 'offline', 'info', 'ok'];
   let best = 'ok';
-  (groups || []).forEach(g => { if (order.indexOf(g.stufe) < order.indexOf(best)) best = g.stufe; });
+  // "aus" (cameras off) counts like a warning for the shield, it is no alarm
+  (groups || []).forEach(g => { const l = g.stufe === 'aus' ? 'warn' : g.stufe; if (order.indexOf(l) < order.indexOf(best)) best = l; });
   return best;
 }
 
