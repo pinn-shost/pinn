@@ -2,7 +2,7 @@
    Part of the app code that used to be a single block in index.html. Classic script, no build step:
    it is loaded right after the inline script of index.html and before the other files in js/
    (the load order is listed at the bottom of index.html and in pinn-setup.sh).
-   Contents: the dashboard parts of Settings → Account: own dashboard PIN (dashPinInfo, loadDashboardPins, renderDashPinSection, startSetOwnPin,
+   Contents: the dashboard parts of the settings (since 1.164.0: "Unlock & lock" → PIN, Admin → Dashboard): own dashboard PIN (dashPinInfo, loadDashboardPins, renderDashPinSection, startSetOwnPin,
    since 1.118.4 enforceDashboardPin: as soon as the family has a dashboard every profile needs a PIN – asked for right after the start), this device as a dashboard (renderDashDeviceSection), the family's dashboard devices (renderDashDeviceList), the background editor for admins (dashBgEdit, renderDashBgPreview, renderDashBgControls, renderDashBgSettings, readDashBgImageFile) and creating a guest account (openGuestModal, closeGuestModal, saveGuestFromModal). */
 
 /* ---------- Account: own dashboard PIN ---------- */
@@ -73,6 +73,8 @@ function startSetOwnPin(opts = {}) {
         return;
       }
       dashPinInfo.eigene = pin.length;
+      // The same PIN unlocks pinn. and locked menus on this device – keep it for checking it offline (js/entsperren.js)
+      try { if (typeof lkCachePin === 'function') lkCachePin(pin); } catch (e) { /* ignore */ }
       pad.close();
       try {
         renderDashPinSection();
@@ -105,18 +107,26 @@ async function enforceDashboardPin() {
     });
   });
 }
-document.getElementById('dashPinSetBtn').addEventListener('click', () => {
+// While pinn. or menus are locked on this device, changing the PIN needs one unlock first (js/entsperren.js)
+async function dashPinChangeAllowed() {
+  try { return typeof lkVerifyForChange === 'function' ? await lkVerifyForChange() : true; } catch (e) { return true; }
+}
+document.getElementById('dashPinSetBtn').addEventListener('click', async () => {
   document.getElementById('dashPinMsg').textContent = '';
-  startSetOwnPin();
+  if (!(await dashPinChangeAllowed())) { document.getElementById('dashPinMsg').textContent = tk('mlock.verifyChange'); return; }
+  startSetOwnPin({ onDone: () => { if (typeof renderLockCard === 'function') renderLockCard(); } });
 });
 document.getElementById('dashPinRemoveBtn').addEventListener('click', async () => {
   const msg = document.getElementById('dashPinMsg');
   if (dashPinInfo.pflicht) { msg.textContent = tk('account.pin.requiredNote'); return; }
+  if (!(await dashPinChangeAllowed())) { msg.textContent = tk('mlock.verifyChange'); return; }
   if (!confirm(tk('account.pin.removeConfirm'))) return;
   try {
     await postJson('/api/pinn/dashboard/pin', { pin: '' });
     dashPinInfo.eigene = 0;
+    try { if (typeof lkClearPinCache === 'function') lkClearPinCache(); } catch (e) { /* ignore */ }
     renderDashPinSection();
+    if (typeof renderLockCard === 'function') renderLockCard();
     msg.textContent = tk('account.pin.removed');
   } catch (e) {
     msg.textContent = e.message;
@@ -207,19 +217,29 @@ document.getElementById('dashDeviceEndBtn').addEventListener('click', async () =
 });
 
 /* ---------- Account (admins): dashboard devices of the family ---------- */
+// Admin → Dashboard → Dashboard devices: a hint when there is neither "this device" nor a dashboard in the list
+function renderDashDevicesEmpty() {
+  const empty = document.getElementById('dashDevicesEmpty');
+  if (!empty) return;
+  const sec = document.getElementById('dashDeviceSection');
+  const wrap = document.getElementById('dashDevicesWrap');
+  empty.classList.toggle('hidden', !(sec && sec.classList.contains('hidden') && wrap && wrap.classList.contains('hidden')));
+}
 async function renderDashDeviceList() {
   const wrap = document.getElementById('dashDevicesWrap');
   const list = document.getElementById('dashDevicesList');
   let devices = [];
   try {
     const res = await apiFetch('/api/pinn/dashboard/geraete', { cache: 'no-store' });
-    if (!res.ok) { wrap.classList.add('hidden'); return; }
+    if (!res.ok) { wrap.classList.add('hidden'); renderDashDevicesEmpty(); return; }
     devices = (await res.json()).geraete || [];
   } catch (e) {
     wrap.classList.add('hidden');
+    renderDashDevicesEmpty();
     return;
   }
   wrap.classList.toggle('hidden', !devices.length);
+  renderDashDevicesEmpty();
   const cfg = readDashboardConfig();
   const fmt = (iso) => {
     const d = iso ? new Date(iso) : null;
@@ -470,7 +490,11 @@ async function saveGuestFromModal() {
     btn.disabled = false;
   }
 }
-document.getElementById('openAddGuestBtn').addEventListener('click', openGuestModal);
+// Admin → Dashboard → Guests → "Add guest": jumps to Admin → Manage profiles and opens the guest popup there (since 1.164.0)
+document.getElementById('openAddGuestBtn').addEventListener('click', () => {
+  if (typeof openSettingsCard === 'function') openSettingsCard('settingsProfilesNest');
+  setTimeout(openGuestModal, 450);
+});
 document.getElementById('cancelGuestModal').addEventListener('click', () => attemptCloseModal('guestModal', closeGuestModal));
 document.getElementById('saveGuestModal').addEventListener('click', saveGuestFromModal);
 document.getElementById('guestNameInput').addEventListener('keydown', (e) => {

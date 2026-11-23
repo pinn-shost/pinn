@@ -227,6 +227,21 @@ document.getElementById('checkUpdateBtn').addEventListener('click', async () => 
       det.scrollIntoView({ block: 'start', behavior: closedAbove ? 'auto' : 'smooth' });
     }));
   }));
+  // Since 1.164.0: cards inside a card (Admin → Profiles, Security, System, Dashboard …) behave the same within their
+  // list – opening one closes its open neighbour. "toggle" does not bubble, so it is caught on the way down.
+  root.addEventListener('toggle', (ev) => {
+    const det = ev.target;
+    if (!det || !det.classList || !det.classList.contains('set-nest') || !det.open || !det.parentElement) return;
+    let closedAbove = false;
+    [...det.parentElement.children].forEach(o => {
+      if (o === det || !o.classList.contains('set-nest') || !o.open) return;
+      if (o.compareDocumentPosition(det) & Node.DOCUMENT_POSITION_FOLLOWING) closedAbove = true;
+      o.open = false;
+    });
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      det.scrollIntoView({ block: 'start', behavior: closedAbove ? 'auto' : 'smooth' });
+    }));
+  }, true);
 })();
 
 // Marks this file as loaded – the start check in index.html reports missing app files

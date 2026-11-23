@@ -1,7 +1,7 @@
   <!-- Sidebar menu -->
   <aside id="sidebar" class="w-0 shrink-0 overflow-hidden bg-pine text-white transition-all duration-300 ease-in-out">
     <nav class="w-64 h-full flex flex-col pt-6">
-      <!-- Menu items: scroll if the window is too low (the footer with account/settings/search stays at the bottom) -->
+      <!-- Menu items: scroll if the window is too low (the footer with settings/search stays at the bottom) -->
       <div id="sidebarScroll" class="sidebar-scroll flex flex-col">
       <button data-tk="nav.overview" data-view="uebersicht" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Overview</button>
       <button data-view="pinnwand" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition"><span data-tk="nav.board">Board</span><span id="navPinboardBadge" class="pw-nav-badge hidden"></span></button>
@@ -23,9 +23,6 @@
       </div>
 
       <div class="sidebar-foot mt-auto flex items-center gap-2 px-6 pt-4 pb-3 border-t border-white/10">
-        <button data-view="konto" class="nav-item sidebar-icon-btn p-2 rounded-lg border-l-4 border-transparent hover:bg-white/10 transition" aria-label="Account" title="Account" data-tk-attr="aria-label:nav.account;title:nav.account">
-          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"></path></svg>
-        </button>
         <button data-view="einstellungen" class="nav-item sidebar-icon-btn p-2 rounded-lg border-l-4 border-transparent hover:bg-white/10 transition" aria-label="Settings" title="Settings" data-tk-attr="aria-label:nav.settings;title:nav.settings">
           <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 13a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V19a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 17.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 13 1.65 1.65 0 0 0 3.09 12H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 7a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
         </button>

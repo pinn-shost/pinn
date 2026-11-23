@@ -28,7 +28,7 @@ const SS_DASH_ACTIVE = 'pinn.dashSession';  // profile was opened via the dashbo
 const SS_DASH_FOREIGN = 'pinn.dashForeign'; // password login of a profile from ANOTHER family on this dashboard device (normal session)
 const SS_DASH_KID = 'pinn.dashKid';         // kid profile: member whose kids' page is open
 const DASH_DEFAULT_TIMEOUT = 5;             // minutes without interaction until the profile selection
-const GUEST_BLOCKED_VIEWS = ['chat', 'finanzen', 'dokumente', 'fahrzeuge', 'haus', 'einstellungen']; // always locked for guests
+const GUEST_BLOCKED_VIEWS = ['chat', 'finanzen', 'dokumente', 'fahrzeuge', 'haus', 'einstellungen']; // always locked for guests (settings: only "Logged in as", see settingsFullAccess)
 // menus an admin can additionally hide for guests (without the always locked ones)
 const GUEST_SELECTABLE_VIEWS = ['uebersicht', 'pinnwand', 'termine', 'aufgaben', 'rezepte', 'vorrat', 'einkauf', 'familie'];
 // child lock (per family member): these menus are locked, deleting is not possible
@@ -106,7 +106,7 @@ function childLockTaskVisible(a) {
 let childLockTasksState = null; // most recently applied state (to rebuild on a change)
 function isViewAllowed(view) {
   if (view === 'haushalt') view = 'aufgaben'; // household is part of "Aufgaben"
-  if (view === 'konto') return true;
+  if (view === 'konto' || view === 'einstellungen') return true; // settings page: guests only see "Logged in as" (settingsFullAccess)
   // Chat on the dashboard: allowed since 1.143.0 once a profile is opened with its PIN (guests stay locked out via GUEST_BLOCKED_VIEWS, kids' page only has no menu)
   if (CHILD_BLOCKED_VIEWS.includes(view) && childLockActive()) return false;
   if (!isCurrentUserGuest()) return true;
@@ -253,6 +253,11 @@ window.addEventListener('DOMContentLoaded', function wrapEditorsForChildLock() {
 // If the calendar is hidden for guests, it is also missing in the overview (only meals and tasks there)
 function isCalendarHiddenForGuest() {
   return isCurrentUserGuest() && !isViewAllowed('termine');
+}
+// Since 1.164.0 the account is part of the settings page: everybody may open it, but guests only see the
+// "Logged in as" card – all other settings stay locked for them
+function settingsFullAccess() {
+  try { return !isCurrentUserGuest(); } catch (e) { return true; }
 }
 // First allowed view (for guests possibly not the overview; if everything is hidden: the account)
 function firstAllowedView() {

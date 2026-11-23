@@ -88,7 +88,11 @@ document.addEventListener('click', (e) => {
 })();
 
 function setView(view) {
+  // Since 1.164.0 the account is part of the settings: "konto" opens the settings at the top ("Logged in as")
+  const settingsTop = view === 'konto';
+  if (settingsTop) view = 'einstellungen';
   if (!isViewAllowed(view)) view = firstAllowedView(); // Guests: locked menus
+  if (view === 'konto') view = 'einstellungen';
   try { if (typeof mlsCheck === 'function') mlsCheck(view); } catch (e) { /* menu lock (js/menuesperre.js): never block navigation by an error */ }
   if (view !== 'pinnwand' && typeof pwArr !== 'undefined' && pwArr.on) pwArrangeEnd(); // Board: end arranging
   const isNavigatingToNewView = view !== currentView;
@@ -129,23 +133,19 @@ function setView(view) {
     btn.classList.toggle('active', btn.dataset.view === navView);
   });
 
-  if (view === 'einstellungen' || view === 'konto') {
-    const accountView = document.getElementById('accountView');
+  if (view === 'einstellungen') {
     mainGrid.classList.add('hidden');
     mobileSectionTabs.classList.add('hidden');
-    settingsView.classList.toggle('hidden', view !== 'einstellungen');
-    settingsView.classList.toggle('flex', view === 'einstellungen');
-    settingsView.classList.toggle('flex-col', view === 'einstellungen');
-    accountView.classList.toggle('hidden', view !== 'konto');
-    accountView.classList.toggle('flex', view === 'konto');
-    accountView.classList.toggle('flex-col', view === 'konto');
+    settingsView.classList.remove('hidden');
+    settingsView.classList.add('flex', 'flex-col');
+    // Guests have no settings: they only see the "Logged in as" card
+    settingsView.classList.toggle('set-account-only', !settingsFullAccess());
+    if (settingsTop) { const sc = document.getElementById('settingsScroll'); if (sc) sc.scrollTop = 0; }
     renderSettings();
     setSidebar(false);
     return;
   }
 
-  document.getElementById('accountView').classList.add('hidden');
-  document.getElementById('accountView').classList.remove('flex', 'flex-col');
   settingsView.classList.add('hidden');
   settingsView.classList.remove('flex', 'flex-col');
   mainGrid.classList.remove('hidden');
@@ -451,7 +451,7 @@ function updateResponsiveMode() {
   // When switching between mobile/wide OR when rotating (portrait/landscape, esp. iPad), rebuild the current
   // view so that e.g. the forced day/week view, the 2-column overview and the
   // calendar/recipe tabs apply correctly or disappear again.
-  if (currentView !== 'einstellungen' && currentView !== 'konto' && familyRecordId) {
+  if (currentView !== 'einstellungen' && familyRecordId) {
     // an opened recipe stays open (with servings and scroll position) – rotating the iPad while cooking
     let openRecipe = null;
     try { const snap = resumeSnapshot(); openRecipe = snap && snap.recipe ? snap.recipe : null; } catch (e) { openRecipe = null; }

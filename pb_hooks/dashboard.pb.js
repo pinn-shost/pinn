@@ -17,6 +17,9 @@
 //   GET  /api/pinn/dashboard/pins                               own PIN length, pflicht (PIN required)
 //                                                               (+ all profiles for admins)
 //   POST /api/pinn/dashboard/pin              {pin}             set the own PIN ("" = remove, not while required)
+//   POST /api/pinn/dashboard/pin-pruefen      {pin}             check the own PIN (since 1.164.0: the same PIN unlocks
+//        pinn. and locked menus on personal devices) -> { ok: true, pin: length } | { ok: false, keine: true } (no PIN);
+//        400 { falsch } on a wrong PIN, 429 { sperre } after too many – the same lock as on the dashboard
 //   POST /api/pinn/dashboard/pin-entfernen    {id}              (admin) remove the PIN of a profile
 //   GET  /api/pinn/dashboard/geraete                            (admin) dashboard devices of the family
 //   POST /api/pinn/dashboard/geraet-entfernen {id}              (admin) remove a dashboard device
@@ -216,6 +219,32 @@ routerAdd("POST", "/api/pinn/dashboard/pin", (e) => {
     $app.save(rec);
     dash.clearFails(rec.id);
     return e.json(200, { success: true, pin: dash.pinLength(rec) });
+}, $apis.requireAuth("benutzer"));
+
+routerAdd("POST", "/api/pinn/dashboard/pin-pruefen", (e) => {
+    const lib = require(`${__hooks}/pinn-benutzer.js`);
+    const dash = require(`${__hooks}/pinn-dashboard.js`);
+    e.response.header().set("Cache-Control", "no-store");
+    if (lib.isGuest(e)) return e.json(403, { error: "Gastkonten haben keine PIN." });
+    let rec = null;
+    try { rec = $app.findRecordById(lib.USERS, e.auth.id); } catch (err) { return e.json(404, { error: "Profil nicht gefunden." }); }
+    if (!dash.pinLength(rec)) return e.json(200, { ok: false, keine: true });
+    const wait = dash.lockedFor(rec.id);
+    if (wait) {
+        return e.json(429, { error: "Zu viele Fehlversuche. Bitte in " + dash.waitText(wait) + " erneut versuchen.", sperre: wait });
+    }
+    const body = e.requestInfo().body;
+    if (!dash.checkPin(rec, String(body.pin || ""))) {
+        sleep(400); // slows down trying out PINs
+        const lock = dash.registerFail(rec.id);
+        if (lock) {
+            try { require(`${__hooks}/pinn-alarm.js`).melde(e, "pinsperre", { familie: rec.getString("familie"), profil: rec.getString("username"), geraetName: "", extra: "Gesperrt für: " + dash.waitText(lock) + " (Entsperren in der App)" }); } catch (err) { /* ignore */ }
+            return e.json(429, { error: "Falsche PIN. Zu viele Fehlversuche – bitte in " + dash.waitText(lock) + " erneut versuchen.", sperre: lock });
+        }
+        return e.json(400, { error: "Falsche PIN.", falsch: true });
+    }
+    dash.clearFails(rec.id);
+    return e.json(200, { ok: true, pin: dash.pinLength(rec) });
 }, $apis.requireAuth("benutzer"));
 
 routerAdd("POST", "/api/pinn/dashboard/pin-entfernen", (e) => {

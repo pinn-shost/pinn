@@ -22,6 +22,14 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.164', datum: '23.11.2026', titel: 'Einstellungen und Profil zusammengelegt',
+    punkte: [
+      ['neu', '1.164.0: Einstellungen und Profil zusammengelegt: Es gibt nur noch das Zahnrad im Menü. Oben steht „Angemeldet als“ (immer offen, am iPad/PC über die ganze Breite) mit Passwort, Abmelden und den angemeldeten Geräten zum Aufklappen. Benachrichtigungen sind jetzt eine eigene Karte wie alle anderen Einstellungen. Gäste sehen nur „Angemeldet als“.'],
+      ['neu', '1.164.0: „Entsperren & Sperren“: PIN, Face ID / Touch ID, „pinn. sperren“ und „Menüs sperren“ in einer Karte. Es gibt nur noch eine PIN – die PIN vom Familien-Dashboard gilt auch für gesperrte Menüs und zum Entsperren von pinn. beim Öffnen (jetzt auch ohne Face ID). Eine eigene PIN der Menüsperre entfällt; ein schon eingerichtetes Face ID wird übernommen.'],
+      ['neu', '1.164.0: Neue Karte „Admin“ (nur für Admins) mit Profile verwalten, Sicherheit, System und Dashboard. Unter Dashboard: Dashboard-Geräte (mit „dieses Gerät“), Hintergrund, Aufgaben und Chats sowie „Gäste“ – dort führt „Gast hinzufügen“ direkt zu Profile verwalten und öffnet das Gast-Fenster. System sehen nur noch Admins.'],
+    ],
+  },
+  {
     v: '1.163', datum: '22.11.2026', titel: 'Terminabstimmung, Ausleihliste, Import-Abgleich',
     punkte: [
       ['neu', '1.163.2: Längenmaße je nach Region: Einstellungen → Sprache & Region hat jetzt „Längenmaße“ (Automatisch / Metrisch / Imperial). In den USA, Großbritannien u. a. werden Entfernungen, Tempo, Wind, Regen, Körpergröße und Genauigkeit in Meilen, Fuß, mph, Zoll bzw. ft/in angezeigt. Gespeichert wird weiter metrisch. Auch Fahrzeuge: Kilometerstand, Service, Rechner und Kosten pro Strecke in Meilen. Neu daneben: „Gewichte, Flüssigkeiten, Flächen“ (Automatisch / Metrisch / USA / Großbritannien): Gewicht in lb, Getränke in fl oz, Tanken in Gallonen (USA; in Großbritannien weiter Liter), Verbrauch in mpg, Wohnfläche in ft². Bestehende Einträge werden mit umgerechnet, gespeichert wird weiter metrisch.'],

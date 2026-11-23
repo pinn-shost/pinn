@@ -731,10 +731,9 @@ function sysOpenFromUrl() {
     q.delete('system');
     history.replaceState(null, '', location.pathname + (q.toString() ? '?' + q.toString() : '') + location.hash);
   } catch (e) { /* ignore */ }
-  if (!isCurrentUserAdmin() || !isViewAllowed('einstellungen')) return true;
+  if (!isCurrentUserAdmin() || !settingsFullAccess()) return true;
   setView('einstellungen');
-  const acc = document.getElementById('settingsSystemAccordion');
-  if (acc) { acc.open = true; setTimeout(() => { try { acc.scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch (e) { /* ignore */ } }, 50); }
+  openSettingsCard('settingsSystemAccordion'); // Admin → System
   openSysMaint({ pruefen: true });
   return true;
 }

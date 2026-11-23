@@ -290,10 +290,11 @@ let lastIcsSync = null;
 const APP_VERSION = '{{VERSION}}';
 
 /* ==========================================================
-   Settings & account: two columns of equal height (landscape from tablet width)
+   Settings: two columns of equal height (landscape from tablet width)
    ----------------------------------------------------------
-   The cards are split into left/right in their order so that both columns are as high as possible
-   in the COLLAPSED state (first left from top to bottom, then right).
+   Cards with the class "set-wide" (since 1.164.0 the "Logged in as" card) span the full width at the top; the other
+   cards are split into left/right in their order so that both columns are as high as possible in the COLLAPSED state
+   (first left from top to bottom, then right).
    Expanding and collapsing only changes the height of the card - it stays in its column, the cards
    below move along. It is only redistributed when the width changes, the page is opened or
    cards are shown/hidden. A ResizeObserver instead of constant polling keeps this easy on the CPU.
@@ -301,20 +302,14 @@ const APP_VERSION = '{{VERSION}}';
 (function setMasonry() {
   const GAP = 12; // 0.75rem
   const mq = window.matchMedia ? window.matchMedia('(orientation: landscape) and (min-width: 768px)') : null;
-  const panes = Array.from(document.querySelectorAll('#settingsView .set-pane, #accountView .set-pane'));
+  const panes = Array.from(document.querySelectorAll('#settingsView .set-pane'));
   if (!panes.length || typeof ResizeObserver === 'undefined') return;
   const st = new Map(); // pane -> { left: Set, vis: [el], width, raf }
   panes.forEach(p => st.set(p, { left: new Set(), vis: [], width: 0, raf: 0 }));
   let active = false;
 
-  function items(pane) {
-    const out = [];
-    Array.from(pane.children).forEach(el => {
-      if (el.id === 'profileAdminSection') { Array.from(el.children).forEach(c => out.push(c)); return; }
-      out.push(el);
-    });
-    return out;
-  }
+  function items(pane) { return Array.from(pane.children); }
+  function isWide(el) { return el.classList.contains('set-wide'); }
   function isVisible(el) { return el.getClientRects().length > 0 && el.offsetHeight > 0; }
   // Height in the collapsed state (expanded settings only count with their heading)
   function closedHeight(el) {
@@ -327,23 +322,31 @@ const APP_VERSION = '{{VERSION}}';
   function assign(pane) {
     const s = st.get(pane);
     const vis = items(pane).filter(isVisible);
-    const hs = vis.map(closedHeight);
+    const cols = vis.filter(el => !isWide(el));
+    const hs = cols.map(closedHeight);
     const total = hs.reduce((a, b) => a + b + GAP, 0);
-    let best = vis.length, bestDiff = Infinity, acc = 0;
-    for (let k = 0; k <= vis.length; k++) {
+    let best = cols.length, bestDiff = Infinity, acc = 0;
+    for (let k = 0; k <= cols.length; k++) {
       const left = acc, right = total - acc;
       const diff = Math.max(left, right);
       if (diff < bestDiff - 0.5) { bestDiff = diff; best = k; }
-      if (k < vis.length) acc += hs[k] + GAP;
+      if (k < cols.length) acc += hs[k] + GAP;
     }
-    s.left = new Set(vis.slice(0, best));
+    s.left = new Set(cols.slice(0, best));
     s.vis = vis;
   }
   function place(pane) {
     const s = st.get(pane);
-    const y = [0, 0];
+    let top = 0;
     s.vis.forEach(el => {
-      if (!el.isConnected) return;
+      if (!el.isConnected || !isWide(el)) return;
+      el.style.left = '0px';
+      el.style.top = top + 'px';
+      top += el.offsetHeight + GAP;
+    });
+    const y = [top, top];
+    s.vis.forEach(el => {
+      if (!el.isConnected || isWide(el)) return;
       const col = s.left.has(el) ? 0 : 1;
       el.style.left = col ? 'calc(50% + 0.375rem)' : '0px';
       el.style.top = y[col] + 'px';
@@ -400,11 +403,7 @@ const APP_VERSION = '{{VERSION}}';
   function check() { if (!mq || mq.matches) on(); else off(); }
   // Also observe newly inserted cards (e.g. sections loaded later)
   const mo = new MutationObserver(() => { if (!active) return; observeItems(); panes.forEach(p => schedule(p, false)); });
-  panes.forEach(p => {
-    mo.observe(p, { childList: true });
-    const pa = p.querySelector(':scope > #profileAdminSection');
-    if (pa) mo.observe(pa, { childList: true });
-  });
+  panes.forEach(p => mo.observe(p, { childList: true }));
   if (mq) { if (mq.addEventListener) mq.addEventListener('change', check); else if (mq.addListener) mq.addListener(check); }
   window.addEventListener('orientationchange', () => setTimeout(check, 250));
   check();

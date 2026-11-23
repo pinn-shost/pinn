@@ -8,6 +8,38 @@
     </div>
     <div id="settingsScroll" class="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 py-4">
       <div class="set-pane max-w-3xl mx-auto">
+    <!-- Signed-in profile: always open, full width on top – the only card guests see (js/konto.js) -->
+    <div id="accountCard" class="set-card set-wide">
+      <div class="acc-hero-row">
+        <div id="accountAvatar" class="acc-avatar"></div>
+        <div class="min-w-0 flex-1">
+          <p data-tk="account.signedInAs" class="acc-hero-label">Logged in as</p>
+          <p class="acc-hero-name"><span id="accountName"></span> <span id="accountRole" class="text-xs text-ink/40 font-normal"></span></p>
+          <p id="accountFamily" class="text-xs text-ink/50"></p>
+        </div>
+      </div>
+      <div class="acc-hero-actions">
+        <button data-tk="account.changePassword" type="button" id="openChangePasswordBtn" class="px-3 py-2 rounded-lg bg-pine text-white text-sm hover:bg-pine/90 transition">Change password</button>
+        <button data-tk="common.logOut" type="button" id="logoutBtn" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-red-500 hover:border-red-500 transition">Log out</button>
+      </div>
+      <p data-tk="account.guestHint" id="accountGuestHint" class="hidden text-xs text-ink/40 px-4 pb-4 -mt-1">You are using a guest account. It has no password and only opens via the family dashboard – finance, documents and settings are not available to guests.</p>
+      <!-- Signed-in devices (own profile) – pb_hooks/sitzungen.pb.js -->
+      <details class="set-nest acc-nest" id="devicesSection">
+        <summary class="set-nest-sum">
+          <span class="set-ico">📱</span>
+          <span class="set-head"><span data-tk="devices.title" class="sa-title">Signed-in devices</span><small data-tk="devices.subtitle">Where your profile is signed in</small></span>
+          <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
+        </summary>
+        <div class="set-body">
+          <div id="devicesList" class="sm-list"><p data-tk="common.loading" class="sm-empty">Loading …</p></div>
+            <div class="flex flex-wrap items-center gap-2 mt-3">
+              <button data-tk="devices.logoutOthers" type="button" id="devicesLogoutOthersBtn" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-red-500 hover:border-red-500 transition">Sign out all other devices</button>
+            </div>
+            <p id="devicesStatus" class="text-xs text-ink/50 mt-2"></p>
+            <p data-tk="devices.hintOwn" class="text-[11px] text-ink/40 mt-2">A signed-out device loses access immediately, no longer receives notifications and deletes the pinn. data on the device the next time it is opened – handy if a phone gets lost. “Change password” also signs out all other devices.</p>
+        </div>
+      </details>
+    </div>
     <details class="settings-accordion set-card">
       <summary class="set-sum">
         <span class="set-ico">🎨</span>
@@ -249,6 +281,256 @@
         </div>
         <p data-tk="settings.outlook.pushHint" class="text-[11px] text-ink/40 mt-3">Applies only to your profile. For the push notification to arrive, notifications must be activated on the device (Settings → Notifications).</p>
         <p id="abSetStatus" class="text-xs text-ink/50 mt-2 min-h-[1em]"></p>
+      </div>
+    </details>
+    <!-- Push notifications (personal for each profile, js/mitteilungen.js) -->
+    <details class="settings-accordion set-card" id="pushSection">
+      <summary class="set-sum">
+        <span class="set-ico">🔔</span>
+        <span class="set-head"><span data-tk="account.push.title" class="sa-title">Notifications</span><small data-tk="account.push.subtitle">Push on this device, reminders, board</small></span>
+        <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
+      </summary>
+      <div class="set-body">
+      <p id="pushWhoText" class="text-sm text-ink/70 mb-1"></p>
+      <p id="pushStatus" class="text-xs text-ink/50 mb-3"></p>
+      <p data-tk="account.push.iosHint" id="pushIosHint" class="hidden text-xs text-mustard mb-3">On iPhone and iPad, notifications only work if pinn. was added via “Share → Add to Home Screen” and is opened from there (iOS 16.4 or later).</p>
+      <!-- Android: notes on browser, app installation and power saving -->
+      <p data-tk="account.push.androidBrowserHint" id="pushAndroidBrowserHint" class="hidden text-xs text-mustard mb-3">On Android phones, notifications work in Chrome, Samsung Internet, Edge or Firefox – not in the built-in browser of other apps (e.g. WhatsApp, Mail). Please open the pinn. address there.</p>
+      <div id="pushAndroidInstallBox" class="hidden mb-3">
+        <p data-tk="account.push.androidInstallTip" class="text-xs text-ink/60 mb-2">Tip for Android: add pinn. to the home screen as an app – it then opens without an address bar and notifications come with the pinn. icon.</p>
+        <button data-tk="account.push.androidInstallButton" type="button" id="pushAndroidInstallBtn" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/70 hover:text-pine hover:border-pine transition">📲 Install pinn. as an app</button>
+        <p data-tk="account.push.androidInstallManual" id="pushAndroidInstallManual" class="hidden text-xs text-ink/50">In Chrome, tap ⋮ at the top right → “Install app” or “Add to Home screen”.</p>
+      </div>
+      <p data-tk="account.push.androidBatteryHint" id="pushAndroidBatteryHint" class="hidden text-xs text-ink/50 mb-3">Do notifications arrive late or not at all on Android when the phone has been idle for a while? Under Settings → Apps → Chrome (or pinn.) → Battery choose “Unrestricted” and check that everything is allowed under Notifications.</p>
+      <div class="flex flex-wrap items-center gap-2 mb-5">
+        <button data-tk="account.push.enable" type="button" id="pushEnableBtn" class="hidden px-3 py-2 rounded-lg bg-pine text-white text-sm hover:bg-pine/90 transition">Activate on this device</button>
+        <button data-tk="account.push.disable" type="button" id="pushDisableBtn" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-red-500 hover:border-red-500 transition">Deactivate on this device</button>
+        <button data-tk="account.push.sendTest" type="button" id="pushTestBtn" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">Send test</button>
+      </div>
+
+      <div id="pushSettingsBox" class="hidden flex flex-col gap-4">
+        <p data-tk="account.push.allDevices" class="text-xs text-ink/40 -mb-1">Applies to all devices you are logged in on.</p>
+        <div class="flex flex-wrap items-center gap-3">
+          <label class="flex items-center gap-3 cursor-pointer w-fit">
+            <span class="relative inline-block w-11 h-6">
+              <input id="pushOptTermine" type="checkbox" class="push-opt peer sr-only" />
+              <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
+              <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span>
+            </span>
+            <span data-tk="account.push.eventReminder" class="text-sm">Event reminder</span>
+          </label>
+          <select id="pushOptVorlauf" class="push-opt rounded-lg border border-ink/15 px-2 py-1.5 text-sm bg-white">
+            <option data-tk="account.push.before5" value="5">5 min before</option>
+            <option data-tk="account.push.before10" value="10">10 min before</option>
+            <option data-tk="account.push.before15" value="15">15 min before</option>
+            <option data-tk="account.push.before30" value="30">30 min before</option>
+            <option data-tk="account.push.before60" value="60">1 hr before</option>
+            <option data-tk="account.push.before120" value="120">2 hrs before</option>
+            <option data-tk="account.push.before1440" value="1440">1 day before</option>
+          </select>
+        </div>
+        <div class="flex flex-wrap items-center gap-3">
+          <label class="flex items-center gap-3 cursor-pointer w-fit">
+            <span class="relative inline-block w-11 h-6">
+              <input id="pushOptTages" type="checkbox" class="push-opt peer sr-only" />
+              <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
+              <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span>
+            </span>
+            <span data-tk="account.push.dailyAt" class="text-sm">Daily summary at</span>
+          </label>
+          <input id="pushOptUhrzeit" type="time" step="300" class="push-opt rounded-lg border border-ink/15 px-2 py-1.5 text-sm bg-white" />
+        </div>
+        <label class="flex items-center gap-3 cursor-pointer w-fit ml-6">
+          <span class="relative inline-block w-11 h-6 shrink-0">
+            <input id="pushOptTagesHaushalt" type="checkbox" class="push-opt peer sr-only" />
+            <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
+            <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span>
+          </span>
+          <span data-tk="account.push.dailyHousehold" class="text-sm">Include household chores in the daily summary</span>
+        </label>
+        <label class="flex items-center gap-3 cursor-pointer w-fit">
+          <span class="relative inline-block w-11 h-6">
+            <input id="pushOptZuweisungen" type="checkbox" class="push-opt peer sr-only" />
+            <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
+            <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span>
+          </span>
+          <span data-tk="account.push.assigned" class="text-sm">When someone assigns me an event or a task</span>
+        </label>
+        <label class="flex items-center gap-3 cursor-pointer w-fit">
+          <span class="relative inline-block w-11 h-6">
+            <input id="pushOptOhneZuweisung" type="checkbox" class="push-opt peer sr-only" />
+            <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
+            <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span>
+          </span>
+          <span data-tk="account.push.unassigned" class="text-sm">Also events without assignment (for the whole family)</span>
+        </label>
+        <h4 data-tk="account.push.completedTitle" class="text-xs uppercase tracking-wide text-ink/40 mt-2 -mb-1">Completed tasks</h4>
+        <label class="flex items-center gap-3 cursor-pointer w-fit">
+          <span class="relative inline-block w-11 h-6 shrink-0">
+            <input id="pushOptAlleErledigt" type="checkbox" class="push-opt peer sr-only" />
+            <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
+            <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span>
+          </span>
+          <span data-tk="account.push.allDone" class="text-sm">When someone has done all tasks so far</span>
+        </label>
+        <label id="pushKidAufgabeRow" class="flex items-center gap-3 cursor-pointer w-fit">
+          <span class="relative inline-block w-11 h-6 shrink-0">
+            <input id="pushOptKindAufgabe" type="checkbox" class="push-opt peer sr-only" />
+            <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
+            <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span>
+          </span>
+          <span data-tk="account.push.kidTask" class="text-sm">When a child completes a task</span>
+        </label>
+        <label id="pushKidAlleRow" class="flex items-center gap-3 cursor-pointer w-fit">
+          <span class="relative inline-block w-11 h-6 shrink-0">
+            <input id="pushOptKindAlle" type="checkbox" class="push-opt peer sr-only" />
+            <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
+            <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span>
+          </span>
+          <span data-tk="account.push.kidAll" class="text-sm">When a child has done all tasks</span>
+        </label>
+        <p data-tk="account.push.kidHint" id="pushKidHint" class="text-[11px] text-ink/40 -mt-2">Children are members with a kids' page or the role “Child”. You also get the notifications when someone else checks off a child's task.</p>
+        <h4 data-tk="nav.board" class="text-xs uppercase tracking-wide text-ink/40 mt-2 -mb-1">Board</h4>
+        <label class="flex items-center gap-3 cursor-pointer w-fit">
+          <span class="relative inline-block w-11 h-6 shrink-0">
+            <input id="pushOptPwMich" type="checkbox" class="push-opt peer sr-only" />
+            <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
+            <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span>
+          </span>
+          <span data-tk="account.push.boardMe" class="text-sm">Notes to me, thank-yous and important notes</span>
+        </label>
+        <label class="flex items-center gap-3 cursor-pointer w-fit">
+          <span class="relative inline-block w-11 h-6 shrink-0">
+            <input id="pushOptPwAlle" type="checkbox" class="push-opt peer sr-only" />
+            <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
+            <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span>
+          </span>
+          <span data-tk="account.push.boardAll" class="text-sm">Every new note for the whole family</span>
+        </label>
+        <label class="flex items-center gap-3 cursor-pointer w-fit">
+          <span class="relative inline-block w-11 h-6 shrink-0">
+            <input id="pushOptPwAntworten" type="checkbox" class="push-opt peer sr-only" />
+            <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
+            <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span>
+          </span>
+          <span data-tk="account.push.boardReplies" class="text-sm">Replies, reactions and votes on my notes</span>
+        </label>
+        <label class="flex items-center gap-3 cursor-pointer w-fit">
+          <span class="relative inline-block w-11 h-6 shrink-0">
+            <input id="pushOptPwErinnerung" type="checkbox" class="push-opt peer sr-only" />
+            <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
+            <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span>
+          </span>
+          <span data-tk="account.push.boardReminders" class="text-sm">Reminders from notes</span>
+        </label>
+        <p data-tk="account.push.boardHint" class="text-[11px] text-ink/40 -mt-2">The message arrives about half a minute after pinning – several reactions are combined. Your own notes and replies never notify yourself.</p>
+        <h4 data-tk="nav.chat" class="text-xs uppercase tracking-wide text-ink/40 mt-2 -mb-1">Chat</h4>
+        <label class="flex items-center gap-3 cursor-pointer w-fit">
+          <span class="relative inline-block w-11 h-6 shrink-0">
+            <input id="pushOptChat" type="checkbox" class="push-opt peer sr-only" />
+            <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
+            <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span>
+          </span>
+          <span data-tk="account.push.chat" class="text-sm">New chat messages</span>
+        </label>
+        <div id="pushUpdatesWrap" class="hidden flex flex-col gap-4">
+        <h4 data-tk="account.push.updatesTitle" class="text-xs uppercase tracking-wide text-ink/40 mt-2 -mb-1">Updates</h4>
+        <label class="flex items-center gap-3 cursor-pointer w-fit">
+          <span class="relative inline-block w-11 h-6 shrink-0">
+            <input id="pushOptUpdates" type="checkbox" class="push-opt peer sr-only" />
+            <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
+            <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span>
+          </span>
+          <span data-tk="account.push.updates" class="text-sm">New pinn. version available</span>
+        </label>
+        <p data-tk="account.push.updatesHint" class="text-[11px] text-ink/40 -mt-2">Only for admins who may install updates: one message per new version. The bell shows the update every day until it is installed.</p>
+        </div>
+        <h4 data-tk="nav.pantry" class="text-xs uppercase tracking-wide text-ink/40 mt-2 -mb-1">Pantry</h4>
+        <label class="flex items-center gap-3 cursor-pointer w-fit">
+          <span class="relative inline-block w-11 h-6 shrink-0">
+            <input id="pushOptVorrat" type="checkbox" class="push-opt peer sr-only" />
+            <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
+            <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span>
+          </span>
+          <span data-tk="account.push.pantryExpiry" class="text-sm">Pantry expiring (best-before date)</span>
+        </label>
+        <p data-tk="account.push.pantryHint" class="text-[11px] text-ink/40 -mt-2">One combined message in the morning when pantry items are about to expire – how many days before is set on the pantry page (slider icon).</p>
+        <h4 data-tk="account.push.wasteTitle" class="text-xs uppercase tracking-wide text-ink/40 mt-2 -mb-1">Bin collection</h4>
+        <div class="flex flex-wrap items-center gap-3">
+          <label class="flex items-center gap-3 cursor-pointer w-fit">
+            <span class="relative inline-block w-11 h-6 shrink-0">
+              <input id="pushOptMuell" type="checkbox" class="push-opt peer sr-only" />
+              <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
+              <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span>
+            </span>
+            <span data-tk="account.push.wasteRemind" class="text-sm">Remind me the day before at</span>
+          </label>
+          <input id="pushOptMuellZeit" type="time" step="300" class="push-opt rounded-lg border border-ink/15 px-2 py-1.5 text-sm bg-white" />
+        </div>
+        <p data-tk="account.push.wasteHint" class="text-[11px] text-ink/40 -mt-2">Only arrives if the waste calendar (Settings → Calendar) shows a collection the next day – with the bins and whose turn it is to take them out. Children only get it when it’s their own turn.</p>
+        <p id="pushSettingsStatus" class="text-xs text-ink/40"></p>
+      </div>
+      </div>
+    </details>
+    <!-- Unlock & lock: ONE PIN of the profile (stored on the server) and Face ID / Touch ID of this device. Both are used by
+         the family dashboard (PIN only), the lock when opening pinn. and the menu lock (js/dashboardkonto.js, js/entsperren.js,
+         js/menuesperre.js) -->
+    <details class="settings-accordion set-card" id="settingsLockAccordion">
+      <summary class="set-sum">
+        <span class="set-ico">🔐</span>
+        <span class="set-head"><span data-tk="lockc.title" class="sa-title">Unlock &amp; lock</span><small data-tk="lockc.subtitle">PIN, Face ID, lock pinn. and single menus</small></span>
+        <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
+      </summary>
+      <div class="set-body">
+        <p data-tk="lockc.intro" class="text-xs text-ink/50 mb-4">Set up your PIN and Face ID once – they open the family dashboard (PIN only), pinn. itself and locked menus.</p>
+        <!-- PIN of the profile -->
+        <div id="dashPinSection">
+          <p data-tk="lockc.pinTitle" class="set-sub-title">PIN</p>
+          <p id="dashPinStatus" class="text-sm text-ink/70 mb-1"></p>
+          <p data-tk="account.pin.requiredNote" id="dashPinRequired" class="hidden text-xs font-medium text-mustard mb-1">Required as long as your family has a dashboard.</p>
+          <p data-tk="lockc.pinHint" class="text-xs text-ink/40 mb-3">The same PIN for everything: it opens your profile on the family dashboard (e.g. the kitchen iPad) and unlocks pinn. and locked menus on your devices. As soon as your family sets up a dashboard, every profile needs a PIN.</p>
+          <div class="flex flex-wrap items-center gap-2">
+            <button data-tk="account.pin.set" type="button" id="dashPinSetBtn" class="px-3 py-2 rounded-lg bg-pine text-white text-sm hover:bg-pine/90 transition">Set PIN</button>
+            <button data-tk="account.pin.remove" type="button" id="dashPinRemoveBtn" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-red-500 hover:border-red-500 transition">Remove PIN</button>
+          </div>
+          <p id="dashPinMsg" class="text-xs text-ink/50 mt-2"></p>
+        </div>
+        <!-- Face ID / Touch ID / fingerprint of this device -->
+        <div id="bioSection" class="set-sub hidden">
+          <p id="bioTitle" class="set-sub-title" data-no-i18n>Face ID / fingerprint</p>
+          <div id="bioRow" class="flex items-center gap-2 flex-wrap"></div>
+          <p data-tk="account.bio.unavailable" id="bioUnavailable" class="hidden text-xs text-mustard mt-2">Not possible on this device: it needs Face ID, Touch ID or a fingerprint sensor and an address starting with https://.</p>
+          <p data-tk="account.bio.hint" class="text-[11px] text-ink/40 mt-2">Applies to this device only. The device itself checks your face or finger – pinn. never sees it. If it ever does not work, simply sign in again with your password.</p>
+        </div>
+        <!-- Lock pinn. when it is opened -->
+        <div id="appLockSub" class="set-sub hidden">
+          <p data-tk="lockc.appTitle" class="set-sub-title">Lock pinn.</p>
+          <label class="flex items-center gap-3 cursor-pointer w-fit">
+            <span class="relative inline-block w-11 h-6 shrink-0">
+              <input id="bioToggle" type="checkbox" class="peer sr-only" />
+              <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
+              <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span>
+            </span>
+            <span data-tk="lockc.appToggle" class="text-sm">Lock pinn. on this device when it is opened</span>
+          </label>
+          <div id="bioAfterRow" class="hidden flex items-center gap-3 mt-3">
+            <span data-tk="account.bio.after" class="text-sm">Lock after</span>
+            <select id="bioAfter" class="rounded-lg border border-ink/15 px-2 py-1.5 text-sm bg-white">
+              <option value="0" data-tk="account.bio.now">immediately</option>
+              <option value="1" data-tk="account.bio.min1">1 minute</option>
+              <option value="5" data-tk="account.bio.min5">5 minutes</option>
+              <option value="15" data-tk="account.bio.min15">15 minutes</option>
+            </select>
+          </div>
+          <p id="bioStatus" class="text-xs text-ink/50 mt-2"></p>
+        </div>
+        <!-- Lock single menus -->
+        <div id="settingsMenuLockAccordion" class="set-sub hidden">
+          <p data-tk="mlock.title" class="set-sub-title">Lock menus</p>
+          <div id="mlsBody"></div>
+        </div>
+        <p id="lockNeedMethod" class="hidden text-xs text-mustard mt-3"></p>
+        <p data-tk="mlock.hint" id="lockHint" class="hidden text-[11px] text-ink/40 mt-3">This is a lock inside the app for this device – it does not replace the device's own screen lock.</p>
       </div>
     </details>
     <details class="settings-accordion set-card">
@@ -545,29 +827,6 @@
         <p data-tk="settings.smartHome.footer" class="text-[11px] text-ink/40 mt-3">You set which action belongs to which task on the household page in the respective cleaning task or on the bin.</p>
       </div>
     </details>
-    <!-- Security: Home Assistant devices in groups for the dashboard and the overview (family admins only, js/sicherheit.js) -->
-    <details class="settings-accordion set-card hidden" id="settingsSecurityAccordion">
-      <summary class="set-sum">
-        <span class="set-ico">🛡️</span>
-        <span class="set-head"><span data-tk="security.title" class="sa-title">Security</span><small data-tk="security.settingsSubtitle">Windows, doors, locks and cameras from Home Assistant</small></span>
-        <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
-      </summary>
-      <div class="set-body">
-        <p id="secSettingsStatus" class="text-xs text-ink/50 mb-3"></p>
-        <div id="secSettingsBody"></div>
-      </div>
-    </details>
-    <!-- Lock single menus with Face ID / fingerprint or a PIN, per device and profile (js/menuesperre.js) -->
-    <details class="settings-accordion set-card hidden" id="settingsMenuLockAccordion">
-      <summary class="set-sum">
-        <span class="set-ico">🔒</span>
-        <span class="set-head"><span data-tk="mlock.title" class="sa-title">Lock menus</span><small data-tk="mlock.subtitle">Protect single menus with Face ID or a PIN</small></span>
-        <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
-      </summary>
-      <div class="set-body">
-        <div id="mlsBody"></div>
-      </div>
-    </details>
     <details class="settings-accordion set-card" id="settingsVoiceAccordion">
       <summary class="set-sum">
         <span class="set-ico">🎙️</span>
@@ -576,6 +835,239 @@
       </summary>
       <div class="set-body">
         <div id="voiceSettingsBody" class="flex flex-col gap-3"><p data-tk="common.loading" class="text-xs text-ink/50">Loading …</p></div>
+      </div>
+    </details>
+    <!-- Admins only (js/konto.js): profiles, security, system and the family dashboard, each collapsible -->
+    <details class="settings-accordion set-card hidden" id="profileAdminSection">
+      <summary class="set-sum">
+        <span class="set-ico"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7.5" r="3.5"></circle><path d="M2.5 20c0-3.6 2.9-6.5 6.5-6.5 1.3 0 2.5.4 3.5 1"></path><path d="M17.5 12.5l4 1.5v3c0 2.4-1.7 4.1-4 4.8-2.3-.7-4-2.4-4-4.8v-3z"></path><path d="M15.9 17.1l1.2 1.2 2.1-2.3"></path></svg></span>
+        <span class="set-head"><span data-tk="admin.title" class="sa-title">Admin</span><small data-tk="admin.subtitle">Profiles, security, system, dashboard</small></span>
+        <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
+      </summary>
+      <div class="set-body set-nest-list">
+        <details class="set-nest" id="settingsProfilesNest">
+          <summary class="set-nest-sum">
+            <span class="set-ico">👥</span>
+            <span class="set-head"><span data-tk="account.profiles.title" class="sa-title">Manage profiles</span><small data-tk="account.profiles.subtitle">Members and guests of the family</small></span>
+            <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
+          </summary>
+          <div class="set-body">
+          <div class="flex items-center justify-end gap-1.5 mb-3">
+            <button data-tk="account.profiles.addMember" type="button" id="openAddProfileBtn" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs hover:bg-pine/90 transition">+ Add member</button>
+          </div>
+          <p data-tk="account.profiles.hint" class="text-xs text-ink/40 mb-2">Each family member has their own profile. You create new people as a member – the profile is created along with it. Guest accounts have no password, only open via the family dashboard and don't see finance, documents and settings.</p>
+          <div id="profileList" class="flex flex-col gap-1.5"></div>
+          </div>
+        </details>
+        <!-- Security: Home Assistant devices in groups for the dashboard and the overview (js/sicherheit.js) -->
+        <details class="set-nest hidden" id="settingsSecurityAccordion">
+          <summary class="set-nest-sum">
+            <span class="set-ico">🛡️</span>
+            <span class="set-head"><span data-tk="security.title" class="sa-title">Security</span><small data-tk="security.settingsSubtitle">Windows, doors, locks and cameras from Home Assistant</small></span>
+            <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
+          </summary>
+          <div class="set-body">
+          <p id="secSettingsStatus" class="text-xs text-ink/50 mb-3"></p>
+          <div id="secSettingsBody"></div>
+          </div>
+        </details>
+        <!-- System: updates, backups (container "wartung", pb_hooks/system.pb.js), error log, data export -->
+        <details class="set-nest" id="settingsSystemAccordion">
+          <summary class="set-nest-sum">
+            <span class="set-ico">🔄</span>
+            <span class="set-head"><span data-tk="settings.system.title" class="sa-title">System</span><small data-tk="settings.system.subtitle">Synchronisation, updates, backups, data</small></span>
+            <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
+          </summary>
+          <div class="set-body">
+          <p data-tk="settings.system.sync" class="set-sub-title">Synchronisation</p>
+          <p class="text-sm text-ink/70"><span data-tk="settings.system.status">Status:</span> <span data-tk="settings.system.synced" id="syncStatus">synchronised</span></p>
+
+          <div class="set-sub">
+            <p data-tk="settings.system.updates" class="set-sub-title">Updates</p>
+            <p class="text-xs text-ink/40 mb-2"><span data-tk="settings.system.installedVersion">Installed version:</span> <span id="settingsVersionDisplay" class="font-mono text-ink/60"></span></p>
+            <div id="sysUpdateHint" class="set-hint ok hidden mb-2">
+              <span>✨</span>
+              <span id="sysUpdateHintText" class="flex-1 min-w-0"></span>
+              <button data-tk="common.view" id="sysUpdateHintBtn" type="button" class="set-hint-btn">View</button>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+              <button data-tk="settings.system.checkUpdate" id="checkUpdateBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">Check for update</button>
+              <button id="openChangelogBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition inline-flex items-center gap-1.5"><span class="font-mono text-xs">&gt;_</span><span data-tk="settings.system.versionLog">Version log</span></button>
+            </div>
+            <p id="versionCheckStatus" class="text-xs text-ink/40 mt-2"></p>
+          </div>
+
+          <!-- Backups (only visible for admins) – container "wartung", pb_hooks/system.pb.js -->
+          <div id="sysBackupSub" class="set-sub hidden">
+            <p data-tk="settings.system.backups" class="set-sub-title">Backups</p>
+            <p data-tk="common.loading" id="sysBackupSummary" class="text-xs text-ink/50 mb-2 leading-snug">Loading …</p>
+            <button data-tk="settings.system.backupsButton" id="openSysMaintBtn" type="button" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">🛟 Backups &amp; restore</button>
+          </div>
+
+          <!-- Error log (only visible for admins) – pb_hooks/protokoll.pb.js -->
+          <div id="errLogSub" class="set-sub hidden">
+            <p data-tk="settings.system.errorLog" class="set-sub-title">Error log</p>
+            <p data-tk="common.loading" id="errLogSummary" class="text-xs text-ink/50 mb-2 leading-snug">Loading …</p>
+            <button id="openErrLogBtn" type="button" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition"><span data-tk="settings.system.errorLogButton">🧾 Error log</span><span id="errLogBadge" class="el-badge hidden" data-no-i18n></span></button>
+          </div>
+
+          <div class="set-sub">
+            <p data-tk="settings.system.data" class="set-sub-title">Data</p>
+            <!-- Data export (only visible for admins) – pb_public/datenexport.js, pb_hooks/export.pb.js -->
+            <div id="dataExportSub" class="hidden mb-4" data-no-i18n data-no-term>
+              <p id="dataExportText" class="text-xs text-ink/50 mb-2 leading-snug"></p>
+              <button id="dataExportBtn" type="button" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition"></button>
+            </div>
+            <p data-tk="settings.system.resetHint" class="text-xs text-ink/40 mb-2">Resets the pinn. data stored on this device to the initial state.</p>
+            <button data-tk="settings.system.resetData" id="resetDataBtn" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-white hover:bg-red-500 hover:border-red-500 transition">Reset all data</button>
+          </div>
+          </div>
+        </details>
+        <!-- Family dashboard: devices, background, numbers, guests (js/dashboardkonto.js, js/dashboardsitzung.js) -->
+        <details class="set-nest" id="settingsDashboardNest">
+          <summary class="set-nest-sum">
+            <span class="set-ico">🖥️</span>
+            <span class="set-head"><span data-tk="dashc.title" class="sa-title">Dashboard</span><small data-tk="dashc.subtitle">Devices, background, numbers, guests</small></span>
+            <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
+          </summary>
+          <div class="set-body">
+          <div class="set-nest-list">
+            <details class="set-nest" id="dashDevicesNest">
+              <summary class="set-nest-sum">
+                <span class="set-ico">🖥️</span>
+                <span class="set-head"><span data-tk="account.dashDevices.title" class="sa-title">Dashboard devices</span><small data-tk="dashc.devicesSub">This device and all dashboards of the family</small></span>
+                <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
+              </summary>
+              <div class="set-body">
+              <!-- This device as the family dashboard (iPad) -->
+              <div id="dashDeviceSection" class="hidden mb-4">
+                <p data-tk="account.dashDevice.title" class="set-sub-title">Family dashboard on this device</p>
+            <div id="dashDeviceSetup" class="hidden">
+              <p data-tk="account.dashDevice.hint" class="text-xs text-ink/40 mb-3">As a dashboard, this device shows the family’s profiles when opened. Every profile opens with its PIN – a child straight into their kids’ page; anyone without a PIN logs in once with the password and sets one. Guests open with a tap. There are no personal notifications on a dashboard device.</p>
+              <div id="dashDeviceSetupForm" class="flex flex-wrap items-center gap-2">
+                <input id="dashDeviceNameInput" type="text" autocomplete="off" maxlength="60" class="flex-1 min-w-[10rem] rounded-lg border border-ink/15 px-3 py-2 text-sm" data-tk-attr="placeholder:account.dashDevice.namePlaceholder" placeholder="Name of the device, e.g. kitchen iPad" />
+                <button data-tk="account.dashDevice.activate" type="button" id="dashDeviceActivateBtn" class="px-3 py-2 rounded-lg bg-pine text-white text-sm hover:bg-pine/90 transition whitespace-nowrap">Set up as dashboard</button>
+              </div>
+              <p data-tk="account.dashDevice.noAdmin" id="dashDeviceNoAdmin" class="hidden text-xs text-mustard">Only an admin of the family can set up a dashboard.</p>
+            </div>
+            <div id="dashDeviceActive" class="hidden">
+              <p id="dashDeviceActiveText" class="text-sm text-ink/70 mb-3"></p>
+              <label id="dashDeviceTimeoutRow" class="flex flex-wrap items-center gap-2 text-sm mb-4">
+                <span data-tk="account.dashDevice.backAfter">Back to profile selection after</span>
+                <select id="dashTimeoutSelect" class="rounded-lg border border-ink/15 px-2 py-1.5 text-sm bg-white">
+                  <option data-tk="account.dashDevice.never" value="0">never automatically</option>
+                  <option data-tk="account.dashDevice.idle1" value="1">1 minute without use</option>
+                  <option data-tk="account.dashDevice.idle2" value="2">2 minutes without use</option>
+                  <option data-tk="account.dashDevice.idle5" value="5">5 minutes without use</option>
+                  <option data-tk="account.dashDevice.idle10" value="10">10 minutes without use</option>
+                  <option data-tk="account.dashDevice.idle30" value="30">30 minutes without use</option>
+                </select>
+              </label>
+              <div id="dashDeviceBtnRow" class="flex flex-wrap items-center gap-2">
+                <button data-tk="app.toProfileSelection" type="button" id="dashDeviceHomeBtn" class="px-3 py-2 rounded-lg bg-pine text-white text-sm hover:bg-pine/90 transition">To profile selection</button>
+                <button data-tk="account.dashDevice.end" type="button" id="dashDeviceEndBtn" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-red-500 hover:border-red-500 transition">End dashboard on this device</button>
+              </div>
+              <p data-tk="account.dashDevice.endHint" id="dashDeviceEndHint" class="hidden text-xs text-ink/40 mt-2">Only an admin of the family can end this.</p>
+            </div>
+            <p id="dashDeviceStatus" class="text-xs text-ink/50 mt-2"></p>
+              </div>
+              <!-- Devices set up as dashboard (list) -->
+              <div id="dashDevicesWrap" class="hidden">
+                <p data-tk="account.dashDevices.subtitle" class="set-sub-title">Devices set up as family dashboard</p>
+                <div id="dashDevicesList" class="flex flex-col gap-1.5"></div>
+              </div>
+              <p data-tk="dashc.noDevices" id="dashDevicesEmpty" class="hidden text-xs text-ink/50">No dashboard set up yet. Open pinn. on an iPad or a computer and set it up here.</p>
+              </div>
+            </details>
+            <details class="set-nest" id="dashBgWrap">
+              <summary class="set-nest-sum">
+                <span class="set-ico">🖼️</span>
+                <span class="set-head"><span data-tk="account.dashBg.title" class="sa-title">Dashboard background</span><small data-tk="account.dashBg.subtitle">Colour, gradient or custom image</small></span>
+                <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
+              </summary>
+              <div class="set-body">
+              <p data-tk="account.dashBg.hint" class="text-xs text-ink/40 mb-3">Applies to all family dashboards of this family (e.g. the iPad in the kitchen). A custom image is automatically reduced when uploading.</p>
+              <div id="dashBgPreview" class="dash-bg-preview">
+                <div id="dashBgPreviewLayer" class="dash-bg"></div>
+                <div class="dash-bg-preview-content">
+                  <span data-tk="app.family" id="dashBgPreviewTitle" class="dash-bg-preview-title">Family</span>
+                  <div class="dash-bg-preview-tiles">
+                    <div class="dash-bg-preview-tile"><span></span></div>
+                    <div class="dash-bg-preview-tile"><span></span></div>
+                    <div class="dash-bg-preview-tile"><span></span></div>
+                  </div>
+                </div>
+              </div>
+              <div id="dashBgArtButtons" class="flex flex-wrap gap-2 mt-3">
+                <button data-tk="account.dashBg.standard" type="button" class="dash-bg-art-btn" data-bg-art="standard">Default</button>
+                <button data-tk="account.dashBg.color" type="button" class="dash-bg-art-btn" data-bg-art="farbe">Colour</button>
+                <button data-tk="account.dashBg.gradient" type="button" class="dash-bg-art-btn" data-bg-art="verlauf">Colour gradient</button>
+                <button data-tk="account.dashBg.ownImage" type="button" class="dash-bg-art-btn" data-bg-art="bild">Custom image</button>
+              </div>
+              <div id="dashBgColorBox" class="hidden flex flex-wrap items-center gap-2 mt-3">
+                <div id="dashBgColorList" class="flex flex-wrap items-center gap-2"></div>
+                <label class="flex items-center gap-2 text-xs text-ink/50 ml-1">
+                  <input id="dashBgColorInput" type="color" class="w-9 h-9 rounded-full border border-ink/15 cursor-pointer p-0 bg-transparent" />
+                  <span data-tk="account.dashBg.ownColor">custom colour</span>
+                </label>
+              </div>
+              <div id="dashBgGradientBox" class="hidden flex flex-wrap items-center gap-2 mt-3"></div>
+              <div id="dashBgImageBox" class="hidden mt-3">
+                <div class="flex flex-wrap items-center gap-2">
+                  <label class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/70 hover:text-pine hover:border-pine transition cursor-pointer">
+                    <span data-tk="account.dashBg.pickImage" id="dashBgPickLabel">Select image</span>
+                    <input id="dashBgFileInput" type="file" accept="image/*" class="hidden" />
+                  </label>
+                  <button data-tk="account.dashBg.removeImage" type="button" id="dashBgImageRemoveBtn" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-red-500 hover:border-red-500 transition">Remove image</button>
+                </div>
+                <label class="flex items-center gap-3 text-sm mt-3 max-w-xs">
+                  <span data-tk="account.dashBg.darken" class="whitespace-nowrap">Darken</span>
+                  <input id="dashBgDim" type="range" min="0" max="70" step="5" class="flex-1 accent-pine" />
+                  <span id="dashBgDimValue" class="w-10 text-right text-xs text-ink/50"></span>
+                </label>
+                <p data-tk="account.dashBg.darkenHint" class="text-xs text-ink/40 mt-1">Darkening keeps the time and names on the image easy to read.</p>
+              </div>
+              <div class="flex flex-wrap items-center gap-2 mt-4">
+                <button data-tk="account.dashBg.save" type="button" id="dashBgSaveBtn" class="px-3 py-2 rounded-lg bg-pine text-white text-sm hover:bg-pine/90 transition">Save background</button>
+              </div>
+              <p id="dashBgStatus" class="text-xs text-ink/50 mt-2"></p>
+              </div>
+            </details>
+            <details class="set-nest" id="dashCountWrap">
+              <summary class="set-nest-sum">
+                <span class="set-ico">🔢</span>
+                <span class="set-head"><span data-tk="account.dashCount.title" class="sa-title">Tasks and chats on the dashboard</span><small data-tk="account.dashCount.subtitle">Numbers under each profile picture</small></span>
+                <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
+              </summary>
+              <div class="set-body">
+              <p data-tk="account.dashCount.hint" class="text-xs text-ink/40 mb-2">Shows under each person’s picture on the profile selection how many tasks are open and due (check mark) and how many chat messages are unread (speech bubble) – without signing in. Applies to all family dashboards of this family.</p>
+              <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-ink/10 bg-white text-sm cursor-pointer select-none">
+                <input type="checkbox" id="dashCountCheck" class="w-4 h-4" />
+                <span data-tk="account.dashCount.label">Show open tasks and unread chats</span>
+              </label>
+              <p id="dashCountStatus" class="text-xs text-ink/50 mt-2"></p>
+              </div>
+            </details>
+            <details class="set-nest" id="guestMenuWrap">
+              <summary class="set-nest-sum">
+                <span class="set-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"></circle><path d="M3 19c0-3.3 2.7-6 6-6s6 2.7 6 6"></path><circle cx="17" cy="9" r="2.5"></circle><path d="M15.5 13.3c.5-.2 1-.3 1.5-.3 2.5 0 4.5 2 4.5 4.5"></path></svg></span>
+                <span class="set-head"><span data-tk="guests.title" class="sa-title">Guests</span><small data-tk="guests.subtitle">Menus for guests, add a guest</small></span>
+                <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
+              </summary>
+              <div class="set-body">
+              <p data-tk="account.guestMenus.title" class="set-sub-title">Menus for guests</p>
+              <p data-tk="account.guestMenus.hint" class="text-xs text-ink/40 mb-2">Ticked areas are visible to guest accounts. Finance, documents and settings are always locked for guests. Note: The overview shows calendar, meals and tasks together on one page – if the calendar is deselected, it is missing there too.</p>
+              <div id="guestMenuList" class="flex flex-wrap gap-2"></div>
+              <p id="guestMenuStatus" class="text-xs text-ink/50 mt-2"></p>
+              <div class="set-sub">
+                <button data-tk="guests.add" type="button" id="openAddGuestBtn" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/70 hover:text-pine hover:border-pine transition">+ Add guest</button>
+                <p data-tk="guests.addHint" class="text-[11px] text-ink/40 mt-2">Opens “Manage profiles” and creates a guest account there.</p>
+              </div>
+              </div>
+            </details>
+          </div>
+          </div>
+        </details>
       </div>
     </details>
     <!-- Help & tutorial: short guides per menu and the first-steps tutorial (js/hilfe.js) -->
@@ -590,57 +1082,6 @@
         <div class="flex flex-wrap items-center gap-2 mt-3">
           <button data-tk="help.open" id="hlpOpenBtn" type="button" class="px-3 py-2 rounded-lg bg-pine text-white text-sm hover:bg-pine/90">Open help</button>
           <button data-tk="help.tourStart" id="hlpTourStartBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">Start tutorial</button>
-        </div>
-      </div>
-    </details>
-    <details class="settings-accordion set-card" id="settingsSystemAccordion">
-      <summary class="set-sum">
-        <span class="set-ico">🔄</span>
-        <span class="set-head"><span data-tk="settings.system.title" class="sa-title">System</span><small data-tk="settings.system.subtitle">Synchronisation, updates, backups, data</small></span>
-        <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
-      </summary>
-      <div class="set-body">
-        <p data-tk="settings.system.sync" class="set-sub-title">Synchronisation</p>
-        <p class="text-sm text-ink/70"><span data-tk="settings.system.status">Status:</span> <span data-tk="settings.system.synced" id="syncStatus">synchronised</span></p>
-
-        <div class="set-sub">
-          <p data-tk="settings.system.updates" class="set-sub-title">Updates</p>
-          <p class="text-xs text-ink/40 mb-2"><span data-tk="settings.system.installedVersion">Installed version:</span> <span id="settingsVersionDisplay" class="font-mono text-ink/60"></span></p>
-          <div id="sysUpdateHint" class="set-hint ok hidden mb-2">
-            <span>✨</span>
-            <span id="sysUpdateHintText" class="flex-1 min-w-0"></span>
-            <button data-tk="common.view" id="sysUpdateHintBtn" type="button" class="set-hint-btn">View</button>
-          </div>
-          <div class="flex flex-wrap items-center gap-2">
-            <button data-tk="settings.system.checkUpdate" id="checkUpdateBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">Check for update</button>
-            <button id="openChangelogBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition inline-flex items-center gap-1.5"><span class="font-mono text-xs">&gt;_</span><span data-tk="settings.system.versionLog">Version log</span></button>
-          </div>
-          <p id="versionCheckStatus" class="text-xs text-ink/40 mt-2"></p>
-        </div>
-
-        <!-- Backups (only visible for admins) – container "wartung", pb_hooks/system.pb.js -->
-        <div id="sysBackupSub" class="set-sub hidden">
-          <p data-tk="settings.system.backups" class="set-sub-title">Backups</p>
-          <p data-tk="common.loading" id="sysBackupSummary" class="text-xs text-ink/50 mb-2 leading-snug">Loading …</p>
-          <button data-tk="settings.system.backupsButton" id="openSysMaintBtn" type="button" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">🛟 Backups &amp; restore</button>
-        </div>
-
-        <!-- Error log (only visible for admins) – pb_hooks/protokoll.pb.js -->
-        <div id="errLogSub" class="set-sub hidden">
-          <p data-tk="settings.system.errorLog" class="set-sub-title">Error log</p>
-          <p data-tk="common.loading" id="errLogSummary" class="text-xs text-ink/50 mb-2 leading-snug">Loading …</p>
-          <button id="openErrLogBtn" type="button" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition"><span data-tk="settings.system.errorLogButton">🧾 Error log</span><span id="errLogBadge" class="el-badge hidden" data-no-i18n></span></button>
-        </div>
-
-        <div class="set-sub">
-          <p data-tk="settings.system.data" class="set-sub-title">Data</p>
-          <!-- Data export (only visible for admins) – pb_public/datenexport.js, pb_hooks/export.pb.js -->
-          <div id="dataExportSub" class="hidden mb-4" data-no-i18n data-no-term>
-            <p id="dataExportText" class="text-xs text-ink/50 mb-2 leading-snug"></p>
-            <button id="dataExportBtn" type="button" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition"></button>
-          </div>
-          <p data-tk="settings.system.resetHint" class="text-xs text-ink/40 mb-2">Resets the pinn. data stored on this device to the initial state.</p>
-          <button data-tk="settings.system.resetData" id="resetDataBtn" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-white hover:bg-red-500 hover:border-red-500 transition">Reset all data</button>
         </div>
       </div>
     </details>

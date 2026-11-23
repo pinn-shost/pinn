@@ -147,6 +147,7 @@ html.dark .dash-busy { background: rgba(27,27,24,.85); }
 .pin-dot.on { background: #fff; }
 .pin-error { min-height: 1.3em; font-size: .85rem; color: #FFB4A8; }
 .pin-lengths { display: flex; justify-content: center; gap: .5rem; margin-top: .4rem; }
+.pin-lengths.hidden { display: none; } /* the 4/6 choice only when a new PIN is set (it showed up when unlocking as well) */
 .pin-len-btn { font: inherit; font-size: .8rem; padding: .3rem .8rem; border-radius: 999px; border: 1px solid rgba(255,255,255,.45); background: transparent; color: #fff; cursor: pointer; }
 .pin-len-btn.active { background: #fff; color: #25231F; border-color: #fff; }
 .pin-keys { display: grid; grid-template-columns: repeat(3, 78px); gap: 16px 26px; justify-content: center; margin-top: 1.3rem; }

@@ -98,6 +98,17 @@ function renderSettings() {
   if (typeof mlsRenderCardAccess === 'function') mlsRenderCardAccess(); // Lock menus: not for guests / dashboard (js/menuesperre.js)
 }
 
+// Opens a settings card – also one inside another card (e.g. Admin → System) – together with every card around it and
+// scrolls to it. target: element or ID. Used by the search, deep links and "Add guest" (since 1.164.0).
+function openSettingsCard(target) {
+  const el = typeof target === 'string' ? document.getElementById(target) : target;
+  if (!el) return;
+  const chain = [];
+  for (let d = el; d && d.id !== 'settingsView'; d = d.parentElement) if (d.tagName === 'DETAILS') chain.unshift(d);
+  chain.forEach(d => { d.open = true; });
+  setTimeout(() => { try { el.scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch (e) { /* ignore */ } }, 160);
+}
+
 // Family members in the settings - with their linked profile. Creating and removing only for
 // admins, because the profile is created or deleted along with the member.
 function renderSettingsMemberList() {

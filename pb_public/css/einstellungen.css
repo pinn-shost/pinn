@@ -156,11 +156,28 @@ html.dark .set-hint.ok { background: rgba(255,255,255,0.05); border-color: rgba(
 /* In landscape (from tablet width) two columns, so the iPad/PC width is used sensibly.
    The cards are distributed evenly to left/right once by JS (setMasonry) - measured in the
    collapsed state. When expanding and collapsing every card stays in its column, only the cards
-   below it move. After collapsing, the distribution is therefore exactly as before. */
-#settingsView .set-pane.set-masonry, #accountView .set-pane.set-masonry { display: block; position: relative; max-width: 1100px; }
-.set-pane.set-masonry > *, .set-pane.set-masonry > #profileAdminSection > * { position: absolute; left: 0; top: 0; margin: 0; width: calc(50% - 0.375rem); box-sizing: border-box; }
-.set-pane.set-masonry > #profileAdminSection:not(.hidden) { display: contents; }
-.set-pane.set-masonry > #profileAdminSection > *:not(.hidden) { display: block; }
-.set-pane.set-masonry > #profileAdminSection.hidden, .set-pane.set-masonry > #profileAdminSection > .hidden { display: none !important; }
-.set-pane.set-masonry.set-masonry-ready > *, .set-pane.set-masonry.set-masonry-ready > #profileAdminSection > * { transition: top .18s ease; }
-@media (prefers-reduced-motion: reduce) { .set-pane.set-masonry.set-masonry-ready > *, .set-pane.set-masonry.set-masonry-ready > #profileAdminSection > * { transition: none; } }
+   below it move. After collapsing, the distribution is therefore exactly as before.
+   Cards with "set-wide" ("Logged in as") span the full width above both columns. */
+#settingsView .set-pane.set-masonry { display: block; position: relative; max-width: 1100px; }
+.set-pane.set-masonry > * { position: absolute; left: 0; top: 0; margin: 0; width: calc(50% - 0.375rem); box-sizing: border-box; }
+.set-pane.set-masonry > .set-wide { width: 100%; }
+.set-pane.set-masonry.set-masonry-ready > * { transition: top .18s ease; }
+@media (prefers-reduced-motion: reduce) { .set-pane.set-masonry.set-masonry-ready > * { transition: none; } }
+
+/* ---------- Since 1.164.0: settings and account on one page ---------- */
+/* Guests (no settings): only the "Logged in as" card */
+#settingsView.set-account-only .set-pane > :not(#accountCard) { display: none !important; }
+/* Collapsible card inside a card (Logged in as → devices; Admin → profiles, security, system, dashboard) */
+.set-nest-list { display: flex; flex-direction: column; gap: 0.6rem; }
+.set-nest { border: 1px solid rgba(37,35,31,0.1); border-radius: 14px; background: rgba(255,255,255,0.65); overflow: hidden; scroll-margin-top: calc(env(safe-area-inset-top, 0px) + 8px); }
+.set-nest > summary { list-style: none; display: flex; align-items: center; gap: 0.7rem; padding: 0.6rem 0.75rem; cursor: pointer; -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none; transition: background .15s; }
+.set-nest > summary::-webkit-details-marker, .set-nest > summary::marker { display: none; content: ''; }
+.set-nest > summary:hover, .set-nest[open] > summary { background: color-mix(in srgb, var(--c-pine) 4%, transparent); }
+.set-nest > summary .set-ico { width: 34px; height: 34px; border-radius: 10px; font-size: 17px; }
+.set-nest > summary .set-ico svg { width: 18px; height: 18px; }
+.set-nest > summary .accordion-chevron { transition: transform 0.18s ease; }
+.set-nest[open] > summary .accordion-chevron { transform: rotate(90deg); }
+.set-nest > .set-body { padding: 0.8rem 0.8rem 0.95rem; }
+.set-nest .set-nest > summary .set-ico { width: 30px; height: 30px; border-radius: 9px; font-size: 15px; }
+.acc-nest { margin: 0 1rem 1rem; }
+html.dark .set-nest { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1); }

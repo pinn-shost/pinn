@@ -2,7 +2,9 @@
    Part of the app code that used to be a single block in index.html. Classic script, no build step:
    it is loaded right after the inline script of index.html and before the other files in js/
    (the load order is listed at the bottom of index.html and in pinn-setup.sh).
-   Contents: the account card in the settings (renderAccountAvatar, renderAccountSettings with the profile list for admins) and the popup "Change password" (openChangePasswordModal, closeChangePasswordModal) with the logout button. accountProfiles and profileManageId are also used by js/profilverwaltung.js. */
+   Contents: the account card in the settings (renderAccountAvatar, renderAccountSettings with the profile list for admins) and the popup "Change password" (openChangePasswordModal, closeChangePasswordModal) with the logout button. accountProfiles and profileManageId are also used by js/profilverwaltung.js.
+   Since 1.164.0 the former account page is part of the settings: "Logged in as" (always open) at the top, notifications
+   and "Unlock & lock" as cards, everything for admins under "Admin" (profiles, security, system, dashboard). */
 
 let accountProfiles = []; // most recently loaded profiles, for the "Manage profile" popup
 let profileManageId = null; // profile currently being edited in the popup
@@ -40,8 +42,12 @@ async function renderAccountSettings() {
   safe(renderDashDeviceSection);
   safe(renderDashPinSection);
   safe(renderDevicesSection);
-  if (typeof renderBioSection === 'function') safe(renderBioSection); // Face ID / fingerprint (js/entsperren.js)
-  const pinsLoaded = guest ? Promise.resolve(dashPinInfo) : loadDashboardPins().then(info => { renderDashPinSection(); return info; });
+  if (typeof renderLockCard === 'function') safe(renderLockCard); // Unlock & lock: Face ID, lock pinn., lock menus (js/entsperren.js)
+  const pinsLoaded = guest ? Promise.resolve(dashPinInfo) : loadDashboardPins().then(info => {
+    renderDashPinSection();
+    if (typeof renderLockCard === 'function') safe(renderLockCard); // the PIN is one way to unlock
+    return info;
+  });
   const famEl = document.getElementById('accountFamily');
   if (famEl && u && u.familie) {
     pb.collection('familien').getOne(u.familie).then(f => { famEl.textContent = tk('account.familyName', { name: f.name }); }).catch(() => { /* offline */ });

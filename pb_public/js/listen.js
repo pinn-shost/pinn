@@ -1587,37 +1587,29 @@ function gsCollect(q) {
       add('menu', { icon: t.icon, typeLabel: tk('search.type.menu'), sub: tk('search.openPage'), run: () => setView(t.id) }, t.label, GS_MENU_KEYWORDS[t.id] || '');
     });
     add('menu', { icon: '👤', typeLabel: tk('search.type.menu'), sub: tk('search.accountSub'), run: () => setView('konto') }, tk('search.account'), 'profil passwort pin abmelden benutzer');
-    if (allowed('einstellungen')) add('menu', { icon: '⚙️', typeLabel: tk('search.type.menu'), sub: tk('search.settingsSub'), run: () => setView('einstellungen') }, tk('search.settings'), 'optionen design');
+    if (settingsFullAccess()) add('menu', { icon: '⚙️', typeLabel: tk('search.type.menu'), sub: tk('search.settingsSub'), run: () => setView('einstellungen') }, tk('search.settings'), 'optionen design');
     add('menu', { icon: '📜', typeLabel: tk('search.type.menu'), sub: tk('search.changelogSub'), run: () => openChangelogTerminal() }, tk('search.changelog'), 'changelog updates version neuigkeiten');
     add('menu', { icon: '💡', typeLabel: tk('search.type.menu'), sub: tk('help.subtitle'), run: () => hlpOpen({}) }, tk('help.title'), 'hilfe help anleitung tutorial ayuda aide');
   });
 
-  // Settings: collapsible sections (their content is searched too)
-  if (allowed('einstellungen')) safe(() => {
+  // Settings: collapsible sections and the cards inside them (Admin → …, Logged in as → devices; their content is searched too)
+  if (settingsFullAccess()) safe(() => {
     const root = document.getElementById('settingsView');
-    root.querySelectorAll('details.settings-accordion').forEach(det => {
+    root.querySelectorAll('details.settings-accordion, details.set-nest').forEach(det => {
       if (gsHiddenWithin(det, root)) return;
-      const sum = det.querySelector('summary .sa-title') || det.querySelector('summary span');
+      const sum = det.querySelector(':scope > summary .sa-title') || det.querySelector(':scope > summary span');
       const label = sum ? sum.textContent.trim() : '';
       if (!label) return;
       add('settings', {
         icon: '⚙️', typeLabel: tk('search.settings'), sub: tk('search.openSection'),
-        run: () => { setView('einstellungen'); det.open = true; gsScrollTo(det); },
+        run: () => { setView('einstellungen'); openSettingsCard(det); },
       }, label, '', det.textContent.replace(/\s+/g, ' '));
     });
   });
 
-  // Account: sections and change password
+  // Account ("Logged in as" at the top of the settings): change password
   safe(() => {
-    const root = document.getElementById('accountView');
-    root.querySelectorAll('h3').forEach(h => {
-      if (h.closest('.fixed') || gsHiddenWithin(h, root)) return;
-      const label = h.textContent.trim();
-      if (!label) return;
-      const block = h.closest('.set-card') || h.parentElement;
-      add('account', { icon: '👤', typeLabel: tk('search.account'), sub: tk('search.openSection'), run: () => { setView('konto'); gsScrollTo(h.closest('.set-card') || h); } },
-        label, '', block ? block.textContent.replace(/\s+/g, ' ') : '');
-    });
+    const root = document.getElementById('accountCard');
     const pwBtn = document.getElementById('openChangePasswordBtn');
     if (pwBtn && !gsHiddenWithin(pwBtn, root)) {
       add('account', { icon: '🔑', typeLabel: tk('search.account'), sub: tk('search.newPassword'), run: () => { setView('konto'); pwBtn.click(); } }, tk('account.changePassword'), 'kennwort');

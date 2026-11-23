@@ -3,6 +3,11 @@
    language other than German. One entry per version of PINN_CHANGELOG: t = title, p = points in the same order
    (null = no translation, the German text is shown). Older versions are not translated. */
 window.PINN_CHANGELOG_EN = {
+  "1.164": {"t": "Settings and profile merged", "p": [
+"1.164.0: Settings and profile merged: the menu now only has the gear. At the top is \u201cLogged in as\u201d (always open, full width on iPad/PC) with password, sign-out and the signed-in devices to expand. Notifications are now a card like all other settings. Guests only see \u201cLogged in as\u201d.",
+"1.164.0: \u201cUnlock & lock\u201d: PIN, Face ID / Touch ID, \u201cLock pinn.\u201d and \u201cLock menus\u201d in one card. There is only one PIN now \u2013 the PIN of the family dashboard also opens locked menus and unlocks pinn. when it is opened (now also without Face ID). A separate PIN of the menu lock is dropped; Face ID that was already set up is kept.",
+"1.164.0: New card \u201cAdmin\u201d (admins only) with Manage profiles, Security, System and Dashboard. Under Dashboard: dashboard devices (with \u201cthis device\u201d), background, tasks and chats, and \u201cGuests\u201d \u2013 there \u201cAdd guest\u201d jumps straight to Manage profiles and opens the guest window. Only admins see System now."
+  ]},
   "1.163": {"t": "Date polls, lending list, import comparison", "p": [
 "1.163.2: Lengths by region: Settings \u2192 Language & region now has \u201cLengths\u201d (Automatic / Metric / Imperial). In the USA, UK etc. distances, speed, wind, rain, body height and accuracy are shown in miles, feet, mph, inches or ft/in. Stored data stays metric. Vehicles too: odometer, service, calculators and cost per distance in miles. New next to it: \u201cWeights, liquids, areas\u201d (Automatic / Metric / US / UK): weight in lb, drinks in fl oz, fuel in gallons (US; litres stay in the UK), consumption in mpg, living space in ft\u00b2. Existing entries are converted as well; stored data stays metric.",
 "1.163.2: Finance: in the history chart the sum is shown above the selected bar only \u2013 side by side the numbers were unreadable. The amounts of the other bars still appear when you tap them or as hint text.",

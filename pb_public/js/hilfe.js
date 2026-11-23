@@ -27,7 +27,6 @@ const HLP_CHAPTERS = [
   { id: 'fahrzeuge', view: 'fahrzeuge', icon: '🚗', title: 'nav.vehicles', quick: 'help.ch.fahrzeuge.quick', detail: 'help.ch.fahrzeuge.detail' },
   { id: 'haus', view: 'haus', icon: '🏡', title: 'nav.home', quick: 'help.ch.haus.quick', detail: 'help.ch.haus.detail' },
   { id: 'suche', view: null, icon: '🔍', title: 'help.ch.suche.title', quick: 'help.ch.suche.quick', detail: 'help.ch.suche.detail' },
-  { id: 'konto', view: 'konto', icon: '👤', title: 'nav.account', quick: 'help.ch.konto.quick', detail: 'help.ch.konto.detail' },
   { id: 'einstellungen', view: 'einstellungen', icon: '⚙️', title: 'nav.settings', quick: 'help.ch.einstellungen.quick', detail: 'help.ch.einstellungen.detail' },
 ];
 
