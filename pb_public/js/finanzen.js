@@ -1006,13 +1006,14 @@ function renderFinanceTrend() {
     const redH = c.total / maxVal * H;
     const greenH = (c.budget && c.total < c.budget) ? (c.budget - c.total) / maxVal * H : 0;
     const overLine = (c.budget && c.total > c.budget) ? `<span class="fin-trend-budgetline" style="bottom:${c.budget / maxVal * H}px"></span>` : '';
+    // The sum above a bar is shown for the selected bar only (side by side the numbers were unreadable)
     const selected = c.off === finOffset;
     let label = c.range.short;
     // Always reserve the year row so all bars stand at the same height
     if (finPeriod === 'month') label += `<span class="block text-[9px] leading-tight text-ink/35">${(c.range.start.getMonth() === 0 || c.off === endOff - n + 1) ? c.range.start.getFullYear() : '&nbsp;'}</span>`;
     return `
       <button type="button" class="fin-trend-col flex-1 min-w-0 flex flex-col items-center gap-1 select-none${c.future ? ' fin-trend-future' : ''}" data-off="${c.off}" title="${escapeHtml(c.range.label + ': ' + fmtEur(c.total) + (c.future ? ' (' + tk('fin.plannedLower') + ')' : ''))}">
-        <span class="text-[10px] ${selected ? 'font-semibold text-ink' : 'text-ink/45'} whitespace-nowrap leading-none h-3" style="display:block;height:12px">${c.total > 0 ? curPlain0(c.total) : ''}</span>
+        <span class="text-[10px] ${selected ? 'font-semibold text-ink' : 'text-ink/45'} whitespace-nowrap leading-none h-3" style="display:block;height:12px">${selected && c.total > 0 ? curPlain0(c.total) : ''}</span>
         <span class="fin-trend-track ${selected ? 'selected' : ''}" style="height:${H}px">
           <span class="fin-trend-stack">
             <span style="height:${greenH}px;background:${FIN_GREEN};opacity:${selected ? 1 : 0.55}"></span>

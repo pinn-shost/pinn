@@ -57,6 +57,9 @@ var GH_DRINKS = [
   { id: 'milch', key: 'gh.drink.milk', color: '#F3EFE6', cup: false },
   { id: 'limo', key: 'gh.drink.soda', color: '#E5D74B', cup: false },
 ];
+// Drink amounts are stored in ml; in customary regions shown in fl oz (US or imperial, see PINN_REGION.mlTo)
+function ghMlN(ml) { return ghNum(PINN_REGION.mlTo(ml)); }
+function ghTkV(key, params) { const t = tk(key, params); return PINN_REGION.customary() ? t.replace(/\bml\b/g, PINN_REGION.mlUnit()) : t; }
 var GH_AMOUNTS = [150, 200, 250, 330, 500];
 var GH_EVERY = [30, 45, 60, 90, 120, 150, 180, 240]; // drink reminder: minutes between two messages
 var GH_GOALS = [1000, 1250, 1500, 1750, 2000, 2250, 2500, 2750, 3000, 3500];
@@ -312,7 +315,7 @@ function ghPaneHtml() {
     if (ghCanSee(m.id)) {
       const d = ghData(m.id);
       const parts = [];
-      if (d.blocks.drink) parts.push('💧 ' + tk('gh.drink.ofGoal', { ml: ghNum(ghDrinkTotal(d, today)), goal: ghNum(d.drink.goal) }));
+      if (d.blocks.drink) parts.push('💧 ' + ghTkV('gh.drink.ofGoal', { ml: ghMlN(ghDrinkTotal(d, today)), goal: ghMlN(d.drink.goal) }));
       if (d.blocks.meds && d.meds.list.length) {
         const slots = ghMedSlots(d);
         const taken = (d.meds.taken[today] || []).length;
@@ -437,13 +440,13 @@ function ghDrinkHint(total, goal) {
   const now = new Date();
   const h = now.getHours() + now.getMinutes() / 60;
   const glasses = Math.ceil(rest / 250);
-  if (h >= GH_DAY_TO) return tk('gh.drink.restLate', { ml: ghNum(rest) });
+  if (h >= GH_DAY_TO) return ghTkV('gh.drink.restLate', { ml: ghMlN(rest) });
   const from = Math.max(h, GH_DAY_FROM);
   const hours = Math.max(1, GH_DAY_TO - from);
   const perHour = Math.ceil(rest / hours / 10) * 10;
   const expected = goal * Math.max(0, Math.min(1, (h - GH_DAY_FROM) / (GH_DAY_TO - GH_DAY_FROM)));
   const plan = total >= expected ? tk('gh.drink.onTrack') : tk('gh.drink.behind');
-  return tk('gh.drink.rest', { ml: ghNum(rest), glasses: ghNum(glasses), perHour: ghNum(perHour), until: GH_DAY_TO + ':00' }) + ' ' + plan;
+  return ghTkV('gh.drink.rest', { ml: ghMlN(rest), glasses: ghNum(glasses), perHour: ghMlN(perHour), until: GH_DAY_TO + ':00' }) + ' ' + plan;
 }
 // Open "Settings" sections of the drink block per person (survive the re-render after every change)
 const ghDrinkSettingsOpen = new Set();
@@ -454,16 +457,16 @@ function ghDrinkHtml(m, d, edit) {
   const goal = Number(d.drink.goal) || 2000;
   const pct = Math.min(100, Math.round(total / goal * 100));
   const goalSel = edit
-    ? `<select class="hp-goal" data-ghchange="goal" data-member="${famAttr(m.id)}" aria-label="${ghAttr(tk('gh.drink.goal'))}">${GH_GOALS.concat(GH_GOALS.includes(goal) ? [] : [goal]).sort((a, b) => a - b).map(g => `<option value="${g}"${g === goal ? ' selected' : ''}>${tk('gh.drink.goalOpt', { ml: ghNum(g) })}</option>`).join('')}</select>`
-    : `<span class="text-xs text-ink/50">${tk('gh.drink.goalOpt', { ml: ghNum(goal) })}</span>`;
+    ? `<select class="hp-goal" data-ghchange="goal" data-member="${famAttr(m.id)}" aria-label="${ghAttr(tk('gh.drink.goal'))}">${GH_GOALS.concat(GH_GOALS.includes(goal) ? [] : [goal]).sort((a, b) => a - b).map(g => `<option value="${g}"${g === goal ? ' selected' : ''}>${ghTkV('gh.drink.goalOpt', { ml: ghMlN(g) })}</option>`).join('')}</select>`
+    : `<span class="text-xs text-ink/50">${ghTkV('gh.drink.goalOpt', { ml: ghMlN(goal) })}</span>`;
   const chips = list.map(x => {
     const dr = ghDrinkById(x.kind);
-    return `<span class="hp-chip">${ghVesselSvg(dr, 0.7)}<span>${ghNum(x.ml)} ml</span><span class="text-ink/40">${escapeHtml(x.t || '')}</span>${edit ? `<button type="button" class="hp-x" data-ghact="drink-del" data-member="${famAttr(m.id)}" data-id="${famAttr(x.id)}" aria-label="${ghAttr(tk('common.delete'))}">×</button>` : ''}</span>`;
+    return `<span class="hp-chip">${ghVesselSvg(dr, 0.7)}<span>${ghMlN(x.ml)} ${PINN_REGION.mlUnit()}</span><span class="text-ink/40">${escapeHtml(x.t || '')}</span>${edit ? `<button type="button" class="hp-x" data-ghact="drink-del" data-member="${famAttr(m.id)}" data-id="${famAttr(x.id)}" aria-label="${ghAttr(tk('common.delete'))}">×</button>` : ''}</span>`;
   }).join('');
   // Since 1.150.5: goal, today's drinks and the reminder sit in one folding "Settings" section under the button
   const open = ghDrinkSettingsOpen.has(m.id);
   const settings = `<details class="hp-fold" data-ghfold="drink" data-member="${famAttr(m.id)}"${open ? ' open' : ''}>
-      <summary class="hp-fold-sum"><span>⚙️ ${tk('nav.settings')}</span><span class="hp-fold-meta">${tk('gh.drink.goalOpt', { ml: ghNum(goal) })}${list.length ? ' · ' + list.length + ' ×' : ''}</span><span class="hp-fold-arrow" aria-hidden="true">›</span></summary>
+      <summary class="hp-fold-sum"><span>⚙️ ${tk('nav.settings')}</span><span class="hp-fold-meta">${ghTkV('gh.drink.goalOpt', { ml: ghMlN(goal) })}${list.length ? ' · ' + list.length + ' ×' : ''}</span><span class="hp-fold-arrow" aria-hidden="true">›</span></summary>
       <div class="hp-fold-body">
         <div class="hp-fold-row"><span class="hp-fold-l">🎯 ${tk('gh.drink.goal')}</span>${goalSel}</div>
         <div class="hp-fold-l mt-3">🥤 ${tk('gh.drink.todayList')}</div>
@@ -474,7 +477,7 @@ function ghDrinkHtml(m, d, edit) {
   const body = `
     <div class="hp-progress" role="progressbar" aria-valuemin="0" aria-valuemax="${goal}" aria-valuenow="${total}"><span style="width:${pct}%"></span></div>
     <div class="flex items-baseline justify-between gap-2 mt-1.5">
-      <span class="text-sm font-medium">${tk('gh.drink.ofGoal', { ml: ghNum(total), goal: ghNum(goal) })}</span>
+      <span class="text-sm font-medium">${ghTkV('gh.drink.ofGoal', { ml: ghMlN(total), goal: ghMlN(goal) })}</span>
       <span class="text-xs text-ink/50">${pct} %</span>
     </div>
     <p class="text-xs text-ink/60 mt-1">${escapeHtml(ghDrinkHint(total, goal))}</p>
@@ -521,7 +524,7 @@ function ghRenderDrinkPopup() {
   if (!ov || !ghDrinkPick) return;
   const pick = ghDrinkPick.drink ? ghDrinkById(ghDrinkPick.drink) : null;
   const items = pick
-    ? GH_AMOUNTS.map(ml => `<button type="button" class="hp-pick" data-hpml="${ml}">${ghVesselSvg(pick, ml / 500)}<span class="hp-pick-t">${ghNum(ml)} ml</span></button>`).join('')
+    ? GH_AMOUNTS.map(ml => `<button type="button" class="hp-pick" data-hpml="${ml}">${ghVesselSvg(pick, ml / 500)}<span class="hp-pick-t">${ghMlN(ml)} ${PINN_REGION.mlUnit()}</span></button>`).join('')
     : GH_DRINKS.map(dr => `<button type="button" class="hp-pick" data-hpdrink="${dr.id}">${ghVesselSvg(dr, 0.75)}<span class="hp-pick-t">${escapeHtml(tk(dr.key))}</span></button>`).join('');
   ov.innerHTML = `<div class="hp-sheet" role="dialog" aria-modal="true">
     <div class="flex items-center justify-between gap-2 mb-3">
@@ -538,7 +541,7 @@ function ghLogDrink(memberId, kind, ml) {
   const now = new Date();
   const entry = { id: ghId(), t: pad2(now.getHours()) + ':' + pad2(now.getMinutes()), kind, ml };
   const day = ghToday();
-  try { finShowToast(tk('gh.drink.logged', { ml: ghNum(ml), drink: tk(ghDrinkById(kind).key) })); } catch (e) { /* no toast */ }
+  try { finShowToast(ghTkV('gh.drink.logged', { ml: ghMlN(ml), drink: tk(ghDrinkById(kind).key) })); } catch (e) { /* no toast */ }
   ghChange(memberId, (d) => {
     const list = d.drink.log[day] || [];
     if (!list.some(x => x.id === entry.id)) list.push(entry);
@@ -1127,10 +1130,10 @@ function ghHandsHtml(m, d, edit) {
 /* ---------- Block: values ---------- */
 function ghValuesHtml(m, d, edit) {
   const list = d.values.slice().sort((a, b) => String(b.date).localeCompare(String(a.date))).slice(0, 6);
-  const kg = PINN_REGION.unit('kg');
+  const kg = PINN_REGION.wUnit() === 'kg' ? PINN_REGION.unit('kg') : 'lb';
   const rows = list.map(v => `<div class="hp-row">
       <span class="hp-time">${escapeHtml(ghFmtDate(v.date))}</span>
-      <span class="flex-1 text-sm">${[v.weight ? '⚖️ ' + ghNum(v.weight) + ' ' + kg : '', v.sys && v.dia ? '❤️ ' + v.sys + '/' + v.dia : '', v.pulse ? '💓 ' + v.pulse : ''].filter(Boolean).join(' · ')}</span>
+      <span class="flex-1 text-sm">${[v.weight ? '⚖️ ' + ghNum(PINN_REGION.wTo(v.weight)) + ' ' + kg : '', v.sys && v.dia ? '❤️ ' + v.sys + '/' + v.dia : '', v.pulse ? '💓 ' + v.pulse : ''].filter(Boolean).join(' · ')}</span>
       ${edit ? `<button type="button" class="hp-x" data-ghact="value-del" data-member="${famAttr(m.id)}" data-id="${famAttr(v.id)}" aria-label="${ghAttr(tk('common.delete'))}">×</button>` : ''}
     </div>`).join('');
   const body = rows ? `<div class="hp-list">${rows}</div>` : `<p class="text-sm text-ink/50">${tk('gh.values.empty')}</p>`;
@@ -1142,7 +1145,7 @@ function ghValueForm(memberId) {
   famOpenModal(`
     <h3 class="font-serif text-lg mb-3">${tk('gh.values.new')}</h3>
     <label class="hp-lbl">${tk('gh.date')}<input id="hpValDate" type="date" value="${ghToday()}" class="hp-in" /></label>
-    <label class="hp-lbl">${tk('gh.values.weight', { unit: PINN_REGION.unit('kg') })}<input id="hpValWeight" type="number" inputmode="decimal" step="0.1" min="0" class="hp-in" /></label>
+    <label class="hp-lbl">${tk('gh.values.weight', { unit: PINN_REGION.wUnit() === 'kg' ? PINN_REGION.unit('kg') : 'lb' })}<input id="hpValWeight" type="number" inputmode="decimal" step="0.1" min="0" class="hp-in" /></label>
     <div class="hp-lbl">${tk('gh.values.bp')}<div class="grid grid-cols-2 gap-2"><input id="hpValSys" type="number" inputmode="numeric" placeholder="${ghAttr(tk('gh.values.sys'))}" class="hp-in" /><input id="hpValDia" type="number" inputmode="numeric" placeholder="${ghAttr(tk('gh.values.dia'))}" class="hp-in" /></div></div>
     <label class="hp-lbl">${tk('gh.values.pulse')}<input id="hpValPulse" type="number" inputmode="numeric" class="hp-in" /></label>
     ${ghModalButtons(false)}`);
@@ -1150,7 +1153,7 @@ function ghValueForm(memberId) {
 function ghSaveValue() {
   const num = (id, max) => { const v = Number(String(document.getElementById(id).value).replace(',', '.')); return isFinite(v) && v > 0 && v < max ? Math.round(v * 10) / 10 : 0; };
   const date = document.getElementById('hpValDate').value || ghToday();
-  const v = { id: ghId(), date, weight: num('hpValWeight', 1000), sys: Math.round(num('hpValSys', 300)), dia: Math.round(num('hpValDia', 250)), pulse: Math.round(num('hpValPulse', 300)) };
+  const v = { id: ghId(), date, weight: Math.round(PINN_REGION.wFrom(num('hpValWeight', 2200)) * 10) / 10, sys: Math.round(num('hpValSys', 300)), dia: Math.round(num('hpValDia', 250)), pulse: Math.round(num('hpValPulse', 300)) };
   if (!v.weight && !(v.sys && v.dia) && !v.pulse) return;
   const st = ghModal;
   famCloseModal();

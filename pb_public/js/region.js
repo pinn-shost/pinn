@@ -93,6 +93,11 @@
   ];
   // Countries that show temperatures in Fahrenheit by default (everything else: Celsius)
   var FAHRENHEIT = ['US', 'LR', 'BS', 'BZ', 'KY', 'PW', 'FM', 'MH'];
+  // Countries that show lengths in miles / feet / inches by default (everything else: metric)
+  var IMPERIAL = ['US', 'GB', 'LR', 'MM'];
+  // Weights / liquids / areas: US customary (gallon 3.785 l) or UK imperial (gallon 4.546 l, fuel still sold in litres), else metric
+  var MASS_US = ['US', 'LR', 'MM'];
+  var MASS_UK = ['GB'];
   // Additional selectable currencies (all national currencies above are included anyway)
   var EXTRA_CURRENCIES = [];
   // Number format: thousands and decimal separator (auto = as usual in the chosen country)
@@ -132,7 +137,9 @@
     var waehrung = CURRENCIES.indexOf(w) >= 0 ? w : 'auto';
     var zahlen = FORMATS[o.zahlen] ? o.zahlen : 'auto';
     var temperatur = o.temperatur === 'C' || o.temperatur === 'F' ? o.temperatur : 'auto';
-    return { land: land, waehrung: waehrung, zahlen: zahlen, temperatur: temperatur };
+    var laenge = o.laenge === 'metric' || o.laenge === 'imperial' ? o.laenge : 'auto';
+    var masse = o.masse === 'metric' || o.masse === 'us' || o.masse === 'uk' ? o.masse : 'auto';
+    return { land: land, waehrung: waehrung, zahlen: zahlen, temperatur: temperatur, laenge: laenge, masse: masse };
   }
 
   // Compute the complete settings of a country/format (without the replaced formatters)
@@ -167,13 +174,15 @@
       if (p.type === 'currency') { sym = p.value; vorne = !sawNum; }
     });
     var tUnit = set.temperatur === 'C' || set.temperatur === 'F' ? set.temperatur : (FAHRENHEIT.indexOf(row[0]) >= 0 ? 'F' : 'C');
+    var lUnit = set.laenge === 'metric' || set.laenge === 'imperial' ? set.laenge : (IMPERIAL.indexOf(row[0]) >= 0 ? 'imperial' : 'metric');
+    var mUnit = set.masse === 'metric' || set.masse === 'us' || set.masse === 'uk' ? set.masse : (MASS_US.indexOf(row[0]) >= 0 ? 'us' : (MASS_UK.indexOf(row[0]) >= 0 ? 'uk' : 'metric'));
     return {
-      tempUnit: tUnit,
+      tempUnit: tUnit, lenUnit: lUnit, massUnit: mUnit,
       row: row, locale: loc, currency: cur, group: g, decimal: d, override: over, digits: nk, symbol: sym, before: vorne,
       notruf: { polizei: row[3], rettung: row[4], feuer: row[5], allgemein: row[6] || '' },
     };
   }
-  function sameSet(a, b) { return a.land === b.land && a.waehrung === b.waehrung && a.zahlen === b.zahlen && a.temperatur === b.temperatur; }
+  function sameSet(a, b) { return a.land === b.land && a.waehrung === b.waehrung && a.zahlen === b.zahlen && a.temperatur === b.temperatur && a.laenge === b.laenge && a.masse === b.masse; }
 
   var stored = cleanSettings(readStored());
   var C = compute(stored);
@@ -257,7 +266,7 @@
   function werteOf(set) {
     var x = compute(set);
     return {
-      land: x.row[0], waehrung: set.waehrung, zahlen: set.zahlen, temperatur: set.temperatur, tempEinheit: x.tempUnit,
+      land: x.row[0], waehrung: set.waehrung, zahlen: set.zahlen, temperatur: set.temperatur, tempEinheit: x.tempUnit, laenge: set.laenge, laengeEinheit: x.lenUnit, masse: set.masse, masseEinheit: x.massUnit,
       geldSym: x.symbol, geldVorne: x.before, geldDez: x.decimal, geldTsd: x.group, geldNk: x.digits,
       notrufPolizei: x.notruf.polizei, notrufRettung: x.notruf.rettung, notrufFeuer: x.notruf.feuer,
     };
@@ -270,6 +279,8 @@
     notruf: C.notruf,
     // Temperature unit shown in the app: 'C' or 'F' (pinn. always calculates in °C internally)
     tempUnit: C.tempUnit, FAHRENHEIT: FAHRENHEIT,
+    // Length system shown in the app: 'metric' or 'imperial' (pinn. always stores and calculates metric)
+    lenUnit: C.lenUnit, IMPERIAL: IMPERIAL, massUnit: C.massUnit, MASS_US: MASS_US, MASS_UK: MASS_UK,
     // Selection stored on this device (land, waehrung = code or 'auto', zahlen = format or 'auto')
     stored: function () { var s = cleanSettings(readStored()); if (!s.land) s.land = C.row[0]; return s; },
     // Remember the selection. true = differs from the one currently shown (pinn. has to reload)
@@ -334,6 +345,79 @@
     if (c === null || c === undefined || c === '' || !isFinite(v)) return null;
     return Math.round((unit || C.tempUnit) === 'F' ? v * 9 / 5 + 32 : v);
   };
+  // Lengths for display (values are metric internally). Imperial: feet below a tenth of a mile, otherwise miles.
+  var R = window.PINN_REGION;
+  function lnum(v, d) { return R.num(v, 0, d); }
+  R.imperial = function () { return C.lenUnit === 'imperial'; };
+  // Distance in metres: „350 m“ / „1,2 km“ – „1150 ft“ / „1.2 mi“
+  R.fmtDist = function (m) {
+    m = Number(m);
+    if (!isFinite(m)) return '';
+    if (C.lenUnit !== 'imperial') {
+      return m < 1000 ? lnum(Math.round(m / 10) * 10) + ' m' : (m < 10000 ? lnum(m / 1000, 1) : lnum(Math.round(m / 1000))) + ' km';
+    }
+    var ft = m * 3.28084;
+    if (ft < 528) return lnum(Math.round(ft / 10) * 10) + ' ft';
+    var mi = m / 1609.344;
+    return (mi < 10 ? lnum(mi, 1) : lnum(Math.round(mi))) + ' mi';
+  };
+  // Small length in metres (accuracy): „± 12 m“ → „39 ft“
+  R.fmtSmall = function (m) {
+    m = Number(m);
+    if (!isFinite(m)) return '';
+    return C.lenUnit === 'imperial' ? lnum(Math.round(m * 3.28084)) + ' ft' : lnum(Math.round(m)) + ' m';
+  };
+  // Speed in km/h
+  R.fmtSpeed = function (kmh) {
+    kmh = Number(kmh);
+    if (!isFinite(kmh)) return '';
+    return C.lenUnit === 'imperial' ? lnum(Math.round(kmh / 1.609344)) + ' mph' : lnum(Math.round(kmh)) + ' ' + R.unit('km/h');
+  };
+  // Precipitation in millimetres
+  R.fmtRain = function (mm) {
+    mm = Number(mm);
+    if (!isFinite(mm)) return '';
+    return C.lenUnit === 'imperial' ? lnum(Math.round(mm / 25.4 * 100) / 100, 2) + ' in' : lnum(mm, 1) + ' ' + R.unit('mm');
+  };
+  // Body height in centimetres: „178 cm“ → „5′10″“
+  R.fmtHeight = function (cm) {
+    cm = Number(cm);
+    if (!isFinite(cm) || cm <= 0) return '';
+    if (C.lenUnit !== 'imperial') return lnum(cm) + ' ' + R.unit('cm');
+    var inch = Math.round(cm / 2.54), f = Math.floor(inch / 12);
+    return f + '\u2032' + (inch - f * 12) + '\u2033';
+  };
+  // ---- Weights, liquids, areas (values are metric internally: kg, ml, l, m², l/100 km) ----
+  var MS = C.massUnit;
+  var LB = 2.20462262, FT2 = 10.7639104;
+  var GAL = MS === 'uk' ? 4.54609 : 3.78541178, FLOZ = MS === 'uk' ? 28.4130625 : 29.5735296;
+  R.massSys = function () { return MS; };
+  R.customary = function () { return MS !== 'metric'; };
+  function rd(v, d) { var f = Math.pow(10, d || 0); return Math.round(v * f) / f; }
+  // Weight: kg ⇄ lb
+  R.wUnit = function () { return MS === 'metric' ? 'kg' : 'lb'; };
+  R.wTo = function (kg) { return MS === 'metric' ? kg : rd(Number(kg) * LB, 1); };
+  R.wFrom = function (v) { return MS === 'metric' ? v : Number(v) / LB; };
+  // Small liquid amounts (drinks): ml ⇄ fl oz
+  R.mlUnit = function () { return MS === 'metric' ? 'ml' : 'fl oz'; };
+  R.mlTo = function (ml) { return MS === 'metric' ? ml : rd(Number(ml) / FLOZ, 0); };
+  // Fuel volume: litres ⇄ gallons (the UK keeps litres at the pump, but uses mpg)
+  R.gallonFuel = function () { return MS === 'us'; };
+  R.fuelUnit = function () { return MS === 'us' ? 'gal' : 'l'; };
+  R.fuelTo = function (l) { return MS === 'us' ? Number(l) / GAL : l; };
+  R.fuelFrom = function (v) { return MS === 'us' ? Number(v) * GAL : v; };
+  // Price per litre ⇄ price per gallon
+  R.fuelPriceTo = function (p) { return MS === 'us' ? Number(p) * GAL : p; };
+  R.fuelPriceFrom = function (p) { return MS === 'us' ? Number(p) / GAL : p; };
+  // Consumption: l/100 km ⇄ miles per gallon (US or imperial gallon)
+  R.consUnit = function () { return MS === 'metric' ? 'l/100 km' : 'mpg'; };
+  R.consTo = function (l100) { l100 = Number(l100); return MS === 'metric' || !(l100 > 0) ? l100 : 100 * GAL / (1.609344 * l100); };
+  R.consFrom = function (mpg) { mpg = Number(mpg); return MS === 'metric' || !(mpg > 0) ? mpg : 100 * GAL / (1.609344 * mpg); };
+  // Area: m² ⇄ ft²
+  R.areaUnit = function () { return MS === 'metric' ? 'm\u00b2' : 'ft\u00b2'; };
+  R.areaFactor = function () { return MS === 'metric' ? 1 : FT2; };
+  R.areaTo = function (m2) { return MS === 'metric' ? m2 : rd(Number(m2) * FT2, 0); };
+  R.areaFrom = function (v) { return MS === 'metric' ? v : Number(v) / FT2; };
   document.documentElement.classList.toggle('cur-before', C.before);
   try { if (sessionStorage.getItem('pinn.region.reload') === JSON.stringify(cleanSettings(readStored()))) sessionStorage.removeItem('pinn.region.reload'); } catch (e) { /* ignore */ }
 })();

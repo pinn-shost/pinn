@@ -76,7 +76,7 @@ function applyPersonalDesign() {
   // Remember the region stored in the profile (country, currency, number format, temperature unit) on the device
   let regionChanged = false;
   if (typeof w.land === 'string' && window.PINN_REGION) {
-    regionChanged = PINN_REGION.save({ land: w.land, waehrung: w.waehrung, zahlen: w.zahlen, temperatur: w.temperatur });
+    regionChanged = PINN_REGION.save({ land: w.land, waehrung: w.waehrung, zahlen: w.zahlen, temperatur: w.temperatur, laenge: w.laenge, masse: w.masse });
   }
   // Take over the language stored in the profile (reloads pinn. once for a different language)
   let reloading = false;

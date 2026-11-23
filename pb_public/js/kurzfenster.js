@@ -50,7 +50,7 @@ function kzDrinkUndoHtml(h) {
   const at = last ? kzIdTime(last.id) : 0;
   const live = last && at && Date.now() - at < KZ_UNDO_MS;
   if (live) {
-    const what = ghNum(last.ml) + ' ml ' + tk(ghDrinkById(last.kind).key);
+    const what = ghMlN(last.ml) + ' ' + PINN_REGION.mlUnit() + ' ' + tk(ghDrinkById(last.kind).key);
     return `<button type="button" class="kz-undo" data-kzs="undodrink" data-id="${escapeHtml(last.id)}">↩ ${escapeHtml(kzT('undo', { what }))}</button>`;
   }
   if (kzUndone && Date.now() - kzUndone.at < KZ_UNDO_MS) return `<button type="button" class="kz-undo" disabled>↩ ${escapeHtml(kzT('undone'))}</button>`;
@@ -76,10 +76,10 @@ function kzDrinkSheet() {
     const goal = h.d.drink.goal;
     const pick = kzSheetState.drink ? ghDrinkById(kzSheetState.drink) : null;
     const items = pick
-      ? GH_AMOUNTS.map(ml => `<button type="button" class="hp-pick" data-kzs="ml" data-v="${ml}">${ghVesselSvg(pick, ml / 500)}<span class="hp-pick-t">${ghNum(ml)} ml</span></button>`).join('')
+      ? GH_AMOUNTS.map(ml => `<button type="button" class="hp-pick" data-kzs="ml" data-v="${ml}">${ghVesselSvg(pick, ml / 500)}<span class="hp-pick-t">${ghMlN(ml)} ${PINN_REGION.mlUnit()}</span></button>`).join('')
       : GH_DRINKS.map(dr => `<button type="button" class="hp-pick" data-kzs="drink" data-v="${dr.id}">${ghVesselSvg(dr, 0.75)}<span class="hp-pick-t">${escapeHtml(tk(dr.key))}</span></button>`).join('');
     const pct = goal ? Math.min(100, Math.round(total / goal * 100)) : 0;
-    return `<div class="kz-big">${escapeHtml(tk('shortcut.sub.drink', { ml: ghNum(total), goal: ghNum(goal) }))}</div>
+    return `<div class="kz-big">${escapeHtml(ghTkV('shortcut.sub.drink', { ml: ghMlN(total), goal: ghMlN(goal) }))}</div>
       <div class="kz-bar"><i style="width:${pct}%"></i></div>
       <p class="kz-hint">${escapeHtml(ghDrinkHint(total, goal))}</p>
       <div class="kz-step">${pick ? `<button type="button" class="kz-back" data-kzs="drinkback">‹ ${escapeHtml(tk('cal.back'))}</button>` : ''}<span>${escapeHtml(pick ? tk('gh.drink.howMuch', { drink: tk(pick.key) }) : tk('gh.drink.what'))}</span></div>
@@ -93,7 +93,7 @@ function kzLogDrink(kind, ml) {
   const now = new Date();
   const entry = { id: ghId(), t: pad2(now.getHours()) + ':' + pad2(now.getMinutes()), kind, ml };
   const day = kzToday();
-  try { finShowToast(tk('gh.drink.logged', { ml: ghNum(ml), drink: tk(ghDrinkById(kind).key) })); } catch (e) { /* no toast */ }
+  try { finShowToast(ghTkV('gh.drink.logged', { ml: ghMlN(ml), drink: tk(ghDrinkById(kind).key) })); } catch (e) { /* no toast */ }
   ghChange(h.id, (d) => {
     const list = d.drink.log[day] || [];
     if (!list.some(x => x.id === entry.id)) list.push(entry);

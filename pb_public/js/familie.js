@@ -638,8 +638,8 @@ function famRenderInfo() {
     live ? ('<span class="text-red-600 font-medium">' + tk('family.live') + '</span>') : '',
     famAgo(p.zeit),
     p.akku != null ? (p.laedt ? '🔌 ' : '🔋 ') + p.akku + ' %' : '',
-    p.tempo ? '🏃 ' + p.tempo + ' ' + PINN_REGION.unit('km/h') : '',
-    p.genau ? '± ' + p.genau + ' ' + PINN_REGION.unit('m') : '',
+    p.tempo ? '🏃 ' + PINN_REGION.fmtSpeed(p.tempo) : '',
+    p.genau ? '± ' + PINN_REGION.fmtSmall(p.genau) : '',
   ].filter(Boolean).join(' · ');
   const nav = isAppleMobile()
     ? `https://maps.apple.com/?ll=${p.lat},${p.lon}&q=${encodeURIComponent(famDeviceName(g))}`
@@ -756,6 +756,22 @@ function famRefreshLive() {
 }
 
 /* ---------- View emergency pass ---------- */
+// Weights are stored in kg; shown and typed in kg or lb depending on the region (see PINN_REGION.wTo / wFrom)
+function famWUnit() { return PINN_REGION.wUnit() === 'kg' ? PINN_REGION.unit('kg') : 'lb'; }
+function famWeightText(raw) {
+  const v = Number(String(raw).replace(',', '.'));
+  if (!isFinite(v) || v <= 0) return String(raw) + ' ' + PINN_REGION.unit('kg');
+  return String(PINN_REGION.wTo(v)).replace('.', ',') + ' ' + famWUnit();
+}
+function famWeightIn(raw) {
+  const v = Number(String(raw == null ? '' : raw).replace(',', '.'));
+  return !isFinite(v) || v <= 0 || PINN_REGION.wUnit() === 'kg' ? (raw == null ? '' : raw) : String(PINN_REGION.wTo(v)).replace('.', ',');
+}
+function famWeightOut(typed) {
+  const v = Number(String(typed).replace(',', '.'));
+  if (!isFinite(v) || v <= 0 || PINN_REGION.wUnit() === 'kg') return typed;
+  return String(Math.round(PINN_REGION.wFrom(v) * 100) / 100);
+}
 function famRow(label, value, extra) {
   if (value == null || String(value).trim() === '') return '';
   return `<div class="fam-row"><div class="fam-k">${escapeHtml(label)}</div><div class="fam-v">${escapeHtml(value)}</div>${extra || ''}</div>`;
@@ -819,9 +835,9 @@ function famDetailHtml(m) {
   const doc = !pet && p.doctorPhone ? `<a class="fz-act-btn" href="${famAttr(famTel(p.doctorPhone))}"><span class="fz-ti">🩺</span>${tk('family.doctor')}</a>` : '';
 
   const medCard = pet
-    ? [famRow(tk('family.speciesBreed'), p.species), famRow(tk('family.dateBirth'), famFmtDate(p.birth)), famRow(tk('family.chipNumber'), p.chip), famRow(tk('family.weight'), p.weight ? p.weight + ' ' + PINN_REGION.unit('kg') : ''),
+    ? [famRow(tk('family.speciesBreed'), p.species), famRow(tk('family.dateBirth'), famFmtDate(p.birth)), famRow(tk('family.chipNumber'), p.chip), famRow(tk('family.weight'), p.weight ? famWeightText(p.weight) : ''),
        famRow(tk('family.allergiesIntolerances'), p.allergies), famRow(tk('family.illnesses'), p.conditions), famRow(tk('family.vaccinations'), p.vaccinations)].join('')
-    : [famRow(tk('family.dateBirth'), famFmtDate(p.birth)), famRow(tk('family.bloodType'), p.blood), famRow(tk('family.heightWeight'), [p.height ? p.height + ' ' + PINN_REGION.unit('cm') : '', p.weight ? p.weight + ' ' + PINN_REGION.unit('kg') : ''].filter(Boolean).join(' · ')),
+    : [famRow(tk('family.dateBirth'), famFmtDate(p.birth)), famRow(tk('family.bloodType'), p.blood), famRow(tk('family.heightWeight'), [p.height ? PINN_REGION.fmtHeight(p.height) : '', p.weight ? famWeightText(p.weight) : ''].filter(Boolean).join(' · ')),
        famRow(tk('family.allergies'), p.allergies), famRow(tk('family.preExistingConditions'), p.conditions), famRow(tk('family.vaccinations'), p.vaccinations),
        famRow(tk('family.organDonation'), p.organDonor ? { ja: tk('family.yesIdAvailable'), nein: tk('family.no'), teilweise: tk('family.partiallySeeCard') }[p.organDonor] || p.organDonor : ''), famRow(tk('family.livingWill'), p.livingWill)].join('');
   const medsHtml = meds.length ? `<div class="fam-row"><div class="fam-k">${tk('lists.t.i.medication')}</div><div class="fam-v">${meds.map(x => `<div>💊 <b>${escapeHtml(x.name || '')}</b>${x.dose ? ' · ' + escapeHtml(x.dose) : ''}</div>`).join('')}</div></div>` : '';
@@ -947,12 +963,12 @@ function famOpenEdit(memberId) {
     <div class="fz-h">${pet ? tk('family.animalHealth') : tk('family.medical')}</div>
     ${pet ? `
       <div class="fz-grid2">${famIn('famF_species', tk('family.speciesBreed'), p.species, ('placeholder="' + escapeHtml(tk('family.eGLabrador')) + '"'))}${famIn('famF_birth', tk('family.dateBirth'), p.birth, 'type="date"')}</div>
-      <div class="fz-grid2">${famIn('famF_chip', tk('family.chipNumber'), p.chip, 'inputmode="numeric"')}${famIn('famF_weight', tk('family.weightKg'), p.weight, 'inputmode="decimal"')}</div>
+      <div class="fz-grid2">${famIn('famF_chip', tk('family.chipNumber'), p.chip, 'inputmode="numeric"')}${famIn('famF_weight', tk('family.weight') + ' (' + PINN_REGION.wUnit() + ')', famWeightIn(p.weight), 'inputmode="decimal"')}</div>
     ` : `
       <div class="fz-grid2">${famIn('famF_birth', tk('family.dateBirth'), p.birth, 'type="date"')}
         <div class="fz-field"><label class="fz-lbl" for="famF_blood">${tk('family.bloodType')}</label><select id="famF_blood" class="fz-in">${FAM_BLOOD.map(b => `<option value="${b}"${(p.blood || '') === b ? ' selected' : ''}>${b || tk('family.unknown')}</option>`).join('')}</select></div>
       </div>
-      <div class="fz-grid2">${famIn('famF_height', tk('family.heightCm'), p.height, 'inputmode="numeric"')}${famIn('famF_weight', tk('family.weightKg'), p.weight, 'inputmode="decimal"')}</div>
+      <div class="fz-grid2">${famIn('famF_height', tk('family.heightCm'), p.height, 'inputmode="numeric"')}${famIn('famF_weight', tk('family.weight') + ' (' + PINN_REGION.wUnit() + ')', famWeightIn(p.weight), 'inputmode="decimal"')}</div>
     `}
     ${famTa('famF_allergies', pet ? tk('family.allergiesIntolerances') : tk('family.allergies'), p.allergies, pet ? tk('family.eGChickenFlea') : tk('family.eGPenicillinNuts'))}
     ${famTa('famF_conditions', pet ? tk('family.illnesses') : tk('family.preExistingConditionsDiagnoses'), p.conditions, pet ? tk('family.eGEpilepsy') : tk('family.eGAsthmaType'))}
@@ -995,7 +1011,7 @@ function famSavePass() {
   const p = {
     phone: famVal('famF_phone'),
     birth: famVal('famF_birth'),
-    weight: famVal('famF_weight'),
+    weight: famWeightOut(famVal('famF_weight')),
     allergies: famVal('famF_allergies'),
     conditions: famVal('famF_conditions'),
     vaccinations: famVal('famF_vaccinations'),
@@ -1986,7 +2002,7 @@ function sosUpdate(a) {
     } else {
       const live = a.aktiv && famNow() - Number(c.zeit || 0) < 2 * 60 * 1000;
       const acc = c.genau ? `(± ${escapeHtml(String(c.genau))} m)` : tk('sos.accuracyUnknown');
-      const extra = [live ? ('<span class="sos-live">' + tk('family.live') + '</span>') : (a.aktiv ? escapeHtml(famAgo(c.zeit)) : ''), c.akku != null ? '🔋 ' + escapeHtml(String(c.akku)) + ' %' : '', c.tempo ? '🏃 ' + escapeHtml(String(c.tempo)) + ' ' + PINN_REGION.unit('km/h') : ''].filter(Boolean).join(' · ');
+      const extra = [live ? ('<span class="sos-live">' + tk('family.live') + '</span>') : (a.aktiv ? escapeHtml(famAgo(c.zeit)) : ''), c.akku != null ? '🔋 ' + escapeHtml(String(c.akku)) + ' %' : '', c.tempo ? '🏃 ' + escapeHtml(PINN_REGION.fmtSpeed(c.tempo)) : ''].filter(Boolean).join(' · ');
       loc.innerHTML = `<div class="sos-addr">📍 ${escapeHtml(sosAddress(a))}</div>
         <div class="sos-when">🕒 ${escapeHtml(sosClock(c.zeit))} <span class="acc">${acc}</span>${extra ? ' · ' + extra : ''}</div>
         ${a.aktuell && a.pos && a.adresse && a.adresse !== a.aktuell.adresse ? `<div class="sos-when">${tk('sos.trigger', { adresse: escapeHtml(a.adresse) })}</div>` : ''}`;
@@ -2116,7 +2132,7 @@ function sosStart() {
         if (!a) break;
         const c = sosCurrent(a);
         if (!c) break;
-        famCopy(sosAddress(a) + ' (' + Number(c.lat).toFixed(5) + ', ' + Number(c.lon).toFixed(5) + (c.genau ? ', ± ' + c.genau + ' ' + PINN_REGION.unit('m') : '') + ')');
+        famCopy(sosAddress(a) + ' (' + Number(c.lat).toFixed(5) + ', ' + Number(c.lon).toFixed(5) + (c.genau ? ', ± ' + PINN_REGION.fmtSmall(c.genau) : '') + ')');
         break;
       }
       case 'pass': {
@@ -3966,26 +3982,27 @@ function ptWeightHtml(p) {
   if (!ws.length) return `<div class="fam-card">${head}<p class="text-sm text-ink/50">${tk('pet.weighingRegularlyHelpsNotice')}</p></div>`;
   const last = ws[ws.length - 1];
   const prev = ws.length > 1 ? ws[ws.length - 2] : null;
-  const diff = prev ? Math.round((last.kg - prev.kg) * 100) / 100 : 0;
+  const diff = prev ? Math.round((PINN_REGION.wTo(last.kg) - PINN_REGION.wTo(prev.kg)) * 100) / 100 : 0;
   const fmt = n => Number(n).toLocaleString(sysLocale(), { maximumFractionDigits: 2 });
   let chart = '';
   if (ws.length > 1) {
     const W = 300, H = 90, pad = 8;
     const t0 = new Date(ws[0].date).getTime(), t1 = new Date(last.date).getTime();
-    const kMin = Math.min(...ws.map(w => w.kg)), kMax = Math.max(...ws.map(w => w.kg));
+    ws.forEach(w => { w.kd = PINN_REGION.wTo(w.kg); }); // shown value (kg or lb)
+    const kMin = Math.min(...ws.map(w => w.kd)), kMax = Math.max(...ws.map(w => w.kd));
     const span = Math.max(0.5, kMax - kMin);
     const pts = ws.map(w => {
       const x = pad + (t1 > t0 ? (new Date(w.date).getTime() - t0) / (t1 - t0) : 0.5) * (W - 2 * pad);
-      const y = H - pad - ((w.kg - kMin) / span) * (H - 2 * pad);
+      const y = H - pad - ((w.kd - kMin) / span) * (H - 2 * pad);
       return [Math.round(x * 10) / 10, Math.round(y * 10) / 10];
     });
     const line = pts.map((q, i) => (i ? 'L' : 'M') + q[0] + ' ' + q[1]).join(' ');
     const area = line + ` L${pts[pts.length - 1][0]} ${H} L${pts[0][0]} ${H} Z`;
     chart = `<svg class="pt-wchart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><path class="a" d="${area}"/><path class="l" d="${line}"/>${pts.map(q => `<circle cx="${q[0]}" cy="${q[1]}" r="2.6"/>`).join('')}</svg>
-      <div class="pt-wscale"><span>${escapeHtml(famFmtDate(ws[0].date))}</span><span>${escapeHtml(fmt(kMin))}–${escapeHtml(fmt(kMax))} ${PINN_REGION.unit('kg')}</span><span>${escapeHtml(famFmtDate(last.date))}</span></div>`;
+      <div class="pt-wscale"><span>${escapeHtml(famFmtDate(ws[0].date))}</span><span>${escapeHtml(fmt(kMin))}–${escapeHtml(fmt(kMax))} ${famWUnit()}</span><span>${escapeHtml(famFmtDate(last.date))}</span></div>`;
   }
   return `<div class="fam-card">${head}
-    <div class="pt-wnow"><b>${escapeHtml(fmt(last.kg))}</b> <span>${PINN_REGION.unit('kg')}</span>${prev ? `<span class="pt-wdiff ${diff > 0 ? 'up' : diff < 0 ? 'down' : ''}">${diff > 0 ? '▲' : diff < 0 ? '▼' : '='} ${escapeHtml(fmt(Math.abs(diff)))} ${PINN_REGION.unit('kg')}</span>` : ''}<small>${escapeHtml(famFmtDate(last.date))}</small></div>
+    <div class="pt-wnow"><b>${escapeHtml(fmt(PINN_REGION.wTo(last.kg)))}</b> <span>${famWUnit()}</span>${prev ? `<span class="pt-wdiff ${diff > 0 ? 'up' : diff < 0 ? 'down' : ''}">${diff > 0 ? '▲' : diff < 0 ? '▼' : '='} ${escapeHtml(fmt(Math.abs(diff)))} ${famWUnit()}</span>` : ''}<small>${escapeHtml(famFmtDate(last.date))}</small></div>
     ${chart}
     ${can && ws.length ? `<button type="button" class="pt-suggest" data-pt="weights" data-id="${famAttr(p.id)}"><span>${tk('pet.allValues')}</span> (${ws.length})</button>` : ''}
   </div>`;
@@ -4498,7 +4515,7 @@ function ptOpenWeight(petId) {
   const p = ptById(petId);
   if (!p) return;
   const html = `<h3 class="font-serif text-lg mb-1"><span>${tk('pet.logWeight')}</span></h3><p class="text-xs text-ink/50 mb-3">${escapeHtml(p.name)}</p>
-    <div class="fz-grid2">${famIn('ptW_date', tk('fin.csv.date'), ptToday(), 'type="date"')}<div class="fz-field"><label class="fz-lbl" for="ptW_kg">${tk('family.weight')}</label><div class="fz-unit"><input id="ptW_kg" class="fz-in" inputmode="decimal" autocomplete="off" maxlength="7" placeholder="z. B. 24,5" /><span>kg</span></div></div></div>
+    <div class="fz-grid2">${famIn('ptW_date', tk('fin.csv.date'), ptToday(), 'type="date"')}<div class="fz-field"><label class="fz-lbl" for="ptW_kg">${tk('family.weight')}</label><div class="fz-unit"><input id="ptW_kg" class="fz-in" inputmode="decimal" autocomplete="off" maxlength="7" placeholder="z. B. 24,5" /><span>${famWUnit()}</span></div></div></div>
     <p id="ptW_err" class="text-xs text-red-600 min-h-[1em]"></p>
     <div class="flex justify-end gap-2 mt-2"><button type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink" data-ptm="cancel">${tk('common.cancel')}</button>
     <button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-ptm="saveweight">${tk('common.save')}</button></div>`;
@@ -4507,7 +4524,7 @@ function ptOpenWeight(petId) {
 }
 function ptSaveWeight() {
   const st = ptModalState;
-  const kg = Number(ptVal('ptW_kg').replace(',', '.'));
+  const kg = PINN_REGION.wFrom(Number(ptVal('ptW_kg').replace(',', '.'))); // typed in kg or lb, stored in kg
   const date = ptVal('ptW_date') || ptToday();
   if (!(kg > 0 && kg < 2000)) { document.getElementById('ptW_err').textContent = tk('pet.pleaseEnterWeight'); return; }
   ptUpdate(st.petId, p => ({ ...p, weights: [...(p.weights || []).filter(w => w.date !== date), { id: ptId('pw'), date, kg: Math.round(kg * 100) / 100 }].sort((a, b) => a.date.localeCompare(b.date)) }));
@@ -4519,7 +4536,7 @@ function ptOpenWeights(petId) {
   if (!p) return;
   const ws = (p.weights || []).slice().sort((a, b) => b.date.localeCompare(a.date));
   const html = `<h3 class="font-serif text-lg mb-3"><span>${tk('family.weight')}</span> · ${escapeHtml(p.name)}</h3>
-    <div class="flex flex-col">${ws.map(w => `<div class="fam-row"><div class="fam-v">${escapeHtml(famFmtDate(w.date))}</div><b class="text-sm">${escapeHtml(Number(w.kg).toLocaleString(sysLocale()))} ${PINN_REGION.unit('kg')}</b>${ptCanEdit() ? `<button type="button" class="fam-x" data-ptm="wdel" data-v="${famAttr(w.id)}" aria-label="${escapeHtml(tk('common.remove'))}">×</button>` : ''}</div>`).join('')}</div>
+    <div class="flex flex-col">${ws.map(w => `<div class="fam-row"><div class="fam-v">${escapeHtml(famFmtDate(w.date))}</div><b class="text-sm">${escapeHtml(Number(PINN_REGION.wTo(w.kg)).toLocaleString(sysLocale()))} ${famWUnit()}</b>${ptCanEdit() ? `<button type="button" class="fam-x" data-ptm="wdel" data-v="${famAttr(w.id)}" aria-label="${escapeHtml(tk('common.remove'))}">×</button>` : ''}</div>`).join('')}</div>
     <div class="flex justify-end mt-3"><button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-ptm="cancel">${tk('common.done')}</button></div>`;
   ptOpenModal(html, { kind: 'weights', petId });
 }
@@ -5108,7 +5125,7 @@ function wxRender() {
     <div class="wx-kicker">${wxIcon('home')} <span>${tk('nav.home')}</span></div>
     <div class="wx-place">${escapeHtml((weatherDaily && weatherDaily.label) || tk('app.weather'))}</div>
     ${weatherData && weatherData.temp != null ? `<div class="wx-now"><b>${tDeg(weatherData.temp)}</b><span>${escapeHtml(wxDesc(weatherData.code))}</span></div>` : ''}
-    <div class="wx-hero-sub">${t0 ? `<span>↑ <b>${tDeg(t0.max)}</b></span><span>↓ <b>${tDeg(t0.min)}</b></span>` : ''}${weatherData && weatherData.gef != null ? `<span><span>${tk('wx.feelsLike')}</span> <b>${tDeg(weatherData.gef)}</b></span>` : ''}${weatherData && weatherData.wind != null ? `<span>${wxIcon('wind')} <b>${weatherData.wind}</b> km/h</span>` : ''}</div>
+    <div class="wx-hero-sub">${t0 ? `<span>↑ <b>${tDeg(t0.max)}</b></span><span>↓ <b>${tDeg(t0.min)}</b></span>` : ''}${weatherData && weatherData.gef != null ? `<span><span>${tk('wx.feelsLike')}</span> <b>${tDeg(weatherData.gef)}</b></span>` : ''}${weatherData && weatherData.wind != null ? `<span>${wxIcon('wind')} <b>${PINN_REGION.fmtSpeed(weatherData.wind)}</b></span>` : ''}</div>
   </div>`;
   let list = '';
   if (!days.length) {
@@ -5162,14 +5179,14 @@ function wxDetailHtml(d, placeKey, kind) {
   if (kind === 'klima') {
     return `<p class="wx-dd"><span>${tk('wx.typicalValue')}</span> – <span>${tk('wx.whatDayWasLike')}</span>${d.jahre ? ` (${tk('wx.yearsN', { n: d.jahre })})` : ''}.</p>
       <div class="wx-tiles">${wxTile(wxIcon('thermo'), tk('wx.avgHigh'), tDeg(d.max))}${wxTile(wxIcon('moon'), tk('wx.avgLow'), d.min != null ? tDeg(d.min) : null)}
-      ${wxTile(wxIcon('drop'), tk('wx.rain'), d.mm != null ? escapeHtml(String(d.mm).replace('.', ',')) + ' ' + PINN_REGION.unit('mm') : null, d.rain != null ? `<b>${d.rain}</b> % <span>${tk('wx.rainyDays')}</span>` : '')}
+      ${wxTile(wxIcon('drop'), tk('wx.rain'), d.mm != null ? escapeHtml(PINN_REGION.fmtRain(d.mm)) : null, d.rain != null ? `<b>${d.rain}</b> % <span>${tk('wx.rainyDays')}</span>` : '')}
       ${wxTile(wxIcon('sun'), tk('wx.sun'), d.sonne != null ? escapeHtml(String(d.sonne).replace('.', ',')) + ' h' : null)}</div>`;
   }
   const arrow = d.richtung != null ? `<span class="wx-arrow" style="transform:rotate(${(d.richtung + 180) % 360}deg)">↑</span>` : '';
   const tiles = [
     wxTile(wxIcon('thermo'), tk('wx.feelsLike2'), d.gefMax != null ? (d.gefMin != null ? tDeg(d.gefMin) + ' / ' : '') + tDeg(d.gefMax) : null),
-    wxTile(wxIcon('drop'), tk('wx.rain'), d.mm != null ? escapeHtml(String(d.mm).replace('.', ',')) + ' ' + PINN_REGION.unit('mm') : null, d.regenStd ? `<b>${d.regenStd}</b> <span>${tk('family.hr')}</span>` : (d.rain != null ? `<b>${d.rain}</b> %` : '')),
-    wxTile(wxIcon('wind'), tk('wx.wind'), d.wind != null ? `${arrow}${d.wind} ${PINN_REGION.unit('km/h')}` : null, d.boeen != null ? `<span>${tk('wx.gusts')}</span> <b>${d.boeen}</b>` : ''),
+    wxTile(wxIcon('drop'), tk('wx.rain'), d.mm != null ? escapeHtml(PINN_REGION.fmtRain(d.mm)) : null, d.regenStd ? `<b>${d.regenStd}</b> <span>${tk('family.hr')}</span>` : (d.rain != null ? `<b>${d.rain}</b> %` : '')),
+    wxTile(wxIcon('wind'), tk('wx.wind'), d.wind != null ? `${arrow}${PINN_REGION.fmtSpeed(d.wind)}` : null, d.boeen != null ? `<span>${tk('wx.gusts')}</span> <b>${PINN_REGION.fmtSpeed(d.boeen)}</b>` : ''),
     wxTile(wxIcon('uv'), tk('wx.uvIndex'), d.uv != null ? String(Math.round(d.uv)) : null, d.uv != null ? escapeHtml(wxUvLabel(d.uv)) : ''),
     wxTile(wxIcon('sun'), tk('wx.sun'), d.sonne != null ? escapeHtml(String(d.sonne).replace('.', ',')) + ' h' : null),
     wxTile(wxIcon('sunrise'), tk('wx.sunriseSunset'), d.auf ? d.auf + ' · ' + (d.unter || '') : null),

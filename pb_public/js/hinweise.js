@@ -147,6 +147,7 @@ function hwName(h) { const m = hwMember(h); return m ? memberLabelRaw(m) : (h.na
 function hwPhone(memberId) { return String((famPass(memberId) || {}).phone || '').trim(); }
 function hwKm(m) {
   if (m == null || !isFinite(m)) return '';
+  if (PINN_REGION.imperial && PINN_REGION.imperial()) return PINN_REGION.fmtDist(m); // miles / feet
   if (m < 1000) return (Math.round(m / 10) * 10) + ' ' + PINN_REGION.unit('m');
   return (m < 10000 ? numDec((m / 1000).toFixed(1)) : Math.round(m / 1000)) + ' ' + PINN_REGION.unit('km');
 }
@@ -448,7 +449,7 @@ function hwPersonHtml(h) {
   meta.push(escapeHtml(tk('bell.hw.since', { time: sosClock(h.seit) })));
   if (c) meta.push(live ? '<span class="sos-live">' + escapeHtml(tk('family.live')) + '</span>' : escapeHtml(tk('bell.hw.updated', { ago: famAgo(c.zeit) })));
   if (c && c.akku != null) meta.push('🔋 ' + escapeHtml(String(c.akku)) + ' %');
-  if (c && c.tempo) meta.push(escapeHtml(String(c.tempo)) + ' ' + PINN_REGION.unit('km/h'));
+  if (c && c.tempo) meta.push(escapeHtml(PINN_REGION.fmtSpeed(c.tempo)));
   return `<div class="hw-person" style="--hw:${famAttr(famColor(m))}">
       <div class="flex items-center gap-3">
         <span class="fam-ava sm" style="--fam:${famAttr(famColor(m))}">${m ? famAvatarInner(m) : '<span class="fam-ava-in">🚶</span>'}</span>

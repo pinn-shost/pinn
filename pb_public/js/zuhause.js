@@ -1420,7 +1420,7 @@ function hsOverviewHtml(h) {
         <div class="flex items-center gap-1.5 flex-wrap mt-2">
           <span class="vt-chip">${hsEsc(HS_MODES[hsMode(h)].label)}</span>
           <span class="vt-chip muted">${hsEsc(type)}</span>
-          ${Number(h.area) > 0 ? `<span class="vt-chip muted">${hsEsc(hsNum(h.area, 0))} m²</span>` : ''}
+          ${Number(h.area) > 0 ? `<span class="vt-chip muted">${hsEsc(hsNum(PINN_REGION.areaTo(h.area), 0))} ${PINN_REGION.areaUnit()}</span>` : ''}
           ${vtIsIso(h.moveIn) && !arch ? `<span class="vt-chip muted">${hsEsc(tk('home.sinceDate', { date: vtFmt(h.moveIn) }))}</span>` : ''}
           ${heat && heat !== '–' ? `<span class="vt-chip muted">♨️ ${hsEsc(heat)}</span>` : ''}
           ${arch ? `<span class="vt-chip warn">${hsEsc(tk('home.movedOutOn', { date: vtFmt(h.moveOut) }))}</span>` : ''}
@@ -1457,12 +1457,12 @@ function hsOverviewHtml(h) {
     const price = Number(h.own && h.own.price) || 0;
     tiles.push(fzTile(tk('home.remainingDebt'), loan ? fmtEur0(loan.rest) : '–', loan && loan.M > 0 ? tk('home.instalmentPerMonth', { amount: fmtEur(loan.M) }) : tk('home.loanUnderEdit')));
     tiles.push(fzTile(tk('home.purchasePrice'), price > 0 ? fmtEur0(price) : '–', hsBuySideCosts(h) > 0 ? tk('home.plusSideCosts', { amount: fmtEur0(hsBuySideCosts(h)) }) : ''));
-    tiles.push(fzTile(tk('home.perM2'), area > 0 && price > 0 ? fmtEur0(price / area) : '–', area > 0 ? hsNum(area, 0) + ' m²' : tk('home.enterLivingSpace')));
+    tiles.push(fzTile(hsAreaL(tk('home.perM2')), area > 0 && price > 0 ? fmtEur0(price / area / PINN_REGION.areaFactor()) : '–', area > 0 ? hsNum(PINN_REGION.areaTo(area), 0) + ' ' + PINN_REGION.areaUnit() : tk('home.enterLivingSpace')));
   } else {
     const warm = hsWarmRent(h);
     const dep = Number(h.rent && h.rent.deposit) || 0;
     tiles.push(fzTile(tk('home.rentInclUtilities'), warm > 0 ? fmtEur(warm) : '–', hsFixAmount(h, 'rent') > 0 ? (tk('home.basic') + ' ') + fmtEur(hsFixAmount(h, 'rent')) : ''));
-    tiles.push(fzTile(tk('home.perM2'), area > 0 && hsFixAmount(h, 'rent') > 0 ? fmtEur(hsFixAmount(h, 'rent') / area) : '–', area > 0 ? (tk('home.basic2') + ' ') + hsNum(area, 0) + ' m²' : tk('home.enterLivingSpace')));
+    tiles.push(fzTile(hsAreaL(tk('home.perM2')), area > 0 && hsFixAmount(h, 'rent') > 0 ? fmtEur(hsFixAmount(h, 'rent') / area / PINN_REGION.areaFactor()) : '–', area > 0 ? (tk('home.basic2') + ' ') + hsNum(PINN_REGION.areaTo(area), 0) + ' ' + PINN_REGION.areaUnit() : tk('home.enterLivingSpace')));
     tiles.push(fzTile(tk('home.deposit'), dep > 0 ? fmtEur(dep) : '–', dep > 0 ? (vtIsIso(h.rent.depositBack) ? tk('home.backOn', { date: vtFmt(h.rent.depositBack) }) : (vtIsIso(h.rent.depositPaid) ? tk('home.paidOn', { date: vtFmt(h.rent.depositPaid) }) : tk('home.enterPayment'))) : ''));
   }
   }
@@ -1552,7 +1552,7 @@ function hsOverviewHtml(h) {
   // Data
   const drows = [];
   drows.push(hsRow(tk('smart.haAddress'), hsEsc(h.address || '')));
-  drows.push(hsRow(h.type === 'garage' ? tk('home.area') : tk('home.livingSpace'), Number(h.area) > 0 ? hsEsc(hsNum(h.area, 1) + ' m²') : ''));
+  drows.push(hsRow(h.type === 'garage' ? tk('home.area') : tk('home.livingSpace'), Number(h.area) > 0 ? hsEsc(hsNum(PINN_REGION.areaTo(h.area), 1) + ' ' + PINN_REGION.areaUnit()) : ''));
   drows.push(hsRow(tk('home.rooms'), Number(h.rooms) > 0 ? hsEsc(hsNum(h.rooms, 1)) : ''));
   drows.push(hsRow(tk('home.peopleHousehold'), Number(h.persons) > 0 ? hsEsc(String(h.persons)) : ''));
   drows.push(hsRow(tk('home.yearManufacture'), Number(h.built) > 0 ? hsEsc(String(h.built)) : ''));
@@ -1660,7 +1660,7 @@ function hsCostsHtml(h) {
       <div class="text-center min-w-0">
         <div class="text-[11px] uppercase tracking-wide text-ink/40">${hsEsc(tk('home.costsYear', { year: y }))}</div>
         <div class="font-serif text-2xl">${hsEsc(fmtEur(total))}</div>
-        <div class="text-xs text-ink/50">${area > 0 && total > 0 ? hsEsc(tk('home.perSqm', { amount: fmtEur(total / area) })) : (y === new Date().getFullYear() ? hsEsc(tk('school.date')) : '&nbsp;')}</div>
+        <div class="text-xs text-ink/50">${area > 0 && total > 0 ? hsEsc(hsAreaL(tk('home.perSqm', { amount: fmtEur(total / area / PINN_REGION.areaFactor()) }))) : (y === new Date().getFullYear() ? hsEsc(tk('school.date')) : '&nbsp;')}</div>
       </div>
       <button type="button" class="fz-mini-btn" data-hsact="year" data-d="1"${y >= maxY ? ' disabled style="opacity:.35"' : ''}>›</button>
     </div>
@@ -1780,7 +1780,7 @@ function hsMeterCardHtml(m) {
   const lines = [];
   if (fc.annual != null) {
     lines.push(hsRow(t.income ? tk('home.yieldPerYear') : tk('home.consumptionPerYear'), hsEsc((st.reliable ? '' : '≈ ') + hsNum(fc.annual, unit === 'kWh' ? 0 : 1) + ' ' + PINN_REGION.unit(unit) + (hsFactor(m) !== 1 ? ' (' + hsNum(fc.annual * hsFactor(m), 0) + ' ' + PINN_REGION.unit(hsBillUnit(m)) + ')' : ''))));
-    if (Number(h_area()) > 0 && (t.id === 'gas' || t.id === 'waerme' || t.id === 'heizstrom')) lines.push(hsRow(tk('home.perM2'), hsEsc(hsNum(fc.annual * hsFactor(m) / h_area(), 0) + ' ' + PINN_REGION.unit('kWh'))));
+    if (Number(h_area()) > 0 && (t.id === 'gas' || t.id === 'waerme' || t.id === 'heizstrom')) lines.push(hsRow(hsAreaL(tk('home.perM2')), hsEsc(hsNum(fc.annual * hsFactor(m) / h_area() / PINN_REGION.areaFactor(), 0) + ' ' + PINN_REGION.unit('kWh'))));
     lines.push(hsRow(tk('home.soFarPeriod'), hsEsc(hsNum(fc.used, unit === 'kWh' ? 0 : 1) + ' ' + PINN_REGION.unit(unit) + ' · ' + tk('home.sinceDate', { date: vtFmt(fc.per.start) }))));
     lines.push(hsRow(t.income ? tk('home.feedPaymentForecast') : tk('home.costsForecast'), hsEsc(fmtEur0(fc.cost) + ' · ' + tk('home.untilDate', { date: vtFmt(fc.per.end) }))));
   }
@@ -1839,6 +1839,8 @@ function hsMeterCardHtml(m) {
     ${readRows ? `<div class="flex flex-col mt-3">${readRows}</div>` : ''}
     ${rs.length > 3 ? `<button type="button" class="w-full mt-1 text-xs text-ink/55 hover:text-pine py-1" data-hsact="meter-toggle" data-id="${hsEsc(m.id)}">${hsMeterOpen === m.id ? tk('maint.showLess') : hsEsc(tk('home.showAllReadings', { n: rs.length }))}</button>` : ''}`);
 }
+// Areas are stored in m²; shown and typed in m² or ft² (PINN_REGION.areaTo / areaFrom); swaps the m² sign in texts
+function hsAreaL(t) { return PINN_REGION.areaUnit() === 'm\u00b2' ? t : String(t).replace(/m\u00b2/g, PINN_REGION.areaUnit()); }
 function h_area() { const h = hsCurrent(); return h ? Number(h.area) || 0 : 0; }
 
 /* ---------- Maintenance ---------- */
@@ -1972,7 +1974,7 @@ function hsOpenHomeModal(id, modePreset) {
     </div>
     ${fzIn('hsAddress', tk('smart.haAddress'), d.address || '', { ph: tk('contract.streetPostcodeTown'), max: 200 })}
     <div class="fz-grid3">
-      ${fzIn('hsArea', tk('home.livingSpace'), Number(d.area) > 0 ? hsDecInput(d.area, 1) : '', { mode: 'decimal', unit: 'm²' })}
+      ${fzIn('hsArea', tk('home.livingSpace'), Number(d.area) > 0 ? hsDecInput(PINN_REGION.areaTo(d.area), 1) : '', { mode: 'decimal', unit: PINN_REGION.areaUnit() })}
       ${fzIn('hsRooms', tk('home.rooms'), Number(d.rooms) > 0 ? hsDecInput(d.rooms, 1) : '', { mode: 'decimal' })}
       ${fzIn('hsPersons', tk('home.people'), Number(d.persons) > 0 ? String(d.persons) : '', { mode: 'numeric' })}
     </div>
@@ -2065,7 +2067,7 @@ function hsSaveHome() {
   const letting = mode === 'vermietet';
   const today = finTodayIso();
   const num = (id, max) => { const raw = fzVal(id); if (!raw) return ''; const v = hsDec(raw); return isFinite(v) && v >= 0 && v <= max ? v : NaN; };
-  const vals = { area: num('hsArea', 100000), rooms: num('hsRooms', 1000), persons: num('hsPersons', 100), built: num('hsBuilt', 2200) };
+  const vals = { area: (v => typeof v === 'number' && isFinite(v) ? Math.round(PINN_REGION.areaFrom(v) * 100) / 100 : v)(num('hsArea', 1100000)), rooms: num('hsRooms', 1000), persons: num('hsPersons', 100), built: num('hsBuilt', 2200) };
   for (const k of Object.keys(vals)) if (Number.isNaN(vals[k])) return err(tk('home.pleaseEnterNumbersOnly'));
   const money = {};
   const moneyIds = ['hsDeposit', 'hsPrice', 'hsLandTax', 'hsNotary', 'hsBroker', 'hsLoanAmount', 'hsLoanMonthly', 'hsDepBackAmt', ...HS_FIX.map(f => 'hsf_' + f.key)];

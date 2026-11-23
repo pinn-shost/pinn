@@ -66,6 +66,24 @@ function renderRegionSettings() {
       + ['C', 'F'].map(u => `<option value="${u}">${escapeHtml(unitLabel(u))}</option>`).join('');
     tSel.value = p.temperatur || 'auto';
   }
+  // Lengths: „Automatisch“ = miles/feet in the USA (and a few other countries), metric elsewhere
+  const lSel = document.getElementById('regionLenSelect');
+  if (lSel) {
+    const autoI = R.IMPERIAL && R.IMPERIAL.includes(p.land);
+    const lenLabel = u => tk(u === 'imperial' ? 'settings.region.imperial' : 'settings.region.metric');
+    lSel.innerHTML = `<option value="auto">${escapeHtml(tk('settings.region.automaticCountry') + ' – ' + lenLabel(autoI ? 'imperial' : 'metric'))}</option>`
+      + ['metric', 'imperial'].map(u => `<option value="${u}">${escapeHtml(lenLabel(u))}</option>`).join('');
+    lSel.value = p.laenge || 'auto';
+  }
+  // Weights, liquids, areas: „Automatisch“ = US customary in the USA, imperial in the UK, metric elsewhere
+  const mSel = document.getElementById('regionMassSelect');
+  if (mSel) {
+    const autoM = R.MASS_US && R.MASS_US.includes(p.land) ? 'us' : (R.MASS_UK && R.MASS_UK.includes(p.land) ? 'uk' : 'metric');
+    const massLabel = u => tk('settings.region.mass.' + u);
+    mSel.innerHTML = `<option value="auto">${escapeHtml(tk('settings.region.automaticCountry') + ' – ' + massLabel(autoM))}</option>`
+      + ['metric', 'us', 'uk'].map(u => `<option value="${u}">${escapeHtml(massLabel(u))}</option>`).join('');
+    mSel.value = p.masse || 'auto';
+  }
   renderRegionPreview();
 }
 function renderRegionPreview() {
@@ -139,6 +157,18 @@ function initLanguageSettings() {
   document.getElementById('regionTempSelect').addEventListener('change', (e) => {
     if (!regionPending) regionPending = PINN_REGION.stored();
     regionPending.temperatur = e.target.value;
+    document.getElementById('langStatus').textContent = '';
+    renderRegionPreview();
+  });
+  document.getElementById('regionLenSelect').addEventListener('change', (e) => {
+    if (!regionPending) regionPending = PINN_REGION.stored();
+    regionPending.laenge = e.target.value;
+    document.getElementById('langStatus').textContent = '';
+    renderRegionPreview();
+  });
+  document.getElementById('regionMassSelect').addEventListener('change', (e) => {
+    if (!regionPending) regionPending = PINN_REGION.stored();
+    regionPending.masse = e.target.value;
     document.getElementById('langStatus').textContent = '';
     renderRegionPreview();
   });

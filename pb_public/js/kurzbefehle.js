@@ -111,7 +111,7 @@ function kzBadge(a) {
       if (typeof ghEnsureLoaded === 'function') ghEnsureLoaded();
       const h = kzHealthData();
       if (!h) return '';
-      if (a.id === 'trinken') return tk('shortcut.sub.drink', { ml: ghNum(ghDrinkTotal(h.d)), goal: ghNum(h.d.drink.goal) });
+      if (a.id === 'trinken') return ghTkV('shortcut.sub.drink', { ml: ghMlN(ghDrinkTotal(h.d)), goal: ghMlN(h.d.drink.goal) });
       if (a.id === 'haende') return tk('shortcut.sub.hands', { n: ghNum(Number(h.d.hands.log[ghToday()]) || 0) });
       const taken = h.d.meds.taken[ghToday()] || [];
       const open = ghMedSlots(h.d).filter(s => s.time && !taken.includes(s.key)).length;

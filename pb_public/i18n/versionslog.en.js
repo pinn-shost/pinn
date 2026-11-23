@@ -4,6 +4,8 @@
    (null = no translation, the German text is shown). Older versions are not translated. */
 window.PINN_CHANGELOG_EN = {
   "1.163": {"t": "Date polls, lending list, import comparison", "p": [
+"1.163.2: Lengths by region: Settings \u2192 Language & region now has \u201cLengths\u201d (Automatic / Metric / Imperial). In the USA, UK etc. distances, speed, wind, rain, body height and accuracy are shown in miles, feet, mph, inches or ft/in. Stored data stays metric. Vehicles too: odometer, service, calculators and cost per distance in miles. New next to it: \u201cWeights, liquids, areas\u201d (Automatic / Metric / US / UK): weight in lb, drinks in fl oz, fuel in gallons (US; litres stay in the UK), consumption in mpg, living space in ft\u00b2. Existing entries are converted as well; stored data stays metric.",
+"1.163.2: Finance: in the history chart the sum is shown above the selected bar only \u2013 side by side the numbers were unreadable. The amounts of the other bars still appear when you tap them or as hint text.",
 "1.163.1: Overview on tablet and PC: the tiles next to the calendar no longer overlap. They now lie one below the other in a single column that scrolls up and down. Every tile has a maximum height; if its content is longer, it scrolls inside the tile.",
 "1.163.1: Phone: the margin of sliders and sub-menu bars only disappeared after a tap (e.g. on the bell). They now run to the screen edge right when the page opens.",
 "1.163.0: Settings → Waste calendar: the red messages (e.g. file empty, link invalid, AI not reachable) now appear in the app language instead of German.",
