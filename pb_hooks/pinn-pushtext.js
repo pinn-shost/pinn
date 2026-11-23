@@ -674,6 +674,23 @@ const GROUPS = [
         [/^Ausgleich: (.+)$/, "push.settle.title", { text: "<1>" }],
         [/^([\s\S]+) wurde für dich eingetragen\.$/, "push.settle.recorded", { what: "{1}" }],
     ] },
+    // --- Lending list (pinn-ausleihe.js): several things in one message are joined with " · " ---
+    { tag: /^ausleihe-/, rules: [
+        [/^Ausleihe$/, "push.loan.title", {}],
+        [/^Morgen zurückgeben: „(.+)“ an (.+)$/, "push.loan.borrowTomorrow", { thing: "<1>", name: "<2>" }],
+        [/^Heute zurückgeben: „(.+)“ an (.+)$/, "push.loan.borrowToday", { thing: "<1>", name: "<2>" }],
+        [/^Überfällig: „(.+)“ an (.+) zurückgeben$/, "push.loan.borrowOverdue", { thing: "<1>", name: "<2>" }],
+        [/^Heute fällig: (.+) gibt „(.+)“ zurück$/, "push.loan.lendToday", { name: "<1>", thing: "<2>" }],
+        [/^(.+) hat „(.+)“ noch nicht zurückgegeben$/, "push.loan.lendOverdue", { name: "<1>", thing: "<2>" }],
+    ] },
+    // --- Date polls in the calendar (pinn-abstimmung.js); date and time of the decided date are translated piece by piece ---
+    { tag: /^abstimmung-/, rules: [
+        [/^Terminabstimmung: (.+)$/, "push.poll.newTitle", { title: "<1>" }],
+        [/^(.+) hat eine Terminabstimmung gestartet – bitte antworte\.$/, "push.poll.newText", { name: "<1>" }],
+        [/^Alle haben geantwortet: (.+)$/, "push.poll.completeTitle", { title: "<1>" }],
+        [/^Du kannst jetzt den Termin festlegen\.$/, "push.poll.completeText", {}],
+        [/^Termin steht: (.+)$/, "push.poll.decidedTitle", { title: "<1>" }],
+    ] },
     { tag: /^kasse-/, rules: [
         [/^(.+) hat dich zur Kasse „(.+)“ hinzugefügt\.$/, "push.fund.added", { name: "{1}", fund: "<2>" }],
         [/^(.+) hat dich zur Kasse „(.+)“ hinzugefügt\. Ausgaben werden geteilt\.$/, "push.fund.addedShared", { name: "{1}", fund: "<2>" }],

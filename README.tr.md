@@ -104,15 +104,16 @@ Tam boyutta açmak için bir resme dokun.
 
 ## pinn. neler yapar
 
-- 📅 **Takvim** – ortak aile takvimi, iCloud ve Google bağlantısı, resmî tatiller ve okul tatilleri
-- ✅ **Görevler ve ev işleri** – görevler, nöbet sırası, atık, temizlik, “Kim ne kadar yapıyor?”
+- 📅 **Takvim** – ortak aile takvimi, iCloud ve Google bağlantısı, resmî tatiller ve okul tatilleri. Tarih oylamaları: birkaç tarih öner, her profil Evet / Hayır / Belki ile yanıtlar ve kazanan tarih takvim kaydı olur.
+- ✅ **Görevler ve ev işleri** – görevler, nöbet sırası, atık, temizlik, “Kim ne kadar yapıyor?”. Bir ödünç listesi kimin kimden ne aldığını (ev arkadaşları veya üçüncü kişiler) tutar ve geri gelene kadar anlık bildirimle hatırlatır.
 - 🍽️ **Yemekler** – haftalık yemek planı, tarif içe aktarma, tarayıcılı kiler, alışveriş listesi
-- 💶 **Finans** – giderler, bütçe, hesaplaşmalı kasalar, fesih sürelerine sahip sözleşmeler, harçlık
+- 💶 **Finans** – giderler, bütçe, hesaplaşmalı kasalar, fesih sürelerine sahip sözleşmeler, harçlık. Banka ekstreleri CSV olarak içe aktarılabilir: gelir ve giderler otomatik tanınır ve kategorilere ayrılır; zaten girilmiş benzer kayıtlar (7 gün içinde aynı tutar) içe aktarmak veya yok saymak için gösterilir, dosyanın bir dönemi de seçilebilir.
 - 👨‍👩‍👧 **Aile** – acil durum kartları, konum, SOS, “Eve geliyorum”, evcil hayvanlar, okul ve bakım
 - 🏠 **Ev ve araçlar** – sayaç okumaları, giderler, tadilat, yakıt ve muayeneli arabalar, akıllı ev
 - 🎙️ **Sesli kontrol** – “Hey Siri, pinn”: alışveriş listesine ekle, sesli oku, görev oluştur, bugünün programını dinle (uygulama Türkçe olduğunda Siri şimdilik İngilizce yanıt verir)
 - 💬 **Sohbet** – aile ve özel sohbet, uçtan uca şifreli, anlık bildirim ve okundu işaretiyle
 - 🔔 **Bildirimler** – iPhone, iPad ve Android'de kişiye özel anlık bildirimler ve ailedeki tüm değişiklikleri gösteren bir bildirim zili
+- 🔒 Tek tek menüler Face ID, parmak izi veya PIN ile kilitlenebilir.
 
 pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk, 🇳🇴 Norsk, 🇫🇮 Suomi ve 🇭🇺 Magyar**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
 

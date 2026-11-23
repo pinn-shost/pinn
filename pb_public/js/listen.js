@@ -61,6 +61,9 @@ const LIST_TYPES = [
   { id: 'idea', icon: '💡', get label() { return tk('lists.type.idea'); }, get one() { return tk('lists.type.ideaOne'); }, get newOne() { return tk('lists.type.ideaNew'); }, sections: true, progress: true,
     get doneWord() { return tk('lists.type.done'); }, get hideWord() { return tk('lists.type.hideDone'); },
     get intro() { return tk('lists.type.ideaIntro'); } },
+  // Lending (js/ausleihe.js): not a list of items but its own view; stored in the family data key "loans"
+  { id: 'leihe', icon: '🤝', get label() { return tk('loan.tab'); }, get one() { return tk('loan.tab'); }, get newOne() { return tk('loan.new'); }, loan: true,
+    get intro() { return tk('loan.intro'); } },
 ];
 const LS_GIFT_STATUS = [
   { id: 'idee', icon: '💡', get label() { return tk('lists.gift.idea'); } },
@@ -351,7 +354,7 @@ function lsUpdateItem(listId, itemId, fn) {
 /* ---------- Switcher ---------- */
 function renderListsTabs() {
   const html = LIST_TYPES.map(t => {
-    const n = t.id === 'einkauf' ? 0 : familyLists.filter(l => l.type === t.id && lsVisible(l)).length;
+    const n = t.id === 'einkauf' ? 0 : (t.loan ? loanOpenCount() : familyLists.filter(l => l.type === t.id && lsVisible(l)).length);
     return `<button type="button" class="ls-tab${listsTab === t.id ? ' active' : ''}" data-ltab="${t.id}" role="tab" aria-selected="${listsTab === t.id}">${t.icon} ${escapeHtml(t.label)}${n ? `<b>${n}</b>` : ''}</button>`;
   }).join('');
   document.querySelectorAll('.lists-tabbar').forEach(bar => {
@@ -430,7 +433,13 @@ function lsHideGenericViews() {
 function lsRenderOverview() {
   const t = lsType(listsTab);
   document.getElementById('listsIntro').textContent = t.intro || '';
-  document.getElementById('listsNewBtn').textContent = t.wish ? tk('lists.newWishBtn') : tk('lists.newListBtn');
+  document.getElementById('listsNewBtn').textContent = t.wish ? tk('lists.newWishBtn') : t.loan ? tk('loan.newBtn') : tk('lists.newListBtn');
+  if (t.loan) {
+    // Lending has its own view instead of cards of lists
+    document.getElementById('listsGrid').innerHTML = '';
+    loanRender(document.getElementById('listsExtra'));
+    return;
+  }
   const lists = lsListsOfType(t.id);
   const cards = lists.map(l => {
     const open = lsOpenItems(l);
@@ -1397,7 +1406,7 @@ function lsOpenShopModal() {
     const tab = e.target.closest('[data-ltab]');
     if (tab) { listsSetTab(tab.dataset.ltab); return; }
   });
-  document.getElementById('listsNewBtn').addEventListener('click', () => lsOpenListModal(null));
+  document.getElementById('listsNewBtn').addEventListener('click', () => { if (listsTab === 'leihe') loanOpenEditor(''); else lsOpenListModal(null); });
   document.getElementById('listsBackBtn').addEventListener('click', lsBackToOverview);
   document.getElementById('listsEditBtn').addEventListener('click', () => { if (listsDetailId) lsOpenListModal(listsDetailId); });
   document.getElementById('listsDetailChips').addEventListener('click', (e) => {

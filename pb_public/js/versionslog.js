@@ -22,6 +22,19 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.163', datum: '22.11.2026', titel: 'Terminabstimmung, Ausleihliste, Import-Abgleich',
+    punkte: [
+      ['fix', '1.163.0: Einstellungen → Müllabfuhr-Kalender: Die roten Hinweise (z. B. Datei leer, Link ungültig, KI nicht erreichbar) erscheinen jetzt in der App-Sprache statt auf Deutsch.'],
+      ['fix', '1.163.0: Kurzbefehle: Die Einstellung „eine Reihe / mehrere Reihen“ blieb nicht erhalten und sprang nach Abmelden oder längerer Pause auf „mehrere“ zurück – sie wird jetzt dauerhaft im Profil gespeichert.'],
+      ['fix', '1.163.0: Handy: Untermenü-Leisten und Slider (Apps/Kurzbefehle, Pinnwand, Familie, Rezepte) laufen jetzt bis zum Bildschirmrand statt am Seitenrand abgeschnitten zu werden.'],
+      ['fix', '1.163.0: Handy: Die Glocke sitzt jetzt fest am rechten Rand der Kopfzeile. Tablet/PC: Datum und Uhrzeit zeigen Temperatur und UV-Index nur noch, wenn die Wetter-Kachel in den Übersichts-Einstellungen eingeschaltet ist (auch auf der Profilauswahl).'],
+      ['fix', '1.163.0: Pfeile an den Menüleisten springen jetzt eintragsweise und nie über den ersten bzw. letzten Eintrag hinaus – am Ende bleibt keine leere Fläche mehr (beide Richtungen).'],
+      ['neu', '1.163.0: Terminabstimmung im Kalender: Mit dem 📊-Knopf oben im Kalender einen Termin mit mehreren Terminvorschlägen anlegen und Profile einladen. Jedes Profil antwortet je Vorschlag mit Ja, Nein oder Vielleicht (auch stellvertretend für Kinder und Profile ohne Handy). Der beliebteste Vorschlag wird hervorgehoben; wer angelegt hat, legt den Termin fest und übernimmt ihn mit einem Tipp als fertigen Kalendereintrag. Per Push: neue Abstimmung, alle haben geantwortet, Termin steht. Am Kalender-Knopf zeigt ein Zähler, wo noch deine Antwort fehlt.'],
+      ['neu', '1.163.0: Ausleihliste: Neuer Reiter „Ausleihe“ unter Listen. Notieren, wer was von wem hat (innerhalb der Familie/WG oder von Dritten, z. B. Arbeitskollegen), seit wann, Rückgabe bis und Notiz. Knopf „Zurückbekommen“ schließt den Eintrag ab; Einträge können privat (nur für dich sichtbar) bleiben. Erinnerungen per Push am Tag vor der Rückgabe, am Fälligkeitstag und danach wiederholt (täglich, alle 3 Tage oder wöchentlich), bis es zurück ist.'],
+      ['neu', '1.163.0: Bankdatei-Import mit Abgleich: Im selben Fenster lässt sich ein Zeitraum der Datei wählen. Passt ein Betrag zu einer schon eingetragenen oder geplanten Buchung (gleicher Betrag, ±7 Tage), steht die Zeile unter „Bitte prüfen“ mit der vorhandenen Buchung daneben – je Zeile „Eintragen“ oder „Ignorieren“, oder alle auf einmal.'],
+    ],
+  },
+  {
     v: '1.162', datum: '21.11.2026', titel: 'Menüsperre, ruhige Banner, Pfeile an Menüleisten',
     punkte: [
       ['neu', '1.162.0: Menüs sperren: Unter Einstellungen → „Menüs sperren“ lassen sich einzelne Menüs (z. B. Finanzen, Dokumente, Chat) mit Face ID / Fingerabdruck oder einer eigenen PIN schützen – je Gerät und Profil. Wieder gesperrt wird sofort beim Verlassen des Menüs oder nach 1, 5 oder 15 Minuten. Änderungen verlangen vorher das Entsperren; bei vergessener PIN hilft „Mit Passwort anmelden“.'],

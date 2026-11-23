@@ -21,7 +21,7 @@ const RESUME_SCROLL_DELAY_MS = 700;            // after scrollRecipeDetailToTop(
 const RESUME_URL_TARGETS = ['seite', 'chat', 'sos', 'heimweg', 'hinweise', 'liste', 'kasse', 'vertrag', 'dokument',
   'pinnwand', 'familie', 'system', 'sterne', 'google', 'packliste', 'wobistdu', 'gesundheit', 'geburtstag', 'haustier', 'urlaub',
   'wetter', 'ausblick', 'ausgabe', 'fahrzeug', 'mitglied', 'aufgabe', 'termin', 'rezept', 'essen', 'vorrat', 'listen',
-  'einkauf', 'konto'];
+  'einkauf', 'konto', 'leihe', 'abstimmung'];
 
 function resumeOnDashboard() {
   try { return isDashboardDevice(); } catch (e) { return false; }

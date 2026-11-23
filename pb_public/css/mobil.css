@@ -273,3 +273,7 @@ html.dark .shopping-combined-logos > * { box-shadow: 0 0 0 2px #1f1e1b; }
    date heading stays bold (font-serif is already semi-bold), but gets smaller, so that it
    is not cut off with "...". */
 body.mobile-mode #periodLabel { font-size: 0.9375rem; }
+
+/* Phone: the bell is fixed at the right edge of the header (the family name takes the free space) */
+body.mobile-mode .nt-head-title { flex: 1 1 auto; min-width: 0; }
+body.mobile-mode .nt-head-title > .nt-famname { flex: 1 1 auto; }

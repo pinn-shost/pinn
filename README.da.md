@@ -104,15 +104,16 @@ Tryk på et billede for at åbne det i fuld størrelse.
 
 ## Hvad pinn. kan
 
-- 📅 **Kalender** – fælles familiekalender, forbindelse til iCloud og Google, helligdage og skoleferier
-- ✅ **Opgaver og husholdning** – opgaver, rotation, skrald, rengøring, »Hvem gør hvor meget?«
+- 📅 **Kalender** – fælles familiekalender, forbindelse til iCloud og Google, helligdage og skoleferier. Datoafstemninger: foreslå flere datoer, hver profil svarer Ja / Nej / Måske, og vinderdatoen bliver en kalenderaftale.
+- ✅ **Opgaver og husholdning** – opgaver, rotation, skrald, rengøring, »Hvem gør hvor meget?«. En udlånsliste noterer, hvem der har hvad af hvem (bofæller eller andre), med push-påmindelser, indtil det er tilbage.
 - 🍽️ **Måltider** – ugemenu, opskriftsimport, spisekammer med scanner, indkøbsliste
-- 💶 **Økonomi** – udgifter, budget, kasser med udligning, kontrakter med opsigelsesfrister, lommepenge
+- 💶 **Økonomi** – udgifter, budget, kasser med udligning, kontrakter med opsigelsesfrister, lommepenge. Kontoudtog kan importeres som CSV: indtægter og udgifter genkendes og kategoriseres automatisk; lignende eksisterende posteringer (samme beløb inden for 7 dage) vises, så du kan importere eller ignorere dem, og du kan vælge en periode fra filen.
 - 👨‍👩‍👧 **Familie** – nødkort, position, SOS, »På vej hjem«, kæledyr, skole og dagpleje
 - 🏠 **Hjem og køretøjer** – måleraflæsninger, omkostninger, mangler, biler med brændstof og syn, smart home
 - 🎙️ **Stemmestyring** – »Hey Siri, pinn«: sæt noget på indkøbslisten, læs den op, opret opgaver, hør dagens program (Siri svarer indtil videre på engelsk)
 - 💬 **Chat** – familie- og privatchat med end-to-end-kryptering, push-beskeder og læsekvitteringer
 - 🔔 **Beskeder** – personlige push-beskeder på iPhone, iPad og Android samt en klokke, der samler alle ændringer i familien
+- 🔒 Enkelte menuer kan låses med Face ID, fingeraftryk eller PIN.
 
 pinn. taler **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk, 🇳🇴 Norsk, 🇫🇮 Suomi og 🇭🇺 Magyar**, tilpasser valuta og nødnumre efter din region og skifter mellem ordene **familie** og **husstand**. En server kan rumme flere familier, hver med egne administratorer.
 

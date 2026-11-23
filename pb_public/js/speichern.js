@@ -105,6 +105,8 @@ function applyFamilyData(data) {
   schoolClosures = skList(data.schoolClosures).filter(x => Array.isArray(x.memberIds));
   pets = skList(data.pets).filter(x => typeof x.name === 'string' && x.name);
   petLog = skList(data.petLog).filter(x => x.pet && x.day);
+  loans = skList(data.loans).filter(x => x.thing);
+  eventPolls = skList(data.eventPolls).filter(x => Array.isArray(x.options));
   lastName = (data.lastName && data.lastName !== 'Mustermann') ? data.lastName : '';
   householdType = data.wohnform === 'wg' ? 'wg' : 'familie';
   applyHouseholdType(true);

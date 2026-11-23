@@ -239,6 +239,32 @@ var muellBusy = false;
 var muellHits = [];
 var muellProgressTimer = null;
 
+// The server answers with German texts; show them in the app language (unknown texts stay as they are)
+var MUELL_ERR_MAP = [
+  [/^Das ist keine Kalenderdatei/, 'notIcs'], [/^Ungültiger oder nicht erlaubter Link/, 'badLink'],
+  [/^Der Server des Entsorgers ist nicht erreichbar \((.*)\)\.?$/, 'unreachable', ['err']],
+  [/^Unter diesem Link gibt es/, 'gone'], [/^Der Server des Entsorgers antwortet mit Status (\d+)/, 'status', ['code']],
+  [/^Die Datei war leer/, 'empty'], [/^Die Datei ist zu groß/, 'tooBig'], [/^In der Datei stehen keine aktuellen/, 'noDates'],
+  [/^Dein Profil gehört zu keiner Familie/, 'noFamily'], [/^Nur Admins der Familie/, 'adminOnly'],
+  [/^Es ist noch kein Müllkalender/, 'notSetUp'], [/^Dieser Müllkalender stammt aus einer Datei/, 'fromFile'],
+  [/^Gerade erst aktualisiert/, 'justUpdated'], [/^Die KI ist auf dem Server nicht eingerichtet \(PINN/, 'aiMissing'],
+  [/^Die KI ist auf dem Server nicht eingerichtet/, 'aiOff'], [/^Der Gemini-Schlüssel/, 'aiKeyInvalid'],
+  [/^Das kostenlose Gemini-Kontingent/, 'quota'], [/^Google Gemini ist gerade überlastet/, 'busy'],
+  [/^Die KI-Suche hat nicht geklappt \((.*)\)\.?$/, 'aiFailed', ['err']],
+  [/^Bitte mindestens den Ort oder die Postleitzahl/, 'needAddr'], [/^Die Suche läuft schon/, 'searchRunning'],
+  [/^Nicht erlaubt\.?$/, 'denied'],
+];
+function muellErrText(msg) {
+  const m = String(msg == null ? '' : msg);
+  for (const r of MUELL_ERR_MAP) {
+    const x = r[0].exec(m);
+    if (!x) continue;
+    const vars = {};
+    (r[2] || []).forEach((n, i) => { vars[n] = x[i + 1]; });
+    return tk('settings.waste.err.' + r[1], vars);
+  }
+  return m;
+}
 function muellSetStatus(text, err) {
   const el = document.getElementById('muellStatus');
   if (!el) return;
@@ -300,7 +326,7 @@ function renderMuellSettings() {
       <div class="home-card-sub">${escapeHtml(k.anzahl ? tk('settings.waste.upcomingUntil', { n: k.anzahl, date: muellFmtLong(k.bis) }) : tk('settings.waste.noUpcoming'))}</div>
       ${naechste.length ? `<div class="muell-hit-dates">${naechste.map(x => `<span><i style="background:${escapeHtml(muellArtFarbe(x.t))}"></i>${escapeHtml(muellFmtShort(x.d))} – ${escapeHtml(x.t)}</span>`).join('')}</div>` : ''}
       <div class="home-card-sub" style="margin-top:0.45rem">${quelleZeile}</div>
-      ${k.fehler ? `<div class="muell-err" style="margin-top:0.3rem">${escapeHtml(tk('settings.waste.lastCheckFailed', { error: k.fehler }))}</div>` : ''}
+      ${k.fehler ? `<div class="muell-err" style="margin-top:0.3rem">${escapeHtml(tk('settings.waste.lastCheckFailed', { error: muellErrText(k.fehler) }))}</div>` : ''}
       ${bald ? `<div class="muell-err" style="margin-top:0.3rem">${escapeHtml(tk('settings.waste.endsSoon', { date: muellFmtLong(k.bis) }))}</div>` : ''}`;
     const tog = document.getElementById('muellShowToggle');
     tog.checked = k.anzeigen !== false;
@@ -383,7 +409,7 @@ async function muellPost(path, data) {
   const res = await apiFetch('/api/pinn/muell/' + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data || {}) });
   if (res.status === 404) throw new Error(tk('settings.waste.serverPartMissing'));
   const body = await res.json().catch(() => ({}));
-  if (!res.ok || body.error) throw new Error(body.error || tk('common.failed'));
+  if (!res.ok || body.error) throw new Error(muellErrText(body.error) || tk('common.failed'));
   return body;
 }
 function muellConfirmReplace() {

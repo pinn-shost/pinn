@@ -104,15 +104,16 @@ Napauta kuvaa avataksesi sen täysikokoisena.
 
 ## Mitä pinn. osaa
 
-- 📅 **Kalenteri** – yhteinen perhekalenteri, iCloud- ja Google-yhteys, pyhäpäivät ja koululomat
-- ✅ **Tehtävät ja kotityöt** – tehtävät, vuorottelu, jäte, siivous, ”Kuka tekee paljonko?”
+- 📅 **Kalenteri** – yhteinen perhekalenteri, iCloud- ja Google-yhteys, pyhäpäivät ja koululomat. Päivämääräkyselyt: ehdota useita päiviä, jokainen profiili vastaa Kyllä / Ei / Ehkä, ja voittanut päivä tulee kalenterimerkinnäksi.
+- ✅ **Tehtävät ja kotityöt** – tehtävät, vuorottelu, jäte, siivous, ”Kuka tekee paljonko?”. Lainalista kirjaa, kuka on lainannut mitä keneltä (kämppikset tai ulkopuoliset), ja muistuttaa push-ilmoituksin, kunnes tavara on palautettu.
 - 🍽️ **Ateriat** – viikon ruokalista, reseptien tuonti, ruokakomero skannerilla, ostoslista
-- 💶 **Talous** – menot, budjetti, kassat tilityksineen, sopimukset irtisanomisaikoineen, viikkorahat
+- 💶 **Talous** – menot, budjetti, kassat tilityksineen, sopimukset irtisanomisaikoineen, viikkorahat. Tiliotteet voi tuoda CSV-tiedostona: tulot ja menot tunnistetaan ja luokitellaan automaattisesti; jo kirjatut samankaltaiset tapahtumat (sama summa 7 päivän sisällä) näytetään, jotta voit tuoda tai ohittaa ne, ja tiedostosta voi valita ajanjakson.
 - 👨‍👩‍👧 **Perhe** – hätäkortit, sijainti, SOS, ”Matkalla kotiin”, lemmikit, koulu ja päiväkoti
 - 🏠 **Koti ja ajoneuvot** – mittarilukemat, kustannukset, viat ja puutteet, autot polttoaineineen ja katsastuksineen, älykoti
 - 🎙️ **Äänohjaus** – ”Hei Siri, pinn”: lisää jotain ostoslistalle, lue lista ääneen, luo tehtäviä, kuule päivän ohjelma (Siri vastaa toistaiseksi englanniksi)
 - 💬 **Chat** – perhe- ja yksityischat päästä päähän salattuna, push-ilmoituksin ja lukukuittauksin
 - 🔔 **Ilmoitukset** – henkilökohtaiset push-ilmoitukset iPhonella, iPadilla ja Androidilla sekä kello, joka kokoaa kaikki perheen muutokset
+- 🔒 Yksittäiset valikot voi lukita Face ID:llä, sormenjäljellä tai PIN-koodilla.
 
 pinn. puhuu **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk, 🇳🇴 Norsk, 🇫🇮 Suomi ja 🇭🇺 Magyar**, mukauttaa valuutan ja hätänumerot alueellesi ja vaihtaa käsitteiden **perhe** ja **kotitalous** välillä. Yksi palvelin voi sisältää useita perheitä, joilla kullakin on omat ylläpitäjänsä.
 

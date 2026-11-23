@@ -121,7 +121,9 @@ function currentDesignValues() {
     ovBdayDays: overviewBdayDays, ovBdayOnlyUpcoming: overviewBdayOnlyUpcoming, ovBdayHidden: bdayPackHidden(), ovVtHidden: bdayPackHidden(overviewVtHidden),
     ovShortcuts: typeof kzEnabled !== 'undefined' ? kzEnabled.slice() : [],
     ovShortcutsSet: typeof kzChosen !== 'undefined' ? kzChosen : false,
-    ovShortcutsRows: typeof kzRows !== 'undefined' ? { ...kzRows } : { phone: 'multi', tablet: 'multi' },
+    // Row layout as two plain texts: the server keeps only simple values, a nested object was dropped (reset after logout)
+    ovShortcutsRowsPhone: typeof kzRows !== 'undefined' ? kzRows.phone : 'multi',
+    ovShortcutsRowsTablet: typeof kzRows !== 'undefined' ? kzRows.tablet : 'multi',
     // Savings: depots hidden from the total overview
     finDepotsOut: finDepotsOut.slice(0, 30),
     // Language of the app (pinnLangCode: stored on the device or currently active)

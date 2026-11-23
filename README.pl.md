@@ -104,15 +104,16 @@ Dotknij obrazu, aby otworzyć go w pełnym rozmiarze.
 
 ## Co potrafi pinn.
 
-- 📅 **Kalendarz** – wspólny kalendarz rodzinny, połączenie z iCloud i Google, święta państwowe i ferie szkolne
-- ✅ **Zadania i obowiązki domowe** – zadania, kolejność dyżurów, odpady, sprzątanie, „Kto ile robi?”
+- 📅 **Kalendarz** – wspólny kalendarz rodzinny, połączenie z iCloud i Google, święta państwowe i ferie szkolne. Głosowanie nad terminem: zaproponuj kilka terminów, każdy profil odpowiada Tak / Nie / Może, a wybrany termin trafia do kalendarza.
+- ✅ **Zadania i obowiązki domowe** – zadania, kolejność dyżurów, odpady, sprzątanie, „Kto ile robi?”. Lista pożyczek notuje, kto co od kogo ma (współlokatorzy lub osoby trzecie), z powiadomieniami push, dopóki rzecz nie wróci.
 - 🍽️ **Posiłki** – tygodniowy plan posiłków, import przepisów, spiżarnia ze skanerem, lista zakupów
-- 💶 **Finanse** – wydatki, budżet, kasy z rozliczeniami, umowy z terminami wypowiedzenia, kieszonkowe
+- 💶 **Finanse** – wydatki, budżet, kasy z rozliczeniami, umowy z terminami wypowiedzenia, kieszonkowe. Wyciągi bankowe można importować jako CSV: przychody i wydatki są rozpoznawane i kategoryzowane automatycznie; podobne, już wpisane operacje (ta sama kwota w ciągu 7 dni) są pokazywane do zaimportowania lub pominięcia, a można też wybrać okres z pliku.
 - 👨‍👩‍👧 **Rodzina** – karty awaryjne, lokalizacja, SOS, „Wracam do domu”, zwierzęta domowe, szkoła i opieka
 - 🏠 **Dom i pojazdy** – odczyty liczników, koszty, remonty, samochody z paliwem i przeglądami, inteligentny dom
 - 🎙️ **Sterowanie głosem** – „Hey Siri, pinn”: dodaj do listy zakupów, przeczytaj na głos, utwórz zadanie, posłuchaj dzisiejszego planu (gdy aplikacja jest po polsku, Siri na razie odpowiada po angielsku)
 - 💬 **Czat** – czat rodzinny i prywatny, szyfrowany end-to-end, z powiadomieniami push i potwierdzeniem odczytu
 - 🔔 **Powiadomienia** – osobiste powiadomienia push na iPhonie, iPadzie i Androidzie oraz dzwonek powiadomień ze wszystkimi zmianami w rodzinie
+- 🔒 Poszczególne menu można zablokować przez Face ID, odcisk palca lub PIN.
 
 pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk, 🇳🇴 Norsk, 🇫🇮 Suomi i 🇭🇺 Magyar**; dostosowuje walutę i numery alarmowe do twojego regionu i przełącza się między określeniami **rodzina** i **wspólne mieszkanie**. Jeden serwer może obsługiwać wiele rodzin, każdą z własnymi administratorami.
 

@@ -19,6 +19,12 @@
 /* the glyph sits optically a bit high in most fonts */
 .tp-arrow { padding-bottom: 2px; }
 
+/* Phone: bars and sliders reach the screen edge (--bl / --br are measured by js/tabpfeile.js) */
+.tp-bleed { margin-left: calc(-1 * var(--bl, 0px)) !important; margin-right: calc(-1 * var(--br, 0px)) !important;
+  padding-left: var(--bl, 0px) !important; padding-right: var(--br, 0px) !important; width: auto !important; max-width: none !important;
+  scroll-padding-left: var(--bl, 0px); scroll-padding-right: var(--br, 0px); }
+[role="tablist"].tp-bleed, .ls-tabs.tp-bleed { border-radius: 0; }
+
 /* Dark mode: pine is hard to read on dark ground, like everywhere else the arrow turns gold (see css/dunkelfarbe.css) */
 html.dark .tp-arrow {
   color: var(--dk-gold, #E9C46A); background: rgba(42,40,37,.94);

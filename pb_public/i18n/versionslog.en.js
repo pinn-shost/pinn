@@ -3,6 +3,16 @@
    language other than German. One entry per version of PINN_CHANGELOG: t = title, p = points in the same order
    (null = no translation, the German text is shown). Older versions are not translated. */
 window.PINN_CHANGELOG_EN = {
+  "1.163": {"t": "Date polls, lending list, import comparison", "p": [
+"1.163.0: Settings → Waste calendar: the red messages (e.g. file empty, link invalid, AI not reachable) now appear in the app language instead of German.",
+"1.163.0: Shortcuts: the “one row / several rows” setting was not kept and jumped back to “several” after logging out or a long pause – it is now stored permanently in the profile.",
+"1.163.0: Phone: sub-menu bars and sliders (apps/shortcuts, pinboard, family, recipes) now run to the screen edge instead of being cut off at the page margin.",
+"1.163.0: Phone: the bell is now fixed at the right edge of the header. Tablet/PC: date and time show temperature and UV index only when the weather tile is switched on in the overview settings (also on the profile selection).",
+"1.163.0: Arrows on menu bars now jump entry by entry and never past the first / last entry – no empty space is left at the end (both directions).",
+"1.163.0: Date polls in the calendar: with the 📊 button at the top of the calendar create an appointment with several proposed dates and invite profiles. Every profile answers each proposal with Yes, No or Maybe (also on behalf of children and profiles without a phone). The most popular proposal is highlighted; the creator picks the date and turns it into a ready calendar entry with one tap. Push: new poll, everybody answered, date set. A counter on the calendar button shows where your answer is still missing.",
+"1.163.0: Lending list: new “Lending” tab under Lists. Note who has what from whom (inside the family/flat share or from third parties, e.g. a colleague), since when, return by and a note. The “Got it back” button closes an entry; entries can stay private (visible only to you). Push reminders the day before the return, on the due date and then repeatedly (daily, every 3 days or weekly) until it is back.",
+"1.163.0: Bank file import with comparison: choose a period of the file in the same window. If an amount matches an already booked or planned entry (same amount, ±7 days), the row is shown under “Please check” with the existing booking next to it – “Import” or “Ignore” per row, or all at once.",
+]},
   "1.162": {"t": "Menu lock, calm banners, arrows on menu bars", "p": [
 "1.162.0: Lock menus: under Settings → “Lock menus” single menus (e.g. Finance, Documents, Chat) can be protected with Face ID / fingerprint or an own PIN – per device and profile. A menu locks again as soon as you leave it or after 1, 5 or 15 minutes. Changes need an unlock first; if you forget the PIN, “Sign in with password” helps.",
 "1.162.0: New banners for Health and Pets: calm, modern and in the pinn. style (colour gradient, fine line icons), without hopping figures. Every species has its own banner (dog, cat, rabbit, guinea pig/hamster, bird, fish, reptile, horse, other); the list shows the species of the family.",

@@ -18,6 +18,8 @@
 //   listen      familyLists, listTemplates                         (since 1.106.0)
 //   schule      schoolProfiles, schoolHomework, schoolLetters, schoolClosures (since 1.106.0)
 //   haustiere   pets, petLog                                       (since 1.106.0)
+//   ausleihe    loans (lending list)                               (since 1.163.0)
+//   abstimmung  eventPolls (date polls in the calendar)            (since 1.163.0)
 //   zuhause     houseMaintenance                                   (since 1.106.0)
 //   mitglieder  members                                            (since 1.108.0)
 //   notfall     emergencyPasses                                    (since 1.108.0)
@@ -71,6 +73,8 @@ const AREAS = {
     listen: ["familyLists", "listTemplates"],
     schule: ["schoolProfiles", "schoolHomework", "schoolLetters", "schoolClosures"],
     haustiere: ["pets", "petLog"],
+    ausleihe: ["loans"],
+    abstimmung: ["eventPolls"],
     zuhause: ["houseMaintenance"],
     mitglieder: ["members"],
     notfall: ["emergencyPasses"],

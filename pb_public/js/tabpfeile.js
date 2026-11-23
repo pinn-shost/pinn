@@ -50,9 +50,29 @@
     s.r.classList.toggle('tp-hide', !(visible && bar.scrollLeft < max - 2));
   }
 
+  // Scroll by whole entries and never past the first / last entry, so no empty space is shown at either end
   function scrollBar(bar, dir) {
-    var step = Math.max(80, Math.round(bar.clientWidth * 0.66));
-    try { bar.scrollBy({ left: dir * step, behavior: 'smooth' }); } catch (e) { bar.scrollLeft += dir * step; }
+    var kids = Array.prototype.filter.call(bar.children, function (c) { return c.offsetWidth > 0 && !c.classList.contains('tp-arrow'); });
+    var br = bar.getBoundingClientRect(), cur = bar.scrollLeft, pad = 6;
+    var target;
+    if (kids.length) {
+      var pos = kids.map(function (c) { var r = c.getBoundingClientRect(); return { l: r.left - br.left + cur, r: r.right - br.left + cur }; });
+      var padL = parseFloat(getComputedStyle(bar).paddingLeft) || 0;
+      var lo = pos[0].l - padL - 12 <= 0 ? 0 : pos[0].l - pad;
+      var hi = Math.max(lo, Math.min(bar.scrollWidth - bar.clientWidth, pos[pos.length - 1].r - bar.clientWidth + pad + 12));
+      if (dir > 0) {
+        var next = pos.filter(function (q) { return q.r > cur + bar.clientWidth + 1; })[0];
+        target = next ? next.l - pad : hi;
+      } else {
+        var prev = pos.filter(function (q) { return q.l < cur - 1; });
+        var last = prev[prev.length - 1];
+        target = last ? last.r - bar.clientWidth + pad : lo;
+      }
+      target = Math.min(hi, Math.max(lo, target));
+    } else {
+      target = cur + dir * Math.max(80, Math.round(bar.clientWidth * 0.66));
+    }
+    try { bar.scrollTo({ left: target, behavior: 'smooth' }); } catch (e) { bar.scrollLeft = target; }
   }
 
   // The entry the person just tapped (or the active one) is scrolled fully into view
@@ -81,10 +101,37 @@
     setTimeout(upd, 400);   // fonts / translated texts change the width after the first layout
   }
 
+  // Phone: menu bars and sliders run to the screen edge instead of stopping at the page margin.
+  // The distance to the screen edge is measured and turned into a negative margin plus the same padding,
+  // so the first entry still starts at the page margin and scrolls out to the edge.
+  var BLEED_SELECTOR = SELECTOR + ', .pw-tile-strip, .kz-grid.one-row, .ov-fam-row, #recipeWeekSlider, #recipeCookSlider, #recipeFavSlider';
+  function bleedOne(el, force) {
+    var on = el.classList.contains('tp-bleed');
+    if (on && !force && el.getAttribute('data-bleed-w') === String(window.innerWidth)) return;
+    if (on) el.classList.remove('tp-bleed');
+    var r = el.getBoundingClientRect();
+    if (r.width < 50) return;
+    var l = r.left, rt = window.innerWidth - r.right;
+    if (l < 0.5 || rt < 0.5 || l > 40 || rt > 40) return;
+    el.style.setProperty('--bl', Math.round(l) + 'px');
+    el.style.setProperty('--br', Math.round(rt) + 'px');
+    el.setAttribute('data-bleed-w', String(window.innerWidth));
+    el.classList.add('tp-bleed');
+  }
+  function bleedAll(force) {
+    var els = document.querySelectorAll(BLEED_SELECTOR);
+    var phone = document.body.classList.contains('mobile-mode');
+    for (var i = 0; i < els.length; i++) {
+      if (phone) bleedOne(els[i], force);
+      else if (els[i].classList.contains('tp-bleed')) els[i].classList.remove('tp-bleed');
+    }
+  }
+
   function scan() {
     scanTimer = null;
     var bars = document.querySelectorAll(SELECTOR);
     for (var i = 0; i < bars.length; i++) enhance(bars[i]);
+    bleedAll(false);
   }
   function scheduleScan() { if (!scanTimer) scanTimer = setTimeout(scan, 200); }
 
@@ -94,6 +141,8 @@
     window.addEventListener('resize', function () {
       var bars = document.querySelectorAll('.tp-bar');
       for (var i = 0; i < bars.length; i++) update(bars[i]);
+      bleedAll(true);
+      for (var j = 0; j < bars.length; j++) update(bars[j]);
     });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();

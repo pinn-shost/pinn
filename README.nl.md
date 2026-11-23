@@ -104,15 +104,16 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 ## Wat pinn. kan
 
-- 📅 **Agenda** – gedeelde gezinsagenda, iCloud en Google koppelen, feestdagen en schoolvakanties
-- ✅ **Taken & huishouden** – taken, beurtenrooster, afval, schoonmaak, “Wie doet hoeveel?”
+- 📅 **Agenda** – gedeelde gezinsagenda, iCloud en Google koppelen, feestdagen en schoolvakanties. Datumstemmingen: stel meerdere data voor, elk profiel antwoordt Ja / Nee / Misschien en de winnende datum wordt een agenda-item.
+- ✅ **Taken & huishouden** – taken, beurtenrooster, afval, schoonmaak, “Wie doet hoeveel?”. Een uitleenlijst houdt bij wie wat van wie heeft (huisgenoten of derden), met pushmeldingen tot het terug is.
 - 🍽️ **Maaltijden** – weekmenu, recepten importeren, voorraadkast met scanner, boodschappenlijst
-- 💶 **Financiën** – uitgaven, budget, kassen met verrekening, contracten met opzegtermijnen, zakgeld
+- 💶 **Financiën** – uitgaven, budget, kassen met verrekening, contracten met opzegtermijnen, zakgeld. Bankafschriften kunnen als CSV worden geïmporteerd: inkomsten en uitgaven worden herkend en gecategoriseerd; vergelijkbare bestaande boekingen (zelfde bedrag binnen 7 dagen) worden getoond om te importeren of te negeren, en je kunt een periode uit het bestand kiezen.
 - 👨‍👩‍👧 **Gezin** – noodpassen, locatie, SOS, “Ik ga naar huis”, huisdieren, school en opvang
 - 🏠 **Huis & voertuigen** – meterstanden, kosten, renovatie, auto’s met tanken en APK, slim huis
 - 🎙️ **Spraakbesturing** – “Hé Siri, pinn”: toevoegen aan de boodschappenlijst, voorlezen, taken maken, horen wat er vandaag op het programma staat (met de app in het Nederlands antwoordt Siri voorlopig nog in het Engels)
 - 💬 **Chat** – gezins- en privéchat, end-to-end versleuteld, met push en leesvinkjes
 - 🔔 **Meldingen** – persoonlijke pushberichten op iPhone, iPad en Android en een meldingenbel met alle wijzigingen in het gezin
+- 🔒 Afzonderlijke menu's kunnen worden vergrendeld met Face ID, vingerafdruk of pincode.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk, 🇳🇴 Norsk, 🇫🇮 Suomi en 🇭🇺 Magyar**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 

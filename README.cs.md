@@ -105,15 +105,16 @@ Klepnutím na obrázek ho otevřeš v plné velikosti.
 
 ## Co pinn. umí
 
-- 📅 **Kalendář** – společný rodinný kalendář, propojení s iCloudem a Googlem, státní svátky a školní prázdniny
-- ✅ **Úkoly a domácnost** – úkoly, střídání, odpad, úklid, „Kdo kolik dělá?“
+- 📅 **Kalendář** – společný rodinný kalendář, propojení s iCloudem a Googlem, státní svátky a školní prázdniny. Hlasování o termínu: navrhněte několik termínů, každý profil odpoví Ano / Ne / Možná a vítězný termín se stane záznamem v kalendáři.
+- ✅ **Úkoly a domácnost** – úkoly, střídání, odpad, úklid, „Kdo kolik dělá?“. Seznam půjček eviduje, kdo má co od koho (spolubydlící nebo cizí lidé), a připomíná push zprávami, dokud se věc nevrátí.
 - 🍽️ **Jídla** – týdenní plán jídel, import receptů, spíž se skenerem, nákupní seznam
-- 💶 **Finance** – výdaje, rozpočet, pokladny s vyrovnáním, smlouvy s výpovědními lhůtami, kapesné
+- 💶 **Finance** – výdaje, rozpočet, pokladny s vyrovnáním, smlouvy s výpovědními lhůtami, kapesné. Bankovní výpisy lze importovat jako CSV: příjmy a výdaje se rozpoznají a zařadí do kategorií samy; podobné už zapsané položky (stejná částka do 7 dnů) se zobrazí k importu nebo přeskočení a lze zvolit období ze souboru.
 - 👨‍👩‍👧 **Rodina** – nouzové karty, poloha, SOS, „Jdu domů“, mazlíčci, škola a školka
 - 🏠 **Domov a vozidla** – odečty měřičů, náklady, vady, auta s palivem a STK, chytrá domácnost
 - 🎙️ **Hlasové ovládání** – „Hey Siri, pinn“: přidat na nákupní seznam, přečíst ho, vytvořit úkoly, vyslechnout si dnešek (zatím Siri odpovídá anglicky)
 - 💬 **Chat** – rodinný a soukromý chat s koncovým šifrováním, push oznámeními a potvrzením o přečtení
 - 🔔 **Oznámení** – osobní push zprávy na iPhonu, iPadu a Androidu a zvonek, který sbírá všechny změny v rodině
+- 🔒 Jednotlivá menu lze zamknout přes Face ID, otisk prstu nebo PIN.
 
 pinn. mluví jazyky: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk, 🇳🇴 Norsk, 🇫🇮 Suomi a 🇭🇺 Magyar**; přizpůsobí měnu a tísňová čísla tvému regionu a přepíná mezi pojmy **rodina** a **společná domácnost**. Jeden server může hostit více rodin, každou s vlastními správci.
 

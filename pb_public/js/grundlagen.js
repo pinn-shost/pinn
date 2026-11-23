@@ -45,7 +45,10 @@ function tickClock() {
   let text = escapeHtml(now.toLocaleDateString(PINN_I18N.language.locale, { weekday: 'long', day: 'numeric', month: 'long' }) + ' · ' + now.toLocaleTimeString(PINN_I18N.language.locale, { hour: '2-digit', minute: '2-digit' }));
   const hw = document.getElementById('headerWeather');
   const headerWeatherShown = !!(hw && !hw.classList.contains('hidden'));
-  if (weatherData && !headerWeatherShown) {
+  // Temperature and UV only when the weather tile is switched on in Settings → Overview
+  let wxOff = false;
+  try { wxOff = overviewHidden.includes('wetter'); } catch (e) { wxOff = false; }
+  if (weatherData && !headerWeatherShown && !wxOff) {
     text += ` | ${weatherIconForCode(weatherData.code)} ${escapeHtml(tDeg(weatherData.temp))}`;
     if (weatherData.uv !== null) text += ` | UV ${escapeHtml(String(weatherData.uv))}`;
   }

@@ -105,15 +105,16 @@ Koppints a képre a teljes méretű megnyitáshoz.
 
 ## Mit tud a pinn.
 
-- 📅 **Naptár** – közös családi naptár, iCloud- és Google-kapcsolat, munkaszüneti napok és iskolai szünetek
-- ✅ **Feladatok és házimunka** – feladatok, váltakozás, hulladék, takarítás, „Ki mennyit csinál?”
+- 📅 **Naptár** – közös családi naptár, iCloud- és Google-kapcsolat, munkaszüneti napok és iskolai szünetek. Időpont-szavazások: javasolj több időpontot, minden profil Igen / Nem / Talán választ ad, a nyertes időpont pedig naptárbejegyzés lesz.
+- ✅ **Feladatok és házimunka** – feladatok, váltakozás, hulladék, takarítás, „Ki mennyit csinál?”. A kölcsönzési lista rögzíti, ki mit kapott kitől (lakótársak vagy kívülállók), és push-értesítéssel emlékeztet, amíg vissza nem kerül.
 - 🍽️ **Étkezések** – heti étlap, receptimport, kamra olvasóval, bevásárlólista
-- 💶 **Pénzügyek** – kiadások, költségvetés, alapok elszámolással, szerződések felmondási idővel, zsebpénz
+- 💶 **Pénzügyek** – kiadások, költségvetés, alapok elszámolással, szerződések felmondási idővel, zsebpénz. A bankszámlakivonatok CSV-ként importálhatók: a bevételeket és kiadásokat a rendszer felismeri és kategorizálja; a már rögzített hasonló tételeket (azonos összeg 7 napon belül) megmutatja, hogy importálhasd vagy kihagyhasd, és a fájl egy időszaka is kiválasztható.
 - 👨‍👩‍👧 **Család** – segélykártyák, helyzet, SOS, „Úton vagyok hazafelé”, háziállatok, iskola és óvoda
 - 🏠 **Otthon és járművek** – mérőóra-állások, költségek, hibák, autók üzemanyaggal és műszaki vizsgával, okosotthon
 - 🎙️ **Hangvezérlés** – „Hey Siri, pinn”: tegyél valamit a bevásárlólistára, olvasd fel a listát, hozz létre feladatokat, hallgasd meg a napi programot (a Siri egyelőre angolul válaszol)
 - 💬 **Csevegés** – családi és privát csevegés végpontok közötti titkosítással, push-értesítésekkel és olvasási visszaigazolásokkal
 - 🔔 **Értesítések** – személyes push-értesítések iPhone-on, iPaden és Androidon, valamint egy csengő, amely összegyűjti a család összes változását
+- 🔒 Az egyes menük Face ID-vel, ujjlenyomattal vagy PIN-nel zárolhatók.
 
 A pinn. **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська, 🇨🇿 Čeština, 🇸🇪 Svenska, 🇩🇰 Dansk, 🇳🇴 Norsk, 🇫🇮 Suomi és 🇭🇺 Magyar** nyelven beszél, a pénznemet és a segélyhívó számokat a te régiódhoz igazítja, és váltani tud a **család** és a **háztartás** fogalma között. Egy szerver több családot is kiszolgálhat, mindegyik saját adminisztrátorokkal.
 

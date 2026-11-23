@@ -1805,6 +1805,19 @@ function ntOpenLink(url) {
       setView('vorrat');
       return true;
     }
+    // 1.163: lending list and date polls (push messages from pb_hooks/pinn-ausleihe.js / pinn-abstimmung.js)
+    if (g('leihe')) {
+      if (!isViewAllowed('einkauf') || isCurrentUserGuest()) return true;
+      setView('einkauf');
+      listsSetTab('leihe');
+      return true;
+    }
+    if (g('abstimmung')) {
+      if (!isViewAllowed('termine') || isCurrentUserGuest()) return true;
+      setView('termine');
+      setTimeout(() => pollOpenList(), 150);
+      return true;
+    }
     if (g('listen')) {
       if (!isViewAllowed('einkauf')) return true;
       setView('einkauf');
@@ -1823,7 +1836,7 @@ function ntOpenLink(url) {
 }
 // The bell opens these addresses itself on start (the others - ?sos, ?heimweg, ?kasse, ?vertrag,
 // ?dokument, ?pinnwand, ?familie - are already handled by their own sections during start-up)
-var NT_START_LINKS = ['packliste', 'wobistdu', 'gesundheit', 'geburtstag', 'haustier', 'urlaub', 'wetter', 'ausblick', 'ausgabe', 'fahrzeug', 'mitglied', 'aufgabe', 'termin', 'rezept', 'essen', 'vorrat', 'listen', 'einkauf', 'konto'];
+var NT_START_LINKS = ['packliste', 'wobistdu', 'gesundheit', 'geburtstag', 'haustier', 'urlaub', 'wetter', 'ausblick', 'ausgabe', 'fahrzeug', 'mitglied', 'aufgabe', 'termin', 'rezept', 'essen', 'vorrat', 'listen', 'einkauf', 'konto', 'leihe', 'abstimmung'];
 
 // Number on the bell: open expenses, running trips home, unread news and new family notices
 function ntUpdateBadge() {

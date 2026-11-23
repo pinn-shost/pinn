@@ -184,6 +184,8 @@ function defaultFamilyData() {
     schoolClosures: [],      // family → school & daycare: closing days (shown in the calendar)
     pets: [],                // family → pets (see the „Haustiere“ section)
     petLog: [],              // family → pets: walks, feeding, medication (last 60 days)
+    loans: [],               // lists → lending (js/ausleihe.js): { id, thing, from, to, date, due, again, back, note, … }
+    eventPolls: [],          // calendar → date polls (js/terminabstimmung.js): { id, title, options, votes, … }
     tasks: [],
     lastName: '',
     wohnform: 'familie',     // 'familie' or 'wg' (settings → family members → type of household)
@@ -228,6 +230,8 @@ let schoolLetters = [];
 let schoolClosures = [];
 let pets = [];            // family → pets
 let petLog = [];
+let loans = [];
+let eventPolls = [];
 let events = []; // filled exclusively from the Apple calendar (kalender.ics), see syncAppleCalendarFile()
 let mealPlan = [];
 let recipes = [];
