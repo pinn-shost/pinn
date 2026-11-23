@@ -51,3 +51,9 @@ html.dark .hw-day.is-today { background: color-mix(in srgb, var(--c-pine) 28%, t
 /* Task counter (done/total): small, next to the heading on iPad & computer, below it on the phone */
 #taskCount { font-variant-numeric: tabular-nums; }
 body.mobile-mode #taskCount { flex-basis: 100%; }
+
+/* Tablet/PC: the tiles next to the calendar lie one below the other in a scrolling column (#ovSideCol, js/uebersicht.js).
+   Each tile has a maximum height; when its content is longer it scrolls inside the tile. Nothing overlaps. */
+#ovSideCol { scrollbar-width: thin; overscroll-behavior: contain; }
+#ovSideCol > .ov-side-tile { flex: 0 0 auto; max-height: 46vh; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
+#ovSideCol > .ov-side-tile.ov-side-big { max-height: 72vh; }

@@ -50,6 +50,17 @@ let lastOverviewTileKey = '';
 let overviewGridColumns = '';
 let overviewCalendarSide = ''; // 'links' | 'rechts' | '' (no calendar next to other tiles)
 
+// The scrolling column on the right/left of the calendar (tablet/PC); created once, hidden when not needed
+function overviewSideColumn(mainGrid) {
+  let el = document.getElementById('ovSideCol');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'ovSideCol';
+    el.className = 'hidden min-h-0 min-w-0 flex flex-col overflow-y-auto';
+    mainGrid.appendChild(el);
+  }
+  return el;
+}
 function overviewTile(id) { return OVERVIEW_TILES.find(t => t.id === id); }
 function overviewSection(id) { return document.getElementById(OVERVIEW_SECTION_IDS[id]); }
 
@@ -118,8 +129,14 @@ function applyOverviewLayout() {
     sec.style.height = '';
     sec.style.gridColumn = '';
     sec.style.gridRow = '';
-    sec.classList.remove('shrink-0', 'border-t', 'border-l', 'border-r');
+    sec.classList.remove('shrink-0', 'border-t', 'border-l', 'border-r', 'ov-side-tile', 'ov-side-big');
+    // Back into the grid itself (tablet/PC puts the small tiles into the scrolling side column, see below)
+    if (sec.parentNode !== mainGrid) mainGrid.appendChild(sec);
   });
+  const sideCol = overviewSideColumn(mainGrid);
+  sideCol.classList.add('hidden');
+  sideCol.style.gridColumn = '';
+  sideCol.style.gridRow = '';
   mainGrid.classList.remove('grid-cols-1', 'lg:grid-cols-[1.1fr_0.8fr_0.8fr]', 'grid-cols-[1.1fr_0.8fr_0.8fr]', 'grid-cols-[1.3fr_1fr]', 'grid-cols-[1.3fr_minmax(0,1fr)]');
   mainGrid.style.gridTemplateRows = '';
   mainGrid.style.gridTemplateColumns = '';
@@ -157,15 +174,22 @@ function applyOverviewLayout() {
       overviewCalendarSide = calLeft ? 'links' : 'rechts';
       overviewGridColumns = calLeft ? '1.3fr minmax(0, 1fr)' : 'minmax(0, 1fr) 1.3fr';
       mainGrid.style.gridTemplateColumns = overviewGridColumns;
-      mainGrid.style.gridTemplateRows = others.map(rowSize).join(' ');
+      // One row: the calendar over the full height and next to it ONE scrolling column that holds all other tiles
+      // one below the other. Every tile has a maximum height (its content scrolls inside), so nothing overlaps.
+      mainGrid.style.gridTemplateRows = 'minmax(0, 1fr)';
       const cal = overviewSection('kalender');
       cal.style.gridColumn = calLeft ? '1' : '2';
-      cal.style.gridRow = '1 / span ' + others.length;
+      cal.style.gridRow = '1';
       cal.classList.add(calLeft ? 'border-r' : 'border-l');
+      sideCol.classList.remove('hidden');
+      sideCol.style.gridColumn = calLeft ? '2' : '1';
+      sideCol.style.gridRow = '1';
+      sideCol.scrollTop = 0;
       others.forEach((id, i) => {
         const sec = overviewSection(id);
-        sec.style.gridColumn = calLeft ? '2' : '1';
-        sec.style.gridRow = String(i + 1);
+        sideCol.appendChild(sec);
+        sec.classList.add('ov-side-tile', 'shrink-0');
+        if (isBig(id)) sec.classList.add('ov-side-big');
         if (i > 0) sec.classList.add('border-t');
       });
     } else {

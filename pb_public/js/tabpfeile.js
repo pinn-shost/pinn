@@ -118,10 +118,18 @@
     el.setAttribute('data-bleed-w', String(window.innerWidth));
     el.classList.add('tp-bleed');
   }
+  // Elements that are hidden when first scanned (e.g. the overview tiles before the page is shown) get their
+  // measurement as soon as they get a size - a ResizeObserver reports that moment.
+  var bleedWatch = window.ResizeObserver ? new ResizeObserver(function (entries) {
+    if (!document.body.classList.contains('mobile-mode')) return;
+    for (var k = 0; k < entries.length; k++) bleedOne(entries[k].target, false);
+  }) : null;
+  var bleedWatched = new WeakSet();
   function bleedAll(force) {
     var els = document.querySelectorAll(BLEED_SELECTOR);
     var phone = document.body.classList.contains('mobile-mode');
     for (var i = 0; i < els.length; i++) {
+      if (bleedWatch && !bleedWatched.has(els[i])) { bleedWatched.add(els[i]); bleedWatch.observe(els[i]); }
       if (phone) bleedOne(els[i], force);
       else if (els[i].classList.contains('tp-bleed')) els[i].classList.remove('tp-bleed');
     }

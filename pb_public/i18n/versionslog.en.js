@@ -4,6 +4,8 @@
    (null = no translation, the German text is shown). Older versions are not translated. */
 window.PINN_CHANGELOG_EN = {
   "1.163": {"t": "Date polls, lending list, import comparison", "p": [
+"1.163.1: Overview on tablet and PC: the tiles next to the calendar no longer overlap. They now lie one below the other in a single column that scrolls up and down. Every tile has a maximum height; if its content is longer, it scrolls inside the tile.",
+"1.163.1: Phone: the margin of sliders and sub-menu bars only disappeared after a tap (e.g. on the bell). They now run to the screen edge right when the page opens.",
 "1.163.0: Settings → Waste calendar: the red messages (e.g. file empty, link invalid, AI not reachable) now appear in the app language instead of German.",
 "1.163.0: Shortcuts: the “one row / several rows” setting was not kept and jumped back to “several” after logging out or a long pause – it is now stored permanently in the profile.",
 "1.163.0: Phone: sub-menu bars and sliders (apps/shortcuts, pinboard, family, recipes) now run to the screen edge instead of being cut off at the page margin.",

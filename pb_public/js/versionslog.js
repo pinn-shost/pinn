@@ -24,6 +24,8 @@ const PINN_CHANGELOG = [
   {
     v: '1.163', datum: '22.11.2026', titel: 'Terminabstimmung, Ausleihliste, Import-Abgleich',
     punkte: [
+      ['fix', '1.163.1: Übersicht auf Tablet und PC: Die Kacheln neben dem Kalender überlappen sich nicht mehr. Sie liegen jetzt alle untereinander in einer Spalte, die sich hoch und runter scrollen lässt. Jede Kachel hat eine Maximalhöhe; ist der Inhalt länger, scrollt er innerhalb der Kachel.'],
+      ['fix', '1.163.1: Handy: Der Rand von Slidern und Untermenü-Leisten verschwand erst nach einem Klick (z. B. auf die Glocke). Jetzt laufen sie sofort beim Öffnen der Seite bis zum Bildschirmrand.'],
       ['fix', '1.163.0: Einstellungen → Müllabfuhr-Kalender: Die roten Hinweise (z. B. Datei leer, Link ungültig, KI nicht erreichbar) erscheinen jetzt in der App-Sprache statt auf Deutsch.'],
       ['fix', '1.163.0: Kurzbefehle: Die Einstellung „eine Reihe / mehrere Reihen“ blieb nicht erhalten und sprang nach Abmelden oder längerer Pause auf „mehrere“ zurück – sie wird jetzt dauerhaft im Profil gespeichert.'],
       ['fix', '1.163.0: Handy: Untermenü-Leisten und Slider (Apps/Kurzbefehle, Pinnwand, Familie, Rezepte) laufen jetzt bis zum Bildschirmrand statt am Seitenrand abgeschnitten zu werden.'],
