@@ -63,14 +63,14 @@ Zawsze przy tobie: pinn. instaluje się na każdym iPhonie i telefonie z Android
 
 <table>
   <tr>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/home.png"><img src=".github/assets/screenshots/home.png" alt="Strona główna z pogodą, dzisiejszymi zadaniami i wydarzeniami" width="240"></a><br><sub><b>Przegląd</b> – twój dzień w skrócie</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/calendar.png"><img src=".github/assets/screenshots/calendar.png" alt="Kalendarz rodzinny w widoku tygodnia" width="240"></a><br><sub><b>Kalendarz</b> – iCloud i Google w jednym widoku</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/meals.png"><img src=".github/assets/screenshots/meals.png" alt="Tygodniowy plan posiłków z przepisami" width="240"></a><br><sub><b>Posiłki</b> – zaplanuj tydzień, zakupy jednym dotknięciem</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/home.png"><img src=".github/assets/screenshots/home.png" alt="Strona główna ze skrótami, członkami rodziny, tablicą i planem tygodnia" width="240"></a><br><sub><b>Przegląd</b> – twój dzień w skrócie</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/calendar.png"><img src=".github/assets/screenshots/calendar.png" alt="Kalendarz rodzinny w widoku dnia z terminami i posiłkami" width="240"></a><br><sub><b>Kalendarz</b> – iCloud i Google w jednym widoku</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/chat.png"><img src=".github/assets/screenshots/chat.png" alt="Czat rodzinny z wiadomością, udostępnioną lokalizacją i wiadomością głosową" width="240"></a><br><sub><b>Czat</b> – szyfrowany end-to-end, z wiadomościami głosowymi i lokalizacją</sub></td>
   </tr>
   <tr>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/meals.png"><img src=".github/assets/screenshots/meals.png" alt="Zbiór własnych i publicznych przepisów" width="240"></a><br><sub><b>Posiłki</b> – zaplanuj tydzień, zakupy jednym dotknięciem</sub></td>
     <td align="center" width="33%"><a href=".github/assets/screenshots/lists.png"><img src=".github/assets/screenshots/lists.png" alt="Lista zakupów podzielona według sklepów" width="240"></a><br><sub><b>Listy</b> – zakupy, spiżarnia, listy pakowania</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="Widok budżetu z wydatkami według kategorii" width="240"></a><br><sub><b>Finanse</b> – budżet, oszczędności, kieszonkowe</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/chat.png"><img src=".github/assets/screenshots/chat.png" alt="Czat rodzinny z wiadomością, udostępnioną lokalizacją i wiadomością głosową" width="240"></a><br><sub><b>Czat</b> – szyfrowany end-to-end, z wiadomościami głosowymi i lokalizacją</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="Przegląd budżetu z wykresem miesięcy" width="240"></a><br><sub><b>Finanse</b> – budżet, oszczędności, kieszonkowe</sub></td>
   </tr>
 </table>
 
@@ -85,16 +85,18 @@ Dotknij obrazu, aby otworzyć go w pełnym rozmiarze.
 
 <table>
   <tr>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/house.png"><img src=".github/assets/screenshots/house.png" alt="Strona Dom z mieszkaniem, miesięcznymi kosztami, kredytem i danymi zakupu" width="200"></a><br><sub><b>Dom</b> – mieszkanie, koszty, kredyt, usterki i odczyty liczników w jednym miejscu</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/tasks.png"><img src=".github/assets/screenshots/tasks.png" alt="Lista zadań z automatycznymi przypomnieniami o pojazdach" width="200"></a><br><sub><b>Zadania</b> – automatyczne przypomnienia, np. o przeglądzie i zmianie opon, ze skrótem</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/vehicles.png"><img src=".github/assets/screenshots/vehicles.png" alt="Strona pojazdu z tablicą rejestracyjną, przypomnieniami i wydarzeniami" width="200"></a><br><sub><b>Pojazdy</b> – przegląd, opony, paliwo i ładowanie</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/scan_pantry.png"><img src=".github/assets/screenshots/scan_pantry.png" alt="Skaner kodów kreskowych do spiżarni z nazwą, kategorią, miejscem przechowywania i datą przydatności" width="200"></a><br><sub><b>Skanowanie spiżarni</b> – zeskanuj kod, dodaj do spiżarni lub zdejmij ze stanu</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/tasks.png"><img src=".github/assets/screenshots/tasks.png" alt="Lista zadań z automatycznymi przypomnieniami o pojazdach" width="160"></a><br><sub><b>Zadania</b> – automatyczne przypomnienia, np. o przeglądzie i zmianie opon, ze skrótem</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/board.png"><img src=".github/assets/screenshots/board.png" alt="Tablica z odliczaniem, podziękowaniem i ankietą" width="160"></a><br><sub><b>Tablica</b> – notatki, odliczania, podziękowania i ankiety</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/family.png"><img src=".github/assets/screenshots/family.png" alt="Strona rodziny z profilami i kafelkami zdrowia, lokalizacji, szkoły i zwierząt" width="160"></a><br><sub><b>Rodzina</b> – profile, zdrowie, szkoła, zwierzęta i lokalizacja</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="Strona dziecka z codzienną rutyną" width="160"></a><br><sub><b>Dzieci</b> – codzienna rutyna w zabawnej formie</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/home_darkmode.png"><img src=".github/assets/screenshots/home_darkmode.png" alt="Strona główna w trybie ciemnym" width="160"></a><br><sub><b>Tryb ciemny</b> – automatycznie lub kiedy chcesz</sub></td>
   </tr>
   <tr>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_1.png"><img src=".github/assets/screenshots/weekly_summary_1.png" alt="Podgląd tygodnia z pogodą i otwartymi zadaniami" width="200"></a><br><sub><b>Podgląd tygodnia</b> – pogoda i to, co jest do zrobienia</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_2.png"><img src=".github/assets/screenshots/weekly_summary_2.png" alt="Podgląd tygodnia dzień po dniu ze sprzątaniem, wywozem śmieci i płatnościami" width="200"></a><br><sub><b>Podgląd tygodnia</b> – dzień po dniu: sprzątanie, śmieci, płatności</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_3.png"><img src=".github/assets/screenshots/weekly_summary_3.png" alt="Podsumowanie minionego tygodnia ze skrótami do kalendarza i zadań" width="200"></a><br><sub><b>Miniony tydzień w skrócie</b> – wydarzenia, posiłki, wydatki – i skróty</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="Strona dziecka z codzienną rutyną" width="200"></a><br><sub><b>Dzieci</b> – codzienna rutyna w zabawnej formie</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/pantry.png"><img src=".github/assets/screenshots/pantry.png" alt="Spiżarnia według kategorii z ostrzeżeniami o terminie i minimalnym zapasem" width="160"></a><br><sub><b>Spiżarnia</b> – zapasy, minimalne ilości i terminy ważności</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/pantry_scan.png"><img src=".github/assets/screenshots/pantry_scan.png" alt="Skaner kodów kreskowych do spiżarni z nazwą, kategorią, miejscem przechowywania i datą przydatności" width="160"></a><br><sub><b>Skanowanie spiżarni</b> – zeskanuj kod, dodaj do spiżarni lub zdejmij ze stanu</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/house.png"><img src=".github/assets/screenshots/house.png" alt="Strona Dom z mieszkaniem, miesięcznymi kosztami, kredytem i danymi zakupu" width="160"></a><br><sub><b>Dom</b> – mieszkanie, koszty, kredyt, usterki i odczyty liczników w jednym miejscu</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/vehicles.png"><img src=".github/assets/screenshots/vehicles.png" alt="Strona pojazdu z tablicą rejestracyjną, przypomnieniami i wydarzeniami" width="160"></a><br><sub><b>Pojazdy</b> – przegląd, opony, paliwo i ładowanie</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/documents.png"><img src=".github/assets/screenshots/documents.png" alt="Dokumenty według kategorii z datami gwarancji i ważności" width="160"></a><br><sub><b>Dokumenty</b> – paragony, gwarancje i umowy z terminami</sub></td>
   </tr>
 </table>
 

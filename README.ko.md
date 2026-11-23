@@ -75,14 +75,14 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 <table>
   <tr>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/home.png"><img src=".github/assets/screenshots/home.png" alt="오늘의 날씨, 할 일, 일정이 있는 홈 화면" width="240"></a><br><sub><b>개요</b>: 오늘 하루를 한눈에</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/calendar.png"><img src=".github/assets/screenshots/calendar.png" alt="주 보기의 가족 캘린더" width="240"></a><br><sub><b>캘린더</b>: iCloud와 Google을 한 화면에</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/meals.png"><img src=".github/assets/screenshots/meals.png" alt="레시피가 있는 주간 식단" width="240"></a><br><sub><b>식단</b>: 한 주를 계획하고 한 번에 장보기</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/home.png"><img src=".github/assets/screenshots/home.png" alt="바로가기, 가족 구성원, 게시판, 이번 주 계획이 있는 홈 화면" width="240"></a><br><sub><b>개요</b>: 오늘 하루를 한눈에</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/calendar.png"><img src=".github/assets/screenshots/calendar.png" alt="일정과 식사가 표시된 가족 캘린더 일간 보기" width="240"></a><br><sub><b>캘린더</b>: iCloud와 Google을 한 화면에</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/chat.png"><img src=".github/assets/screenshots/chat.png" alt="메시지, 공유된 위치, 음성 메시지가 있는 가족 채팅" width="240"></a><br><sub><b>채팅</b>: 종단 간 암호화, 음성 메시지와 위치 공유</sub></td>
   </tr>
   <tr>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/meals.png"><img src=".github/assets/screenshots/meals.png" alt="내 레시피와 공개 레시피 모음" width="240"></a><br><sub><b>식단</b>: 한 주를 계획하고 한 번에 장보기</sub></td>
     <td align="center" width="33%"><a href=".github/assets/screenshots/lists.png"><img src=".github/assets/screenshots/lists.png" alt="가게별로 정리한 장보기 목록" width="240"></a><br><sub><b>목록</b>: 장보기, 비축품, 짐 싸기</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="카테고리별 지출이 있는 예산 개요" width="240"></a><br><sub><b>가계</b>: 예산, 저축, 용돈</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/chat.png"><img src=".github/assets/screenshots/chat.png" alt="메시지, 공유된 위치, 음성 메시지가 있는 가족 채팅" width="240"></a><br><sub><b>채팅</b>: 종단 간 암호화, 음성 메시지와 위치 공유</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="월별 추이 그래프가 있는 예산 개요" width="240"></a><br><sub><b>가계</b>: 예산, 저축, 용돈</sub></td>
   </tr>
 </table>
 
@@ -97,16 +97,18 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 <table>
   <tr>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/house.png"><img src=".github/assets/screenshots/house.png" alt="집, 월별 비용, 대출, 구입 정보가 있는 집 페이지" width="200"></a><br><sub><b>집</b> – 집, 비용, 대출, 하자, 계량기를 한곳에서</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/tasks.png"><img src=".github/assets/screenshots/tasks.png" alt="차량 자동 알림이 있는 할 일 목록" width="200"></a><br><sub><b>할 일</b> – 자동 알림(예: 차검과 타이어 교체)과 바로가기 버튼</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/vehicles.png"><img src=".github/assets/screenshots/vehicles.png" alt="번호판, 알림, 이벤트가 있는 차량 페이지" width="200"></a><br><sub><b>차량</b> – 차검, 타이어, 주유와 충전</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/scan_pantry.png"><img src=".github/assets/screenshots/scan_pantry.png" alt="이름, 카테고리, 보관 위치, 유통기한이 있는 비축품 바코드 스캔" width="200"></a><br><sub><b>비축품 스캔</b> – 바코드를 스캔해 보관하거나 소진</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/tasks.png"><img src=".github/assets/screenshots/tasks.png" alt="차량 자동 알림이 있는 할 일 목록" width="160"></a><br><sub><b>할 일</b> – 자동 알림(예: 차검과 타이어 교체)과 바로가기 버튼</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/board.png"><img src=".github/assets/screenshots/board.png" alt="카운트다운, 감사 메모, 투표가 있는 게시판" width="160"></a><br><sub><b>게시판</b> – 메모, 카운트다운, 감사 인사, 투표</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/family.png"><img src=".github/assets/screenshots/family.png" alt="프로필과 건강·위치·학교·반려동물 타일이 있는 가족 페이지" width="160"></a><br><sub><b>가족</b> – 프로필, 건강, 학교, 반려동물, 위치</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="하루 일과가 있는 아이 페이지" width="160"></a><br><sub><b>아이</b>: 재미있는 하루 일과</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/home_darkmode.png"><img src=".github/assets/screenshots/home_darkmode.png" alt="다크 모드의 홈 화면" width="160"></a><br><sub><b>다크 모드</b> – 자동으로 또는 원할 때</sub></td>
   </tr>
   <tr>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_1.png"><img src=".github/assets/screenshots/weekly_summary_1.png" alt="날씨와 남은 할 일이 있는 주간 미리보기" width="200"></a><br><sub><b>주간 미리보기</b> – 날씨와 아직 남은 일</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_2.png"><img src=".github/assets/screenshots/weekly_summary_2.png" alt="청소, 쓰레기 배출일, 결제를 하루씩 보여 주는 주간 미리보기" width="200"></a><br><sub><b>주간 미리보기</b> – 하루씩: 청소, 쓰레기, 결제</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_3.png"><img src=".github/assets/screenshots/weekly_summary_3.png" alt="캘린더와 할 일로 가는 바로가기가 있는 지난주 요약" width="200"></a><br><sub><b>지난주 요약</b> – 일정, 식사, 지출 – 그리고 바로가기</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="하루 일과가 있는 아이 페이지" width="200"></a><br><sub><b>아이</b>: 재미있는 하루 일과</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/pantry.png"><img src=".github/assets/screenshots/pantry.png" alt="유통기한 알림과 최소 재고가 있는 카테고리별 식료품 보관함" width="160"></a><br><sub><b>보관함</b> – 재고, 최소 수량, 유통기한</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/pantry_scan.png"><img src=".github/assets/screenshots/pantry_scan.png" alt="이름, 카테고리, 보관 위치, 유통기한이 있는 비축품 바코드 스캔" width="160"></a><br><sub><b>비축품 스캔</b> – 바코드를 스캔해 보관하거나 소진</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/house.png"><img src=".github/assets/screenshots/house.png" alt="집, 월별 비용, 대출, 구입 정보가 있는 집 페이지" width="160"></a><br><sub><b>집</b> – 집, 비용, 대출, 하자, 계량기를 한곳에서</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/vehicles.png"><img src=".github/assets/screenshots/vehicles.png" alt="번호판, 알림, 이벤트가 있는 차량 페이지" width="160"></a><br><sub><b>차량</b> – 차검, 타이어, 주유와 충전</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/documents.png"><img src=".github/assets/screenshots/documents.png" alt="보증 기간과 유효 기간이 있는 카테고리별 문서" width="160"></a><br><sub><b>문서</b> – 영수증, 보증서, 계약서와 기한</sub></td>
   </tr>
 </table>
 

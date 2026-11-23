@@ -73,14 +73,14 @@ Always with you: pinn. installs on every iPhone and Android phone like a native 
 
 <table>
   <tr>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/home.png"><img src=".github/assets/screenshots/home.png" alt="Home page with weather, today's tasks and appointments" width="240"></a><br><sub><b>Overview</b> – your day at a glance</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/calendar.png"><img src=".github/assets/screenshots/calendar.png" alt="Family calendar in week view" width="240"></a><br><sub><b>Calendar</b> – iCloud and Google in one view</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/meals.png"><img src=".github/assets/screenshots/meals.png" alt="Weekly meal plan with recipes" width="240"></a><br><sub><b>Meals</b> – plan the week, shop with one tap</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/home.png"><img src=".github/assets/screenshots/home.png" alt="Home page with shortcuts, family members, pinboard and the week's plan" width="240"></a><br><sub><b>Overview</b> – your day at a glance</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/calendar.png"><img src=".github/assets/screenshots/calendar.png" alt="Family calendar in day view with appointments and meals" width="240"></a><br><sub><b>Calendar</b> – iCloud and Google in one view</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/chat.png"><img src=".github/assets/screenshots/chat.png" alt="Family chat with a message, a shared location and a voice message" width="240"></a><br><sub><b>Chat</b> – end-to-end encrypted, with voice messages and locations</sub></td>
   </tr>
   <tr>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/meals.png"><img src=".github/assets/screenshots/meals.png" alt="Recipe collection with your own and public recipes" width="240"></a><br><sub><b>Meals</b> – plan the week, shop with one tap</sub></td>
     <td align="center" width="33%"><a href=".github/assets/screenshots/lists.png"><img src=".github/assets/screenshots/lists.png" alt="Shopping list sorted by shop" width="240"></a><br><sub><b>Lists</b> – shopping, pantry, packing</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="Budget overview with spending by category" width="240"></a><br><sub><b>Finance</b> – budget, savings, pocket money</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/chat.png"><img src=".github/assets/screenshots/chat.png" alt="Family chat with a message, a shared location and a voice message" width="240"></a><br><sub><b>Chat</b> – end-to-end encrypted, with voice messages and locations</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="Budget overview with monthly history chart" width="240"></a><br><sub><b>Finance</b> – budget, savings, pocket money</sub></td>
   </tr>
 </table>
 
@@ -95,16 +95,18 @@ Tap any picture to open it in full size.
 
 <table>
   <tr>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/house.png"><img src=".github/assets/screenshots/house.png" alt="Home page with the house, monthly costs, loan and purchase details" width="200"></a><br><sub><b>Home</b> – house, costs, loan, defects and meters in one place</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/tasks.png"><img src=".github/assets/screenshots/tasks.png" alt="Task list with automatic vehicle reminders" width="200"></a><br><sub><b>Tasks</b> – automatic reminders, e.g. inspection and tyre change, with a shortcut button</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/vehicles.png"><img src=".github/assets/screenshots/vehicles.png" alt="Vehicle page with licence plate, notifications and events" width="200"></a><br><sub><b>Vehicles</b> – inspection, tyres, fuelling and charging</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/scan_pantry.png"><img src=".github/assets/screenshots/scan_pantry.png" alt="Barcode scanner for the pantry with name, category, storage location and best-before date" width="200"></a><br><sub><b>Pantry scan</b> – scan the barcode, put away or use up</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/tasks.png"><img src=".github/assets/screenshots/tasks.png" alt="Task list with automatic vehicle reminders" width="160"></a><br><sub><b>Tasks</b> – automatic reminders, e.g. inspection and tyre change, with a shortcut button</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/board.png"><img src=".github/assets/screenshots/board.png" alt="Pinboard with a countdown, a thank-you note and a poll" width="160"></a><br><sub><b>Board</b> – notes, countdowns, thank-yous and polls</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/family.png"><img src=".github/assets/screenshots/family.png" alt="Family page with profiles and tiles for health, location, school and pets" width="160"></a><br><sub><b>Family</b> – profiles, health, school, pets and location</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="Kids' page with the daily routine" width="160"></a><br><sub><b>Kids</b> – a playful daily routine</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/home_darkmode.png"><img src=".github/assets/screenshots/home_darkmode.png" alt="Home page in dark mode" width="160"></a><br><sub><b>Dark mode</b> – automatic or whenever you like</sub></td>
   </tr>
   <tr>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_1.png"><img src=".github/assets/screenshots/weekly_summary_1.png" alt="Weekly preview with weather and open tasks" width="200"></a><br><sub><b>Weekly preview</b> – weather and what is still open</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_2.png"><img src=".github/assets/screenshots/weekly_summary_2.png" alt="Weekly preview, day by day with cleaning, bin day and payments" width="200"></a><br><sub><b>Weekly preview</b> – day by day: cleaning, bins, payments</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_3.png"><img src=".github/assets/screenshots/weekly_summary_3.png" alt="Summary of last week with shortcuts to calendar and tasks" width="200"></a><br><sub><b>Last week in brief</b> – events, meals, spending – and shortcuts</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="Kids' page with the daily routine" width="200"></a><br><sub><b>Kids</b> – a playful daily routine</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/pantry.png"><img src=".github/assets/screenshots/pantry.png" alt="Pantry sorted by category with best-before warnings and minimum stock" width="160"></a><br><sub><b>Pantry</b> – stock, minimum amounts and best-before dates</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/pantry_scan.png"><img src=".github/assets/screenshots/pantry_scan.png" alt="Barcode scanner for the pantry with name, category, storage location and best-before date" width="160"></a><br><sub><b>Pantry scan</b> – scan the barcode, put away or use up</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/house.png"><img src=".github/assets/screenshots/house.png" alt="Home page with the house, monthly costs, loan and purchase details" width="160"></a><br><sub><b>Home</b> – house, costs, loan, defects and meters in one place</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/vehicles.png"><img src=".github/assets/screenshots/vehicles.png" alt="Vehicle page with licence plate, notifications and events" width="160"></a><br><sub><b>Vehicles</b> – inspection, tyres, fuelling and charging</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/documents.png"><img src=".github/assets/screenshots/documents.png" alt="Documents sorted by category with warranty and validity dates" width="160"></a><br><sub><b>Documents</b> – receipts, warranties and contracts with deadlines</sub></td>
   </tr>
 </table>
 

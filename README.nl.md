@@ -63,14 +63,14 @@ Altijd bij je: pinn. installeer je op elke iPhone en Android-telefoon als een ge
 
 <table>
   <tr>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/home.png"><img src=".github/assets/screenshots/home.png" alt="Startpagina met weer, taken en afspraken van vandaag" width="240"></a><br><sub><b>Overzicht</b> – jouw dag in één oogopslag</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/calendar.png"><img src=".github/assets/screenshots/calendar.png" alt="Gezinsagenda in weekweergave" width="240"></a><br><sub><b>Agenda</b> – iCloud en Google in één weergave</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/meals.png"><img src=".github/assets/screenshots/meals.png" alt="Weekmenu met recepten" width="240"></a><br><sub><b>Maaltijden</b> – plan de week, doe boodschappen met één tik</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/home.png"><img src=".github/assets/screenshots/home.png" alt="Startpagina met snelkoppelingen, gezinsleden, prikbord en weekplanning" width="240"></a><br><sub><b>Overzicht</b> – jouw dag in één oogopslag</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/calendar.png"><img src=".github/assets/screenshots/calendar.png" alt="Gezinsagenda in dagweergave met afspraken en maaltijden" width="240"></a><br><sub><b>Agenda</b> – iCloud en Google in één weergave</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/chat.png"><img src=".github/assets/screenshots/chat.png" alt="Gezinschat met een bericht, een gedeelde locatie en een spraakbericht" width="240"></a><br><sub><b>Chat</b> – end-to-end versleuteld, met spraakberichten en locatie</sub></td>
   </tr>
   <tr>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/meals.png"><img src=".github/assets/screenshots/meals.png" alt="Receptenverzameling met eigen en openbare recepten" width="240"></a><br><sub><b>Maaltijden</b> – plan de week, doe boodschappen met één tik</sub></td>
     <td align="center" width="33%"><a href=".github/assets/screenshots/lists.png"><img src=".github/assets/screenshots/lists.png" alt="Boodschappenlijst per winkel" width="240"></a><br><sub><b>Lijsten</b> – boodschappen, voorraad, paklijsten</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="Budgetoverzicht met uitgaven per categorie" width="240"></a><br><sub><b>Financiën</b> – budget, sparen, zakgeld</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/chat.png"><img src=".github/assets/screenshots/chat.png" alt="Gezinschat met een bericht, een gedeelde locatie en een spraakbericht" width="240"></a><br><sub><b>Chat</b> – end-to-end versleuteld, met spraakberichten en locatie</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="Budgetoverzicht met het verloop per maand" width="240"></a><br><sub><b>Financiën</b> – budget, sparen, zakgeld</sub></td>
   </tr>
 </table>
 
@@ -85,16 +85,18 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 <table>
   <tr>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/house.png"><img src=".github/assets/screenshots/house.png" alt="Pagina Huis met woning, maandelijkse kosten, lening en aankoopgegevens" width="200"></a><br><sub><b>Huis</b> – woning, kosten, lening, gebreken en meterstanden op één plek</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/tasks.png"><img src=".github/assets/screenshots/tasks.png" alt="Takenlijst met automatische voertuigherinneringen" width="200"></a><br><sub><b>Taken</b> – automatische herinneringen, bijvoorbeeld voor de APK en het wisselen van banden, met een snelkoppeling</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/vehicles.png"><img src=".github/assets/screenshots/vehicles.png" alt="Voertuigpagina met kenteken, meldingen en gebeurtenissen" width="200"></a><br><sub><b>Voertuigen</b> – APK, banden, tanken en laden</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/scan_pantry.png"><img src=".github/assets/screenshots/scan_pantry.png" alt="Barcodescanner voor de voorraadkast met naam, categorie, opslagplaats en houdbaarheidsdatum" width="200"></a><br><sub><b>Voorraad scannen</b> – scan de barcode, berg het op of boek het af</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/tasks.png"><img src=".github/assets/screenshots/tasks.png" alt="Takenlijst met automatische voertuigherinneringen" width="160"></a><br><sub><b>Taken</b> – automatische herinneringen, bijvoorbeeld voor de APK en het wisselen van banden, met een snelkoppeling</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/board.png"><img src=".github/assets/screenshots/board.png" alt="Prikbord met aftelling, bedankbriefje en peiling" width="160"></a><br><sub><b>Prikbord</b> – briefjes, aftellingen, bedankjes en peilingen</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/family.png"><img src=".github/assets/screenshots/family.png" alt="Gezinspagina met profielen en tegels voor gezondheid, locatie, school en huisdieren" width="160"></a><br><sub><b>Gezin</b> – profielen, gezondheid, school, huisdieren en locatie</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="Kinderpagina met de dagroutine" width="160"></a><br><sub><b>Kinderen</b> – een speelse dagroutine</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/home_darkmode.png"><img src=".github/assets/screenshots/home_darkmode.png" alt="Startpagina in donkere modus" width="160"></a><br><sub><b>Donkere modus</b> – automatisch of wanneer je wilt</sub></td>
   </tr>
   <tr>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_1.png"><img src=".github/assets/screenshots/weekly_summary_1.png" alt="Weekoverzicht met weer en openstaande taken" width="200"></a><br><sub><b>Weekoverzicht</b> – het weer en wat er nog moet gebeuren</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_2.png"><img src=".github/assets/screenshots/weekly_summary_2.png" alt="Weekoverzicht per dag met schoonmaak, afvaldag en betalingen" width="200"></a><br><sub><b>Weekoverzicht</b> – dag voor dag: schoonmaak, afval, betalingen</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_3.png"><img src=".github/assets/screenshots/weekly_summary_3.png" alt="Samenvatting van vorige week met snelkoppelingen naar agenda en taken" width="200"></a><br><sub><b>Vorige week in het kort</b> – afspraken, maaltijden, uitgaven – en snelkoppelingen</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="Kinderpagina met de dagroutine" width="200"></a><br><sub><b>Kinderen</b> – een speelse dagroutine</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/pantry.png"><img src=".github/assets/screenshots/pantry.png" alt="Voorraad per categorie met houdbaarheidswaarschuwingen en minimumvoorraad" width="160"></a><br><sub><b>Voorraad</b> – voorraad, minimumhoeveelheden en houdbaarheid</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/pantry_scan.png"><img src=".github/assets/screenshots/pantry_scan.png" alt="Barcodescanner voor de voorraadkast met naam, categorie, opslagplaats en houdbaarheidsdatum" width="160"></a><br><sub><b>Voorraad scannen</b> – scan de barcode, berg het op of boek het af</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/house.png"><img src=".github/assets/screenshots/house.png" alt="Pagina Huis met woning, maandelijkse kosten, lening en aankoopgegevens" width="160"></a><br><sub><b>Huis</b> – woning, kosten, lening, gebreken en meterstanden op één plek</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/vehicles.png"><img src=".github/assets/screenshots/vehicles.png" alt="Voertuigpagina met kenteken, meldingen en gebeurtenissen" width="160"></a><br><sub><b>Voertuigen</b> – APK, banden, tanken en laden</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/documents.png"><img src=".github/assets/screenshots/documents.png" alt="Documenten per categorie met garantie- en geldigheidsdatum" width="160"></a><br><sub><b>Documenten</b> – bonnen, garanties en contracten met termijnen</sub></td>
   </tr>
 </table>
 

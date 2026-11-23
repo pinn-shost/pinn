@@ -63,14 +63,14 @@ Alltid med deg: pinn. installeres på hver iPhone og Android-telefon som en ekte
 
 <table>
   <tr>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/home.png"><img src=".github/assets/screenshots/home.png" alt="Startside med vær, dagens oppgaver og avtaler" width="240"></a><br><sub><b>Hjem</b> – dagen med et enkelt blikk</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/calendar.png"><img src=".github/assets/screenshots/calendar.png" alt="Familiekalender i ukevisning" width="240"></a><br><sub><b>Kalender</b> – iCloud og Google i én visning</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/meals.png"><img src=".github/assets/screenshots/meals.png" alt="Ukemeny med oppskrifter" width="240"></a><br><sub><b>Måltider</b> – planlegg uken, handle med ett trykk</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/home.png"><img src=".github/assets/screenshots/home.png" alt="Startside med snarveier, familiemedlemmer, oppslagstavle og ukeplan" width="240"></a><br><sub><b>Hjem</b> – dagen med et enkelt blikk</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/calendar.png"><img src=".github/assets/screenshots/calendar.png" alt="Familiekalender i dagsvisning med avtaler og måltider" width="240"></a><br><sub><b>Kalender</b> – iCloud og Google i én visning</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/chat.png"><img src=".github/assets/screenshots/chat.png" alt="Familiechat med melding, delt posisjon og talemelding" width="240"></a><br><sub><b>Chat</b> – ende-til-ende-kryptert, med talemeldinger og posisjon</sub></td>
   </tr>
   <tr>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/meals.png"><img src=".github/assets/screenshots/meals.png" alt="Oppskriftsamling med egne og offentlige oppskrifter" width="240"></a><br><sub><b>Måltider</b> – planlegg uken, handle med ett trykk</sub></td>
     <td align="center" width="33%"><a href=".github/assets/screenshots/lists.png"><img src=".github/assets/screenshots/lists.png" alt="Handleliste sortert etter butikker" width="240"></a><br><sub><b>Lister</b> – handling, spiskammer, pakkelister</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="Budsjett med utgifter per kategori" width="240"></a><br><sub><b>Økonomi</b> – budsjett, sparing, lommepenger</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/chat.png"><img src=".github/assets/screenshots/chat.png" alt="Familiechat med melding, delt posisjon og talemelding" width="240"></a><br><sub><b>Chat</b> – ende-til-ende-kryptert, med talemeldinger og posisjon</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="Budsjettoversikt med utvikling over månedene" width="240"></a><br><sub><b>Økonomi</b> – budsjett, sparing, lommepenger</sub></td>
   </tr>
 </table>
 
@@ -85,16 +85,18 @@ Trykk på et bilde for å åpne det i full størrelse.
 
 <table>
   <tr>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/house.png"><img src=".github/assets/screenshots/house.png" alt="Hjemmesiden med bolig, månedlige kostnader, lån og kjøpsopplysninger" width="200"></a><br><sub><b>Hjem</b> – bolig, kostnader, lån, feil og mangler og måleravlesninger på ett sted</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/tasks.png"><img src=".github/assets/screenshots/tasks.png" alt="Oppgaveliste med automatiske påminnelser for kjøretøy" width="200"></a><br><sub><b>Oppgaver</b> – automatiske påminnelser, f.eks. EU-kontroll og dekkskift, med snarvei</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/vehicles.png"><img src=".github/assets/screenshots/vehicles.png" alt="Kjøretøyside med kjennemerke, påminnelser og avtaler" width="200"></a><br><sub><b>Kjøretøy</b> – EU-kontroll, dekk, drivstoff og lading</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/scan_pantry.png"><img src=".github/assets/screenshots/scan_pantry.png" alt="Strekkodeskanner for spiskammeret med navn, kategori, oppbevaringssted og best før-dato" width="200"></a><br><sub><b>Skann spiskammeret</b> – skann koden, legg i spiskammeret eller bruk opp</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/tasks.png"><img src=".github/assets/screenshots/tasks.png" alt="Oppgaveliste med automatiske påminnelser for kjøretøy" width="160"></a><br><sub><b>Oppgaver</b> – automatiske påminnelser, f.eks. EU-kontroll og dekkskift, med snarvei</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/board.png"><img src=".github/assets/screenshots/board.png" alt="Oppslagstavle med nedtelling, takkelapp og avstemning" width="160"></a><br><sub><b>Oppslagstavle</b> – lapper, nedtellinger, takk og avstemninger</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/family.png"><img src=".github/assets/screenshots/family.png" alt="Familieside med profiler og fliser for helse, posisjon, skole og kjæledyr" width="160"></a><br><sub><b>Familie</b> – profiler, helse, skole, kjæledyr og posisjon</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="Barneside med daglig rutine" width="160"></a><br><sub><b>Barn</b> – daglige rutiner på en lekende måte</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/home_darkmode.png"><img src=".github/assets/screenshots/home_darkmode.png" alt="Startside i mørk modus" width="160"></a><br><sub><b>Mørk modus</b> – automatisk eller når du vil</sub></td>
   </tr>
   <tr>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_1.png"><img src=".github/assets/screenshots/weekly_summary_1.png" alt="Ukesforhåndsvisning med vær og åpne oppgaver" width="200"></a><br><sub><b>Ukesforhåndsvisning</b> – været og hva som skal gjøres</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_2.png"><img src=".github/assets/screenshots/weekly_summary_2.png" alt="Ukesforhåndsvisning dag for dag med rengjøring, søppelhenting og betalinger" width="200"></a><br><sub><b>Ukesforhåndsvisning</b> – dag for dag: rengjøring, søppel, betalinger</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_3.png"><img src=".github/assets/screenshots/weekly_summary_3.png" alt="Oppsummering av forrige uke med snarveier til kalender og oppgaver" width="200"></a><br><sub><b>Forrige uke kort fortalt</b> – avtaler, måltider, utgifter – og snarveier</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="Barneside med daglig rutine" width="200"></a><br><sub><b>Barn</b> – daglige rutiner på en lekende måte</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/pantry.png"><img src=".github/assets/screenshots/pantry.png" alt="Forråd etter kategori med varsler om holdbarhet og minstebeholdning" width="160"></a><br><sub><b>Forråd</b> – beholdning, minstemengder og holdbarhet</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/pantry_scan.png"><img src=".github/assets/screenshots/pantry_scan.png" alt="Strekkodeskanner for spiskammeret med navn, kategori, oppbevaringssted og best før-dato" width="160"></a><br><sub><b>Skann spiskammeret</b> – skann koden, legg i spiskammeret eller bruk opp</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/house.png"><img src=".github/assets/screenshots/house.png" alt="Hjemmesiden med bolig, månedlige kostnader, lån og kjøpsopplysninger" width="160"></a><br><sub><b>Hjem</b> – bolig, kostnader, lån, feil og mangler og måleravlesninger på ett sted</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/vehicles.png"><img src=".github/assets/screenshots/vehicles.png" alt="Kjøretøyside med kjennemerke, påminnelser og avtaler" width="160"></a><br><sub><b>Kjøretøy</b> – EU-kontroll, dekk, drivstoff og lading</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/documents.png"><img src=".github/assets/screenshots/documents.png" alt="Dokumenter etter kategori med garanti- og gyldighetsdato" width="160"></a><br><sub><b>Dokumenter</b> – kvitteringer, garantier og kontrakter med frister</sub></td>
   </tr>
 </table>
 

@@ -75,14 +75,14 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 <table>
   <tr>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/home.png"><img src=".github/assets/screenshots/home.png" alt="含今日天气、任务和日程的主页" width="240"></a><br><sub><b>概览</b>：你的一天一目了然</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/calendar.png"><img src=".github/assets/screenshots/calendar.png" alt="周视图的家庭日历" width="240"></a><br><sub><b>日历</b>：iCloud 和 Google 合在一个视图</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/meals.png"><img src=".github/assets/screenshots/meals.png" alt="含食谱的每周餐食计划" width="240"></a><br><sub><b>餐食</b>：规划一周，一键购物</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/home.png"><img src=".github/assets/screenshots/home.png" alt="首页：快捷方式、家庭成员、留言板和本周计划" width="240"></a><br><sub><b>概览</b>：你的一天一目了然</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/calendar.png"><img src=".github/assets/screenshots/calendar.png" alt="家庭日历的日视图，含预约和餐食" width="240"></a><br><sub><b>日历</b>：iCloud 和 Google 合在一个视图</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/chat.png"><img src=".github/assets/screenshots/chat.png" alt="家庭聊天：一条消息、一个共享位置和一条语音消息" width="240"></a><br><sub><b>聊天</b>：端到端加密，支持语音消息和位置</sub></td>
   </tr>
   <tr>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/meals.png"><img src=".github/assets/screenshots/meals.png" alt="自己的和公开的食谱合集" width="240"></a><br><sub><b>餐食</b>：规划一周，一键购物</sub></td>
     <td align="center" width="33%"><a href=".github/assets/screenshots/lists.png"><img src=".github/assets/screenshots/lists.png" alt="按商店整理的购物清单" width="240"></a><br><sub><b>清单</b>：购物、储备、打包</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="按类别显示支出的预算概览" width="240"></a><br><sub><b>财务</b>：预算、储蓄、零花钱</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/chat.png"><img src=".github/assets/screenshots/chat.png" alt="家庭聊天：一条消息、一个共享位置和一条语音消息" width="240"></a><br><sub><b>聊天</b>：端到端加密，支持语音消息和位置</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="预算概览及每月走势图" width="240"></a><br><sub><b>财务</b>：预算、储蓄、零花钱</sub></td>
   </tr>
 </table>
 
@@ -97,16 +97,18 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 <table>
   <tr>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/house.png"><img src=".github/assets/screenshots/house.png" alt="住宅页面：房屋、每月费用、贷款和购买信息" width="200"></a><br><sub><b>住宅</b> – 房屋、费用、贷款、缺陷和读表集中管理</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/tasks.png"><img src=".github/assets/screenshots/tasks.png" alt="带有车辆自动提醒的任务列表" width="200"></a><br><sub><b>任务</b> – 自动提醒，例如车检和换轮胎，带快捷按钮</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/vehicles.png"><img src=".github/assets/screenshots/vehicles.png" alt="车辆页面：车牌、提醒和事件" width="200"></a><br><sub><b>车辆</b> – 车检、轮胎、加油和充电</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/scan_pantry.png"><img src=".github/assets/screenshots/scan_pantry.png" alt="储物条形码扫描：名称、分类、存放位置和保质期" width="200"></a><br><sub><b>扫描储物</b> – 扫描条形码，入库或用完</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/tasks.png"><img src=".github/assets/screenshots/tasks.png" alt="带有车辆自动提醒的任务列表" width="160"></a><br><sub><b>任务</b> – 自动提醒，例如车检和换轮胎，带快捷按钮</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/board.png"><img src=".github/assets/screenshots/board.png" alt="留言板：倒计时、感谢便条和投票" width="160"></a><br><sub><b>留言板</b> – 便条、倒计时、感谢和投票</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/family.png"><img src=".github/assets/screenshots/family.png" alt="家庭页面：成员资料以及健康、定位、学校和宠物板块" width="160"></a><br><sub><b>家庭</b> – 资料、健康、学校、宠物和定位</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="含每日作息的儿童页面" width="160"></a><br><sub><b>儿童</b>：有趣的每日作息</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/home_darkmode.png"><img src=".github/assets/screenshots/home_darkmode.png" alt="深色模式下的首页" width="160"></a><br><sub><b>深色模式</b> – 自动切换或随你设定</sub></td>
   </tr>
   <tr>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_1.png"><img src=".github/assets/screenshots/weekly_summary_1.png" alt="每周预览：天气和未完成的任务" width="200"></a><br><sub><b>每周预览</b> – 天气和尚未完成的事项</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_2.png"><img src=".github/assets/screenshots/weekly_summary_2.png" alt="每周预览：逐日显示清洁、垃圾日和付款" width="200"></a><br><sub><b>每周预览</b> – 逐日查看：清洁、垃圾、付款</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_3.png"><img src=".github/assets/screenshots/weekly_summary_3.png" alt="上周回顾：含日历和任务的快捷入口" width="200"></a><br><sub><b>上周回顾</b> – 日程、餐食、支出——以及快捷入口</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="含每日作息的儿童页面" width="200"></a><br><sub><b>儿童</b>：有趣的每日作息</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/pantry.png"><img src=".github/assets/screenshots/pantry.png" alt="按类别整理的储物，带保质期提醒和最低库存" width="160"></a><br><sub><b>储物</b> – 库存、最低数量和保质期</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/pantry_scan.png"><img src=".github/assets/screenshots/pantry_scan.png" alt="储物条形码扫描：名称、分类、存放位置和保质期" width="160"></a><br><sub><b>扫描储物</b> – 扫描条形码，入库或用完</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/house.png"><img src=".github/assets/screenshots/house.png" alt="住宅页面：房屋、每月费用、贷款和购买信息" width="160"></a><br><sub><b>住宅</b> – 房屋、费用、贷款、缺陷和读表集中管理</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/vehicles.png"><img src=".github/assets/screenshots/vehicles.png" alt="车辆页面：车牌、提醒和事件" width="160"></a><br><sub><b>车辆</b> – 车检、轮胎、加油和充电</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/documents.png"><img src=".github/assets/screenshots/documents.png" alt="按类别整理的文件，带保修和有效期" width="160"></a><br><sub><b>文件</b> – 收据、保修和合同，附期限提醒</sub></td>
   </tr>
 </table>
 

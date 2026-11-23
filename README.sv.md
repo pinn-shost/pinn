@@ -62,14 +62,14 @@ Alltid med dig: pinn. installeras på varje iPhone och Android-telefon som en ri
 
 <table>
   <tr>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/home.png"><img src=".github/assets/screenshots/home.png" alt="Startsida med väder, dagens uppgifter och händelser" width="240"></a><br><sub><b>Start</b> – dagen med en blick</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/calendar.png"><img src=".github/assets/screenshots/calendar.png" alt="Familjekalender i veckovy" width="240"></a><br><sub><b>Kalender</b> – iCloud och Google i en vy</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/meals.png"><img src=".github/assets/screenshots/meals.png" alt="Veckomeny med recept" width="240"></a><br><sub><b>Måltider</b> – planera veckan, handla med ett tryck</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/home.png"><img src=".github/assets/screenshots/home.png" alt="Startsida med genvägar, familjemedlemmar, anslagstavla och veckans plan" width="240"></a><br><sub><b>Start</b> – dagen med en blick</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/calendar.png"><img src=".github/assets/screenshots/calendar.png" alt="Familjekalender i dagsvy med möten och måltider" width="240"></a><br><sub><b>Kalender</b> – iCloud och Google i en vy</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/chat.png"><img src=".github/assets/screenshots/chat.png" alt="Familjechatt med meddelande, delad position och röstmeddelande" width="240"></a><br><sub><b>Chatt</b> – end-to-end-krypterad, med röstmeddelanden och position</sub></td>
   </tr>
   <tr>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/meals.png"><img src=".github/assets/screenshots/meals.png" alt="Receptsamling med egna och offentliga recept" width="240"></a><br><sub><b>Måltider</b> – planera veckan, handla med ett tryck</sub></td>
     <td align="center" width="33%"><a href=".github/assets/screenshots/lists.png"><img src=".github/assets/screenshots/lists.png" alt="Inköpslista sorterad efter butiker" width="240"></a><br><sub><b>Listor</b> – inköp, förråd, packlistor</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="Budget med utgifter per kategori" width="240"></a><br><sub><b>Ekonomi</b> – budget, sparande, fickpengar</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/chat.png"><img src=".github/assets/screenshots/chat.png" alt="Familjechatt med meddelande, delad position och röstmeddelande" width="240"></a><br><sub><b>Chatt</b> – end-to-end-krypterad, med röstmeddelanden och position</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="Budgetöversikt med utveckling över månaderna" width="240"></a><br><sub><b>Ekonomi</b> – budget, sparande, fickpengar</sub></td>
   </tr>
 </table>
 
@@ -84,16 +84,18 @@ Tryck på en bild för att öppna den i full storlek.
 
 <table>
   <tr>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/house.png"><img src=".github/assets/screenshots/house.png" alt="Hemsidan med bostad, månadskostnader, lån och köpuppgifter" width="200"></a><br><sub><b>Hem</b> – bostad, kostnader, lån, brister och mätaravläsningar på ett ställe</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/tasks.png"><img src=".github/assets/screenshots/tasks.png" alt="Uppgiftslista med automatiska påminnelser för fordon" width="200"></a><br><sub><b>Uppgifter</b> – automatiska påminnelser, t.ex. besiktning och däckbyte, med genväg</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/vehicles.png"><img src=".github/assets/screenshots/vehicles.png" alt="Fordonssida med registreringsnummer, påminnelser och händelser" width="200"></a><br><sub><b>Fordon</b> – besiktning, däck, bränsle och laddning</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/scan_pantry.png"><img src=".github/assets/screenshots/scan_pantry.png" alt="Streckkodsskanner för skafferiet med namn, kategori, förvaringsplats och minsta hållbarhet" width="200"></a><br><sub><b>Skanna skafferiet</b> – skanna koden, lägg i skafferiet eller förbruka</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/tasks.png"><img src=".github/assets/screenshots/tasks.png" alt="Uppgiftslista med automatiska påminnelser för fordon" width="160"></a><br><sub><b>Uppgifter</b> – automatiska påminnelser, t.ex. besiktning och däckbyte, med genväg</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/board.png"><img src=".github/assets/screenshots/board.png" alt="Anslagstavla med nedräkning, tacklapp och omröstning" width="160"></a><br><sub><b>Anslagstavla</b> – lappar, nedräkningar, tack och omröstningar</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/family.png"><img src=".github/assets/screenshots/family.png" alt="Familjesida med profiler och rutor för hälsa, plats, skola och husdjur" width="160"></a><br><sub><b>Familj</b> – profiler, hälsa, skola, husdjur och plats</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="Barnsida med daglig rutin" width="160"></a><br><sub><b>Barn</b> – dagliga rutiner på lekfullt vis</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/home_darkmode.png"><img src=".github/assets/screenshots/home_darkmode.png" alt="Startsida i mörkt läge" width="160"></a><br><sub><b>Mörkt läge</b> – automatiskt eller när du vill</sub></td>
   </tr>
   <tr>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_1.png"><img src=".github/assets/screenshots/weekly_summary_1.png" alt="Veckoutblick med väder och öppna uppgifter" width="200"></a><br><sub><b>Veckoutblick</b> – vädret och vad som behöver göras</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_2.png"><img src=".github/assets/screenshots/weekly_summary_2.png" alt="Veckoutblick dag för dag med städning, sophämtning och betalningar" width="200"></a><br><sub><b>Veckoutblick</b> – dag för dag: städning, sopor, betalningar</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_3.png"><img src=".github/assets/screenshots/weekly_summary_3.png" alt="Sammanfattning av förra veckan med genvägar till kalender och uppgifter" width="200"></a><br><sub><b>Förra veckan i korthet</b> – händelser, måltider, utgifter – och genvägar</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="Barnsida med daglig rutin" width="200"></a><br><sub><b>Barn</b> – dagliga rutiner på lekfullt vis</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/pantry.png"><img src=".github/assets/screenshots/pantry.png" alt="Förråd per kategori med varningar om bäst före och minsta lager" width="160"></a><br><sub><b>Förråd</b> – lager, minsta mängder och bäst före</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/pantry_scan.png"><img src=".github/assets/screenshots/pantry_scan.png" alt="Streckkodsskanner för skafferiet med namn, kategori, förvaringsplats och minsta hållbarhet" width="160"></a><br><sub><b>Skanna skafferiet</b> – skanna koden, lägg i skafferiet eller förbruka</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/house.png"><img src=".github/assets/screenshots/house.png" alt="Hemsidan med bostad, månadskostnader, lån och köpuppgifter" width="160"></a><br><sub><b>Hem</b> – bostad, kostnader, lån, brister och mätaravläsningar på ett ställe</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/vehicles.png"><img src=".github/assets/screenshots/vehicles.png" alt="Fordonssida med registreringsnummer, påminnelser och händelser" width="160"></a><br><sub><b>Fordon</b> – besiktning, däck, bränsle och laddning</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/documents.png"><img src=".github/assets/screenshots/documents.png" alt="Dokument per kategori med garanti- och giltighetsdatum" width="160"></a><br><sub><b>Dokument</b> – kvitton, garantier och avtal med frister</sub></td>
   </tr>
 </table>
 

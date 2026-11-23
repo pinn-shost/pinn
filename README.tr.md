@@ -63,14 +63,14 @@ Hep yanında: pinn., her iPhone ve Android telefona gerçek bir uygulama gibi ku
 
 <table>
   <tr>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/home.png"><img src=".github/assets/screenshots/home.png" alt="Hava durumu, bugünün görevleri ve randevularıyla ana sayfa" width="240"></a><br><sub><b>Genel bakış</b> – gününün özeti</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/calendar.png"><img src=".github/assets/screenshots/calendar.png" alt="Haftalık görünümde aile takvimi" width="240"></a><br><sub><b>Takvim</b> – iCloud ve Google tek görünümde</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/meals.png"><img src=".github/assets/screenshots/meals.png" alt="Tariflerle haftalık yemek planı" width="240"></a><br><sub><b>Yemekler</b> – haftayı planla, tek dokunuşla alışveriş yap</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/home.png"><img src=".github/assets/screenshots/home.png" alt="Kısayollar, aile üyeleri, pano ve haftalık planla ana sayfa" width="240"></a><br><sub><b>Genel bakış</b> – gününün özeti</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/calendar.png"><img src=".github/assets/screenshots/calendar.png" alt="Randevular ve yemeklerle gün görünümünde aile takvimi" width="240"></a><br><sub><b>Takvim</b> – iCloud ve Google tek görünümde</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/chat.png"><img src=".github/assets/screenshots/chat.png" alt="Bir mesaj, paylaşılan bir konum ve bir sesli mesajla aile sohbeti" width="240"></a><br><sub><b>Sohbet</b> – uçtan uca şifreli, sesli mesaj ve konumla</sub></td>
   </tr>
   <tr>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/meals.png"><img src=".github/assets/screenshots/meals.png" alt="Kendi ve herkese açık tariflerden oluşan koleksiyon" width="240"></a><br><sub><b>Yemekler</b> – haftayı planla, tek dokunuşla alışveriş yap</sub></td>
     <td align="center" width="33%"><a href=".github/assets/screenshots/lists.png"><img src=".github/assets/screenshots/lists.png" alt="Markete göre alışveriş listesi" width="240"></a><br><sub><b>Listeler</b> – alışveriş, kiler, bavul listeleri</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="Kategorilere göre giderlerle bütçe görünümü" width="240"></a><br><sub><b>Finans</b> – bütçe, birikim, harçlık</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/chat.png"><img src=".github/assets/screenshots/chat.png" alt="Bir mesaj, paylaşılan bir konum ve bir sesli mesajla aile sohbeti" width="240"></a><br><sub><b>Sohbet</b> – uçtan uca şifreli, sesli mesaj ve konumla</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="Aylık geçmiş grafiğiyle bütçe özeti" width="240"></a><br><sub><b>Finans</b> – bütçe, birikim, harçlık</sub></td>
   </tr>
 </table>
 
@@ -85,16 +85,18 @@ Tam boyutta açmak için bir resme dokun.
 
 <table>
   <tr>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/house.png"><img src=".github/assets/screenshots/house.png" alt="Konut, aylık giderler, kredi ve satın alma bilgileriyle Ev sayfası" width="200"></a><br><sub><b>Ev</b> – konut, giderler, kredi, kusurlar ve sayaç okumaları tek yerde</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/tasks.png"><img src=".github/assets/screenshots/tasks.png" alt="Otomatik araç hatırlatmalarıyla görev listesi" width="200"></a><br><sub><b>Görevler</b> – örneğin muayene ve lastik değişimi için otomatik hatırlatmalar, kısayolla</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/vehicles.png"><img src=".github/assets/screenshots/vehicles.png" alt="Plaka, bildirimler ve olaylarla araç sayfası" width="200"></a><br><sub><b>Araçlar</b> – muayene, lastikler, yakıt ve şarj</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/scan_pantry.png"><img src=".github/assets/screenshots/scan_pantry.png" alt="Ad, kategori, depolama yeri ve son kullanma tarihiyle kiler için barkod tarayıcı" width="200"></a><br><sub><b>Kileri tara</b> – barkodu tara, kilere koy veya stoktan düş</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/tasks.png"><img src=".github/assets/screenshots/tasks.png" alt="Otomatik araç hatırlatmalarıyla görev listesi" width="160"></a><br><sub><b>Görevler</b> – örneğin muayene ve lastik değişimi için otomatik hatırlatmalar, kısayolla</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/board.png"><img src=".github/assets/screenshots/board.png" alt="Geri sayım, teşekkür notu ve anketli pano" width="160"></a><br><sub><b>Pano</b> – notlar, geri sayımlar, teşekkürler ve anketler</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/family.png"><img src=".github/assets/screenshots/family.png" alt="Profiller ve sağlık, konum, okul ve evcil hayvan kutucuklarıyla aile sayfası" width="160"></a><br><sub><b>Aile</b> – profiller, sağlık, okul, evcil hayvanlar ve konum</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="Günlük rutinle çocuk sayfası" width="160"></a><br><sub><b>Çocuklar</b> – eğlenceli bir günlük rutin</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/home_darkmode.png"><img src=".github/assets/screenshots/home_darkmode.png" alt="Karanlık modda ana sayfa" width="160"></a><br><sub><b>Karanlık mod</b> – otomatik ya da istediğin zaman</sub></td>
   </tr>
   <tr>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_1.png"><img src=".github/assets/screenshots/weekly_summary_1.png" alt="Hava durumu ve açık görevlerle haftalık önizleme" width="200"></a><br><sub><b>Haftalık önizleme</b> – hava durumu ve yapılması gerekenler</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_2.png"><img src=".github/assets/screenshots/weekly_summary_2.png" alt="Temizlik, çöp günü ve ödemelerle günlere göre haftalık önizleme" width="200"></a><br><sub><b>Haftalık önizleme</b> – gün gün: temizlik, çöp, ödemeler</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_3.png"><img src=".github/assets/screenshots/weekly_summary_3.png" alt="Takvim ve görevlere kısayollarla geçen haftanın özeti" width="200"></a><br><sub><b>Geçen hafta kısaca</b> – randevular, yemekler, harcamalar – ve kısayollar</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="Günlük rutinle çocuk sayfası" width="200"></a><br><sub><b>Çocuklar</b> – eğlenceli bir günlük rutin</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/pantry.png"><img src=".github/assets/screenshots/pantry.png" alt="Son kullanma uyarıları ve asgari stokla kategoriye göre kiler" width="160"></a><br><sub><b>Kiler</b> – stok, asgari miktarlar ve son kullanma tarihleri</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/pantry_scan.png"><img src=".github/assets/screenshots/pantry_scan.png" alt="Ad, kategori, depolama yeri ve son kullanma tarihiyle kiler için barkod tarayıcı" width="160"></a><br><sub><b>Kileri tara</b> – barkodu tara, kilere koy veya stoktan düş</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/house.png"><img src=".github/assets/screenshots/house.png" alt="Konut, aylık giderler, kredi ve satın alma bilgileriyle Ev sayfası" width="160"></a><br><sub><b>Ev</b> – konut, giderler, kredi, kusurlar ve sayaç okumaları tek yerde</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/vehicles.png"><img src=".github/assets/screenshots/vehicles.png" alt="Plaka, bildirimler ve olaylarla araç sayfası" width="160"></a><br><sub><b>Araçlar</b> – muayene, lastikler, yakıt ve şarj</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/documents.png"><img src=".github/assets/screenshots/documents.png" alt="Garanti ve geçerlilik tarihleriyle kategoriye göre belgeler" width="160"></a><br><sub><b>Belgeler</b> – fişler, garantiler ve süreli sözleşmeler</sub></td>
   </tr>
 </table>
 

@@ -63,14 +63,14 @@ Aina mukanasi: pinn. asentuu jokaiseen iPhoneen ja Android-puhelimeen oikeana so
 
 <table>
   <tr>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/home.png"><img src=".github/assets/screenshots/home.png" alt="Aloitussivu sään, päivän tehtävien ja tapaamisten kanssa" width="240"></a><br><sub><b>Koti</b> – päivä yhdellä silmäyksellä</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/calendar.png"><img src=".github/assets/screenshots/calendar.png" alt="Perhekalenteri viikkonäkymässä" width="240"></a><br><sub><b>Kalenteri</b> – iCloud ja Google samassa näkymässä</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/meals.png"><img src=".github/assets/screenshots/meals.png" alt="Viikon ruokalista resepteineen" width="240"></a><br><sub><b>Ateriat</b> – suunnittele viikko, osta yhdellä napautuksella</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/home.png"><img src=".github/assets/screenshots/home.png" alt="Etusivu, jossa pikakuvakkeet, perheenjäsenet, ilmoitustaulu ja viikon suunnitelma" width="240"></a><br><sub><b>Koti</b> – päivä yhdellä silmäyksellä</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/calendar.png"><img src=".github/assets/screenshots/calendar.png" alt="Perheen kalenteri päivänäkymässä tapaamisineen ja aterioineen" width="240"></a><br><sub><b>Kalenteri</b> – iCloud ja Google samassa näkymässä</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/chat.png"><img src=".github/assets/screenshots/chat.png" alt="Perhechat viestin, jaetun sijainnin ja ääniviestin kanssa" width="240"></a><br><sub><b>Chat</b> – päästä päähän salattu, ääniviestein ja sijainnein</sub></td>
   </tr>
   <tr>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/meals.png"><img src=".github/assets/screenshots/meals.png" alt="Omien ja julkisten reseptien kokoelma" width="240"></a><br><sub><b>Ateriat</b> – suunnittele viikko, osta yhdellä napautuksella</sub></td>
     <td align="center" width="33%"><a href=".github/assets/screenshots/lists.png"><img src=".github/assets/screenshots/lists.png" alt="Kauppojen mukaan lajiteltu ostoslista" width="240"></a><br><sub><b>Listat</b> – ostokset, ruokakomero, pakkauslistat</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="Budjetti ja menot luokittain" width="240"></a><br><sub><b>Talous</b> – budjetti, säästöt, viikkorahat</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/chat.png"><img src=".github/assets/screenshots/chat.png" alt="Perhechat viestin, jaetun sijainnin ja ääniviestin kanssa" width="240"></a><br><sub><b>Chat</b> – päästä päähän salattu, ääniviestein ja sijainnein</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="Budjetin yleiskatsaus ja kuukausien kehitys" width="240"></a><br><sub><b>Talous</b> – budjetti, säästöt, viikkorahat</sub></td>
   </tr>
 </table>
 
@@ -85,16 +85,18 @@ Napauta kuvaa avataksesi sen täysikokoisena.
 
 <table>
   <tr>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/house.png"><img src=".github/assets/screenshots/house.png" alt="Kotisivu asuntoineen, kuukausikustannuksineen, lainoineen ja ostotietoineen" width="200"></a><br><sub><b>Koti</b> – asunto, kustannukset, lainat, viat ja puutteet sekä mittarilukemat yhdessä paikassa</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/tasks.png"><img src=".github/assets/screenshots/tasks.png" alt="Tehtävälista ajoneuvojen automaattisine muistutuksineen" width="200"></a><br><sub><b>Tehtävät</b> – automaattiset muistutukset, esim. katsastus ja rengasvaihto, pikavalinnalla</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/vehicles.png"><img src=".github/assets/screenshots/vehicles.png" alt="Ajoneuvosivu rekisterikilven, muistutusten ja sopimusten kanssa" width="200"></a><br><sub><b>Ajoneuvot</b> – katsastus, renkaat, polttoaine ja lataus</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/scan_pantry.png"><img src=".github/assets/screenshots/scan_pantry.png" alt="Ruokakomeron viivakoodiskanneri nimen, luokan, säilytyspaikan ja parasta ennen -päivän kanssa" width="200"></a><br><sub><b>Skannaa ruokakomero</b> – skannaa koodi, lisää komeroon tai käytä loppuun</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/tasks.png"><img src=".github/assets/screenshots/tasks.png" alt="Tehtävälista ajoneuvojen automaattisine muistutuksineen" width="160"></a><br><sub><b>Tehtävät</b> – automaattiset muistutukset, esim. katsastus ja rengasvaihto, pikavalinnalla</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/board.png"><img src=".github/assets/screenshots/board.png" alt="Ilmoitustaulu, jossa lähtölaskenta, kiitoslappu ja äänestys" width="160"></a><br><sub><b>Ilmoitustaulu</b> – laput, lähtölaskennat, kiitokset ja äänestykset</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/family.png"><img src=".github/assets/screenshots/family.png" alt="Perhesivu profiileineen ja ruutuineen terveydelle, sijainnille, koululle ja lemmikeille" width="160"></a><br><sub><b>Perhe</b> – profiilit, terveys, koulu, lemmikit ja sijainti</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="Lastensivu päivittäisine rutiineineen" width="160"></a><br><sub><b>Lapset</b> – päivittäiset rutiinit leikillisesti</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/home_darkmode.png"><img src=".github/assets/screenshots/home_darkmode.png" alt="Etusivu tummassa tilassa" width="160"></a><br><sub><b>Tumma tila</b> – automaattisesti tai milloin haluat</sub></td>
   </tr>
   <tr>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_1.png"><img src=".github/assets/screenshots/weekly_summary_1.png" alt="Viikkokatsaus sään ja avointen tehtävien kanssa" width="200"></a><br><sub><b>Viikkokatsaus</b> – sää ja tehtävät</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_2.png"><img src=".github/assets/screenshots/weekly_summary_2.png" alt="Viikkokatsaus päivä päivältä siivouksineen, jätteenkeräyksineen ja maksuineen" width="200"></a><br><sub><b>Viikkokatsaus</b> – päivä päivältä: siivous, jäte, maksut</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_3.png"><img src=".github/assets/screenshots/weekly_summary_3.png" alt="Edellisen viikon yhteenveto kalenterin ja tehtävien pikavalinnoin" width="200"></a><br><sub><b>Edellinen viikko lyhyesti</b> – tapaamiset, ateriat, menot – ja pikavalinnat</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="Lastensivu päivittäisine rutiineineen" width="200"></a><br><sub><b>Lapset</b> – päivittäiset rutiinit leikillisesti</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/pantry.png"><img src=".github/assets/screenshots/pantry.png" alt="Ruokavarasto luokittain parasta ennen -varoituksin ja vähimmäismäärin" width="160"></a><br><sub><b>Ruokavarasto</b> – varasto, vähimmäismäärät ja parasta ennen</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/pantry_scan.png"><img src=".github/assets/screenshots/pantry_scan.png" alt="Ruokakomeron viivakoodiskanneri nimen, luokan, säilytyspaikan ja parasta ennen -päivän kanssa" width="160"></a><br><sub><b>Skannaa ruokakomero</b> – skannaa koodi, lisää komeroon tai käytä loppuun</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/house.png"><img src=".github/assets/screenshots/house.png" alt="Kotisivu asuntoineen, kuukausikustannuksineen, lainoineen ja ostotietoineen" width="160"></a><br><sub><b>Koti</b> – asunto, kustannukset, lainat, viat ja puutteet sekä mittarilukemat yhdessä paikassa</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/vehicles.png"><img src=".github/assets/screenshots/vehicles.png" alt="Ajoneuvosivu rekisterikilven, muistutusten ja sopimusten kanssa" width="160"></a><br><sub><b>Ajoneuvot</b> – katsastus, renkaat, polttoaine ja lataus</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/documents.png"><img src=".github/assets/screenshots/documents.png" alt="Asiakirjat luokittain takuu- ja voimassaolopäivineen" width="160"></a><br><sub><b>Asiakirjat</b> – kuitit, takuut ja sopimukset määräaikoineen</sub></td>
   </tr>
 </table>
 

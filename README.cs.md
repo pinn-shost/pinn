@@ -64,14 +64,14 @@ Vždy u tebe: pinn. se instaluje na každý iPhone a telefon s Androidem jako sk
 
 <table>
   <tr>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/home.png"><img src=".github/assets/screenshots/home.png" alt="Úvodní stránka s počasím, dnešními úkoly a událostmi" width="240"></a><br><sub><b>Úvod</b> – dnešek na první pohled</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/calendar.png"><img src=".github/assets/screenshots/calendar.png" alt="Rodinný kalendář v týdenním zobrazení" width="240"></a><br><sub><b>Kalendář</b> – iCloud a Google v jednom zobrazení</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/meals.png"><img src=".github/assets/screenshots/meals.png" alt="Týdenní plán jídel s recepty" width="240"></a><br><sub><b>Jídla</b> – naplánuj týden, nákup jedním klepnutím</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/home.png"><img src=".github/assets/screenshots/home.png" alt="Úvodní stránka se zkratkami, členy rodiny, nástěnkou a plánem týdne" width="240"></a><br><sub><b>Úvod</b> – dnešek na první pohled</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/calendar.png"><img src=".github/assets/screenshots/calendar.png" alt="Rodinný kalendář v denním zobrazení se schůzkami a jídly" width="240"></a><br><sub><b>Kalendář</b> – iCloud a Google v jednom zobrazení</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/chat.png"><img src=".github/assets/screenshots/chat.png" alt="Rodinný chat se zprávou, odeslanou polohou a hlasovou zprávou" width="240"></a><br><sub><b>Chat</b> – koncové šifrování, s hlasovými zprávami a polohou</sub></td>
   </tr>
   <tr>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/meals.png"><img src=".github/assets/screenshots/meals.png" alt="Sbírka vlastních i veřejných receptů" width="240"></a><br><sub><b>Jídla</b> – naplánuj týden, nákup jedním klepnutím</sub></td>
     <td align="center" width="33%"><a href=".github/assets/screenshots/lists.png"><img src=".github/assets/screenshots/lists.png" alt="Nákupní seznam podle obchodů" width="240"></a><br><sub><b>Seznamy</b> – nákupy, zásoby, balicí seznamy</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="Rozpočet s výdaji podle kategorií" width="240"></a><br><sub><b>Finance</b> – rozpočet, spoření, kapesné</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/chat.png"><img src=".github/assets/screenshots/chat.png" alt="Rodinný chat se zprávou, odeslanou polohou a hlasovou zprávou" width="240"></a><br><sub><b>Chat</b> – koncové šifrování, s hlasovými zprávami a polohou</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="Přehled rozpočtu s grafem po měsících" width="240"></a><br><sub><b>Finance</b> – rozpočet, spoření, kapesné</sub></td>
   </tr>
 </table>
 
@@ -86,16 +86,18 @@ Klepnutím na obrázek ho otevřeš v plné velikosti.
 
 <table>
   <tr>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/house.png"><img src=".github/assets/screenshots/house.png" alt="Stránka Domov s bytem, měsíčními náklady, úvěrem a údaji o koupi" width="200"></a><br><sub><b>Domov</b> – byt, náklady, úvěr, vady a odečty měřičů na jednom místě</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/tasks.png"><img src=".github/assets/screenshots/tasks.png" alt="Seznam úkolů s automatickými připomenutími k vozidlům" width="200"></a><br><sub><b>Úkoly</b> – automatická připomenutí, např. STK a výměna pneumatik, s rychlým přechodem</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/vehicles.png"><img src=".github/assets/screenshots/vehicles.png" alt="Stránka vozidel s SPZ, připomenutími a událostmi" width="200"></a><br><sub><b>Vozidla</b> – STK, pneumatiky, palivo a nabíjení</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/scan_pantry.png"><img src=".github/assets/screenshots/scan_pantry.png" alt="Skener čárových kódů pro spíž s názvem, kategorií, místem uložení a minimální trvanlivostí" width="200"></a><br><sub><b>Skenování spíže</b> – naskenuj kód, ulož do spíže nebo spotřebuj</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/tasks.png"><img src=".github/assets/screenshots/tasks.png" alt="Seznam úkolů s automatickými připomenutími k vozidlům" width="160"></a><br><sub><b>Úkoly</b> – automatická připomenutí, např. STK a výměna pneumatik, s rychlým přechodem</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/board.png"><img src=".github/assets/screenshots/board.png" alt="Nástěnka s odpočtem, poděkováním a anketou" width="160"></a><br><sub><b>Nástěnka</b> – vzkazy, odpočty, poděkování a ankety</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/family.png"><img src=".github/assets/screenshots/family.png" alt="Stránka rodiny s profily a dlaždicemi zdraví, polohy, školy a mazlíčků" width="160"></a><br><sub><b>Rodina</b> – profily, zdraví, škola, mazlíčci a poloha</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="Dětská stránka s denní rutinou" width="160"></a><br><sub><b>Děti</b> – denní rutina hravě</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/home_darkmode.png"><img src=".github/assets/screenshots/home_darkmode.png" alt="Úvodní stránka v tmavém režimu" width="160"></a><br><sub><b>Tmavý režim</b> – automaticky nebo kdy chceš</sub></td>
   </tr>
   <tr>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_1.png"><img src=".github/assets/screenshots/weekly_summary_1.png" alt="Týdenní náhled s počasím a otevřenými úkoly" width="200"></a><br><sub><b>Týdenní náhled</b> – počasí a co je potřeba udělat</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_2.png"><img src=".github/assets/screenshots/weekly_summary_2.png" alt="Týdenní náhled den po dni s úklidem, svozem odpadu a platbami" width="200"></a><br><sub><b>Týdenní náhled</b> – den po dni: úklid, odpad, platby</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_3.png"><img src=".github/assets/screenshots/weekly_summary_3.png" alt="Shrnutí minulého týdne s rychlými přechody do kalendáře a úkolů" width="200"></a><br><sub><b>Minulý týden ve zkratce</b> – události, jídla, výdaje – a rychlé přechody</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="Dětská stránka s denní rutinou" width="200"></a><br><sub><b>Děti</b> – denní rutina hravě</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/pantry.png"><img src=".github/assets/screenshots/pantry.png" alt="Zásoby podle kategorií s upozorněním na trvanlivost a minimální zásobou" width="160"></a><br><sub><b>Zásoby</b> – stav, minimální množství a trvanlivost</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/pantry_scan.png"><img src=".github/assets/screenshots/pantry_scan.png" alt="Skener čárových kódů pro spíž s názvem, kategorií, místem uložení a minimální trvanlivostí" width="160"></a><br><sub><b>Skenování spíže</b> – naskenuj kód, ulož do spíže nebo spotřebuj</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/house.png"><img src=".github/assets/screenshots/house.png" alt="Stránka Domov s bytem, měsíčními náklady, úvěrem a údaji o koupi" width="160"></a><br><sub><b>Domov</b> – byt, náklady, úvěr, vady a odečty měřičů na jednom místě</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/vehicles.png"><img src=".github/assets/screenshots/vehicles.png" alt="Stránka vozidel s SPZ, připomenutími a událostmi" width="160"></a><br><sub><b>Vozidla</b> – STK, pneumatiky, palivo a nabíjení</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/documents.png"><img src=".github/assets/screenshots/documents.png" alt="Dokumenty podle kategorií s datem záruky a platnosti" width="160"></a><br><sub><b>Dokumenty</b> – účtenky, záruky a smlouvy s termíny</sub></td>
   </tr>
 </table>
 

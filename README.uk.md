@@ -63,14 +63,14 @@ pinn. – це один застосунок для всього, що трим�
 
 <table>
   <tr>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/home.png"><img src=".github/assets/screenshots/home.png" alt="Головна сторінка з погодою, сьогоднішніми завданнями та подіями" width="240"></a><br><sub><b>Головна</b> – сьогодні одним поглядом</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/calendar.png"><img src=".github/assets/screenshots/calendar.png" alt="Сімейний календар у тижневому вигляді" width="240"></a><br><sub><b>Календар</b> – iCloud і Google в одному вигляді</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/meals.png"><img src=".github/assets/screenshots/meals.png" alt="Тижневий план страв із рецептами" width="240"></a><br><sub><b>Страви</b> – сплануй тиждень, покупки одним дотиком</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/home.png"><img src=".github/assets/screenshots/home.png" alt="Головна сторінка з ярликами, членами родини, дошкою та планом тижня" width="240"></a><br><sub><b>Головна</b> – сьогодні одним поглядом</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/calendar.png"><img src=".github/assets/screenshots/calendar.png" alt="Сімейний календар у режимі дня із зустрічами та стравами" width="240"></a><br><sub><b>Календар</b> – iCloud і Google в одному вигляді</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/chat.png"><img src=".github/assets/screenshots/chat.png" alt="Сімейний чат із повідомленням, надісланим місцезнаходженням і голосовим повідомленням" width="240"></a><br><sub><b>Чат</b> – наскрізне шифрування, з голосовими повідомленнями та місцезнаходженням</sub></td>
   </tr>
   <tr>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/meals.png"><img src=".github/assets/screenshots/meals.png" alt="Колекція власних і загальнодоступних рецептів" width="240"></a><br><sub><b>Страви</b> – сплануй тиждень, покупки одним дотиком</sub></td>
     <td align="center" width="33%"><a href=".github/assets/screenshots/lists.png"><img src=".github/assets/screenshots/lists.png" alt="Список покупок за магазинами" width="240"></a><br><sub><b>Списки</b> – покупки, запаси, списки речей</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="Бюджет із витратами за категоріями" width="240"></a><br><sub><b>Фінанси</b> – бюджет, заощадження, кишенькові гроші</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/chat.png"><img src=".github/assets/screenshots/chat.png" alt="Сімейний чат із повідомленням, надісланим місцезнаходженням і голосовим повідомленням" width="240"></a><br><sub><b>Чат</b> – наскрізне шифрування, з голосовими повідомленнями та місцезнаходженням</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="Огляд бюджету з графіком за місяцями" width="240"></a><br><sub><b>Фінанси</b> – бюджет, заощадження, кишенькові гроші</sub></td>
   </tr>
 </table>
 
@@ -85,16 +85,18 @@ pinn. – це один застосунок для всього, що трим�
 
 <table>
   <tr>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/house.png"><img src=".github/assets/screenshots/house.png" alt="Сторінка «Дім» із квартирою, щомісячними витратами, кредитом і даними про купівлю" width="200"></a><br><sub><b>Дім</b> – квартира, витрати, кредит, дефекти та показання лічильників в одному місці</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/tasks.png"><img src=".github/assets/screenshots/tasks.png" alt="Список завдань з автоматичними нагадуваннями про транспорт" width="200"></a><br><sub><b>Завдання</b> – автоматичні нагадування, наприклад про техогляд і заміну шин, зі швидким переходом</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/vehicles.png"><img src=".github/assets/screenshots/vehicles.png" alt="Сторінка транспорту з номерним знаком, нагадуваннями та подіями" width="200"></a><br><sub><b>Транспорт</b> – техогляд, шини, пальне й заряджання</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/scan_pantry.png"><img src=".github/assets/screenshots/scan_pantry.png" alt="Сканер штрихкодів для запасів із назвою, категорією, місцем зберігання та терміном придатності" width="200"></a><br><sub><b>Сканування запасів</b> – скануй код, поклади в запаси або спиши</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/tasks.png"><img src=".github/assets/screenshots/tasks.png" alt="Список завдань з автоматичними нагадуваннями про транспорт" width="160"></a><br><sub><b>Завдання</b> – автоматичні нагадування, наприклад про техогляд і заміну шин, зі швидким переходом</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/board.png"><img src=".github/assets/screenshots/board.png" alt="Дошка зі зворотним відліком, подякою та опитуванням" width="160"></a><br><sub><b>Дошка</b> – записки, відліки, подяки та опитування</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/family.png"><img src=".github/assets/screenshots/family.png" alt="Сторінка родини з профілями та плитками здоров’я, місцезнаходження, школи й тварин" width="160"></a><br><sub><b>Родина</b> – профілі, здоров’я, школа, тварини та місцезнаходження</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="Дитяча сторінка зі щоденною рутиною" width="160"></a><br><sub><b>Діти</b> – щоденна рутина в ігровій формі</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/home_darkmode.png"><img src=".github/assets/screenshots/home_darkmode.png" alt="Головна сторінка в темному режимі" width="160"></a><br><sub><b>Темний режим</b> – автоматично або коли захочеш</sub></td>
   </tr>
   <tr>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_1.png"><img src=".github/assets/screenshots/weekly_summary_1.png" alt="Попередній перегляд тижня з погодою та відкритими завданнями" width="200"></a><br><sub><b>Попередній перегляд тижня</b> – погода й те, що потрібно зробити</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_2.png"><img src=".github/assets/screenshots/weekly_summary_2.png" alt="Попередній перегляд тижня день за днем із прибиранням, вивезенням сміття та платежами" width="200"></a><br><sub><b>Попередній перегляд тижня</b> – день за днем: прибирання, сміття, платежі</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_3.png"><img src=".github/assets/screenshots/weekly_summary_3.png" alt="Підсумок минулого тижня зі швидкими переходами до календаря та завдань" width="200"></a><br><sub><b>Минулий тиждень коротко</b> – події, страви, витрати – і швидкі переходи</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="Дитяча сторінка зі щоденною рутиною" width="200"></a><br><sub><b>Діти</b> – щоденна рутина в ігровій формі</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/pantry.png"><img src=".github/assets/screenshots/pantry.png" alt="Запаси за категоріями з попередженнями про термін придатності та мінімальним залишком" width="160"></a><br><sub><b>Запаси</b> – залишки, мінімальні кількості та терміни придатності</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/pantry_scan.png"><img src=".github/assets/screenshots/pantry_scan.png" alt="Сканер штрихкодів для запасів із назвою, категорією, місцем зберігання та терміном придатності" width="160"></a><br><sub><b>Сканування запасів</b> – скануй код, поклади в запаси або спиши</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/house.png"><img src=".github/assets/screenshots/house.png" alt="Сторінка «Дім» із квартирою, щомісячними витратами, кредитом і даними про купівлю" width="160"></a><br><sub><b>Дім</b> – квартира, витрати, кредит, дефекти та показання лічильників в одному місці</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/vehicles.png"><img src=".github/assets/screenshots/vehicles.png" alt="Сторінка транспорту з номерним знаком, нагадуваннями та подіями" width="160"></a><br><sub><b>Транспорт</b> – техогляд, шини, пальне й заряджання</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/documents.png"><img src=".github/assets/screenshots/documents.png" alt="Документи за категоріями з термінами гарантії та дії" width="160"></a><br><sub><b>Документи</b> – чеки, гарантії та договори з термінами</sub></td>
   </tr>
 </table>
 

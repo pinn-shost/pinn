@@ -17,6 +17,9 @@
 //   ingredients: "amount unit ingredient" (e.g. "200 g Spaghetti"), subheadings with ":"
 //   categories/tools: only names that already exist in the family
 //   bild: for recipe links the recipe image as a data: URL (if loadable), otherwise ""
+// Language (since 1.164.1): the recipe keeps the language it was written in - it is NOT translated.
+// Only if the user asks for another language in the text, that one is used; if the language cannot be
+// recognised, the app language (input.sprache) is used. Units follow the region (input.masse, input.temperatur).
 
 const KEY_ENV = "PINN_GEMINI_KEY";
 const MODEL_ENV = "PINN_GEMINI_MODELL";
@@ -181,7 +184,7 @@ const PAGE_AGENTS = [
     "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1",
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15",
 ];
-function fetchText(url) {
+function fetchText(url, lang) {
     if (isPrivateHost(hostOf(url))) throw new Error("Diese Adresse ist nicht erlaubt – bitte einen öffentlichen Rezept-Link verwenden.");
     let lastStatus = 0;
     for (let i = 0; i < PAGE_AGENTS.length; i++) {
@@ -193,7 +196,7 @@ function fetchText(url) {
                 headers: {
                     "User-Agent": PAGE_AGENTS[i],
                     "Accept": "text/html,application/xhtml+xml;q=0.9,*/*;q=0.5",
-                    "Accept-Language": "de-DE,de;q=0.9,en;q=0.5",
+                    "Accept-Language": acceptLanguage(lang),
                 },
             });
         } catch (err) {
@@ -212,8 +215,8 @@ function pause(ms) {
     try { if (typeof sleep === "function") sleep(ms); } catch (e) { /* ignore */ }
 }
 // From the page: structured recipe data (JSON-LD), image address and readable text
-function pageContent(url) {
-    const html = String(fetchText(url) || "").slice(0, 3 * 1024 * 1024);
+function pageContent(url, lang) {
+    const html = String(fetchText(url, lang) || "").slice(0, 3 * 1024 * 1024);
     if (!html) throw new Error("Die Rezeptseite war leer.");
     const ld = [];
     const ldRe = /<script[^>]*type=["']?application\/ld\+json["']?[^>]*>([\s\S]*?)<\/script>/gi;
@@ -360,32 +363,82 @@ function fetchImageDataUrl(url) {
 }
 
 // ---------------------------------------------------------------------------------------------
+// Language and units of the user (recipes)
+// ---------------------------------------------------------------------------------------------
+// App languages (code -> English name for the AI). Unknown codes fall back to English.
+const LANGUAGE_NAMES = {
+    de: "German", en: "English", fr: "French", es: "Spanish", it: "Italian", pt: "Portuguese",
+    zh: "Chinese (simplified)", ja: "Japanese", ko: "Korean", ru: "Russian", nl: "Dutch", tr: "Turkish",
+    pl: "Polish", uk: "Ukrainian", cs: "Czech", sv: "Swedish", da: "Danish", nb: "Norwegian (Bokmål)",
+    fi: "Finnish", hu: "Hungarian", el: "Greek", ro: "Romanian", ar: "Arabic", he: "Hebrew", hi: "Hindi",
+};
+function languageCode(v) {
+    const c = String(v || "").toLowerCase().split(/[-_]/)[0].replace(/[^a-z]/g, "");
+    return LANGUAGE_NAMES[c] ? c : "";
+}
+function languageName(code) { return LANGUAGE_NAMES[code] || "English"; }
+// Page request: the app language first, then any language (so the page is not forced into German)
+function acceptLanguage(code) {
+    const c = languageCode(code);
+    if (!c) return "*;q=0.8";
+    return c === "en" ? "en,*;q=0.5" : c + "," + "en;q=0.6,*;q=0.5";
+}
+// Measuring system of the region: "metric" | "us" | "uk"; temperature "C" | "F"
+function recipeContext(data) {
+    const masse = String(data.masse || "").toLowerCase();
+    return {
+        lang: languageCode(data.sprache),
+        masse: masse === "us" || masse === "uk" ? masse : "metric",
+        temp: String(data.temperatur || "").toUpperCase() === "F" ? "F" : "C",
+    };
+}
+
+// ---------------------------------------------------------------------------------------------
 // Gemini
 // ---------------------------------------------------------------------------------------------
-function instructions(categories, tools) {
+function instructions(categories, tools, ctx) {
+    const c = ctx || { lang: "", masse: "metric", temp: "C" };
+    const appLang = languageName(c.lang || "en");
+    const units = c.masse === "us"
+        ? "- Units: keep the measures of the recipe (cups, oz, lb, tbsp, tsp as well as g/ml). Do not convert them."
+        : "- Units: metric. Convert American/imperial measures (cups, oz, lb, fl oz, sticks of butter) into g/ml"
+            + (c.masse === "uk" ? " (spoons such as tbsp/tsp may stay)." : ".");
+    const temp = c.temp === "F"
+        ? "- Oven temperatures in °F (convert °C into °F, keep a gas mark if given)."
+        : "- Oven temperatures in °C (convert °F into °C, keep a gas mark if given).";
     return [
-        "Du bist der Rezept-Assistent der deutschen Familien-App pinn.",
-        "Du bekommst ein Rezept als Text, Foto(s), PDF oder Webseite und gibst es sauber sortiert als JSON zurück.",
-        "Regeln:",
-        "- Alles auf Deutsch. Fremdsprachige Rezepte übersetzen, amerikanische Maße (cups, oz, lb, °F) in g/ml/°C umrechnen.",
-        "- titel: kurzer, natürlicher Rezeptname ohne Werbung, Blog- oder Seitennamen.",
-        "- zutaten: genau eine Zutat je Eintrag im Format \"Menge Einheit Zutat\", Menge immer VORNE, z. B. \"200 g Spaghetti\", \"2 EL Olivenöl\", \"1 Zwiebel\", \"0,5 TL Salz\", \"1-2 Knoblauchzehen\".",
-        "  Einheiten: g, kg, ml, l, EL, TL, Prise, Stück, Dose, Bund, Zehe, Packung, Becher, Scheibe. Dezimalkomma, Brüche als \"1/2\" (nie ½).",
-        "  Zusätze wie \"fein gehackt\" hinten mit Komma anhängen. Keine Menge erfinden: steht keine da (z. B. \"Salz und Pfeffer\"), die Zutat ohne Menge schreiben.",
-        "  Hat das Rezept Teilkomponenten (Teig, Füllung, Soße …), vor deren Zutaten eine kurze Zwischenüberschrift mit Doppelpunkt am Ende, z. B. \"Für die Soße:\".",
-        "- schritte: ein Arbeitsschritt je Eintrag, ohne Nummerierung, vollständige Sätze. Zwischenüberschriften wie bei den Zutaten mit Doppelpunkt erlaubt.",
-        "  Getrennte Zeilen, Seitenumbrüche oder mehrere Fotos/Screenshots zu einem durchgehenden Rezept zusammensetzen, Überschneidungen nur einmal übernehmen.",
-        "- Werbung, Kommentare, Bewertungen, Nährwerte, Navigations- und Cookie-Texte, Bildunterschriften ignorieren.",
-        "- portionen: Anzahl Portionen/Personen als Ganzzahl (bei \"für eine Springform\" o. Ä. 12, bei \"1 Blech\" 16; unbekannt: 0).",
-        "- vorbereitung_min: aktive Arbeits-/Vorbereitungszeit in Minuten; zubereitung_min: Koch-, Back- oder Garzeit in Minuten (Ruhe-/Kühlzeit nicht mitzählen). Unbekannt: 0.",
+        "You are the recipe assistant of the family app pinn.",
+        "You receive a recipe as text, photo(s), PDF or web page and return it neatly sorted as JSON.",
+        "LANGUAGE (most important rule):",
+        "- Write titel, zutaten and schritte in the SAME language the recipe is written in. Do NOT translate.",
+        "  Example: a Dutch recipe stays Dutch, an English one stays English, a German one stays German.",
+        "- Only if the user's own text explicitly asks for another language (e.g. \"in English please\", \"auf Deutsch übersetzen\",",
+        "  \"vertaal naar het Duits\"), translate everything into that language.",
+        "- If the language of the recipe cannot be recognised (e.g. no readable text), use " + appLang + ".",
+        "- Ingredient names, units, sub-headings and sentences all in that one language - never mix languages.",
+        "Rules:",
+        units,
+        temp,
+        "- titel: short, natural recipe name without advertising, blog or site names.",
+        "- zutaten: exactly one ingredient per entry in the format \"amount unit ingredient\", amount always FIRST",
+        "  (e.g. German \"200 g Spaghetti\", \"2 EL Olivenöl\"; Dutch \"200 g spaghetti\", \"2 el olijfolie\"; English \"200 g spaghetti\", \"2 tbsp olive oil\").",
+        "  Use the usual unit abbreviations of the recipe's language (German EL/TL, Dutch el/tl, English tbsp/tsp …) and its decimal separator.",
+        "  Fractions as \"1/2\" (never ½). Ranges as \"1-2\".",
+        "  Additions like \"finely chopped\" go at the end after a comma. Never invent an amount: if there is none (e.g. salt and pepper), write the ingredient without an amount.",
+        "  If the recipe has components (dough, filling, sauce …), put a short sub-heading ending with a colon before their ingredients (e.g. \"Für die Soße:\", \"Voor de saus:\", \"For the sauce:\").",
+        "- schritte: one step per entry, without numbering, complete sentences. Sub-headings with a colon are allowed like for the ingredients.",
+        "  Join separate lines, page breaks or several photos/screenshots into one continuous recipe; take over overlaps only once.",
+        "- Ignore advertising, comments, ratings, nutrition facts, navigation and cookie texts, image captions.",
+        "- portionen: number of servings/persons as an integer (for \"one springform pan\" or similar 12, for \"1 baking tray\" 16; unknown: 0).",
+        "- vorbereitung_min: active working/preparation time in minutes; zubereitung_min: cooking, baking or simmering time in minutes (resting/cooling time not counted). Unknown: 0.",
         categories.length
-            ? "- kategorien: 0 bis 3 passende Kategorien NUR aus dieser Liste: " + categories.join(", ") + "."
-            : "- kategorien: leere Liste.",
+            ? "- kategorien: 0 to 3 matching categories ONLY from this list (spelled exactly like this): " + categories.join(", ") + "."
+            : "- kategorien: empty list.",
         tools.length
-            ? "- geraete: benötigte Küchengeräte NUR aus dieser Liste (nur wenn im Rezept wirklich gebraucht): " + tools.join(", ") + "."
-            : "- geraete: leere Liste.",
-        "- ist_rezept: false, wenn der Inhalt erkennbar kein Rezept ist; dann alle Listen leer lassen.",
-        "- Nichts dazuerfinden, was nicht im Rezept steht – außer der Übersetzung/Umrechnung und der Kategorien-/Geräte-Zuordnung.",
+            ? "- geraete: required kitchen appliances ONLY from this list (spelled exactly like this, only if really needed): " + tools.join(", ") + "."
+            : "- geraete: empty list.",
+        "- ist_rezept: false if the content is clearly not a recipe; then leave all lists empty.",
+        "- Do not add anything that is not in the recipe - except a requested translation, the unit conversion and the category/appliance assignment.",
     ].join("\n");
 }
 function schema(categories, tools) {
@@ -413,11 +466,11 @@ function schema(categories, tools) {
 }
 
 // custom = { system, schema } for evaluations other than recipes (e.g. meter readings)
-function callGemini(parts, categories, tools, custom) {
+function callGemini(parts, categories, tools, custom, ctx) {
     const key = apiKey();
     if (!key) throw new Error("Die KI ist auf dem Server nicht eingerichtet (PINN_GEMINI_KEY fehlt in der .env).");
     const payload = JSON.stringify({
-        systemInstruction: { parts: [{ text: custom ? custom.system : instructions(categories, tools) }] },
+        systemInstruction: { parts: [{ text: custom ? custom.system : instructions(categories, tools, ctx) }] },
         contents: [{ role: "user", parts: parts }],
         generationConfig: {
             temperature: custom ? 0 : 0.2,
@@ -520,15 +573,17 @@ function normalizeIngredient(line) {
         .trim();
 }
 function normalizeStep(line) {
-    return String(line).replace(/^\s*(\d+[.)]|schritt\s*\d+[.:]?|[-*•·])\s*/i, "").replace(/\s+/g, " ").trim();
+    return String(line).replace(/^\s*(\d+[.)]|(?:schritt|step|stap|stappe|étape|etape|paso|passo|krok|adım|lépés|vaihe|steg|trin)\s*\d+[.:]?|[-*•·])\s*/i, "").replace(/\s+/g, " ").trim();
 }
 
 // ---------------------------------------------------------------------------------------------
 // Entry point for the route
 // ---------------------------------------------------------------------------------------------
-// input: { text, dateien: [{ mime, daten (base64 without the data: prefix), name }], kategorien[], geraete[] }
+// input: { text, dateien: [{ mime, daten (base64 without the data: prefix), name }], kategorien[], geraete[],
+//          sprache (app language code), masse ("metric" | "us" | "uk"), temperatur ("C" | "F") }
 function analyzeRecipe(input) {
     const data = input && typeof input === "object" ? input : {};
+    const ctx = recipeContext(data);
     const categories = cleanList(data.kategorien, 80, 60);
     const tools = cleanList(data.geraete, 80, 60);
     const text = cleanText(data.text, MAX_TEXT);
@@ -542,17 +597,17 @@ function analyzeRecipe(input) {
 
     if (text && isUrl(text)) {
         quelle = text;
-        page = pageContent(text);
+        page = pageContent(text, ctx.lang);
         imageUrl = page.image;
         pageTitle = page.title;
         if (!page.jsonLd && page.text.length < 200 && !files.length) throw new Error("Auf der Seite war kein Rezept zu finden.");
         parts.push({
-            text: "Rezept von der Webseite " + text + (page.title ? " (Seitentitel: " + page.title + ")" : "") + ".\n"
-                + (page.jsonLd ? "Strukturierte Rezeptdaten der Seite (JSON-LD):\n" + page.jsonLd + "\n\n" : "")
-                + "Seitentext:\n" + page.text,
+            text: "Recipe from the web page " + text + (page.title ? " (page title: " + page.title + ")" : "") + ".\n"
+                + (page.jsonLd ? "Structured recipe data of the page (JSON-LD):\n" + page.jsonLd + "\n\n" : "")
+                + "Page text:\n" + page.text,
         });
     } else if (text) {
-        parts.push({ text: "Rezepttext:\n" + text });
+        parts.push({ text: "Recipe text (and possibly a wish of the user, e.g. a language):\n" + text });
     }
 
     let total = 0;
@@ -567,12 +622,12 @@ function analyzeRecipe(input) {
         parts.push({ inline_data: { mime_type: mime, data: b64 } });
     });
     const fileCount = parts.filter(p => p.inline_data).length;
-    if (fileCount > 1) parts.unshift({ text: "Die folgenden " + fileCount + " Dateien gehören zu EINEM Rezept (z. B. mehrere Screenshots oder Seiten, Reihenfolge evtl. vertauscht)." });
+    if (fileCount > 1) parts.unshift({ text: "The following " + fileCount + " files belong to ONE recipe (e.g. several screenshots or pages, possibly in the wrong order)." });
     if (!parts.length) throw new Error("Kein Rezept übergeben.");
 
     let r;
     try {
-        r = callGemini(parts, categories, tools);
+        r = callGemini(parts, categories, tools, null, ctx);
     } catch (err) {
         // Recipe link and Gemini is currently not working: take over the recipe from the page data
         const fallback = page ? recipeFromLd(page, categories) : null;

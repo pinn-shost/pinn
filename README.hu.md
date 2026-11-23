@@ -64,14 +64,14 @@ Mindig nálad van: a pinn. valódi alkalmazásként települ minden iPhone-ra é
 
 <table>
   <tr>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/home.png"><img src=".github/assets/screenshots/home.png" alt="Kezdőlap az időjárással, a mai feladatokkal és időpontokkal" width="240"></a><br><sub><b>Otthon</b> – a nap egy pillantásra</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/calendar.png"><img src=".github/assets/screenshots/calendar.png" alt="Családi naptár heti nézetben" width="240"></a><br><sub><b>Naptár</b> – iCloud és Google egy nézetben</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/meals.png"><img src=".github/assets/screenshots/meals.png" alt="Heti étlap receptekkel" width="240"></a><br><sub><b>Étkezések</b> – tervezd meg a hetet, vásárolj egy koppintással</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/home.png"><img src=".github/assets/screenshots/home.png" alt="Kezdőlap parancsikonokkal, családtagokkal, faliújsággal és a heti tervvel" width="240"></a><br><sub><b>Otthon</b> – a nap egy pillantásra</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/calendar.png"><img src=".github/assets/screenshots/calendar.png" alt="Családi naptár napi nézetben időpontokkal és étkezésekkel" width="240"></a><br><sub><b>Naptár</b> – iCloud és Google egy nézetben</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/chat.png"><img src=".github/assets/screenshots/chat.png" alt="Családi csevegés üzenettel, megosztott helyzettel és hangüzenettel" width="240"></a><br><sub><b>Csevegés</b> – végpontok közötti titkosítással, hangüzenetekkel és helyzetmegosztással</sub></td>
   </tr>
   <tr>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/meals.png"><img src=".github/assets/screenshots/meals.png" alt="Saját és nyilvános receptek gyűjteménye" width="240"></a><br><sub><b>Étkezések</b> – tervezd meg a hetet, vásárolj egy koppintással</sub></td>
     <td align="center" width="33%"><a href=".github/assets/screenshots/lists.png"><img src=".github/assets/screenshots/lists.png" alt="Üzletek szerint rendezett bevásárlólista" width="240"></a><br><sub><b>Listák</b> – bevásárlás, kamra, csomaglisták</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="Költségvetés és kiadások kategóriák szerint" width="240"></a><br><sub><b>Pénzügyek</b> – költségvetés, megtakarítás, zsebpénz</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/chat.png"><img src=".github/assets/screenshots/chat.png" alt="Családi csevegés üzenettel, megosztott helyzettel és hangüzenettel" width="240"></a><br><sub><b>Csevegés</b> – végpontok közötti titkosítással, hangüzenetekkel és helyzetmegosztással</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="Költségvetés-áttekintés a hónapok alakulásával" width="240"></a><br><sub><b>Pénzügyek</b> – költségvetés, megtakarítás, zsebpénz</sub></td>
   </tr>
 </table>
 
@@ -86,16 +86,18 @@ Koppints a képre a teljes méretű megnyitáshoz.
 
 <table>
   <tr>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/house.png"><img src=".github/assets/screenshots/house.png" alt="Otthon oldal a lakással, havi költségekkel, hitelekkel és vételi adatokkal" width="200"></a><br><sub><b>Otthon</b> – lakás, költségek, hitelek, hibák és mérőóra-állások egy helyen</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/tasks.png"><img src=".github/assets/screenshots/tasks.png" alt="Feladatlista a járművek automatikus emlékeztetőivel" width="200"></a><br><sub><b>Feladatok</b> – automatikus emlékeztetők, pl. műszaki vizsgához és gumicseréhez, gyorsválasztással</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/vehicles.png"><img src=".github/assets/screenshots/vehicles.png" alt="Jármű oldal rendszámmal, emlékeztetőkkel és szerződésekkel" width="200"></a><br><sub><b>Járművek</b> – műszaki vizsga, gumik, üzemanyag és töltés</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/scan_pantry.png"><img src=".github/assets/screenshots/scan_pantry.png" alt="Kamra vonalkódolvasója névvel, kategóriával, tárolási hellyel és minőségmegőrzési dátummal" width="200"></a><br><sub><b>Kamra beolvasása</b> – olvasd be a kódot, add a kamrához, vagy használd fel</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/tasks.png"><img src=".github/assets/screenshots/tasks.png" alt="Feladatlista a járművek automatikus emlékeztetőivel" width="160"></a><br><sub><b>Feladatok</b> – automatikus emlékeztetők, pl. műszaki vizsgához és gumicseréhez, gyorsválasztással</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/board.png"><img src=".github/assets/screenshots/board.png" alt="Faliújság visszaszámlálással, köszönőcetlivel és szavazással" width="160"></a><br><sub><b>Faliújság</b> – cetlik, visszaszámlálások, köszönetek és szavazások</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/family.png"><img src=".github/assets/screenshots/family.png" alt="Család oldal profilokkal és csempékkel az egészséghez, helyzethez, iskolához és háziállatokhoz" width="160"></a><br><sub><b>Család</b> – profilok, egészség, iskola, háziállatok és helyzet</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="Gyerekoldal napi rutinokkal" width="160"></a><br><sub><b>Gyerekek</b> – napi rutinok játékosan</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/home_darkmode.png"><img src=".github/assets/screenshots/home_darkmode.png" alt="Kezdőlap sötét módban" width="160"></a><br><sub><b>Sötét mód</b> – automatikusan vagy amikor csak szeretnéd</sub></td>
   </tr>
   <tr>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_1.png"><img src=".github/assets/screenshots/weekly_summary_1.png" alt="Heti előnézet az időjárással és a nyitott feladatokkal" width="200"></a><br><sub><b>Heti előnézet</b> – időjárás és feladatok</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_2.png"><img src=".github/assets/screenshots/weekly_summary_2.png" alt="Heti előnézet napról napra takarítással, hulladékszállítással és fizetésekkel" width="200"></a><br><sub><b>Heti előnézet</b> – napról napra: takarítás, hulladék, fizetések</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_3.png"><img src=".github/assets/screenshots/weekly_summary_3.png" alt="Az előző hét összefoglalója a naptár és a feladatok gyorsválasztóival" width="200"></a><br><sub><b>Az előző hét röviden</b> – időpontok, étkezések, kiadások – és gyorsválasztók</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="Gyerekoldal napi rutinokkal" width="200"></a><br><sub><b>Gyerekek</b> – napi rutinok játékosan</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/pantry.png"><img src=".github/assets/screenshots/pantry.png" alt="Kamra kategóriánként lejárati figyelmeztetésekkel és minimális készlettel" width="160"></a><br><sub><b>Kamra</b> – készlet, minimális mennyiségek és lejárat</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/pantry_scan.png"><img src=".github/assets/screenshots/pantry_scan.png" alt="Kamra vonalkódolvasója névvel, kategóriával, tárolási hellyel és minőségmegőrzési dátummal" width="160"></a><br><sub><b>Kamra beolvasása</b> – olvasd be a kódot, add a kamrához, vagy használd fel</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/house.png"><img src=".github/assets/screenshots/house.png" alt="Otthon oldal a lakással, havi költségekkel, hitelekkel és vételi adatokkal" width="160"></a><br><sub><b>Otthon</b> – lakás, költségek, hitelek, hibák és mérőóra-állások egy helyen</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/vehicles.png"><img src=".github/assets/screenshots/vehicles.png" alt="Jármű oldal rendszámmal, emlékeztetőkkel és szerződésekkel" width="160"></a><br><sub><b>Járművek</b> – műszaki vizsga, gumik, üzemanyag és töltés</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/documents.png"><img src=".github/assets/screenshots/documents.png" alt="Dokumentumok kategóriánként garancia- és érvényességi dátummal" width="160"></a><br><sub><b>Dokumentumok</b> – blokkok, garanciák és szerződések határidőkkel</sub></td>
   </tr>
 </table>
 

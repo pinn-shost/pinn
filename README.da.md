@@ -63,14 +63,14 @@ Altid med dig: pinn. installeres på hver iPhone og Android-telefon som en rigti
 
 <table>
   <tr>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/home.png"><img src=".github/assets/screenshots/home.png" alt="Startside med vejr, dagens opgaver og begivenheder" width="240"></a><br><sub><b>Start</b> – dagen med et enkelt blik</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/calendar.png"><img src=".github/assets/screenshots/calendar.png" alt="Familiekalender i ugevisning" width="240"></a><br><sub><b>Kalender</b> – iCloud og Google i én visning</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/meals.png"><img src=".github/assets/screenshots/meals.png" alt="Ugemenu med opskrifter" width="240"></a><br><sub><b>Måltider</b> – planlæg ugen, handl med et tryk</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/home.png"><img src=".github/assets/screenshots/home.png" alt="Startside med genveje, familiemedlemmer, opslagstavle og ugens plan" width="240"></a><br><sub><b>Start</b> – dagen med et enkelt blik</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/calendar.png"><img src=".github/assets/screenshots/calendar.png" alt="Familiekalender i dagsvisning med aftaler og måltider" width="240"></a><br><sub><b>Kalender</b> – iCloud og Google i én visning</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/chat.png"><img src=".github/assets/screenshots/chat.png" alt="Familiechat med besked, delt position og talebesked" width="240"></a><br><sub><b>Chat</b> – end-to-end-krypteret, med talebeskeder og position</sub></td>
   </tr>
   <tr>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/meals.png"><img src=".github/assets/screenshots/meals.png" alt="Opskriftsamling med egne og offentlige opskrifter" width="240"></a><br><sub><b>Måltider</b> – planlæg ugen, handl med et tryk</sub></td>
     <td align="center" width="33%"><a href=".github/assets/screenshots/lists.png"><img src=".github/assets/screenshots/lists.png" alt="Indkøbsliste sorteret efter butikker" width="240"></a><br><sub><b>Lister</b> – indkøb, spisekammer, pakkelister</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="Budget med udgifter pr. kategori" width="240"></a><br><sub><b>Økonomi</b> – budget, opsparing, lommepenge</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/chat.png"><img src=".github/assets/screenshots/chat.png" alt="Familiechat med besked, delt position og talebesked" width="240"></a><br><sub><b>Chat</b> – end-to-end-krypteret, med talebeskeder og position</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="Budgetoversigt med forløb over månederne" width="240"></a><br><sub><b>Økonomi</b> – budget, opsparing, lommepenge</sub></td>
   </tr>
 </table>
 
@@ -85,16 +85,18 @@ Tryk på et billede for at åbne det i fuld størrelse.
 
 <table>
   <tr>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/house.png"><img src=".github/assets/screenshots/house.png" alt="Hjemmesiden med bolig, månedlige omkostninger, lån og købsoplysninger" width="200"></a><br><sub><b>Hjem</b> – bolig, omkostninger, lån, mangler og måleraflæsninger ét sted</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/tasks.png"><img src=".github/assets/screenshots/tasks.png" alt="Opgaveliste med automatiske påmindelser til køretøjer" width="200"></a><br><sub><b>Opgaver</b> – automatiske påmindelser, fx syn og dækskift, med genvej</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/vehicles.png"><img src=".github/assets/screenshots/vehicles.png" alt="Køretøjsside med nummerplade, påmindelser og begivenheder" width="200"></a><br><sub><b>Køretøjer</b> – syn, dæk, brændstof og opladning</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/scan_pantry.png"><img src=".github/assets/screenshots/scan_pantry.png" alt="Stregkodescanner til spisekammeret med navn, kategori, opbevaringssted og mindste holdbarhed" width="200"></a><br><sub><b>Scan spisekammeret</b> – scan koden, læg i spisekammeret eller brug</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/tasks.png"><img src=".github/assets/screenshots/tasks.png" alt="Opgaveliste med automatiske påmindelser til køretøjer" width="160"></a><br><sub><b>Opgaver</b> – automatiske påmindelser, fx syn og dækskift, med genvej</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/board.png"><img src=".github/assets/screenshots/board.png" alt="Opslagstavle med nedtælling, takkeseddel og afstemning" width="160"></a><br><sub><b>Opslagstavle</b> – sedler, nedtællinger, tak og afstemninger</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/family.png"><img src=".github/assets/screenshots/family.png" alt="Familieside med profiler og felter for helbred, placering, skole og kæledyr" width="160"></a><br><sub><b>Familie</b> – profiler, helbred, skole, kæledyr og placering</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="Børneside med daglig rutine" width="160"></a><br><sub><b>Børn</b> – daglige rutiner på en legende måde</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/home_darkmode.png"><img src=".github/assets/screenshots/home_darkmode.png" alt="Startside i mørk tilstand" width="160"></a><br><sub><b>Mørk tilstand</b> – automatisk eller når du vil</sub></td>
   </tr>
   <tr>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_1.png"><img src=".github/assets/screenshots/weekly_summary_1.png" alt="Ugeudsigt med vejr og åbne opgaver" width="200"></a><br><sub><b>Ugeudsigt</b> – vejret og hvad der skal gøres</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_2.png"><img src=".github/assets/screenshots/weekly_summary_2.png" alt="Ugeudsigt dag for dag med rengøring, skraldeafhentning og betalinger" width="200"></a><br><sub><b>Ugeudsigt</b> – dag for dag: rengøring, skrald, betalinger</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_3.png"><img src=".github/assets/screenshots/weekly_summary_3.png" alt="Opsummering af sidste uge med genveje til kalender og opgaver" width="200"></a><br><sub><b>Sidste uge kort fortalt</b> – begivenheder, måltider, udgifter – og genveje</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="Børneside med daglig rutine" width="200"></a><br><sub><b>Børn</b> – daglige rutiner på en legende måde</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/pantry.png"><img src=".github/assets/screenshots/pantry.png" alt="Forråd efter kategori med advarsler om holdbarhed og minimumslager" width="160"></a><br><sub><b>Forråd</b> – beholdning, minimumsmængder og holdbarhed</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/pantry_scan.png"><img src=".github/assets/screenshots/pantry_scan.png" alt="Stregkodescanner til spisekammeret med navn, kategori, opbevaringssted og mindste holdbarhed" width="160"></a><br><sub><b>Scan spisekammeret</b> – scan koden, læg i spisekammeret eller brug</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/house.png"><img src=".github/assets/screenshots/house.png" alt="Hjemmesiden med bolig, månedlige omkostninger, lån og købsoplysninger" width="160"></a><br><sub><b>Hjem</b> – bolig, omkostninger, lån, mangler og måleraflæsninger ét sted</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/vehicles.png"><img src=".github/assets/screenshots/vehicles.png" alt="Køretøjsside med nummerplade, påmindelser og begivenheder" width="160"></a><br><sub><b>Køretøjer</b> – syn, dæk, brændstof og opladning</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/documents.png"><img src=".github/assets/screenshots/documents.png" alt="Dokumenter efter kategori med garanti- og gyldighedsdato" width="160"></a><br><sub><b>Dokumenter</b> – kvitteringer, garantier og kontrakter med frister</sub></td>
   </tr>
 </table>
 

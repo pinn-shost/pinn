@@ -75,14 +75,14 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 <table>
   <tr>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/home.png"><img src=".github/assets/screenshots/home.png" alt="今日の天気、タスク、予定を表示したホーム画面" width="240"></a><br><sub><b>概要</b>：あなたの一日がひと目でわかる</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/calendar.png"><img src=".github/assets/screenshots/calendar.png" alt="週表示の家族カレンダー" width="240"></a><br><sub><b>カレンダー</b>：iCloudとGoogleをひとつの画面で</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/meals.png"><img src=".github/assets/screenshots/meals.png" alt="レシピ付きの週間献立" width="240"></a><br><sub><b>食事</b>：一週間を計画して、ワンタップで買い物</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/home.png"><img src=".github/assets/screenshots/home.png" alt="ショートカット、家族、掲示板、今週の予定が並ぶホーム画面" width="240"></a><br><sub><b>概要</b>：あなたの一日がひと目でわかる</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/calendar.png"><img src=".github/assets/screenshots/calendar.png" alt="予定と食事が表示された家族カレンダーの日表示" width="240"></a><br><sub><b>カレンダー</b>：iCloudとGoogleをひとつの画面で</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/chat.png"><img src=".github/assets/screenshots/chat.png" alt="メッセージ、共有した位置情報、ボイスメッセージのある家族チャット" width="240"></a><br><sub><b>チャット</b>：エンドツーエンド暗号化、ボイスメッセージと位置情報つき</sub></td>
   </tr>
   <tr>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/meals.png"><img src=".github/assets/screenshots/meals.png" alt="自分のレシピと公開レシピのコレクション" width="240"></a><br><sub><b>食事</b>：一週間を計画して、ワンタップで買い物</sub></td>
     <td align="center" width="33%"><a href=".github/assets/screenshots/lists.png"><img src=".github/assets/screenshots/lists.png" alt="お店ごとに並べた買い物リスト" width="240"></a><br><sub><b>リスト</b>：買い物、ストック、荷造り</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="カテゴリ別の支出を示す予算の概要" width="240"></a><br><sub><b>家計</b>：予算、貯蓄、お小遣い</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/chat.png"><img src=".github/assets/screenshots/chat.png" alt="メッセージ、共有した位置情報、ボイスメッセージのある家族チャット" width="240"></a><br><sub><b>チャット</b>：エンドツーエンド暗号化、ボイスメッセージと位置情報つき</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="月ごとの推移グラフ付きの予算概要" width="240"></a><br><sub><b>家計</b>：予算、貯蓄、お小遣い</sub></td>
   </tr>
 </table>
 
@@ -97,16 +97,18 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 <table>
   <tr>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/house.png"><img src=".github/assets/screenshots/house.png" alt="住宅、月々の費用、ローン、購入情報を表示した住まいのページ" width="200"></a><br><sub><b>住まい</b> – 住宅・費用・ローン・不具合・メーターを一か所に</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/tasks.png"><img src=".github/assets/screenshots/tasks.png" alt="車両の自動リマインダー付きタスク一覧" width="200"></a><br><sub><b>タスク</b> – 車検やタイヤ交換などの自動リマインダーとワンタップのボタン</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/vehicles.png"><img src=".github/assets/screenshots/vehicles.png" alt="ナンバー、通知、イベントを表示した車両ページ" width="200"></a><br><sub><b>車両</b> – 車検、タイヤ、給油と充電</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/scan_pantry.png"><img src=".github/assets/screenshots/scan_pantry.png" alt="名前、カテゴリ、保管場所、賞味期限を表示するストックのバーコードスキャン" width="200"></a><br><sub><b>ストックのスキャン</b> – バーコードを読み取って、しまう・使い切る</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/tasks.png"><img src=".github/assets/screenshots/tasks.png" alt="車両の自動リマインダー付きタスク一覧" width="160"></a><br><sub><b>タスク</b> – 車検やタイヤ交換などの自動リマインダーとワンタップのボタン</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/board.png"><img src=".github/assets/screenshots/board.png" alt="カウントダウン、お礼のメモ、投票がある掲示板" width="160"></a><br><sub><b>掲示板</b> – メモ、カウントダウン、お礼、投票</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/family.png"><img src=".github/assets/screenshots/family.png" alt="プロフィールと健康・位置・学校・ペットのタイルがある家族ページ" width="160"></a><br><sub><b>家族</b> – プロフィール、健康、学校、ペット、位置情報</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="毎日の流れを表示した子どものページ" width="160"></a><br><sub><b>子ども</b>：楽しい毎日の流れ</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/home_darkmode.png"><img src=".github/assets/screenshots/home_darkmode.png" alt="ダークモードのホーム画面" width="160"></a><br><sub><b>ダークモード</b> – 自動でも好きなときにでも</sub></td>
   </tr>
   <tr>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_1.png"><img src=".github/assets/screenshots/weekly_summary_1.png" alt="天気と未完了のタスクを表示した週のプレビュー" width="200"></a><br><sub><b>週のプレビュー</b> – 天気とまだ終わっていないこと</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_2.png"><img src=".github/assets/screenshots/weekly_summary_2.png" alt="掃除、ごみの日、支払いを日ごとに表示した週のプレビュー" width="200"></a><br><sub><b>週のプレビュー</b> – 日ごとに：掃除、ごみ、支払い</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_3.png"><img src=".github/assets/screenshots/weekly_summary_3.png" alt="カレンダーとタスクへのショートカット付き先週のまとめ" width="200"></a><br><sub><b>先週のまとめ</b> – 予定、食事、支出——とショートカット</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="毎日の流れを表示した子どものページ" width="200"></a><br><sub><b>子ども</b>：楽しい毎日の流れ</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/pantry.png"><img src=".github/assets/screenshots/pantry.png" alt="賞味期限の警告と最低在庫付きのカテゴリー別ストック" width="160"></a><br><sub><b>ストック</b> – 在庫、最低数量、賞味期限</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/pantry_scan.png"><img src=".github/assets/screenshots/pantry_scan.png" alt="名前、カテゴリ、保管場所、賞味期限を表示するストックのバーコードスキャン" width="160"></a><br><sub><b>ストックのスキャン</b> – バーコードを読み取って、しまう・使い切る</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/house.png"><img src=".github/assets/screenshots/house.png" alt="住宅、月々の費用、ローン、購入情報を表示した住まいのページ" width="160"></a><br><sub><b>住まい</b> – 住宅・費用・ローン・不具合・メーターを一か所に</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/vehicles.png"><img src=".github/assets/screenshots/vehicles.png" alt="ナンバー、通知、イベントを表示した車両ページ" width="160"></a><br><sub><b>車両</b> – 車検、タイヤ、給油と充電</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/documents.png"><img src=".github/assets/screenshots/documents.png" alt="保証期限・有効期限付きのカテゴリー別書類" width="160"></a><br><sub><b>書類</b> – レシート、保証書、契約を期限付きで</sub></td>
   </tr>
 </table>
 

@@ -627,6 +627,19 @@ function recipeKiApply(r) {
   checkIngredientsQuantityWarning();
 }
 
+// App language and measuring system for the AI (the server never translates a recipe on its own)
+function recipeKiLocale() {
+  const out = { sprache: 'en', masse: 'metric', temperatur: 'C' };
+  try { if (window.PINN_I18N && PINN_I18N.language && PINN_I18N.language.code) out.sprache = PINN_I18N.language.code; } catch (e) { /* default */ }
+  try {
+    if (window.PINN_REGION) {
+      if (PINN_REGION.massUnit) out.masse = PINN_REGION.massUnit;
+      if (PINN_REGION.tempUnit) out.temperatur = PINN_REGION.tempUnit;
+    }
+  } catch (e) { /* default */ }
+  return out;
+}
+
 // Sends text/files to the AI. true = form filled, false = please evaluate yourself.
 async function recipeKiImport(payload, label) {
   if (recipeKiBusy) return false;
@@ -646,6 +659,9 @@ async function recipeKiImport(payload, label) {
       dateien: payload.dateien || [],
       kategorien: recipeCategories.filter(c => categoryActive[c] !== false),
       geraete: kitchenTools.filter(t => t.active !== false).map(t => t.label).filter(Boolean),
+      // Since 1.164.1: the recipe keeps its own language; the app language is only the fallback,
+      // units and oven temperature follow the region (Settings -> Language & region).
+      ...recipeKiLocale(),
     };
     const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
     const timer = ctrl ? setTimeout(() => ctrl.abort(), 150000) : null;

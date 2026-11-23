@@ -75,14 +75,14 @@ Immer dabei: pinn. lässt sich auf jedem iPhone und Android-Handy wie eine echte
 
 <table>
   <tr>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/home.png"><img src=".github/assets/screenshots/home.png" alt="Startseite mit Wetter, Aufgaben und Terminen von heute" width="240"></a><br><sub><b>Übersicht</b> – dein Tag auf einen Blick</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/calendar.png"><img src=".github/assets/screenshots/calendar.png" alt="Familienkalender in der Wochenansicht" width="240"></a><br><sub><b>Kalender</b> – iCloud und Google in einer Ansicht</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/meals.png"><img src=".github/assets/screenshots/meals.png" alt="Wochenplan mit Rezepten" width="240"></a><br><sub><b>Essen</b> – die Woche planen, mit einem Tipp einkaufen</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/home.png"><img src=".github/assets/screenshots/home.png" alt="Startseite mit Shortcuts, Familienmitgliedern, Pinnwand und Wochenplan" width="240"></a><br><sub><b>Übersicht</b> – dein Tag auf einen Blick</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/calendar.png"><img src=".github/assets/screenshots/calendar.png" alt="Familienkalender in der Tagesansicht mit Terminen und Essen" width="240"></a><br><sub><b>Kalender</b> – iCloud und Google in einer Ansicht</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/chat.png"><img src=".github/assets/screenshots/chat.png" alt="Familienchat mit Nachricht, geteiltem Standort und Sprachnachricht" width="240"></a><br><sub><b>Chat</b> – Ende-zu-Ende verschlüsselt, mit Sprachnachrichten und Standort</sub></td>
   </tr>
   <tr>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/meals.png"><img src=".github/assets/screenshots/meals.png" alt="Rezeptsammlung mit eigenen und öffentlichen Rezepten" width="240"></a><br><sub><b>Essen</b> – die Woche planen, mit einem Tipp einkaufen</sub></td>
     <td align="center" width="33%"><a href=".github/assets/screenshots/lists.png"><img src=".github/assets/screenshots/lists.png" alt="Einkaufsliste nach Geschäft sortiert" width="240"></a><br><sub><b>Listen</b> – Einkauf, Vorrat, Packen</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="Budgetübersicht mit Ausgaben nach Kategorie" width="240"></a><br><sub><b>Finanzen</b> – Budget, Sparen, Taschengeld</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/chat.png"><img src=".github/assets/screenshots/chat.png" alt="Familienchat mit Nachricht, geteiltem Standort und Sprachnachricht" width="240"></a><br><sub><b>Chat</b> – Ende-zu-Ende verschlüsselt, mit Sprachnachrichten und Standort</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="Budget-Übersicht mit Verlauf der Monate" width="240"></a><br><sub><b>Finanzen</b> – Budget, Sparen, Taschengeld</sub></td>
   </tr>
 </table>
 
@@ -97,16 +97,18 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 <table>
   <tr>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/house.png"><img src=".github/assets/screenshots/house.png" alt="Zuhause-Seite mit Haus, monatlichen Kosten, Kredit und Kaufdaten" width="200"></a><br><sub><b>Zuhause</b> – Haus, Kosten, Kredit, Mängel und Zähler an einem Ort</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/tasks.png"><img src=".github/assets/screenshots/tasks.png" alt="Aufgabenliste mit automatischen Fahrzeug-Erinnerungen" width="200"></a><br><sub><b>Aufgaben</b> – automatische Erinnerungen, z. B. an TÜV und Reifenwechsel, mit Direkt-Button</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/vehicles.png"><img src=".github/assets/screenshots/vehicles.png" alt="Fahrzeugseite mit Kennzeichen, Hinweisen und Ereignissen" width="200"></a><br><sub><b>Fahrzeuge</b> – TÜV, Reifen, Tanken und Laden</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/scan_pantry.png"><img src=".github/assets/screenshots/scan_pantry.png" alt="Strichcode-Scanner für den Vorrat mit Name, Kategorie, Lagerort und Haltbarkeit" width="200"></a><br><sub><b>Vorrat scannen</b> – Strichcode scannen, einlagern oder verbrauchen</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/tasks.png"><img src=".github/assets/screenshots/tasks.png" alt="Aufgabenliste mit automatischen Fahrzeug-Erinnerungen" width="160"></a><br><sub><b>Aufgaben</b> – automatische Erinnerungen, z. B. an TÜV und Reifenwechsel, mit Direkt-Button</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/board.png"><img src=".github/assets/screenshots/board.png" alt="Pinnwand mit Countdown, Danke-Zettel und Abstimmung" width="160"></a><br><sub><b>Pinnwand</b> – Zettel, Countdowns, Dankeschöns und Abstimmungen</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/family.png"><img src=".github/assets/screenshots/family.png" alt="Familienseite mit Profilen und Kacheln für Gesundheit, Ortung, Schule und Haustiere" width="160"></a><br><sub><b>Familie</b> – Profile, Gesundheit, Schule, Haustiere und Ortung</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="Kinderseite mit dem Tagesablauf" width="160"></a><br><sub><b>Kinder</b> – ein spielerischer Tagesablauf</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/home_darkmode.png"><img src=".github/assets/screenshots/home_darkmode.png" alt="Startseite im Dunkelmodus" width="160"></a><br><sub><b>Dunkelmodus</b> – automatisch oder wann du willst</sub></td>
   </tr>
   <tr>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_1.png"><img src=".github/assets/screenshots/weekly_summary_1.png" alt="Wochenvorschau mit Wetter und offenen Aufgaben" width="200"></a><br><sub><b>Wochenvorschau</b> – Wetter und was noch offen ist</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_2.png"><img src=".github/assets/screenshots/weekly_summary_2.png" alt="Wochenvorschau Tag für Tag mit Putzen, Mülltag und Zahlungen" width="200"></a><br><sub><b>Wochenvorschau</b> – Tag für Tag: Putzen, Müll, Zahlungen</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_3.png"><img src=".github/assets/screenshots/weekly_summary_3.png" alt="Rückblick auf die letzte Woche mit Abkürzungen zu Kalender und Aufgaben" width="200"></a><br><sub><b>Letzte Woche kompakt</b> – Termine, Essen, Ausgaben – und Abkürzungen</sub></td>
-    <td align="center" width="25%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="Kinderseite mit dem Tagesablauf" width="200"></a><br><sub><b>Kinder</b> – ein spielerischer Tagesablauf</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/pantry.png"><img src=".github/assets/screenshots/pantry.png" alt="Vorrat nach Kategorie mit Hinweisen zum Mindesthaltbarkeitsdatum und Mindestbestand" width="160"></a><br><sub><b>Vorrat</b> – Bestand, Mindestmengen und Haltbarkeit</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/pantry_scan.png"><img src=".github/assets/screenshots/pantry_scan.png" alt="Strichcode-Scanner für den Vorrat mit Name, Kategorie, Lagerort und Haltbarkeit" width="160"></a><br><sub><b>Vorrat scannen</b> – Strichcode scannen, einlagern oder verbrauchen</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/house.png"><img src=".github/assets/screenshots/house.png" alt="Zuhause-Seite mit Haus, monatlichen Kosten, Kredit und Kaufdaten" width="160"></a><br><sub><b>Zuhause</b> – Haus, Kosten, Kredit, Mängel und Zähler an einem Ort</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/vehicles.png"><img src=".github/assets/screenshots/vehicles.png" alt="Fahrzeugseite mit Kennzeichen, Hinweisen und Ereignissen" width="160"></a><br><sub><b>Fahrzeuge</b> – TÜV, Reifen, Tanken und Laden</sub></td>
+    <td align="center" width="20%"><a href=".github/assets/screenshots/documents.png"><img src=".github/assets/screenshots/documents.png" alt="Dokumente nach Kategorie mit Garantie- und Gültigkeitsdatum" width="160"></a><br><sub><b>Dokumente</b> – Belege, Garantien und Verträge mit Fristen</sub></td>
   </tr>
 </table>
 
