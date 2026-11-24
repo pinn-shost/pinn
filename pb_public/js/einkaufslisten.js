@@ -7,9 +7,32 @@
    the popups to move content and to create/edit a list (shop, logo, main shop), Settings → Shopping (category order, main shop,
    special lists), the main-shop popup and the wiring of the shopping page (initShoppingLists). */
 
+/* ---------- Filter of the detail view (since 1.165.0) ----------
+   '' = everything, 'important' = marked as important, 'low' = pantry item that is running low at home,
+   'pantry' = linked to the pantry, 'meal' = ingredients from the meal plan. Not stored: every list opens unfiltered. */
+let shoppingFilter = '';
+let shoppingFilterOpen = false;
+const SHOPPING_FILTERS = ['important', 'low', 'pantry', 'meal'];
+function shoppingFilterReset() { shoppingFilter = ''; shoppingFilterOpen = false; }
+// Pantry item of an own entry that is short at home (below the minimum stock or nothing left)
+function shoppingItemIsLow(it) {
+  const p = pantryItemForShopping(it);
+  if (!p) return false;
+  return pantryIsLow(p) || !((pantryNum(p.qty) || 0) > 0);
+}
+function shoppingManualMatchesFilter(it, f) {
+  if (!f) return true;
+  if (f === 'important') return !!it.important;
+  if (f === 'low') return shoppingItemIsLow(it);
+  if (f === 'pantry') return !!pantryItemForShopping(it);
+  return false; // 'meal': own entries never come from the meal plan
+}
+function shoppingRecipeMatchesFilter(f) { return !f || f === 'meal'; }
+
 /* ---------- Overview / detail view ---------- */
 function openShoppingList(id, opts = {}) {
   if (!getShoppingList(id)) return;
+  if (currentShoppingListId !== id) shoppingFilterReset();
   currentShoppingListId = id;
   shoppingBackToPlanTaskId = opts.backToPlanTaskId || null;
   currentShoppingPlanTaskId = null;
@@ -22,6 +45,7 @@ function openShoppingList(id, opts = {}) {
 }
 // Combined view of a planned shopping trip (several lists, clearly separated)
 function openShoppingPlanView(taskId) {
+  shoppingFilterReset();
   currentShoppingListId = null;
   shoppingBackToPlanTaskId = null;
   currentShoppingPlanTaskId = taskId;
@@ -47,6 +71,7 @@ function showShoppingOverview() {
     openShoppingPlanView(shoppingBackToPlanTaskId);
     return;
   }
+  shoppingFilterReset();
   currentShoppingListId = null;
   currentShoppingPlanTaskId = null;
   shoppingBackToPlanTaskId = null;
@@ -94,6 +119,7 @@ function renderShoppingOverview() {
   const hideMeal = shoppingMealListHidden();
   const cards = allShoppingLists().filter(list => !(hideMeal && list.id === SHOPPING_MEAL_LIST_ID)).map(list => {
     const { count, preview } = shoppingListSummary(list.id);
+    const impCount = shoppingItemsOfList(list.id).filter(it => !it.done && it.important).length;
     const color = shoppingListColor(list);
     const isStamm = list.id === stammId;
     const previewHtml = preview.length
@@ -117,7 +143,10 @@ function renderShoppingOverview() {
         <span class="absolute top-0 left-0 right-0 h-1.5" style="background:${color}"></span>
         <div class="flex items-start justify-between gap-2">
           ${shoppingListLogoHtml(list, 52)}
-          ${count ? `<span class="shrink-0 min-w-[1.75rem] h-7 px-2 rounded-full bg-pine text-white text-xs font-semibold grid place-items-center">${count}</span>` : ''}
+          <span class="shrink-0 flex items-center gap-1.5">
+            ${impCount ? `<span class="shop-imp-badge" title="${escapeHtml(tk('shop.importantHint'))}">${wxIcon('alert', 'shop-imp-badge-i')}${impCount}</span>` : ''}
+            ${count ? `<span class="min-w-[1.75rem] h-7 px-2 rounded-full bg-pine text-white text-xs font-semibold grid place-items-center">${count}</span>` : ''}
+          </span>
         </div>
         <div class="min-w-0">
           <div class="font-serif text-base leading-tight truncate">${escapeHtml(list.name || '')}</div>
@@ -398,12 +427,13 @@ function shoppingManualRowHtml(it) {
   const muted = !!it.done;
   const pItem = pantryItemForShopping(it);
   const fresh = shoppingJustToggledKey === 'm:' + it.id;
+  const imp = !!it.important && !muted;
   return `
-    <div class="shop-row ${muted ? 'is-done' : ''} ${fresh ? 'shop-row-fresh' : ''}">
+    <div class="shop-row ${muted ? 'is-done' : ''} ${imp ? 'is-important' : ''} ${fresh ? 'shop-row-fresh' : ''}">
       <button type="button" class="shopping-manual-row shop-row-main flex-1 min-w-0 flex items-center gap-3 text-left select-none" data-manual-id="${escapeHtml(it.id)}">
         <span class="shop-check" aria-hidden="true">${muted ? '✓' : ''}</span>
         <span class="flex-1 min-w-0">
-          <span class="flex items-center gap-1.5 min-w-0"><span class="shop-name truncate">${escapeHtml(truncateTitle(it.name || '', 40))}</span></span>
+          <span class="flex items-center gap-1.5 min-w-0">${imp ? `<span class="shop-imp-ico" role="img" aria-label="${escapeHtml(tk('shop.filter.important'))}">${wxIcon('alert')}</span>` : ''}<span class="shop-name truncate">${escapeHtml(truncateTitle(it.name || '', 40))}</span></span>
           ${note ? `<span class="shop-note block truncate">${escapeHtml(note)}</span>` : ''}
           ${pItem ? `<span class="shop-note block truncate">🥫 <span>${escapeHtml(tk('shop.fromPantry', { stock: pantryStockText(pItem) }))}</span></span>` : ''}
         </span>
@@ -465,8 +495,8 @@ function shoppingGroupedBodyHtml(manual, recipeItems, showRoute) {
   return groupHtml + doneHtml;
 }
 // Check off all own entries of a list or reopen them
-function toggleAllShoppingItemsOfList(listId) {
-  const manual = shoppingItemsOfList(listId);
+function toggleAllShoppingItemsOfList(listId, onlyIds = null) {
+  const manual = shoppingItemsOfList(listId).filter(it => !onlyIds || onlyIds.has(it.id));
   if (!manual.length) return;
   const allDone = manual.every(it => it.done);
   const ids = new Set(manual.map(it => it.id));
@@ -732,20 +762,71 @@ function renderShoppingDetail() {
 
   if (!hasAny) { contentEl.innerHTML = ''; return; }
 
-  const allManualDone = manual.length > 0 && manual.every(it => it.done);
-  const selectAllHtml = manual.length ? `
-    <div class="mx-auto w-full max-w-xl flex justify-end mb-2">
-      <button type="button" id="shoppingSelectAllBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 bg-white text-xs text-ink/60 hover:text-pine hover:border-pine transition">${allManualDone ? tk('shop.checkNone') : tk('shop.checkAll')}</button>
-    </div>` : '';
-  contentEl.innerHTML = selectAllHtml + `
+  // Filter (since 1.165.0): counts refer to the open entries; the order of the list never changes
+  const openRecipeItems = items.filter(i => !getShoppingItemAdjustment(i.key).excluded);
+  const filterCount = (f) => manual.filter(it => !it.done && shoppingManualMatchesFilter(it, f)).length
+    + (shoppingRecipeMatchesFilter(f) ? openRecipeItems.length : 0);
+  const counts = {};
+  SHOPPING_FILTERS.forEach(f => { counts[f] = filterCount(f); });
+  if (shoppingFilter && !SHOPPING_FILTERS.includes(shoppingFilter)) shoppingFilter = '';
+  const filter = shoppingFilter;
+  const shownManual = manual.filter(it => shoppingManualMatchesFilter(it, filter));
+  const shownItems = shoppingRecipeMatchesFilter(filter) ? items : [];
+  const filterChoices = SHOPPING_FILTERS.filter(f => counts[f] > 0 || f === filter);
+
+  const impOpen = counts.important;
+  const hintHtml = impOpen && filter !== 'important' ? `
+    <button type="button" id="shoppingImportantHint" class="shop-imp-hint mx-auto w-full max-w-xl mb-2.5">
+      <span class="shop-imp-hint-ico">${wxIcon('alert')}</span>
+      <span class="flex-1 min-w-0 text-left">${escapeHtml(tk('shop.importantHint'))}</span>
+      <span class="shop-imp-hint-n">${impOpen}</span>
+      <span class="shop-imp-hint-go">${escapeHtml(tk('shop.importantShow'))}</span>
+    </button>` : '';
+
+  const allShownDone = shownManual.length > 0 && shownManual.every(it => it.done);
+  const filterBtnLabel = filter ? tk('shop.filter.' + filter) : tk('shop.filter.button');
+  const showFilterBtn = filterChoices.length > 0;
+  const toolbarHtml = (shownManual.length || showFilterBtn) ? `
+    <div class="mx-auto w-full max-w-xl flex justify-end items-center gap-2 mb-2">
+      ${showFilterBtn ? `<button type="button" id="shoppingFilterBtn" class="shop-filter-btn ${filter ? 'is-active' : ''}" aria-expanded="${shoppingFilterOpen ? 'true' : 'false'}">${wxIcon('filter')}<span>${escapeHtml(filterBtnLabel)}</span></button>` : ''}
+      ${shownManual.length ? `<button type="button" id="shoppingSelectAllBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 bg-white text-xs text-ink/60 hover:text-pine hover:border-pine transition">${allShownDone ? tk('shop.checkNone') : tk('shop.checkAll')}</button>` : ''}
+    </div>
+    ${showFilterBtn && (shoppingFilterOpen || filter) ? `
+    <div class="mx-auto w-full max-w-xl flex justify-end mb-3">
+      <div class="ls-tabs shop-filter-chips">
+        <button type="button" class="ls-tab ${filter ? '' : 'active'}" data-shop-filter="">${escapeHtml(tk('lists.filterAll'))}</button>
+        ${filterChoices.map(f => `<button type="button" class="ls-tab ${f === filter ? 'active' : ''} ${f === 'important' ? 'is-imp' : ''}" data-shop-filter="${f}">${escapeHtml(tk('shop.filter.' + f))}<b>${counts[f]}</b></button>`).join('')}
+      </div>
+    </div>` : ''}` : '';
+
+  const bodyHtml = (shownManual.length || shownItems.length)
+    ? shoppingGroupedBodyHtml(shownManual, shownItems, isMeal)
+    : `<div class="text-center py-6"><p class="text-sm text-ink/45 mb-2">${escapeHtml(tk('shop.filter.empty'))}</p><button type="button" class="shop-filter-reset text-sm text-pine underline">${escapeHtml(tk('shop.filter.reset'))}</button></div>`;
+  contentEl.innerHTML = hintHtml + toolbarHtml + `
     <div id="shoppingListPaper" class="shop-list-body mx-auto w-full max-w-xl">
-      ${shoppingGroupedBodyHtml(manual, items, isMeal)}
+      ${bodyHtml}
     </div>
   `;
 
-  // At the top: check off all own entries at once (or reopen them all)
+  // At the top: check off all visible own entries at once (or reopen them all)
   const selectAllBtn = document.getElementById('shoppingSelectAllBtn');
-  if (selectAllBtn) selectAllBtn.addEventListener('click', () => toggleAllShoppingItemsOfList(listId));
+  if (selectAllBtn) selectAllBtn.addEventListener('click', () => toggleAllShoppingItemsOfList(listId, filter ? new Set(shownManual.map(it => it.id)) : null));
+  const setFilter = (f) => { shoppingFilter = f; if (!f) shoppingFilterOpen = false; renderShoppingList(); };
+  const filterBtn = document.getElementById('shoppingFilterBtn');
+  if (filterBtn) filterBtn.addEventListener('click', () => {
+    if (shoppingFilter) { setFilter(''); return; } // active filter: one tap shows everything again
+    shoppingFilterOpen = !shoppingFilterOpen;
+    renderShoppingList();
+  });
+  contentEl.querySelectorAll('[data-shop-filter]').forEach(b => b.addEventListener('click', () => setFilter(b.dataset.shopFilter)));
+  contentEl.querySelectorAll('.shop-filter-reset').forEach(b => b.addEventListener('click', () => setFilter('')));
+  const hintBtn = document.getElementById('shoppingImportantHint');
+  if (hintBtn) hintBtn.addEventListener('click', () => {
+    shoppingFilterOpen = true;
+    setFilter('important');
+    const scroller = document.querySelector('#shoppingDetail .overflow-y-auto');
+    if (scroller) scroller.scrollTop = 0;
+  });
 
   wireShoppingRows(contentEl, items, from, to);
 }

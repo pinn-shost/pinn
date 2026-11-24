@@ -135,3 +135,47 @@ html.dark .shop-paste-tags span { background: rgba(110,190,140,.18); color: #8fd
 html.dark .ls-plan { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.12); }
 html.dark .ls-plan > summary small, html.dark .ls-plan-hint, html.dark .ls-plan-meta, html.dark .ls-plan-head { color: rgba(237,234,226,0.6); }
 html.dark .ls-plan-head { border-bottom-color: rgba(255,255,255,0.1); }
+
+/* ---------- Shopping: important entries, note at the top and filter (since 1.165.0) ----------
+   Important own entries turn red so they catch the eye (same red as finance, #D94A45); their place in the list
+   stays the same. The note above the list opens the filter "Important". */
+.shop-row.is-important { background: #FCEDEC; border-color: rgba(217,74,69,.45); box-shadow: inset 4px 0 0 #D94A45; }
+.shop-row.is-important .shop-name { color: #A8322E; font-weight: 600; }
+.shop-row.is-important .shop-check { border-color: rgba(217,74,69,.6); }
+.shop-row.is-important .shop-qty-btn { border-color: rgba(217,74,69,.3); }
+.shop-imp-ico { flex-shrink: 0; color: #D94A45; line-height: 0; }
+.shop-imp-ico .wi { width: 1rem; height: 1rem; vertical-align: top; }
+html.dark .shop-row.is-important { background: rgba(217,74,69,.16); border-color: rgba(240,120,112,.55); box-shadow: inset 4px 0 0 #F07870; }
+html.dark .shop-row.is-important .shop-name { color: #FFB4AD; }
+html.dark .shop-imp-ico { color: #F07870; }
+
+.shop-imp-hint { display: flex; align-items: center; gap: .6rem; padding: .7rem .85rem; border-radius: 1rem;
+  border: 1px solid rgba(217,74,69,.35); background: #FCEDEC; color: #A8322E; font-size: .85rem; font-weight: 500;
+  -webkit-tap-highlight-color: transparent; transition: background .15s; }
+.shop-imp-hint:active { background: #F9DEDC; }
+.shop-imp-hint-ico { flex-shrink: 0; line-height: 0; }
+.shop-imp-hint-ico .wi { width: 1.15rem; height: 1.15rem; }
+.shop-imp-hint-n { flex-shrink: 0; min-width: 1.5rem; height: 1.5rem; padding: 0 .4rem; border-radius: 999px; background: #D94A45; color: #fff;
+  font-size: .72rem; font-weight: 700; display: grid; place-items: center; }
+.shop-imp-hint-go { flex-shrink: 0; font-size: .75rem; font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+html.dark .shop-imp-hint { background: rgba(217,74,69,.16); border-color: rgba(240,120,112,.45); color: #FFB4AD; }
+html.dark .shop-imp-hint:active { background: rgba(217,74,69,.24); }
+
+.shop-imp-badge { height: 1.75rem; padding: 0 .5rem; border-radius: 999px; background: #D94A45; color: #fff; font-size: .75rem; font-weight: 700;
+  display: inline-flex; align-items: center; gap: .2rem; }
+.shop-imp-badge-i { width: .85rem; height: .85rem; }
+
+.shop-filter-btn { display: inline-flex; align-items: center; gap: .35rem; padding: .375rem .75rem; border-radius: .5rem;
+  border: 1px solid rgba(37,35,31,.15); background: #fff; font-size: .75rem; color: rgba(37,35,31,.6); transition: color .15s, border-color .15s, background .15s; }
+.shop-filter-btn:hover { color: var(--c-pine); border-color: var(--c-pine); }
+.shop-filter-btn .wi { width: .95rem; height: .95rem; }
+.shop-filter-btn.is-active { background: var(--c-pine); border-color: var(--c-pine); color: #fff; }
+.shop-filter-chips .ls-tab.is-imp:not(.active) { color: #A8322E; }
+html.dark .shop-filter-btn { background: rgba(255,255,255,.04); border-color: rgba(255,255,255,.16); color: rgba(237,234,226,.75); }
+html.dark .shop-filter-btn.is-active { background: var(--c-pine); color: #fff; }
+html.dark .shop-filter-chips .ls-tab.is-imp:not(.active) { color: #FFB4AD; }
+
+/* Popup: the "Important" row turns red while it is ticked */
+.shop-imp-check.is-on { background: #FCEDEC; border-color: rgba(217,74,69,.45); }
+.shop-imp-check input { accent-color: #D94A45; }
+html.dark .shop-imp-check.is-on { background: rgba(217,74,69,.16); border-color: rgba(240,120,112,.45); }

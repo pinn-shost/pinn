@@ -101,6 +101,10 @@ function openShoppingItemModal({ name = '', editId = null } = {}) {
   }
   shoppingModalEditId = existing ? existing.id : null;
 
+  // Since 1.165.0: "Important" marks the entry red on the list (shoppingImportantCheck)
+  const impCheck = document.getElementById('shoppingImportantCheck');
+  impCheck.checked = !!(existing && existing.important);
+  syncShoppingImportantRow();
   if (existing) {
     nameInput.value = existing.name || '';
     qtyInput.value = existing.qty || '';
@@ -129,6 +133,13 @@ function openShoppingItemModal({ name = '', editId = null } = {}) {
 
   modal.classList.remove('hidden');
   document.getElementById('shoppingAddInput').blur();
+}
+
+// The "Important" row in the popup turns red while it is ticked (preview of the list row)
+function syncShoppingImportantRow() {
+  const row = document.getElementById('shoppingImportantRow');
+  const check = document.getElementById('shoppingImportantCheck');
+  if (row && check) row.classList.toggle('is-on', check.checked);
 }
 
 // Choice „Automatisch (erkannte Kategorie)“ + all categories in the family's order
@@ -211,6 +222,7 @@ if (window.visualViewport) {
 window.addEventListener('resize', syncShoppingKeyboardLayout);
 document.getElementById('shoppingItemNameInput').addEventListener('input', renderShoppingItemCategorySelect);
 document.getElementById('shoppingItemCategorySelect').addEventListener('change', (e) => { e.target.dataset.cat = e.target.value; });
+document.getElementById('shoppingImportantCheck').addEventListener('change', syncShoppingImportantRow);
 ['shoppingItemNameInput', 'shoppingQtyInput', 'shoppingNoteInput'].forEach(id => {
   const el = document.getElementById(id);
   el.addEventListener('focus', () => [0, 100, 300, 600].forEach(ms => setTimeout(syncShoppingKeyboardLayout, ms)));
@@ -249,13 +261,21 @@ function confirmShoppingItem() {
   const listId = getShoppingList(selectedListId) ? selectedListId : activeShoppingListId();
   const catVal = document.getElementById('shoppingItemCategorySelect').value;
   const cat = shoppingCategoryById(catVal) ? catVal : '';
+  const important = document.getElementById('shoppingImportantCheck').checked;
 
   if (shoppingModalEditId) {
     const editId = shoppingModalEditId;
-    shoppingItems = shoppingItems.map(x => x.id === editId ? { ...x, name, qty, note, cat, done: false, listId } : x);
+    shoppingItems = shoppingItems.map(x => {
+      if (x.id !== editId) return x;
+      const next = { ...x, name, qty, note, cat, done: false, listId };
+      if (important) next.important = true; else delete next.important;
+      return next;
+    });
   } else {
     // Add new own entries at the top so the last added one is visible right away.
-    shoppingItems = [{ id: 'si' + Date.now() + Math.random().toString(36).slice(2, 6), name, qty, note, cat, done: false, createdAt: Date.now(), listId }, ...shoppingItems];
+    const fresh = { id: 'si' + Date.now() + Math.random().toString(36).slice(2, 6), name, qty, note, cat, done: false, createdAt: Date.now(), listId };
+    if (important) fresh.important = true;
+    shoppingItems = [fresh, ...shoppingItems];
   }
   rememberShoppingInput(name, qty, cat);
 

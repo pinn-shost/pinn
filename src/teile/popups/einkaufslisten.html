@@ -17,6 +17,14 @@
       <label data-tk="shop.entry.note" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Note</label>
       <input data-tk-attr="placeholder:shop.entry.notePlaceholder" id="shoppingNoteInput" type="text" autocomplete="off" placeholder="e.g. organic, the big pack …" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" />
 
+      <label id="shoppingImportantRow" class="shop-imp-check flex items-start gap-2.5 rounded-xl border border-ink/10 px-3 py-2.5 mb-3 cursor-pointer select-none">
+        <input id="shoppingImportantCheck" type="checkbox" class="shrink-0 w-4 h-4 mt-0.5" />
+        <span class="min-w-0">
+          <span data-tk="shop.entry.important" class="block text-sm font-medium">Important</span>
+          <span data-tk="shop.entry.importantHint" class="block text-[11px] text-ink/45 leading-snug">Stands out in red on the list – a note appears at the top.</span>
+        </span>
+      </label>
+
       <div class="grid grid-cols-2 gap-3 mb-5">
         <div class="min-w-0">
           <label data-tk="shop.entry.category" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="shoppingItemCategorySelect">Category</label>

@@ -22,6 +22,14 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.165', datum: '24.11.2026', titel: 'Einkaufslisten: Wichtiges markieren und filtern',
+    punkte: [
+      ['neu', 'Wichtig markieren: Im Fenster beim Hinzufügen (oder lange auf einen Eintrag drücken) gibt es den Haken „Wichtig“. Der Eintrag wird rot, bleibt aber an seinem Platz. Oben auf der Liste erscheint ein Hinweis – antippen zeigt nur die wichtigen Dinge. In der Übersicht zeigt ein rotes Zeichen, auf welcher Liste etwas Wichtiges steht.'],
+      ['neu', 'Filter neben „Alle abhaken“: Wichtig, Knapp (im Vorrat fast aufgebraucht), Vorrat und Essensplan, jeweils mit Anzahl. „Alle abhaken“ gilt dann nur für das, was gerade zu sehen ist.'],
+      ['fix', 'Kurzbefehle: „Rückgängig“ zeigt ein schlichtes Symbol statt eines Emojis.'],
+    ],
+  },
+  {
     v: '1.164', datum: '23.11.2026', titel: 'Einstellungen und Profil zusammengelegt',
     punkte: [
       ['fix', '1.164.1: Rezepte mit KI: Ein Rezept bleibt in der Sprache, in der es geschrieben ist (z. B. ein niederländisches Rezept bleibt niederländisch) und wird nicht mehr automatisch ins Deutsche übersetzt. Wer eine andere Sprache möchte, schreibt das einfach dazu (z. B. „auf Deutsch übersetzen“). Ist die Sprache nicht erkennbar, nimmt pinn. die App-Sprache. Maße und Ofentemperatur richten sich nach der Region (Einstellungen → Sprache & Region).'],

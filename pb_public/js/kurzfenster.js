@@ -51,9 +51,9 @@ function kzDrinkUndoHtml(h) {
   const live = last && at && Date.now() - at < KZ_UNDO_MS;
   if (live) {
     const what = ghMlN(last.ml) + ' ' + PINN_REGION.mlUnit() + ' ' + tk(ghDrinkById(last.kind).key);
-    return `<button type="button" class="kz-undo" data-kzs="undodrink" data-id="${escapeHtml(last.id)}">↩ ${escapeHtml(kzT('undo', { what }))}</button>`;
+    return `<button type="button" class="kz-undo" data-kzs="undodrink" data-id="${escapeHtml(last.id)}">${wxIcon('undo', 'kz-undo-i')}<span>${escapeHtml(kzT('undo', { what }))}</span></button>`;
   }
-  if (kzUndone && Date.now() - kzUndone.at < KZ_UNDO_MS) return `<button type="button" class="kz-undo" disabled>↩ ${escapeHtml(kzT('undone'))}</button>`;
+  if (kzUndone && Date.now() - kzUndone.at < KZ_UNDO_MS) return `<button type="button" class="kz-undo" disabled>${wxIcon('undo', 'kz-undo-i')}<span>${escapeHtml(kzT('undone'))}</span></button>`;
   return '';
 }
 function kzSheetSchedule() {

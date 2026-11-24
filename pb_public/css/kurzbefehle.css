@@ -44,7 +44,8 @@
 .kz-empty { font-size: 14px; opacity: .6; text-align: center; padding: 14px 0; }
 .kz-step { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 14px; font-weight: 600; margin: 8px 0; position: relative; }
 .kz-back { position: absolute; left: 0; font-size: 13px; font-weight: 400; opacity: .6; }
-.kz-undo { width: 100%; margin-top: 12px; padding: 10px; border-radius: 12px; border: 1px solid rgba(37,35,31,.15); font-size: 14px; font-weight: 600; }
+.kz-undo { width: 100%; margin-top: 12px; padding: 10px; border-radius: 12px; border: 1px solid rgba(37,35,31,.15); font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.kz-undo-i { width: 17px; height: 17px; flex-shrink: 0; }
 .kz-undo:disabled { opacity: .4; }
 .kz-count { display: flex; align-items: center; justify-content: center; gap: 22px; padding: 8px 0; }
 .kz-count-n { font-size: 44px; font-weight: 700; text-align: center; line-height: 1; }

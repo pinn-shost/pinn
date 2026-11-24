@@ -3,6 +3,11 @@
    language other than German. One entry per version of PINN_CHANGELOG: t = title, p = points in the same order
    (null = no translation, the German text is shown). Older versions are not translated. */
 window.PINN_CHANGELOG_EN = {
+  "1.165": {"t": "Shopping lists: mark important things and filter", "p": [
+"Mark as important: the popup for adding (or a long press on an entry) has the tick \u201cImportant\u201d. The entry turns red but stays in its place. A note appears at the top of the list \u2013 tap it to see only the important things. In the overview a red marker shows which list has something important on it.",
+"Filter next to \u201cCheck all\u201d: Important, Low (almost used up in the pantry), Pantry and Meal plan, each with a count. \u201cCheck all\u201d then only applies to what is shown.",
+"Shortcuts: \u201cUndo\u201d shows a plain symbol instead of an emoji."
+]},
   "1.164": {"t": "Settings and profile merged", "p": [
 "1.164.1: Recipes with AI: a recipe now stays in the language it is written in (e.g. a Dutch recipe stays Dutch) and is no longer translated into German automatically. If you want another language, just add it to the text (e.g. \u201ctranslate into English\u201d). If the language cannot be recognised, pinn. uses the app language. Measures and oven temperature follow the region (Settings \u2192 Language & region).",
 "1.164.0: Settings and profile merged: the menu now only has the gear. At the top is \u201cLogged in as\u201d (always open, full width on iPad/PC) with password, sign-out and the signed-in devices to expand. Notifications are now a card like all other settings. Guests only see \u201cLogged in as\u201d.",
