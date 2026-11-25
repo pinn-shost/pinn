@@ -307,11 +307,13 @@ function ladeIcs(url, timeoutSek) {
     if (!u) throw new Error("Ungültiger oder nicht erlaubter Link.");
     let res;
     try {
-        res = $http.send({
-            url: u, method: "GET", timeout: timeoutSek || 20,
+        // Safe fetch (since 1.165.1): checks where the name really points to and every redirect
+        res = require(`${__hooks}/pinn-sicherabruf.js`).fetch(u, {
+            timeout: timeoutSek || 20, maxBytes: 5 * 1024 * 1024,
             headers: { "User-Agent": UA_BROWSER, "Accept": "text/calendar,text/plain;q=0.9,*/*;q=0.5", "Accept-Language": "de-DE,de;q=0.9" },
         });
     } catch (err) {
+        if (/nicht erlaubt|gibt es nicht/.test(err.message)) throw new Error("Ungültiger oder nicht erlaubter Link.");
         throw new Error("Der Server des Entsorgers ist nicht erreichbar (" + err.message + ").");
     }
     if (res.statusCode === 404 || res.statusCode === 410) throw new Error("Unter diesem Link gibt es (nicht mehr) keine Datei.");
@@ -636,7 +638,7 @@ function icsLinksAufSeite(url, deadline) {
     if (left < 8) return { links: [], basis: "" };
     let res;
     try {
-        res = $http.send({ url: url, method: "GET", timeout: Math.min(10, left - 2),
+        res = require(`${__hooks}/pinn-sicherabruf.js`).fetch(url, { timeout: Math.min(10, left - 2), maxBytes: 4 * 1024 * 1024,
             headers: { "User-Agent": UA_BROWSER, "Accept": "text/html,application/xhtml+xml;q=0.9,*/*;q=0.5", "Accept-Language": "de-DE,de;q=0.9" } });
     } catch (err) { return { links: [], basis: "" }; }
     if (res.statusCode < 200 || res.statusCode >= 300) return { links: [], basis: "" };

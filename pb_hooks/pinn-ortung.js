@@ -714,6 +714,12 @@ function saveDevice(e, body) {
     const clash = allCfgs().some(x => x.cfg.geraete.some(g => g.uniqueId === uniqueId && !(x.familyId === familyId && g.id === id)));
     if (clash) throw new Error("Diese Geräte-ID ist schon vergeben.");
     let g = id ? cfg.geraete.find(x => x.id === id) : null;
+    // Since 1.165.1: a new or changed device ID needs at least 8 characters. The OsmAnd way works without sign-in - the
+    // device ID is the only secret; a short one (e.g. a 6-digit number) could be guessed from the internet and used to
+    // send false locations or a false SOS. Devices that already exist keep their ID.
+    if ((!g || g.uniqueId !== uniqueId) && uniqueId.length < MIN_NEW_ID) {
+        throw new Error("Die Geräte-ID braucht mindestens " + MIN_NEW_ID + " Zeichen, damit sie niemand erraten kann – bitte in der Tracking-App eine längere ID eintragen (z. B. die von pinn. vorgeschlagene) oder bei GPS-Trackern die IMEI.");
+    }
     if (!g) {
         if (cfg.geraete.length >= MAX_GERAETE) throw new Error("Es sind schon " + MAX_GERAETE + " Geräte eingerichtet.");
         if (cfg.geraete.some(x => x.memberId === memberId && x.typ === typ)) throw new Error("Für dieses Mitglied ist schon ein solches Gerät eingerichtet.");
@@ -1426,6 +1432,7 @@ function knownDevice(uid) {
 // ignored for FREMD_SPERRE_MS. Reports from the home network are never slowed down.
 const FREMD_PREFIX = "pinnOsmandFremd:";
 const FREMD_MAX = 20;
+const MIN_NEW_ID = 8; // minimum length of a newly chosen device ID (since 1.165.1)
 const FREMD_FENSTER_MS = 15 * 60 * 1000;
 const FREMD_SPERRE_MS = 60 * 60 * 1000;
 function fremdSchluessel(e) {

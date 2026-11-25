@@ -38,3 +38,40 @@ routerUse((e) => {
     if (admin) return e.string(403, "pinn.: Die PocketBase-Verwaltung ist nur im Heimnetz erreichbar.");
     return e.json(403, { status: 403, message: "Nur im Heimnetz erreichbar.", data: {} });
 });
+
+// Check for admins (since 1.165.1): how does pinn. see the device that asks - home network or internet?
+// Settings → Admin → System → "Access from outside". Behind an own reverse proxy that does not pass on the real
+// visitor (or with Docker's userland proxy) every visitor looks like the home network - then the protection above
+// does not work. The admin tests it once on the phone without Wi-Fi.
+//   GET /api/pinn/netz/pruefen -> { adresse, intern, proxy: { gesetzt, wert } }
+routerAdd("GET", "/api/pinn/netz/pruefen", (e) => {
+    const lib = require(`${__hooks}/pinn-benutzer.js`);
+    if (!lib.isAdmin(e)) return e.json(403, { error: "Nur für Admins." });
+    const n = require(`${__hooks}/pinn-netz.js`);
+    const ip = n.visitor(e);
+    let wert = "";
+    try { wert = String($os.getenv(n.ENV_NETZE) || "").trim(); } catch (err) { wert = ""; }
+    e.response.header().set("Cache-Control", "no-store");
+    return e.json(200, { adresse: n.ipText(ip), intern: !!ip && n.isIntern(ip), proxy: { gesetzt: !!wert, wert: wert.slice(0, 200) } });
+}, $apis.requireAuth("benutzer"));
+
+// Protection against embedding (since 1.165.1): pinn. may only be shown inside a frame of its own pages (e.g. the PDF
+// view). A foreign web page could otherwise load pinn. invisibly and catch clicks ("clickjacking").
+// Whoever wants to show pinn. in Home Assistant (webpage card) or a similar page names its address in the
+// environment value PINN_EINBETTEN (space or comma separated, e.g. "http://192.168.1.10:8123 https://ha.example.org").
+routerUse((e) => {
+    const extra = [];
+    let raw = "";
+    try { raw = String($os.getenv("PINN_EINBETTEN") || ""); } catch (err) { raw = ""; }
+    raw.split(/[\s,]+/).forEach(x => {
+        const v = x.trim().replace(/\/+$/, "");
+        if (/^https?:\/\/[A-Za-z0-9.-]+(:\d{1,5})?$/.test(v) || /^https?:\/\/\[[0-9A-Fa-f:]+\](:\d{1,5})?$/.test(v)) extra.push(v);
+    });
+    try {
+        const h = e.response.header();
+        h.set("Content-Security-Policy", "frame-ancestors 'self'" + (extra.length ? " " + extra.join(" ") : ""));
+        if (!extra.length) h.set("X-Frame-Options", "SAMEORIGIN");
+        if (!h.get("X-Content-Type-Options")) h.set("X-Content-Type-Options", "nosniff");
+    } catch (err) { /* ignore */ }
+    return e.next();
+});

@@ -6,7 +6,8 @@ window.PINN_CHANGELOG_EN = {
   "1.165": {"t": "Shopping lists: mark important things and filter", "p": [
 "Mark as important: the popup for adding (or a long press on an entry) has the tick \u201cImportant\u201d. The entry turns red but stays in its place. A note appears at the top of the list \u2013 tap it to see only the important things. In the overview a red marker shows which list has something important on it.",
 "Filter next to \u201cCheck all\u201d: Important, Low (almost used up in the pantry), Pantry and Meal plan, each with a count. \u201cCheck all\u201d then only applies to what is shown.",
-"Shortcuts: \u201cUndo\u201d shows a plain symbol instead of an emoji."
+"Shortcuts: \u201cUndo\u201d shows a plain symbol instead of an emoji.",
+"1.165.1: Security check: profiles \u201ckids\u2019 page only\u201d are now also limited by the server to what the kids\u2019 page needs (of the pocket money only their own). The family data can no longer be deleted through the interface. Recipe and waste calendar links now check where an address really points to and never follow redirects into the home network. New check \u201cAccess from outside\u201d (Admin \u2192 System). New device IDs for location tracking need at least 8 characters. pinn. can no longer be embedded in foreign pages (exceptions via PINN_EINBETTEN)."
 ]},
   "1.164": {"t": "Settings and profile merged", "p": [
 "1.164.1: Recipes with AI: a recipe now stays in the language it is written in (e.g. a Dutch recipe stays Dutch) and is no longer translated into German automatically. If you want another language, just add it to the text (e.g. \u201ctranslate into English\u201d). If the language cannot be recognised, pinn. uses the app language. Measures and oven temperature follow the region (Settings \u2192 Language & region).",

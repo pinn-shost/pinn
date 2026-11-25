@@ -40,6 +40,8 @@ async function errLogRefreshSummary() {
   const sub = document.getElementById('errLogSub');
   const show = errLogCanUse() && !(typeof childLockActive === 'function' && childLockActive());
   if (sub) sub.classList.toggle('hidden', !show);
+  const netSub = document.getElementById('netCheckSub');
+  if (netSub) netSub.classList.toggle('hidden', !show);
   if (!show || !navigator.onLine) return;
   let k = null;
   try {
@@ -246,3 +248,34 @@ document.getElementById('checkUpdateBtn').addEventListener('click', async () => 
 
 // Marks this file as loaded – the start check in index.html reports missing app files
 (window.PINN_PARTS = window.PINN_PARTS || []).push('fehlerprotokoll');
+
+/* ---------- Access from outside (since 1.165.1) ----------
+   Settings → Admin → System: shows how pinn. sees this device (home network or internet). Behind an own reverse proxy
+   that does not pass on the real visitor, everybody looks like the home network - then the PocketBase administration
+   and the start password are not kept away from the internet. Server: GET /api/pinn/netz/pruefen (pb_hooks/netz.pb.js). */
+async function netCheckRun() {
+  const box = document.getElementById('netCheckResult');
+  const btn = document.getElementById('netCheckBtn');
+  if (!box) return;
+  box.classList.remove('hidden');
+  box.className = 'mt-2 text-xs leading-snug text-ink/50';
+  box.textContent = tk('common.loading');
+  if (btn) btn.disabled = true;
+  let r = null;
+  try {
+    const res = await apiFetch('/api/pinn/netz/pruefen', { cache: 'no-store' });
+    if (res.ok) r = await res.json();
+  } catch (e) { r = null; }
+  if (btn) btn.disabled = false;
+  if (!r) { box.textContent = tk('sys.access.error'); return; }
+  const where = r.intern ? tk('sys.access.home') : tk('sys.access.internet');
+  const proxy = r.proxy && r.proxy.gesetzt ? r.proxy.wert : tk('sys.access.proxyDefault');
+  box.className = 'net-check mt-2 text-xs leading-snug ' + (r.intern ? 'is-home' : 'is-net');
+  box.innerHTML = `<p class="font-medium text-ink/80 mb-1">${escapeHtml(tk('sys.access.result', { ip: r.adresse || '?', where }))}</p>`
+    + `<p class="mb-1">${escapeHtml(tk('sys.access.proxy', { value: proxy }))}</p>`
+    + (r.intern ? `<p>${escapeHtml(tk('sys.access.warn'))}</p>` : `<p>${escapeHtml(tk('sys.access.ok'))}</p>`);
+}
+(function () {
+  const btn = document.getElementById('netCheckBtn');
+  if (btn) btn.addEventListener('click', netCheckRun);
+})();

@@ -751,15 +751,22 @@ function list(user, stand) {
     try { ensureFamily(fam); } catch (e) { console.log("[Kassen] Umzug: " + e.message); }
     try { ensureFamilyGroup(fam); } catch (e) { console.log("[Kassen] Familien-Gruppe: " + e.message); }
     const known = (stand && typeof stand === "object" && !Array.isArray(stand)) ? stand : {};
+    // Kids' page only (since 1.165.1): such a profile gets nothing but its own pocket money from each fund -
+    // always with data, so that a copy loaded earlier in the app is replaced
+    let kids = null;
+    try { kids = require(`${__hooks}/pinn-kinderschutz.js`); if (!kids.isKidsOnly(user)) kids = null; } catch (e) { kids = null; }
+    let kidMember = "";
+    try { kidMember = kids ? user.getString("mitglied") : ""; } catch (e) { kidMember = ""; }
     const out = [];
     metaList(fam).filter(k => isMember(k, user)).forEach(k => {
         try {
-            if (known[k.id] && known[k.id] === k.updated) { out.push(toClient(k, user)); return; }
+            if (!kids && known[k.id] && known[k.id] === k.updated) { out.push(toClient(k, user)); return; }
             let rec = null;
             try { rec = $app.findRecordById(KASSEN, k.id); } catch (e) { rec = null; }
             const m = rec ? metaOfRecord(rec) : k;
             let d = {};
             if (rec) { d = parseJson(rec.get("daten"), {}); if (!d || typeof d !== "object" || Array.isArray(d)) d = {}; }
+            if (kids) { const c = toClient(m, user, kids.kidFinanceView(d, kidMember)); c.canManage = false; out.push(c); return; }
             out.push(toClient(m, user, d));
         } catch (e) {
             console.log("[Kassen] Kasse " + k.id + " nicht lesbar: " + e.message);
@@ -774,6 +781,8 @@ function saveData(user, body) {
     const id = String(body.id || "");
     let hinweisVorher = null, hinweisMeta = null;
     if (!isId(id)) return { status: 400, body: { error: "Ungültige Kasse." } };
+    // Kids' page only (since 1.165.1): such a profile only ever sees its own pocket money - it must never save a fund
+    try { if (require(`${__hooks}/pinn-kinderschutz.js`).isKidsOnly(user)) return { status: 403, body: { error: "Auf der Kinderseite nicht möglich." } }; } catch (e) { /* ignore */ }
     if (!body.daten || typeof body.daten !== "object" || Array.isArray(body.daten)) return { status: 400, body: { error: "Keine Daten." } };
     let result = null;
     try {

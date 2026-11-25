@@ -181,3 +181,11 @@ html.dark .set-hint.ok { background: rgba(255,255,255,0.05); border-color: rgba(
 .set-nest .set-nest > summary .set-ico { width: 30px; height: 30px; border-radius: 9px; font-size: 15px; }
 .acc-nest { margin: 0 1rem 1rem; }
 html.dark .set-nest { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1); }
+
+/* Settings → Admin → System: "Access from outside" (since 1.165.1, js/fehlerprotokoll.js) */
+.net-check { border-radius: .75rem; border: 1px solid; padding: .5rem .75rem; color: rgba(37,35,31,.72); }
+.net-check.is-net { border-color: color-mix(in srgb, var(--c-pine) 28%, transparent); background: color-mix(in srgb, var(--c-pine) 6%, #fff); }
+.net-check.is-home { border-color: color-mix(in srgb, var(--c-mustard) 45%, transparent); background: color-mix(in srgb, var(--c-mustard) 8%, #fff); }
+html.dark .net-check { color: rgba(237,234,226,.8); }
+html.dark .net-check.is-net { background: rgba(255,255,255,.04); }
+html.dark .net-check.is-home { background: rgba(233,196,106,.08); border-color: rgba(233,196,106,.4); }

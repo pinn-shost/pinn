@@ -45,6 +45,7 @@ services:
       PINN_GEMINI_MODELL: "${PINN_GEMINI_MODELL:-}"
       PINN_PUSH_KONTAKT: "${PINN_PUSH_KONTAKT:-}"
       PINN_PROXY_NETZE: "${PINN_PROXY_NETZE:-}"   # own reverse proxy: which proxies may name the visitor (empty = home/Docker networks)
+      PINN_EINBETTEN: "${PINN_EINBETTEN:-}"       # pages that may show pinn. in a frame, e.g. Home Assistant (empty = none)
     ports:
       - "${PINN_PORT:-8090}:80"     # first set-up and access in the home network: http://<NAS-IP>:8090
     volumes:

@@ -431,7 +431,10 @@ function ensureSchema() {
             const c = findCol(name);
             const u = findCol(USERS);
             if (!c || !hasField(c, "familie") || !u || !hasField(u, "familie")) return;
-            if (setRules(c, { listRule: FAM_READ_RULE, viewRule: FAM_READ_RULE, createRule: FAM_CREATE_RULE, updateRule: FAM_UPDATE_RULE, deleteRule: FAM_READ_RULE })) {
+            // The family data can never be deleted through the interface (since 1.165.1) - the app never does it, and
+            // otherwise every member could wipe the whole record. Recipe images stay deletable within the family.
+            const del = name === "familien_daten" ? null : FAM_READ_RULE;
+            if (setRules(c, { listRule: FAM_READ_RULE, viewRule: FAM_READ_RULE, createRule: FAM_CREATE_RULE, updateRule: FAM_UPDATE_RULE, deleteRule: del })) {
                 $app.save(c);
                 console.log("[Familien] Sammlung \"" + name + "\" ist jetzt je Familie getrennt.");
             }

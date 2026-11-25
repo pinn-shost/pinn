@@ -191,8 +191,9 @@ function fetchText(url, lang) {
         if (i > 0) pause(1500);
         let res;
         try {
-            res = $http.send({
-                url: url, method: "GET", timeout: 25,
+            // Safe fetch (since 1.165.1): checks where the name really points to and every redirect
+            res = require(`${__hooks}/pinn-sicherabruf.js`).fetch(url, {
+                timeout: 25, maxBytes: 8 * 1024 * 1024,
                 headers: {
                     "User-Agent": PAGE_AGENTS[i],
                     "Accept": "text/html,application/xhtml+xml;q=0.9,*/*;q=0.5",
@@ -200,6 +201,7 @@ function fetchText(url, lang) {
                 },
             });
         } catch (err) {
+            if (/nicht erlaubt|gibt es nicht/.test(err.message)) throw err;
             if (i < PAGE_AGENTS.length - 1) continue;
             throw new Error("Die Rezeptseite ist nicht erreichbar (" + err.message + ").");
         }
@@ -348,7 +350,7 @@ function recipeFromLd(page, categories) {
 function fetchImageDataUrl(url) {
     try {
         if (!url || !/^https?:\/\//i.test(url) || isPrivateHost(hostOf(url))) return "";
-        const res = $http.send({ url: url, method: "GET", timeout: 20, headers: { "User-Agent": "Mozilla/5.0 (pinn.)", "Accept": "image/*" } });
+        const res = require(`${__hooks}/pinn-sicherabruf.js`).fetch(url, { timeout: 20, maxBytes: MAX_IMAGE_BYTES, headers: { "User-Agent": "Mozilla/5.0 (pinn.)", "Accept": "image/*" } });
         if (res.statusCode !== 200) return "";
         let mime = headerValue(res, "Content-Type").split(";")[0].trim().toLowerCase();
         if (!/^image\/(jpeg|jpg|png|webp)$/.test(mime)) return "";

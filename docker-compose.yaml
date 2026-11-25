@@ -50,11 +50,12 @@ services:
     # Is only rebuilt when the version above changes – otherwise it comes straight from the cache.
     build:
       context: ./pb_hooks          # only needed as a placeholder, nothing is copied from it
+      # curl stays in the image (since 1.165.1): safe fetching of links typed in by users (pb_hooks/pinn-sicherabruf.js)
       dockerfile_inline: |
         FROM alpine:3.20
         ARG PB_VERSION
         RUN set -e; \
-            apk add --no-cache ca-certificates tzdata wget; \
+            apk add --no-cache ca-certificates tzdata wget curl; \
             case "$$(uname -m)" in \
               x86_64) A=amd64 ;; aarch64) A=arm64 ;; armv7l) A=armv7 ;; \
               *) echo "Unbekannte Architektur: $$(uname -m)"; exit 1 ;; \

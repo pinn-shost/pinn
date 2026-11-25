@@ -911,6 +911,14 @@
             <button id="openErrLogBtn" type="button" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition"><span data-tk="settings.system.errorLogButton">🧾 Error log</span><span id="errLogBadge" class="el-badge hidden" data-no-i18n></span></button>
           </div>
 
+          <!-- Access from outside (only visible for admins) – pb_hooks/netz.pb.js, check in js/fehlerprotokoll.js -->
+          <div id="netCheckSub" class="set-sub hidden">
+            <p data-tk="sys.access.title" class="set-sub-title">Access from outside</p>
+            <p data-tk="sys.access.hint" class="text-xs text-ink/50 mb-2 leading-snug">Checks whether pinn. recognises access from the internet. Check it once on the phone without Wi-Fi (mobile data) – there it has to say “Internet”.</p>
+            <button data-tk="sys.access.check" id="netCheckBtn" type="button" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">Check now</button>
+            <div id="netCheckResult" class="hidden mt-2 text-xs leading-snug"></div>
+          </div>
+
           <div class="set-sub">
             <p data-tk="settings.system.data" class="set-sub-title">Data</p>
             <!-- Data export (only visible for admins) – pb_public/datenexport.js, pb_hooks/export.pb.js -->

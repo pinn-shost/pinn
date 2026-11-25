@@ -27,6 +27,7 @@ const PINN_CHANGELOG = [
       ['neu', 'Wichtig markieren: Im Fenster beim Hinzufügen (oder lange auf einen Eintrag drücken) gibt es den Haken „Wichtig“. Der Eintrag wird rot, bleibt aber an seinem Platz. Oben auf der Liste erscheint ein Hinweis – antippen zeigt nur die wichtigen Dinge. In der Übersicht zeigt ein rotes Zeichen, auf welcher Liste etwas Wichtiges steht.'],
       ['neu', 'Filter neben „Alle abhaken“: Wichtig, Knapp (im Vorrat fast aufgebraucht), Vorrat und Essensplan, jeweils mit Anzahl. „Alle abhaken“ gilt dann nur für das, was gerade zu sehen ist.'],
       ['fix', 'Kurzbefehle: „Rückgängig“ zeigt ein schlichtes Symbol statt eines Emojis.'],
+      ['fix', '1.165.1: Sicherheitsprüfung: Profile „nur Kinderseite“ dürfen auch auf dem Server nur noch, was die Kinderseite braucht (vom Taschengeld nur das eigene). Der Familien-Datensatz lässt sich nicht mehr über die Schnittstelle löschen. Rezept- und Müllkalender-Links prüfen jetzt, wohin eine Adresse wirklich zeigt, und folgen keinen Weiterleitungen ins Heimnetz. Neue Prüfung „Zugang von außen“ (Admin → System). Neue Geräte-IDs bei der Ortung brauchen mindestens 8 Zeichen. pinn. lässt sich nicht mehr in fremde Seiten einbetten (Ausnahmen über PINN_EINBETTEN).'],
     ],
   },
   {
