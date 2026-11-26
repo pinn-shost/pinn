@@ -1,0 +1,21 @@
+/* pinn. – app styles (css/energiesparen.css)
+   Power saving (since 0.99): in idle mode (class pinn-ruhe on <html>, set by the idle script in the <head> of
+   index.html) continuous animations pause; with "reduce motion" they are switched off.
+   Former <style> block in the <head> of index.html; linked at exactly the same place. */
+
+html.pinn-ruhe .fin-goal-reached, html.pinn-ruhe .fin-piggy, html.pinn-ruhe .fin-etf-spin,
+html.pinn-ruhe .fz-hero-band::after, html.pinn-ruhe .fz-hero-icon > span, html.pinn-ruhe .fz-empty-car,
+html.pinn-ruhe .fam-ping, html.pinn-ruhe .fam-ping::after, html.pinn-ruhe .fam-dot,
+html.pinn-ruhe .hw-head::before, html.pinn-ruhe .hw-walk i, html.pinn-ruhe .fam-ecg path,
+html.pinn-ruhe .fm-mk.live .fm-mk-ava::after, html.pinn-ruhe .fm-mk.live .fm-mk-ava::before,
+html.pinn-ruhe .kid-money-pig, html.pinn-ruhe .kid-deco span, html.pinn-ruhe .kid-avatar,
+html.pinn-ruhe .kid-empty-emoji, html.pinn-ruhe .kid-chip-badge, html.pinn-ruhe .pw-kudos-heart,
+html.pinn-ruhe .term-window::after, html.pinn-ruhe .t-cursor,
+html.pinn-ruhe .ov-fam-live, html.pinn-ruhe .ov-fam-live::after, html.pinn-ruhe .ov-fam-item.is-bday .ov-fam-badge,
+html.pinn-ruhe .ofs-bday-ic, html.pinn-ruhe .ov-fam-item.is-soon .ov-fam-ava, html.pinn-ruhe .hs-anim, html.pinn-ruhe .hs-anim path { animation-play-state: paused !important; }
+@media (prefers-reduced-motion: reduce) {
+  .fin-goal-reached, .fin-piggy, .fz-hero-band::after, .fz-hero-icon > span, .fz-empty-car,
+  .hw-head::before, .hw-walk i, .fam-ecg path, .kid-money-pig, .kid-deco span, .kid-avatar,
+  .kid-empty-emoji, .kid-chip-badge, .pw-kudos-heart, .term-window::after, .hs-anim, .hs-anim path { animation: none !important; }
+  .hs-mover.hs-anim, .hs-cloud.hs-anim { display: none; }
+}

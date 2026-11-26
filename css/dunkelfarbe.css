@@ -1,0 +1,133 @@
+/* pinn. – Dark mode colours (css/dunkelfarbe.css, since 1.150.10)
+   The accent colour "pine" is a dark blue. On the dark background it is hard to read, so in dark mode every
+   place that used pine as TEXT colour, outline or check mark now uses gold instead. Filled pine areas with white
+   text (bands, primary buttons) stay as they are. Loaded after all other style sheets, light mode is untouched. */
+
+html.dark {
+  --dk-gold: #E9C46A;
+  --dk-gold-soft: rgba(233, 196, 106, 0.14);
+  --dk-gold-line: rgba(233, 196, 106, 0.55);
+}
+
+/* ---------- Tailwind helpers that carry the accent colour ---------- */
+html.dark .text-pine,
+html.dark .hover\:text-pine:hover { color: var(--dk-gold) !important; }
+html.dark .border-pine,
+html.dark .hover\:border-pine:hover,
+html.dark .focus\:border-pine:focus { border-color: var(--dk-gold-line) !important; }
+html.dark .ring-pine { --tw-ring-color: var(--dk-gold-line); }
+html.dark .accent-pine,
+html.dark input[type="checkbox"],
+html.dark input[type="radio"] { accent-color: var(--dk-gold); }
+html.dark .hover\:bg-pine\/10:hover,
+html.dark .bg-pine\/10 { background-color: var(--dk-gold-soft) !important; }
+
+/* ---------- Chips, buttons, tabs that are "selected" (blue text + blue tint before) ---------- */
+html.dark .fz-kind-btn.active, html.dark .fz-drive-btn.active, html.dark .fz-type-chip.active,
+html.dark .fz-member-chip.active, html.dark .fz-filter-chip.active, html.dark .hs-mod-chip.active,
+html.dark .fz-pick-row.active, html.dark .fz-act-btn:hover, html.dark .fz-res,
+html.dark .fin-scope-opt.active, html.dark .plan-list-chip.active, html.dark .pantry-chip.active,
+html.dark .fin-icon-pick.active, html.dark .fin-depot-type-btn.active, html.dark .fin-etf-chip.active,
+html.dark .hh-fair-chip.active, html.dark .ls-pick.active, html.dark .ls-tab:hover, html.dark .ls-tpl:hover,
+html.dark .ls-shop-btn, html.dark .ls-shop-btn:hover, html.dark .ls-link:hover, html.dark .ls-reserve:hover,
+html.dark .pw-chip.active, html.dark .pw-type.active, html.dark .pw-color.active, html.dark .pw-person.active,
+html.dark .sh-chip.active, html.dark .sh-icon.active, html.dark .kasse-chip.on, html.dark .kasse-icon-btn.active,
+html.dark .kasse-row.active, html.dark .el-chip.on, html.dark .sm-opt:has(input:checked), html.dark .sm-tag,
+html.dark .wx-tab.active, html.dark .wx-pack-chip, html.dark .wx-btn.ghost, html.dark .fam-emoji.active,
+html.dark .dash-bg-art-btn.active, html.dark .dash-bg-swatch.active, html.dark .pinn-cal-seg button.on,
+html.dark .task-shopping-open, html.dark .contract-status-btn.active, html.dark .sh-run {
+  color: var(--dk-gold) !important;
+  border-color: var(--dk-gold-line) !important;
+}
+/* Buttons below the title of a task (smart home start, meter reading …): were blue on blue until 1.153.0 */
+html.dark .sh-run:hover, html.dark .sh-run:active { background: var(--dk-gold-soft) !important; }
+html.dark .fz-kind-btn.active, html.dark .fz-drive-btn.active, html.dark .fz-type-chip.active,
+html.dark .fz-member-chip.active, html.dark .fz-filter-chip.active, html.dark .hs-mod-chip.active,
+html.dark .fz-pick-row.active, html.dark .fin-scope-opt.active, html.dark .plan-list-chip.active,
+html.dark .pantry-chip.active, html.dark .hh-fair-chip.active, html.dark .ls-pick.active,
+html.dark .pw-chip.active, html.dark .sh-chip.active, html.dark .kasse-chip.on, html.dark .contract-status-btn.active {
+  background: var(--dk-gold-soft) !important;
+  box-shadow: 0 0 0 1px var(--dk-gold-line);
+}
+/* Text links and small helpers */
+html.dark .chat-link-a, html.dark .nt-link, html.dark .hlp-link, html.dark .hlp-go, html.dark .hlp-item-title,
+html.dark .hlp-tour-btn, html.dark .hlp-btn-ghost, html.dark .gs-group-help, html.dark .ev-link-btn,
+html.dark .ov-bday-when, html.dark .ov-bday-more, html.dark .ov-set-kz, html.dark .kz-open,
+html.dark .nt-act-bal, html.dark .nt-pts li > span:first-child, html.dark .sm-more,
+html.dark .pt-add-ic, html.dark .pt-tool:hover, html.dark .pt-roster-d.today small, html.dark .wx-arrow,
+html.dark .cal-agenda-badge, html.dark .pinn-cal-item .pc-edit, html.dark .pca-row .pc-edit,
+html.dark .pinn-cal-src .pcs-link, html.dark .pw-act:hover, html.dark .muell-pages a, html.dark .muell-own summary,
+html.dark .home-btn:hover, html.dark .sm-btn:hover, html.dark .chat-sender { color: var(--dk-gold) !important; }
+
+/* ---------- Check marks (ticking things off) are gold with a dark tick ---------- */
+html.dark .task-toggle-done.bg-pine,
+html.dark .shopping-item-row .bg-pine,
+html.dark .shop-row.is-done .shop-check,
+html.dark .ls-check.on,
+html.dark .pw-item.done .pw-box,
+html.dark .kz-row.is-on .kz-check,
+html.dark .pcs-chk.on,
+html.dark .sk-chk.on {
+  background: var(--dk-gold) !important;
+  border-color: var(--dk-gold) !important;
+  color: #1B1B18 !important;
+  box-shadow: none;
+}
+html.dark .task-toggle-done.bg-pine svg, html.dark .shopping-item-row .bg-pine svg { stroke: #1B1B18; }
+/* Pets: "done" button next to a care task and the finished slot */
+html.dark .pt-done-btn { color: var(--dk-gold); border-color: var(--dk-gold); }
+html.dark .pt-done-btn:hover, html.dark .pt-done-btn:active { background: var(--dk-gold); color: #1B1B18; }
+html.dark .pt-slot.done { border-color: var(--dk-gold-line); background: var(--dk-gold-soft); }
+html.dark .pt-slot.done .pt-slot-ic, html.dark .pt-stat.ok { color: var(--dk-gold); }
+/* Health: check boxes in the check-up lists */
+html.dark .hp-tick input, html.dark .fz-check input, html.dark .vt-check, html.dark .chat-switch input,
+html.dark .chat-group-row input, html.dark .kid-sun-opt input, html.dark .fin-scope-opt input[type="radio"],
+html.dark .sm-opt input { accent-color: var(--dk-gold); }
+html.dark .hp-block.on { border-color: var(--dk-gold-line); color: var(--dk-gold); }
+
+/* ---------- Grey text that had no dark rule (was dark grey on dark = unreadable) ---------- */
+html.dark .text-ink\/20, html.dark .text-ink\/45, html.dark .text-ink\/55 { color: rgba(237, 234, 226, 0.72) !important; }
+html.dark .fz-due-row .text-ink\/55, html.dark .fz-due-row .text-ink\/45 { color: #EDEAE2 !important; }
+
+/* ---------- Contracts: "cancellable until" chip and hints look like the grey "term missing" chip ---------- */
+html.dark .vt-chip { background: rgba(255, 255, 255, 0.08); color: rgba(237, 234, 226, 0.85); }
+html.dark .vt-chip.warn { background: var(--dk-gold-soft); color: var(--dk-gold); }
+html.dark .vt-chip.urgent { color: #F08A85; background: rgba(214, 69, 69, 0.22); }
+html.dark .vt-chip.muted { background: rgba(255, 255, 255, 0.08); color: rgba(237, 234, 226, 0.6); }
+html.dark .vt-status-box { color: rgba(237, 234, 226, 0.85); border-color: rgba(255, 255, 255, 0.12); background: rgba(255, 255, 255, 0.05); }
+html.dark .vt-status-box.warn { color: var(--dk-gold); border-color: var(--dk-gold-line); background: var(--dk-gold-soft); }
+html.dark .vt-status-box.urgent { color: #F08A85; border-color: rgba(240, 138, 133, 0.4); background: rgba(214, 69, 69, 0.14); }
+html.dark .vt-info { color: rgba(237, 234, 226, 0.85); background: rgba(255, 255, 255, 0.05); }
+html.dark .vt-info.warn { color: var(--dk-gold); background: var(--dk-gold-soft); }
+/* "In view" rows (vehicles, home): sub line in white */
+html.dark .fz-due-row { background: rgba(255, 255, 255, 0.07); }
+html.dark .fz-due-row .block.text-xs { color: #EDEAE2; opacity: 0.85; }
+html.dark .rounded-2xl.border-mustard\/40 { background: rgba(233, 196, 106, 0.10) !important; }
+
+/* ---------- Household: schedule / bin buttons in the colour of the room, less transparent ---------- */
+html.dark .hh-row {
+  background: color-mix(in srgb, var(--rc, #888) 38%, #242320) !important;
+  color: inherit;
+}
+html.dark .hh-row:hover { background: color-mix(in srgb, var(--rc, #888) 50%, #242320) !important; }
+html.dark .hh-row .text-ink\/30 { color: rgba(237, 234, 226, 0.7) !important; }
+
+/* ---------- Chat ---------- */
+html.dark .chat-banner { background: rgba(233, 196, 106, 0.16); color: #EDEAE2; border-bottom-color: rgba(255, 255, 255, 0.12); }
+html.dark .chat-banner.warn { background: rgba(214, 69, 69, 0.22); color: #EDEAE2; }
+html.dark .chat-empty { background: rgba(233, 196, 106, 0.14); color: #EDEAE2; border: 1px solid rgba(233, 196, 106, 0.3); }
+html.dark .chat-attach { color: #fff; }
+/* Notes such as "message deleted": italic and set apart from normal messages by colour */
+html.dark .chat-text.chat-muted { color: #D8C48C; font-style: italic; }
+html.dark .chat-row.mine .chat-text.chat-muted { color: #E9D9A6; }
+
+/* ---------- Pantry: "on the list" tag ---------- */
+html.dark .bg-pine\/10.text-pine { background: var(--dk-gold-soft) !important; color: var(--dk-gold) !important; }
+
+/* ---------- Shortcut app icons in dark mode: colours again, but muted (since 1.160.2; 1.150.11–1.160.1 grey) ---------- */
+html.dark .kz-ico { filter: saturate(.5) brightness(.88); }
+html.dark .kz-set-row.is-off .kz-ico { filter: grayscale(.8) brightness(.85); }
+
+/* Mustard hint texts (e.g. "Required as long as your family has a dashboard" at the dashboard PIN) use the same gold
+   as everything else in dark mode (since 1.153.1; before they were the darker mustard of the light mode) */
+html.dark .text-mustard { color: var(--dk-gold) !important; }

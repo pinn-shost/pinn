@@ -1,0 +1,129 @@
+/* pinn. – Home, waste calendar, language and region settings (css/wohnort.css)
+   Part of the styles that used to be inline in index.html (step 3 of splitting index.html). Plain CSS, no build
+   step: linked in the head of index.html at exactly the place where the <style> block stood, so the order of
+   the rules - and with it the look of the app - is unchanged.
+   Contents: Settings → home, waste calendar, language dropdown, language & region (country, currency,
+   number format, currency symbol position) and the sun times on the kids page.
+   Utility classes (Tailwind) live in vendor/pinn.css, not here. */
+
+/* ---------- Settings → home ---------- */
+.home-card { border-radius: 12px; border: 1px solid rgba(37,35,31,0.1); background: #fff; padding: 0.75rem 0.85rem; margin-bottom: 0.75rem; }
+.home-card-title { font-size: 0.875rem; font-weight: 500; }
+.home-card-sub { font-size: 0.72rem; opacity: 0.55; margin-top: 0.15rem; }
+.home-card-sun { font-size: 0.72rem; opacity: 0.7; margin-top: 0.4rem; }
+.home-input { width: 100%; border-radius: 10px; border: 1px solid rgba(37,35,31,0.15); padding: 0.55rem 0.75rem; font-size: 0.875rem; background: #fff; }
+.home-input:focus { outline: none; border-color: var(--c-pine); }
+.home-sug { display: flex; flex-direction: column; gap: 0.3rem; margin-bottom: 0.4rem; }
+.home-sug:empty { display: none; }
+.home-sug-row { display: flex; align-items: flex-start; gap: 0.55rem; width: 100%; text-align: left; padding: 0.5rem 0.65rem; border-radius: 10px; background: rgba(255,255,255,0.9); border: 1px solid rgba(37,35,31,0.1); transition: border-color .15s, background .15s; }
+.home-sug-row:hover, .home-sug-row:focus { border-color: var(--c-pine); background: color-mix(in srgb, var(--c-pine) 5%, #fff); outline: none; }
+.home-sug-row b { display: block; font-size: 0.82rem; font-weight: 500; }
+.home-sug-row span.home-sug-z { display: block; font-size: 0.7rem; opacity: 0.55; }
+.home-sug-msg { font-size: 0.72rem; opacity: 0.5; padding: 0.2rem 0.1rem; }
+.home-btns { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.55rem; }
+.home-btn { padding: 0.45rem 0.75rem; border-radius: 10px; border: 1px solid rgba(37,35,31,0.15); font-size: 0.8rem; color: rgba(37,35,31,0.7); background: transparent; transition: color .15s, border-color .15s; }
+.home-btn:hover { color: var(--c-pine); border-color: var(--c-pine); }
+.home-btn:disabled { opacity: 0.5; }
+.home-btn.danger:hover { color: #dc2626; border-color: #dc2626; }
+.home-status { font-size: 0.72rem; opacity: 0.6; margin-top: 0.5rem; min-height: 1em; }
+.home-status.err { color: #dc2626; opacity: 1; }
+.home-sect { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.45; margin: 1rem 0 0.45rem; }
+.home-row { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; padding: 0.35rem 0; font-size: 0.85rem; }
+.home-row small { display: block; font-size: 0.7rem; opacity: 0.5; }
+.home-select { border-radius: 10px; border: 1px solid rgba(37,35,31,0.15); padding: 0.4rem 0.6rem; font-size: 0.82rem; background: #fff; max-width: 60%; }
+.home-dot { display: inline-block; width: 0.6rem; height: 0.6rem; border-radius: 999px; margin-right: 0.35rem; vertical-align: middle; }
+/* Waste calendar (settings → calendar) */
+.home-btn.primary { background: var(--c-pine); border-color: var(--c-pine); color: #fff; }
+.home-btn.primary:hover { color: #fff; opacity: 0.9; }
+.muell-addr { display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; padding: 0.5rem 0.7rem; border-radius: 10px; background: color-mix(in srgb, var(--c-pine) 6%, transparent); }
+.muell-addr small { display: block; font-size: 0.7rem; opacity: 0.55; }
+.muell-manual { display: flex; flex-direction: column; gap: 0.45rem; }
+.muell-types { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.35rem 0 0.2rem; }
+.muell-type { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.3rem 0.65rem 0.3rem 0.45rem; border-radius: 999px; border: 1px solid rgba(37,35,31,0.14); font-size: 0.76rem; background: #fff; transition: opacity .15s, border-color .15s; }
+.muell-type i { width: 0.7rem; height: 0.7rem; border-radius: 4px 4px 2px 2px; flex-shrink: 0; }
+.muell-type small { opacity: 0.45; font-size: 0.68rem; }
+.muell-type.off { opacity: 0.4; text-decoration: line-through; }
+.muell-type:disabled { cursor: default; }
+.muell-progress { display: flex; align-items: center; gap: 0.55rem; font-size: 0.76rem; opacity: 0.7; margin-top: 0.7rem; }
+.muell-spin { width: 0.95rem; height: 0.95rem; border-radius: 999px; border: 2px solid color-mix(in srgb, var(--c-pine) 25%, transparent); border-top-color: var(--c-pine); animation: muellSpin 0.9s linear infinite; flex-shrink: 0; }
+@keyframes muellSpin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .muell-spin { animation-duration: 3s; } }
+.muell-results { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.6rem; }
+.muell-results:empty { display: none; }
+.muell-hit { border-radius: 12px; border: 1px solid rgba(37,35,31,0.12); background: #fff; padding: 0.65rem 0.75rem; }
+.muell-hit-head { display: flex; align-items: flex-start; gap: 0.6rem; }
+.muell-hit-title { font-size: 0.85rem; font-weight: 500; }
+.muell-hit-sub { font-size: 0.7rem; opacity: 0.55; margin-top: 0.1rem; overflow-wrap: anywhere; }
+.muell-hit-dates { display: flex; flex-direction: column; gap: 0.15rem; margin-top: 0.45rem; font-size: 0.74rem; }
+.muell-hit-dates span { display: flex; align-items: center; gap: 0.4rem; }
+.muell-hit-dates i { width: 0.55rem; height: 0.55rem; border-radius: 3px; flex-shrink: 0; }
+.muell-take { flex-shrink: 0; margin-left: auto; padding: 0.4rem 0.7rem; border-radius: 9px; background: var(--c-pine); color: #fff; font-size: 0.75rem; font-weight: 500; white-space: nowrap; }
+.muell-take:disabled { opacity: 0.5; }
+.muell-pages { font-size: 0.76rem; line-height: 1.45; }
+.muell-pages p { opacity: 0.65; margin-bottom: 0.35rem; }
+.muell-pages a { display: block; padding: 0.4rem 0.6rem; margin-bottom: 0.3rem; border-radius: 9px; border: 1px dashed rgba(37,35,31,0.2); color: var(--c-pine); word-break: break-all; }
+.muell-pages a small { display: block; color: inherit; opacity: 0.55; font-size: 0.68rem; }
+.muell-own { margin-top: 0.85rem; }
+.muell-own summary { cursor: pointer; font-size: 0.78rem; color: var(--c-pine); list-style: none; }
+.muell-own summary::-webkit-details-marker { display: none; }
+.muell-own summary::before { content: '＋ '; }
+.muell-own[open] summary::before { content: '－ '; }
+.muell-own-txt { font-size: 0.72rem; opacity: 0.55; margin: 0.45rem 0; line-height: 1.4; }
+.muell-err { font-size: 0.75rem; color: #dc2626; }
+.muell-addr.hidden, .muell-manual.hidden, .muell-progress.hidden, .muell-types:empty { display: none; }
+html.dark .muell-type, html.dark .muell-hit { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.12); }
+html.dark .muell-pages a { border-color: rgba(255,255,255,0.2); }
+html.dark .home-card, html.dark .home-input, html.dark .home-select, html.dark .home-sug-row { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.12); color: inherit; }
+html.dark .home-btn { border-color: rgba(255,255,255,0.18); color: rgba(255,255,255,0.75); }
+/* Language: dropdown with flag */
+.lang-row { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 0.5rem; }
+.lang-dd { position: relative; }
+.lang-dd-btn { display: inline-flex; align-items: center; gap: 0.55rem; min-width: 12rem; padding: 0.5rem 0.75rem; border-radius: 10px; border: 1px solid rgba(37,35,31,0.15); background: rgba(255,255,255,0.9); font-size: 0.875rem; color: inherit; text-align: left; transition: border-color .15s; }
+.lang-dd-btn:hover, .lang-dd-btn:focus-visible, .lang-dd.open .lang-dd-btn { border-color: var(--c-pine); outline: none; }
+.lang-dd-btn .lang-dd-name { flex: 1; }
+.lang-dd-btn .lang-dd-chev { width: 0.8rem; height: 0.8rem; opacity: 0.4; transition: transform .15s; }
+.lang-dd.open .lang-dd-chev { transform: rotate(180deg); }
+.lang-flag { display: inline-block; width: 1.6rem; height: 1.1rem; border-radius: 3px; overflow: hidden; flex-shrink: 0; box-shadow: 0 0 0 1px rgba(37,35,31,0.12); }
+.lang-flag svg { display: block; width: 100%; height: 100%; }
+.lang-dd-list { margin-top: 4px; display: flex; flex-direction: column; padding: 0.25rem; border-radius: 12px; border: 1px solid rgba(37,35,31,0.12); background: var(--c-paper); box-shadow: 0 10px 30px rgba(0,0,0,0.12); }
+.lang-dd-list.hidden { display: none; }
+.lang-dd-opt { display: flex; align-items: center; gap: 0.55rem; padding: 0.5rem 0.6rem; border-radius: 8px; font-size: 0.875rem; text-align: left; color: inherit; }
+.lang-dd-opt:hover, .lang-dd-opt:focus-visible { background: color-mix(in srgb, var(--c-pine) 8%, transparent); outline: none; }
+.lang-dd-opt.sel { font-weight: 600; color: var(--c-pine); }
+.lang-dd-opt .lang-dd-check { margin-left: auto; opacity: 0; }
+.lang-dd-opt.sel .lang-dd-check { opacity: 1; }
+html.dark .lang-dd-btn { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.12); }
+html.dark .lang-dd-list { border-color: rgba(255,255,255,0.12); box-shadow: 0 10px 30px rgba(0,0,0,0.45); }
+html.dark .lang-dd-opt.sel { color: inherit; }
+/* Language & region: country, currency, number format */
+.region-grid { display: grid; gap: 0.85rem; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 640px) { .region-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.region-field { display: flex; flex-direction: column; gap: 0.3rem; min-width: 0; }
+.region-lbl { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.04em; color: rgba(37,35,31,0.45); }
+.region-field .lang-dd-btn { width: 100%; min-width: 0; }
+.region-sel { width: 100%; min-width: 0; padding: 0.5rem 0.75rem; border-radius: 10px; border: 1px solid rgba(37,35,31,0.15); background: rgba(255,255,255,0.9); font-size: 0.875rem; color: inherit; }
+.region-sel:focus-visible { outline: none; border-color: var(--c-pine); }
+.region-preview { margin-top: 1rem; padding: 0.75rem 0.85rem; border-radius: 12px; background: color-mix(in srgb, var(--c-pine) 7%, transparent); font-size: 0.8rem; line-height: 1.45; }
+.region-preview .rp-k { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.04em; opacity: 0.55; margin-bottom: 0.15rem; }
+.region-preview .rp-money { font-size: 1.05rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.region-preview .rp-calls { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.2rem; }
+.region-preview .rp-call { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.2rem 0.55rem; border-radius: 999px; background: rgba(255,255,255,0.75); border: 1px solid rgba(37,35,31,0.08); white-space: nowrap; }
+.region-preview .rp-call b { font-variant-numeric: tabular-nums; }
+.region-preview .rp-note { font-size: 0.7rem; opacity: 0.55; margin-top: 0.45rem; }
+html.dark .region-sel { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.12); }
+html.dark .region-lbl { color: rgba(237,234,226,0.5); }
+html.dark .region-preview .rp-call { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.1); }
+/* Currency symbol in front (e.g. "$ 12.50") instead of behind - depending on the country */
+html.cur-before .cur-sym { order: 1; }
+html.cur-before input:has(+ .cur-sym) { order: 2; }
+html.cur-before .cur-sym.ml-1 { margin-left: 0; margin-right: 0.25rem; }
+html.cur-before .fz-unit > span.cur-sym { right: auto; left: 0.65rem; }
+html.cur-before .fz-unit:has(> span.cur-sym) > input { padding-right: 0.75rem; padding-left: 2.9rem; }
+
+/* Kids page: sun times */
+.kid-sun-opt { display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.78rem; margin: 0.2rem 0 1.1rem; cursor: pointer; }
+.kid-sun-opt input { margin-top: 0.15rem; accent-color: var(--c-pine); }
+.kid-sun-opt small { display: block; font-size: 0.7rem; opacity: 0.5; }
+.kid-sun { margin-top: 0.9rem; font-size: 0.85rem; font-weight: 600; opacity: 0.75; text-align: center; }
+html.dark .ov-weather-day { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); }
+html.dark .ov-weather-day.is-today { background: color-mix(in srgb, var(--c-pine) 28%, transparent); border-color: color-mix(in srgb, var(--c-pine) 60%, transparent); }

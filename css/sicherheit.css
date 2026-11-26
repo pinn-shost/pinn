@@ -1,0 +1,120 @@
+/* pinn. – Security overview (css/sicherheit.css, since 1.153.0)
+   Plain CSS, no build step; linked in src/rahmen.html right before css/dunkelfarbe.css.
+   Contents: bottom bar of the family dashboard (.sec-dash, pills per group), overview tile (.sec-row),
+   Settings → Security (.sec-set-row, .sec-need-ha) and the group editor popup (.sec-ents).
+   Colours of a group state (class lvl-<state> on the pill / row):
+     ok = green, warn = amber (open / not locked / disarmed), alarm = red (smoke, water, alarm, jammed lock),
+     cameras (since 1.162.0): at least one on = green (ok), all off = red but calm (no pulsing); info = slate (motion), offline = grey. The accent colour pine is not used as a text colour here,
+   so the dark mode needs no extra entry in css/dunkelfarbe.css. */
+
+:root {
+  --sec-ok: #2E9D6A;
+  --sec-warn: #D98E04;
+  --sec-alarm: #D64545;
+  --sec-info: #5B6B8C;
+  --sec-off: #9A968F;
+}
+html.dark {
+  --sec-ok: #4CC38A;
+  --sec-warn: #F2B544;
+  --sec-alarm: #FF6B6B;
+  --sec-info: #9AA9C7;
+  --sec-off: #8A867F;
+}
+
+/* ---------- State dot (shared) ---------- */
+.sec-dot { width: .6rem; height: .6rem; border-radius: 999px; flex-shrink: 0; background: var(--sec-ok); box-shadow: 0 0 0 3px color-mix(in srgb, var(--sec-ok) 18%, transparent); }
+.lvl-warn .sec-dot { background: var(--sec-warn); box-shadow: 0 0 0 3px color-mix(in srgb, var(--sec-warn) 22%, transparent); }
+.lvl-alarm .sec-dot { background: var(--sec-alarm); box-shadow: 0 0 0 3px color-mix(in srgb, var(--sec-alarm) 25%, transparent); animation: sec-pulse 1.2s ease-in-out infinite; }
+.lvl-info .sec-dot { background: var(--sec-info); box-shadow: 0 0 0 3px color-mix(in srgb, var(--sec-info) 20%, transparent); }
+.lvl-offline .sec-dot { background: var(--sec-off); box-shadow: none; }
+.lvl-aus .sec-dot { background: var(--sec-alarm); box-shadow: 0 0 0 3px color-mix(in srgb, var(--sec-alarm) 22%, transparent); }
+@keyframes sec-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+@media (prefers-reduced-motion: reduce) { .lvl-alarm .sec-dot { animation: none; } }
+
+/* ---------- Family dashboard: bar at the bottom ---------- */
+.sec-dash { width: 100%; padding-top: 2rem; }
+.sec-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: .75rem; }
+.sec-pill {
+  display: inline-flex; align-items: center; gap: .65rem; max-width: 100%; box-sizing: border-box;
+  padding: .6rem .95rem .6rem .7rem; border-radius: 1.1rem;
+  background: rgba(255,255,255,.72); border: 1px solid rgba(255,255,255,.45);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  box-shadow: 0 6px 18px rgba(37,35,31,.06);
+}
+.sec-pill-ico { width: 2.3rem; height: 2.3rem; border-radius: .8rem; display: grid; place-items: center; font-size: 1.2rem; flex-shrink: 0;
+  background: color-mix(in srgb, var(--sec-ok) 13%, transparent); color: var(--sec-ok); }
+.sec-pill.lvl-warn .sec-pill-ico { background: color-mix(in srgb, var(--sec-warn) 16%, transparent); color: var(--sec-warn); }
+.sec-pill.lvl-alarm .sec-pill-ico { background: color-mix(in srgb, var(--sec-alarm) 16%, transparent); color: var(--sec-alarm); }
+.sec-pill.lvl-info .sec-pill-ico { background: color-mix(in srgb, var(--sec-info) 15%, transparent); color: var(--sec-info); }
+.sec-pill.lvl-aus .sec-pill-ico { background: color-mix(in srgb, var(--sec-alarm) 14%, transparent); color: var(--sec-alarm); }
+.sec-pill.lvl-aus .sec-pill-sum { color: var(--sec-alarm); font-weight: 600; }
+.sec-pill.lvl-offline .sec-pill-ico { background: rgba(127,127,127,.12); color: var(--sec-off); }
+.sec-pill-txt { display: flex; flex-direction: column; min-width: 0; line-height: 1.2; }
+.sec-pill-name { font-size: 11px; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; opacity: .5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sec-pill-sum { font-size: .98rem; font-weight: 500; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.sec-pill.lvl-alarm { border-color: color-mix(in srgb, var(--sec-alarm) 55%, transparent); background: color-mix(in srgb, var(--sec-alarm) 12%, rgba(255,255,255,.85)); }
+.sec-pill.lvl-alarm .sec-pill-sum { color: var(--sec-alarm); font-weight: 600; }
+.sec-dash-err { text-align: center; font-size: 12px; opacity: .6; margin-bottom: .6rem; }
+html.dark .sec-pill { background: rgba(42,40,37,.72); border-color: rgba(255,255,255,.07); box-shadow: none; }
+html.dark .sec-pill.lvl-alarm { background: color-mix(in srgb, var(--sec-alarm) 18%, rgba(42,40,37,.85)); }
+/* own background picture: the pills stay light glass, only the error line becomes white */
+#dashboardScreen.dash-on-dark .sec-dash-err { color: #fff; opacity: .85; text-shadow: 0 1px 8px rgba(0,0,0,.4); }
+@media (max-width: 640px) {
+  .sec-pill { flex: 1 1 100%; }
+  .sec-pill-sum { font-size: .9rem; }
+}
+
+/* ---------- Overview tile ---------- */
+.sec-rows { display: flex; flex-direction: column; gap: .5rem; }
+.sec-row { display: flex; align-items: flex-start; gap: .75rem; padding: .6rem .7rem; border-radius: .9rem; border: 1px solid rgba(127,127,127,.18); background: rgba(255,255,255,.55); }
+html.dark .sec-row { background: rgba(255,255,255,.03); border-color: rgba(255,255,255,.08); }
+.sec-row .sec-dot { margin-top: .55rem; }
+.sec-row-ico { width: 2.1rem; height: 2.1rem; border-radius: .7rem; display: grid; place-items: center; font-size: 1.05rem; flex-shrink: 0;
+  background: color-mix(in srgb, var(--sec-ok) 12%, transparent); color: var(--sec-ok); }
+.sec-row.lvl-warn .sec-row-ico { background: color-mix(in srgb, var(--sec-warn) 15%, transparent); color: var(--sec-warn); }
+.sec-row.lvl-alarm .sec-row-ico { background: color-mix(in srgb, var(--sec-alarm) 15%, transparent); color: var(--sec-alarm); }
+.sec-row.lvl-info .sec-row-ico { background: color-mix(in srgb, var(--sec-info) 14%, transparent); color: var(--sec-info); }
+.sec-row.lvl-aus .sec-row-ico { background: color-mix(in srgb, var(--sec-alarm) 13%, transparent); color: var(--sec-alarm); }
+.sec-row.lvl-aus .sec-row-sum { color: var(--sec-alarm); font-weight: 600; }
+.sec-row.lvl-offline .sec-row-ico { background: rgba(127,127,127,.12); color: var(--sec-off); }
+.sec-row.lvl-alarm { border-color: color-mix(in srgb, var(--sec-alarm) 50%, transparent); background: color-mix(in srgb, var(--sec-alarm) 7%, transparent); }
+.sec-row-txt { flex: 1; min-width: 0; }
+.sec-row-name { font-size: 11px; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; opacity: .5; }
+.sec-row-sum { font-size: .875rem; line-height: 1.3; margin-top: 1px; word-break: break-word; }
+.sec-row.lvl-alarm .sec-row-sum { color: var(--sec-alarm); font-weight: 600; }
+.sec-row-acts { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .5rem; }
+.sec-lock-btn { display: inline-flex; align-items: center; gap: .3rem; padding: .3rem .75rem; border-radius: 999px; font-size: .75rem; font-weight: 600; line-height: 1.2;
+  border: 1px solid color-mix(in srgb, var(--sec-warn) 70%, transparent); color: var(--sec-warn); background: color-mix(in srgb, var(--sec-warn) 8%, transparent);
+  -webkit-tap-highlight-color: transparent; transition: background-color .15s; }
+.sec-lock-btn:hover, .sec-lock-btn:active { background: color-mix(in srgb, var(--sec-warn) 18%, transparent); }
+.sec-lock-btn:disabled { opacity: .55; }
+.sec-allok { display: flex; align-items: center; gap: .5rem; font-size: .8rem; font-weight: 600; color: var(--sec-ok); margin-bottom: .6rem; }
+.sec-allok-ico { font-size: 1rem; }
+.sec-tile-err { font-size: .75rem; color: var(--sec-warn); margin-bottom: .6rem; }
+
+/* ---------- Settings → Security ---------- */
+.sec-set-row { display: flex; align-items: center; gap: .75rem; width: 100%; text-align: left; padding: .6rem .75rem; border-radius: .75rem;
+  border: 1px solid rgba(127,127,127,.2); background: rgba(255,255,255,.6); transition: border-color .15s; }
+.sec-set-row:hover { border-color: rgba(127,127,127,.45); }
+html.dark .sec-set-row { background: rgba(255,255,255,.03); }
+.sec-add-btn { width: 100%; padding: .6rem .75rem; border-radius: .75rem; border: 1px dashed rgba(127,127,127,.45); font-size: .875rem; opacity: .7; transition: opacity .15s; }
+.sec-add-btn:hover { opacity: 1; }
+.sec-add-btn:disabled { opacity: .35; cursor: not-allowed; }
+.sec-need-ha { border-radius: .75rem; padding: .7rem .8rem; margin-bottom: .9rem; font-size: .8rem; line-height: 1.35;
+  background: color-mix(in srgb, var(--sec-warn) 10%, transparent); border: 1px solid color-mix(in srgb, var(--sec-warn) 35%, transparent); }
+.sec-btn { margin-top: .5rem; display: inline-flex; padding: .35rem .8rem; border-radius: 999px; font-size: .75rem; font-weight: 600;
+  border: 1px solid rgba(127,127,127,.4); background: transparent; }
+
+/* ---------- Group editor (popup) ---------- */
+.sec-label { display: block; font-size: 12px; font-weight: 600; opacity: .6; margin: .9rem 0 .4rem; }
+.sec-input { width: 100%; box-sizing: border-box; border-radius: .6rem; border: 1px solid rgba(127,127,127,.3); padding: .5rem .7rem; font-size: .875rem; background: transparent; color: inherit; }
+.sec-chips { display: flex; flex-wrap: wrap; gap: .4rem; }
+.sec-check { display: flex; align-items: center; gap: .5rem; font-size: .8rem; margin-top: .5rem; cursor: pointer; }
+.sec-ents { margin-top: .5rem; max-height: 16rem; overflow-y: auto; border: 1px solid rgba(127,127,127,.2); border-radius: .75rem; padding: .25rem; }
+.sec-ent { display: flex; align-items: center; gap: .6rem; padding: .45rem .5rem; border-radius: .55rem; cursor: pointer; }
+.sec-ent:hover { background: rgba(127,127,127,.08); }
+.sec-ent.on { background: color-mix(in srgb, var(--sec-ok) 9%, transparent); }
+.sec-ent-txt { display: flex; flex-direction: column; min-width: 0; }
+.sec-ent-name { font-size: .85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sec-ent-id { font-size: 11px; opacity: .5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }

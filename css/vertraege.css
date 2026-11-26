@@ -1,0 +1,90 @@
+/* pinn. – Contracts (css/vertraege.css)
+   Part of the styles that used to be inline in index.html (step 3 of splitting index.html). Plain CSS, no build
+   step: linked in the head of index.html at exactly the place where the <style> block stood, so the order of
+   the rules - and with it the look of the app - is unchanged.
+   Contents: Finances → contracts, wrapping labels and amounts (1.62) and the links in the event popup
+   (packing list, holiday weather).
+   Utility classes (Tailwind) live in vendor/pinn.css, not here. */
+
+/* ---------- Finances → contracts ---------- */
+@media (max-width: 420px) { .fin-tab-btn { padding-left: 0.5rem !important; padding-right: 0.5rem !important; font-size: 11px; } }
+.contract-status-btn { -webkit-tap-highlight-color: transparent; white-space: nowrap; }
+.contract-status-btn.active { background: var(--c-pine); color: #fff; }
+.vt-due-toggle { -webkit-tap-highlight-color: transparent; }
+.vt-due-toggle.active { border-color: var(--c-mustard) !important; background: color-mix(in srgb, var(--c-mustard) 16%, transparent); color: #8A6412; }
+html.dark .vt-due-toggle.active { color: #F1C96B; }
+.vt-card, .vt-cat-row, .vt-due-row, .vt-tile-row, .fin-doc-row a { -webkit-tap-highlight-color: transparent; }
+.vt-card:hover { border-color: color-mix(in srgb, var(--c-pine) 45%, transparent); }
+.vt-card:active, .vt-due-row:active { transform: scale(0.995); }
+.vt-bar { height: 8px; border-radius: 9999px; overflow: hidden; background: rgba(37,35,31,0.07); }
+.vt-bar > span { display: block; height: 100%; border-radius: 9999px; transition: width .4s ease; }
+html.dark .vt-bar { background: rgba(255,255,255,0.10); }
+.vt-chip { display: inline-flex; align-items: center; font-size: 11px; line-height: 1.2; font-weight: 600; padding: 3px 8px; border-radius: 9999px; white-space: nowrap; background: color-mix(in srgb, var(--c-pine) 12%, transparent); color: var(--c-pine); }
+.vt-chip.warn { background: color-mix(in srgb, var(--c-mustard) 20%, transparent); color: #8A6412; }
+.vt-chip.urgent { background: rgba(214,69,69,0.14); color: #B3302B; }
+.vt-chip.muted { background: rgba(37,35,31,0.07); color: rgba(37,35,31,0.55); }
+html.dark .vt-chip.warn { color: #F1C96B; }
+html.dark .vt-chip.urgent { color: #F08A85; background: rgba(214,69,69,0.22); }
+html.dark .vt-chip.muted { background: rgba(255,255,255,0.08); color: rgba(237,234,226,0.6); }
+.vt-status-box { border-radius: 14px; padding: 10px 12px; border: 1px solid color-mix(in srgb, var(--c-pine) 30%, transparent); background: color-mix(in srgb, var(--c-pine) 8%, transparent); color: var(--c-pine); }
+.vt-status-box.warn { border-color: color-mix(in srgb, var(--c-mustard) 50%, transparent); background: color-mix(in srgb, var(--c-mustard) 14%, transparent); color: #7A5710; }
+.vt-status-box.urgent { border-color: rgba(214,69,69,0.45); background: rgba(214,69,69,0.10); color: #A2291F; }
+.vt-status-box.muted { border-color: rgba(37,35,31,0.12); background: rgba(37,35,31,0.04); color: rgba(37,35,31,0.7); }
+html.dark .vt-status-box { color: #9FD3BE; }
+html.dark .vt-status-box.warn { color: #F1C96B; }
+html.dark .vt-status-box.urgent { color: #F08A85; }
+html.dark .vt-status-box.muted { color: rgba(237,234,226,0.7); border-color: rgba(255,255,255,0.12); background: rgba(255,255,255,0.05); }
+.vt-detail-h, .vt-form-h { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(37,35,31,0.5); margin: 1.25rem 0 0.5rem; padding-top: 0.9rem; border-top: 1px solid rgba(37,35,31,0.08); }
+html.dark .vt-detail-h, html.dark .vt-form-h { color: rgba(237,234,226,0.55) !important; border-top-color: rgba(255,255,255,0.1); }
+.vt-row { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 6px 0; font-size: 0.8125rem; border-bottom: 1px dashed rgba(37,35,31,0.1); }
+.vt-row:last-child { border-bottom: 0; }
+.vt-row > span:first-child { color: rgba(37,35,31,0.55); flex-shrink: 0; }
+.vt-row > span:last-child { text-align: right; min-width: 0; overflow-wrap: anywhere; }
+html.dark .vt-row { border-bottom-color: rgba(255,255,255,0.1); }
+/* 1.62: long labels may wrap, amounts stay in one line (contract costs on the phone) */
+.vt-row > span:first-child { flex: 1 1 auto; min-width: 0; overflow-wrap: break-word; }
+.vt-row > span:last-child { flex: 0 1 auto; min-width: 6.5em; max-width: 62%; overflow-wrap: break-word; }
+.vt-amt { white-space: nowrap; }
+.vt-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr)); gap: 0.5rem; }
+.vt-tile-v { font-size: 1rem; font-weight: 600; line-height: 1.2; margin-top: 2px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+/* 1.62: labels in two/three columns wrap instead of running into the next field */
+.fz-grid2 .fz-lbl, .fz-grid3 .fz-lbl { overflow-wrap: break-word; hyphens: auto; }
+.hs-buycosts { align-items: end; }
+@media (max-width: 560px) {
+  .hs-buycosts { grid-template-columns: minmax(0,1fr) minmax(0,1fr); }
+  .hs-buycosts > :first-child { grid-column: 1 / -1; }
+}
+/* 1.62: links in the event popup (packing list, holiday weather) */
+.ev-link-btn { padding: 5px 10px; border-radius: 9999px; font-size: 12px; border: 1px solid rgba(37,35,31,0.15); background: #fff; color: var(--c-pine); }
+html.dark .ev-link-btn { background: transparent; border-color: rgba(255,255,255,0.2); }
+.hs-smart-btn { white-space: nowrap; }
+html.dark .vt-row > span:first-child { color: rgba(237,234,226,0.55); }
+.vt-info { font-size: 0.75rem; line-height: 1.45; padding: 8px 10px; border-radius: 10px; background: color-mix(in srgb, var(--c-pine) 8%, transparent); color: var(--c-pine); }
+.vt-info:empty { display: none; }
+.vt-info.warn { background: color-mix(in srgb, var(--c-mustard) 16%, transparent); color: #7A5710; }
+html.dark .vt-info { color: #9FD3BE; }
+html.dark .vt-info.warn { color: #F1C96B; }
+.vt-check { width: 18px; height: 18px; flex-shrink: 0; accent-color: var(--c-pine); }
+.vt-letter { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px !important; line-height: 1.5; min-height: 14rem; }
+.vt-suggest summary { list-style: none; }
+.vt-suggest summary::-webkit-details-marker, .vt-more summary::-webkit-details-marker { display: none; }
+.vt-more summary { list-style: none; }
+.vt-more summary::after, .vt-suggest summary::after { content: '▾'; float: right; opacity: .45; transition: transform .2s; }
+.vt-more[open] summary::after, .vt-suggest[open] summary::after { transform: rotate(180deg); }
+.vt-tile-row { cursor: pointer; }
+.vt-tile-row.is-urgent { background: rgba(214,69,69,0.08); border-color: rgba(214,69,69,0.35); }
+html.dark .vt-tile-row.is-urgent { background: rgba(214,69,69,0.16); }
+.fin-pocket-kind-btn.active { background: var(--c-pine); color: #fff; }
+.fin-goal, .fin-kid-card button, .fin-save-row, .fin-move-row { -webkit-tap-highlight-color: transparent; }
+.fin-goal-bar { height: 10px; border-radius: 9999px; overflow: hidden; background: rgba(37,35,31,0.07); }
+.fin-goal-bar > span { display: block; height: 100%; border-radius: 9999px; transition: width .5s ease; }
+html.dark .fin-goal-bar { background: rgba(255,255,255,0.10); }
+.fin-goal-reached { animation: finGoalShine 2.6s ease-in-out infinite; }
+@keyframes finGoalShine { 0%, 100% { filter: none; } 50% { filter: brightness(1.15) saturate(1.2); } }
+.fin-piggy { font-size: 46px; line-height: 1; display: inline-block; animation: kidBob 3.4s ease-in-out infinite; }
+.fin-save-trend-track { position: relative; width: 100%; max-width: 30px; display: flex; flex-direction: column; align-items: center; }
+.fin-save-trend-track.selected { box-shadow: 0 0 0 1.5px var(--c-pine); border-radius: 8px; }
+.fin-etf-chip { -webkit-tap-highlight-color: transparent; }
+.fin-etf-chip.active { background: var(--c-pine); color: #fff; border-color: var(--c-pine) !important; }
+.fin-etf-row { -webkit-tap-highlight-color: transparent; }
+.fin-etf-spin { display: inline-block; animation: finSpin 1s linear infinite; }

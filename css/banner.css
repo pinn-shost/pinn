@@ -1,0 +1,54 @@
+/* pinn. – Calm banners for Health and Pets (css/banner.css, since 1.162.0, js/banner.js)
+   Plain CSS, no build step; linked in src/rahmen.html right before css/dunkelfarbe.css.
+   Base: .fam-band.pn-band = soft gradient from the colour of the person / pet (--fz) to a tint (--pn-tint),
+   blurred light circles (.pn-blob), a fine dot grid (.pn-dots), line icons as watermark (.pn-ico) and fine
+   topic lines (.pn-art). Only the light circles and the waves drift - very slowly, and only with class hs-anim. */
+
+.fam-band.pn-band {
+  --pn-a: color-mix(in srgb, var(--fz, var(--c-pine)) 86%, #0A1A22);
+  --pn-b: color-mix(in srgb, var(--fz, var(--c-pine)) 52%, var(--pn-tint, #5FB3A8));
+  background: linear-gradient(118deg, var(--pn-a) 0%, var(--pn-b) 100%);
+  isolation: isolate;
+}
+.pn-band > * { position: absolute; pointer-events: none; }
+.pn-blob { border-radius: 50%; background: radial-gradient(circle at 35% 35%, rgba(255,255,255,.30), rgba(255,255,255,0) 68%); }
+.pn-blob.b1 { width: 210px; height: 210px; right: -50px; top: -110px; animation: pnDrift 22s ease-in-out infinite alternate; }
+.pn-blob.b2 { width: 150px; height: 150px; left: 24%; bottom: -96px; opacity: .65; animation: pnDrift 28s ease-in-out infinite alternate-reverse; }
+@keyframes pnDrift { from { transform: translate(0, 0); } to { transform: translate(18px, 10px); } }
+.pn-dots {
+  inset: 0; opacity: .8;
+  background-image: radial-gradient(rgba(255,255,255,.26) 1px, transparent 1.4px); background-size: 14px 14px;
+  -webkit-mask-image: linear-gradient(90deg, transparent 10%, #000 90%); mask-image: linear-gradient(90deg, transparent 10%, #000 90%);
+}
+.pn-ico { width: var(--s, 28px); height: var(--s, 28px); color: #fff; opacity: .3; line-height: 0; transform: rotate(var(--r, 0deg)); }
+.pn-ico .wi { width: 100%; height: 100%; stroke-width: .9; vertical-align: top; }
+.pn-ico .wi .wi-a { stroke: currentColor; }
+/* small icons need a stronger line to stay visible */
+.pn-ico.sm .wi { stroke-width: 1.6; }
+.pn-art { inset: 0; width: 100%; height: 100%; fill: none; stroke: #fff; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; opacity: .26; }
+.pn-art .dash { stroke-dasharray: 1 7; stroke-width: 2.4; }
+.pn-seed { width: 7px; height: 4px; border-radius: 50%; background: rgba(255,255,255,.38); transform: rotate(-30deg); }
+
+/* ----- Health ----- */
+.pn-health { --pn-tint: #4CB6B0; }
+.pn-health.is-night { --pn-a: color-mix(in srgb, var(--fz, var(--c-pine)) 40%, #0B1424); --pn-b: color-mix(in srgb, var(--fz, var(--c-pine)) 30%, #1D3550); }
+.pn-ecg { left: 0; right: 0; top: 22px; width: 100%; height: 36px; overflow: visible;
+  -webkit-mask-image: linear-gradient(90deg, #000 0, #000 52%, transparent 90%); mask-image: linear-gradient(90deg, #000 0, #000 52%, transparent 90%); }
+.pn-ecg path { fill: none; stroke: rgba(255,255,255,.85); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; filter: drop-shadow(0 0 5px rgba(255,255,255,.4)); }
+.pn-water { left: 0; right: 0; bottom: 0; transition: height .8s ease; overflow: hidden; }
+.pn-wave { position: absolute; left: 0; bottom: 0; width: 200%; height: 100%; animation: pnWave 18s linear infinite; }
+.pn-wave.back { animation-duration: 26s; animation-direction: reverse; bottom: 3px; }
+.pn-wave path { fill: rgba(255,255,255,.22); }
+.pn-wave.back path { fill: rgba(255,255,255,.12); }
+@keyframes pnWave { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* ----- Pets ----- */
+.pn-pet.pn-sp-hund { --pn-tint: #7FB69A; }
+.pn-art .pn-scale { stroke: #fff; stroke-width: 1; }
+.pn-sp-reptil .pn-art { opacity: .3; }
+
+/* Empty pet page: the row of animals no longer hops */
+.pt-empty-paws span { animation: none !important; }
+
+html.dark .fam-band.pn-band { --pn-a: color-mix(in srgb, var(--fz, var(--c-pine)) 62%, #0C1216); --pn-b: color-mix(in srgb, var(--fz, var(--c-pine)) 40%, color-mix(in srgb, var(--pn-tint, #5FB3A8) 70%, #0C1216)); }
+@media (prefers-reduced-motion: reduce) { .pn-blob, .pn-wave { animation: none !important; } }
