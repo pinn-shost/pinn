@@ -331,6 +331,66 @@ function lsOpenItems(l) {
   if (t.wish) return l.items;
   return l.items.filter(i => !i.done);
 }
+/* ---------- "Important" and filter of a list (since 1.167.0, like the shopping lists since 1.165.0) ----------
+   Every kind of list can mark entries as important: red row, a note at the top (tap = filter), a red badge on the card.
+   The filter button offers "important" and, depending on the kind, gifts: still to buy / still to give, wish list of
+   somebody else: still free / reserved by me. Not stored: a list always opens unfiltered. */
+let listsItemFilter = '';
+let listsItemFilterOpen = false;
+function lsItemFilterReset() { listsItemFilter = ''; listsItemFilterOpen = false; }
+function lsItemIsOpen(l, it) {
+  const t = lsType(l.type);
+  if (t.gift) return (it.status || 'idee') !== 'verschenkt';
+  return t.wish ? true : !it.done;
+}
+function lsItemImportant(l, it) { return !!it.important && lsItemIsOpen(l, it); }
+function lsImportantCount(l) { return l.items.filter(it => lsItemImportant(l, it)).length; }
+function lsFilterIds(l) {
+  const t = lsType(l.type);
+  const ids = ['important'];
+  if (t.gift) ids.push('toBuy', 'toGive');
+  if (t.wish && !lsIsOwner(l)) ids.push('free', 'mine');
+  return ids;
+}
+function lsMatchesFilter(l, it, f) {
+  if (!f) return true;
+  if (f === 'important') return lsItemImportant(l, it);
+  if (f === 'toBuy') return (it.status || 'idee') === 'idee';
+  if (f === 'toGive') return it.status === 'besorgt' || it.status === 'verpackt';
+  if (f === 'free') return !it.reservedBy;
+  if (f === 'mine') { const me = lsMyUserId(); return it.reservedBy === me || lsJoined(it, me); }
+  return true;
+}
+// Note "important" + filter button and choices above the entries (same look as on the shopping list)
+function lsFilterBarHtml(l, items) {
+  const ids = lsFilterIds(l);
+  const counts = {};
+  ids.forEach(f => { counts[f] = items.filter(it => lsMatchesFilter(l, it, f)).length; });
+  if (listsItemFilter && !ids.includes(listsItemFilter)) listsItemFilter = '';
+  const filter = listsItemFilter;
+  const choices = ids.filter(f => counts[f] > 0 || f === filter);
+  const imp = counts.important || 0;
+  const hint = imp && filter !== 'important' ? `
+    <button type="button" class="shop-imp-hint w-full mb-2.5" data-lsimp="1">
+      <span class="shop-imp-hint-ico">${wxIcon('alert')}</span>
+      <span class="flex-1 min-w-0 text-left">${escapeHtml(tk('lists.importantHint'))}</span>
+      <span class="shop-imp-hint-n">${imp}</span>
+      <span class="shop-imp-hint-go">${escapeHtml(tk('shop.importantShow'))}</span>
+    </button>` : '';
+  if (!choices.length) return hint;
+  const label = filter ? tk('lists.filter.' + filter) : tk('shop.filter.button');
+  return hint + `
+    <div class="flex justify-end items-center gap-2 mb-2">
+      <button type="button" class="shop-filter-btn ${filter ? 'is-active' : ''}" data-lsfbtn="1" aria-expanded="${listsItemFilterOpen ? 'true' : 'false'}">${wxIcon('filter')}<span>${escapeHtml(label)}</span></button>
+    </div>
+    ${listsItemFilterOpen || filter ? `
+    <div class="flex justify-end mb-3">
+      <div class="ls-tabs shop-filter-chips">
+        <button type="button" class="ls-tab ${filter ? '' : 'active'}" data-lsf="">${escapeHtml(tk('lists.filterAll'))}</button>
+        ${choices.map(f => `<button type="button" class="ls-tab ${f === filter ? 'active' : ''} ${f === 'important' ? 'is-imp' : ''}" data-lsf="${f}">${escapeHtml(tk('lists.filter.' + f))}<b>${counts[f]}</b></button>`).join('')}
+      </div>
+    </div>` : ''}`;
+}
 function lsWhoHtml(m) {
   if (!m) return '';
   const color = (!m.color || m.color === 'transparent') ? '#9A9A92' : m.color;
@@ -375,6 +435,7 @@ function listsSetTab(tab) {
   listsTab = tab;
   listsDetailId = null;
   listsFilter = '';
+  lsItemFilterReset();
   if (tab === 'einkauf') {
     currentShoppingListId = null;
     currentShoppingPlanTaskId = null;
@@ -386,6 +447,7 @@ function listsSetTab(tab) {
 function lsOpenList(id) {
   const l = lsGetList(id);
   if (!l) return;
+  if (listsDetailId !== id) lsItemFilterReset();
   listsTab = l.type;
   listsDetailId = id;
   listsFilter = '';
@@ -402,6 +464,7 @@ function lsOpenList(id) {
 function lsBackToOverview() {
   listsDetailId = null;
   listsFilter = '';
+  lsItemFilterReset();
   const input = document.getElementById('listsAddInput');
   input.value = '';
   input.blur();
@@ -444,6 +507,7 @@ function lsRenderOverview() {
   const cards = lists.map(l => {
     const open = lsOpenItems(l);
     let badge = open.length;
+    const impCount = lsImportantCount(l);
     let sub = [];
     if (l.date) sub.push('🗓️ ' + lsDateText(l.date));
     if (t.wish && l.memberId && memberById(l.memberId)) sub.push(memberSelfTk(memberById(l.memberId), 'lists.ofPerson'));
@@ -467,7 +531,10 @@ function lsRenderOverview() {
         <span class="absolute top-0 left-0 right-0 h-1.5" style="background:${lsColor(l)}"></span>
         <div class="flex items-start justify-between gap-2">
           ${lsIconHtml(l)}
-          ${badge ? `<span class="shrink-0 min-w-[1.75rem] h-7 px-2 rounded-full bg-pine text-white text-xs font-semibold grid place-items-center">${badge}</span>` : ''}
+          <span class="flex items-center gap-1.5 shrink-0">
+            ${impCount ? `<span class="shop-imp-badge" title="${escapeHtml(tk('lists.importantHint'))}">${wxIcon('alert', 'shop-imp-badge-i')}${impCount}</span>` : ''}
+            ${badge ? `<span class="shrink-0 min-w-[1.75rem] h-7 px-2 rounded-full bg-pine text-white text-xs font-semibold grid place-items-center">${badge}</span>` : ''}
+          </span>
         </div>
         <div class="min-w-0">
           <div class="font-serif text-base leading-tight truncate">${escapeHtml(l.name || t.one)}</div>
@@ -616,11 +683,12 @@ function lsRowHtml(l, it) {
     else if (lsJoined(it, lsMyUserId())) right += `<button type="button" class="ls-reserve mine" data-act="join" data-iid="${escapeHtml(it.id)}">${escapeHtml(tk('lists.joined'))}</button>`;
     else right += `<button type="button" class="ls-reserve" data-act="join" data-iid="${escapeHtml(it.id)}">${escapeHtml(tk('lists.join'))}</button>`;
   }
+  const imp = lsItemImportant(l, it);
   return `
-    <div class="ls-row${done ? ' done' : ''}">
+    <div class="ls-row${done ? ' done' : ''}${imp ? ' is-important' : ''}">
       ${left}
       <button type="button" class="ls-body" data-act="edit" data-iid="${escapeHtml(it.id)}">
-        <span class="ls-main">${escapeHtml(it.text)}</span>
+        <span class="ls-main">${imp ? `<span class="shop-imp-ico" role="img" aria-label="${escapeHtml(tk('shop.filter.important'))}">${wxIcon('alert')}</span>` : ''}${escapeHtml(it.text)}</span>
         ${sub.length ? `<span class="ls-sub">${sub.join('<span aria-hidden="true">·</span>')}</span>` : ''}
       </button>
       ${right}
@@ -686,10 +754,15 @@ function lsRenderDetail(l) {
   // Items
   let shown = items;
   if (t.progress && listsHideDone) shown = shown.filter(i => !i.done);
+  const filterBar = l.items.length ? lsFilterBarHtml(l, items) : '';
+  const unfiltered = shown.length;
+  if (listsItemFilter) shown = shown.filter(i => lsMatchesFilter(l, i, listsItemFilter));
   const groups = lsGroupItems(l, shown);
   const showHeads = groups.length > 1 || (groups.length === 1 && groups[0].key);
   const content = document.getElementById('listsDetailContent');
-  content.innerHTML = groups.map(g => {
+  const filteredEmpty = listsItemFilter && unfiltered && !shown.length
+    ? `<div class="text-center py-6"><p class="text-sm text-ink/45 mb-2">${escapeHtml(tk('shop.filter.empty'))}</p><button type="button" class="text-sm text-pine underline" data-lsf="">${escapeHtml(tk('shop.filter.reset'))}</button></div>` : '';
+  content.innerHTML = filterBar + filteredEmpty + groups.map(g => {
     let head = '';
     if (showHeads) {
       const label = g.key || (t.gift ? tk('lists.noRecipient') : tk('lists.general'));
@@ -705,7 +778,7 @@ function lsRenderDetail(l) {
   }).join('');
 
   const empty = document.getElementById('listsDetailEmpty');
-  const hasRows = groups.some(g => g.items.length);
+  const hasRows = groups.some(g => g.items.length) || !!filteredEmpty;
   empty.classList.toggle('hidden', hasRows);
   if (!hasRows) {
     empty.textContent = !l.items.length
@@ -1319,6 +1392,10 @@ function lsOpenItemModal(listId, itemId) {
   document.getElementById('lsItemPrice').value = p !== null ? numDec(String(p)) : '';
   document.getElementById('lsItemLink').value = it.link || '';
 
+  // Important (since 1.167.0)
+  const impCheck = document.getElementById('lsItemImportant');
+  impCheck.checked = !!it.important;
+  document.getElementById('lsItemImportantRow').classList.toggle('is-on', impCheck.checked);
   document.getElementById('lsItemShopBtn').classList.toggle('hidden', !t.toShop);
   document.getElementById('lsItemModal').classList.remove('hidden');
   armModalSnapshot('lsItemModal');
@@ -1342,6 +1419,7 @@ function lsSaveItemFromModal() {
     const c = { ...i, text };
     const set = (k, v) => { if (v) c[k] = v; else delete c[k]; };
     set('note', document.getElementById('lsItemNote').value.trim());
+    set('important', document.getElementById('lsItemImportant').checked);
     if (t.sections) set('section', document.getElementById('lsItemSection').value.trim());
     if (t.members) set('memberId', ctx.memberId);
     if (t.gift) {
@@ -1416,7 +1494,22 @@ function lsOpenShopModal() {
   });
   document.getElementById('listsDetailContent').addEventListener('click', (e) => {
     const b = e.target.closest('[data-act]');
-    if (b) lsRowAction(b.dataset.act, b.dataset.iid);
+    if (b) { lsRowAction(b.dataset.act, b.dataset.iid); return; }
+    // Filter (since 1.167.0): button opens the choices, an active filter is switched off with one tap
+    const f = e.target.closest('[data-lsf]');
+    if (f) { listsItemFilter = f.dataset.lsf; if (!listsItemFilter) listsItemFilterOpen = false; renderShoppingList(); return; }
+    if (e.target.closest('[data-lsfbtn]')) {
+      if (listsItemFilter) { listsItemFilter = ''; listsItemFilterOpen = false; } else listsItemFilterOpen = !listsItemFilterOpen;
+      renderShoppingList();
+      return;
+    }
+    if (e.target.closest('[data-lsimp]')) {
+      listsItemFilter = 'important';
+      listsItemFilterOpen = true;
+      renderShoppingList();
+      const sc = document.getElementById('listsDetailScroll');
+      if (sc) sc.scrollTop = 0;
+    }
   });
   document.getElementById('listsDetailActions').addEventListener('click', (e) => {
     const b = e.target.closest('[data-lact]');
@@ -1466,6 +1559,7 @@ function lsOpenShopModal() {
   document.getElementById('lsItemClose').addEventListener('click', () => attemptCloseModal('lsItemModal', lsCloseItemModal));
   document.getElementById('lsItemCancelBtn').addEventListener('click', () => attemptCloseModal('lsItemModal', lsCloseItemModal));
   document.getElementById('lsItemSaveBtn').addEventListener('click', lsSaveItemFromModal);
+  document.getElementById('lsItemImportant').addEventListener('change', (e) => document.getElementById('lsItemImportantRow').classList.toggle('is-on', e.target.checked));
   document.getElementById('lsItemDeleteBtn').addEventListener('click', lsDeleteItemFromModal);
   document.getElementById('lsItemShopBtn').addEventListener('click', lsOpenShopModal);
   document.getElementById('lsItemText').addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.isComposing) { e.preventDefault(); lsSaveItemFromModal(); } });

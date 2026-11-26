@@ -247,7 +247,7 @@ function showSmartDonePrompt(run) {
     yesLabel: tk('smart.checkOffBtn'),
     onYes: () => {
       const current = deriveTasks().find(t => t.id === run.taskId);
-      if (current && !current.done) toggleTaskDone(current);
+      if (current && !current.done) toggleTaskDone(current, { plain: true });
     },
   });
 }

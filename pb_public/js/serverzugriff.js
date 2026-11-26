@@ -54,6 +54,23 @@ const SERVER_MESSAGE_KEYS = {
   "Wiederherstellen betrifft alle Familien auf diesem Server – das kann nur der Hauptadmin oder ein von ihm berechtigter Admin.": 'srv.restoreMainAdmin',
   "Updates betreffen alle Familien auf diesem Server – das kann nur der Hauptadmin oder ein von ihm berechtigter Admin.": 'srv.updateMainAdmin',
   "Nur der Hauptadmin kann dieses Recht vergeben.": 'srv.rightMainAdmin',
+  // AI photo readers and recipe import (pb_hooks/pinn-ki.js, ki.pb.js – since 1.167.0)
+  "Die KI ist auf dem Server nicht eingerichtet.": 'srv.aiNotSetUp',
+  "Nur für Profile einer Familie.": 'srv.familyProfilesOnly',
+  "Das Foto ist zu groß für die KI.": 'srv.aiPhotoTooBig',
+  "Die Datei ist zu groß für die KI.": 'srv.aiFileTooBig',
+  "Die Dateien sind zusammen zu groß für die KI (max. ca. 13 MB).": 'srv.aiFilesTooBig',
+  "Kein Foto übergeben.": 'srv.aiNoPhoto',
+  "Auf dem Foto war kein Zählerstand zu erkennen.": 'srv.aiNoMeter',
+  "Auf dem Foto war keine Packung zu erkennen.": 'srv.aiNoPack',
+  "Auf dem Foto war kein Stundenplan zu erkennen.": 'srv.aiNoTimetable',
+  "Darin war kein Elternbrief zu erkennen.": 'srv.aiNoLetter',
+  "Die KI hat darin kein Rezept erkannt.": 'srv.aiNoRecipe',
+  "Auf der Seite war kein Rezept zu finden.": 'srv.aiNoRecipePage',
+  "Die Antwort von Gemini war nicht lesbar.": 'srv.aiUnreadable',
+  "Das kostenlose Gemini-Kontingent ist gerade aufgebraucht – bitte in einer Minute (oder morgen) noch einmal versuchen.": 'srv.aiQuota',
+  "Google Gemini ist gerade überlastet – bitte gleich noch einmal versuchen.": 'srv.aiBusy',
+  "Der Gemini-Schlüssel (PINN_GEMINI_KEY) ist ungültig.": 'srv.aiBadKey',
 };
 function serverMessageText(s) {
   if (typeof s !== 'string' || !window.PINN_I18N || PINN_I18N.current === 'de') return s;

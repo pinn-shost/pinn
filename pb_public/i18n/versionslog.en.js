@@ -3,6 +3,12 @@
    language other than German. One entry per version of PINN_CHANGELOG: t = title, p = points in the same order
    (null = no translation, the German text is shown). Older versions are not translated. */
 window.PINN_CHANGELOG_EN = {
+  "1.167": {"t": "Ticking off with an input, important in every list", "p": [
+"Tasks with their own input: ticking off \u201cFit winter tyres\u201d, the MOT or the service now opens a short popup just for that \u2013 which tyres are on now, or result and next MOT, plus date, odometer reading and the cost if you like. Saving ticks off the task and brings the vehicle up to date. \u201cDone\u201d under Vehicles opens the same popup; \u201cMore details \u2026\u201d leads to the full entry. \u201cRead the meters\u201d opens the reading when ticked off, and \u201cGet a prescription\u201d asks for the new pack so the medicine supply is right again. \u201cJust tick off\u201d is still possible.",
+"Important and filter in every list: packing lists, gifts, wish lists, checklists and ideas know the tick \u201cImportant\u201d (red, note at the top, red marker on the card). The filter offers Important, for gifts \u201cStill to buy\u201d and \u201cStill to give\u201d, for other people\u2019s wish lists \u201cStill free\u201d and \u201cMine\u201d. The combined view of a planned shopping trip with several shops now has the note and the filter as well.",
+"AI photos in your language: notes when reading meters and packs, timetables (subjects) and parent letters (title, summary, closing days) now come in the language of the app instead of always in German \u2013 a German parent letter is summarised e.g. in Ukrainian. Error messages of the AI are translated too.",
+"Recipes on PC/tablet: after visiting the overview, the recipes page sat only in the right half and was cut off at the bottom \u2013 now it uses the full width and height again (the same applied to Tasks)."
+]},
   "1.166": {"t": "Family data tidied up", "p": [
 "Under the hood: all family data now live only in their own areas (recipes, shopping, tasks, members, settings \u2026). The old big family record is dissolved during the update \u2013 a backup is made first, nothing gets lost. Loading, saving and syncing between devices are leaner as a result.",
 "The bridge for very old app versions (before 1.104) has been removed. New families start with their areas right away. In the data export the family data now show their proper name (\u201cCalendar, lists, recipes, members & settings\u201d)."

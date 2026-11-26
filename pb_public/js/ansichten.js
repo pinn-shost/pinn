@@ -198,6 +198,8 @@ function setView(view) {
     sec.classList.remove('shrink-0', 'border-t', 'border-l');
   });
   taskSection.classList.add('border-l');
+  // Tiles parked in the side column of the overview go back into the grid (see overviewUndock)
+  if (view !== 'uebersicht') overviewUndock();
 
   if (view === 'termine') {
     mainGrid.classList.remove('lg:grid-cols-[1.1fr_0.8fr_0.8fr]', 'grid-cols-[1.1fr_0.8fr_0.8fr]', 'grid-cols-[1.3fr_1fr]', 'grid-cols-[1.3fr_minmax(0,1fr)]');

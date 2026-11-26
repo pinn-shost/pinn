@@ -64,12 +64,14 @@ function taskRemindApplyOpen(match, remindAt) {
    Some tasks are completed by entering something: „Zählerstände ablesen“ (Home) opens the
    meter-reading window directly, vehicle tasks (MOT, service, tyres …) the matching entry.
    After saving, the task checks itself off. The areas provide the action
-   (js/zuhause.js → hsTaskAction, js/fahrzeuge.js → fzTaskAction). */
+   (js/zuhause.js → hsTaskAction, js/fahrzeuge.js → fzTaskAction, js/gesundheit.js → ghTaskAction since 1.167.0).
+   Since 1.167.0 ticking such a task off opens the input as well (toggleTaskDone in js/aufgaben.js). */
 function taskActionFor(task) {
   if (!task || task.done || isCurrentUserGuest() || childLockActive()) return null;
   try {
     if (typeof hsTaskAction === 'function') { const a = hsTaskAction(task); if (a) return a; }
     if (typeof fzTaskAction === 'function') { const a = fzTaskAction(task); if (a) return a; }
+    if (typeof ghTaskAction === 'function') { const a = ghTaskAction(task); if (a) return a; }
   } catch (e) { /* area not ready */ }
   return null;
 }

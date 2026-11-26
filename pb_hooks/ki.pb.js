@@ -8,12 +8,13 @@
 //                                              categories, tools, bild, quelle } }
 //                              Error -> { error } with status 4xx/5xx; the app then evaluates
 //                              by itself as before.
-//   POST /api/pinn/ki/zaehler  { dateien: [{ mime, daten }], art, einheit, letzter, nummer }
+//   POST /api/pinn/ki/zaehler  { dateien: [{ mime, daten }], art, einheit, letzter, nummer, sprache }
 //                              -> { zaehler: { stand, nummer, sicher, hinweis } }  (menu "House" → Meters;
 //                              not for guest accounts)
-//   POST /api/pinn/ki/stundenplan  { dateien: [{ mime, daten }], kind, klasse }
+//   POST /api/pinn/ki/stundenplan  { dateien: [{ mime, daten }], kind, klasse, sprache }
 //                              -> { stundenplan: { zeiten: [{ von, bis }], stunden: [{ tag, stunde, fach, raum }], hinweis } }
-//   POST /api/pinn/ki/elternbrief  { dateien: [{ mime, daten }], heute, kinder[], einrichtungen[] }
+//   POST /api/pinn/ki/elternbrief  { dateien: [{ mime, daten }], heute, kinder[], einrichtungen[], sprache }
+//                              (hinweis, titel, zusammenfassung come in the app language "sprache", since 1.167.0)
 //                              -> { brief: { titel, absender, aktion, frist, betrag, zusammenfassung,
 //                                            schliesstage: [{ von, bis, grund }], hinweis } }
 //                              (Family → School & daycare; not for guest accounts)

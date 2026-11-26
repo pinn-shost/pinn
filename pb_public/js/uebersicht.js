@@ -61,6 +61,21 @@ function overviewSideColumn(mainGrid) {
   }
   return el;
 }
+// Leaving the overview (or opening a recipe full screen from it): every tile goes back from the side column
+// into the grid itself. Otherwise e.g. the recipes page stayed inside the hidden-calendar column on the right
+// half, cut to the tile height (fixed in 1.167.0).
+function overviewUndock() {
+  const mainGrid = document.getElementById('mainGrid');
+  const sideCol = document.getElementById('ovSideCol');
+  if (!mainGrid || !sideCol) return;
+  Array.from(sideCol.children).forEach(sec => {
+    sec.classList.remove('ov-side-tile', 'ov-side-big');
+    mainGrid.appendChild(sec);
+  });
+  sideCol.classList.add('hidden');
+  sideCol.style.gridColumn = '';
+  sideCol.style.gridRow = '';
+}
 function overviewTile(id) { return OVERVIEW_TILES.find(t => t.id === id); }
 function overviewSection(id) { return document.getElementById(OVERVIEW_SECTION_IDS[id]); }
 

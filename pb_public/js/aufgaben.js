@@ -195,9 +195,17 @@ function showAllTasksDoneCelebration() {
   kidPlaySound('win');
 }
 
-async function toggleTaskDone(task) {
+// opts.plain: tick off without the input of the task (e.g. started automatically by the smart home)
+async function toggleTaskDone(task, opts = {}) {
   if (!task.id) return;
   const newDone = !task.done;
+  // Since 1.167.0: a task that is completed by an input (tyre change, HU, service, meter readings, new pack of a
+  // prescription medicine …) opens that short popup instead of being ticked off right away - saving it ticks it off
+  // and updates the vehicle, the meters or the supply. The popup itself also offers "just tick off".
+  if (newDone && !opts.plain) {
+    const act = taskActionFor(task);
+    if (act) { act.run(); return; }
+  }
 
   // Re-sort and show right away - saving on the NAS runs through the queue and
   // is submitted automatically when there is no connection.

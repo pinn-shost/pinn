@@ -125,6 +125,14 @@
     <label data-tk="lists.item.note" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="lsItemNote">Note</label>
     <input data-tk-attr="placeholder:lists.item.notePlaceholder" id="lsItemNote" type="text" autocomplete="off" maxlength="160" placeholder="optional" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" />
 
+    <label id="lsItemImportantRow" class="shop-imp-check flex items-start gap-2.5 rounded-xl border border-ink/10 px-3 py-2.5 mb-3 cursor-pointer select-none">
+      <input id="lsItemImportant" type="checkbox" class="shrink-0 w-4 h-4 mt-0.5" />
+      <span class="min-w-0">
+        <span data-tk="shop.entry.important" class="block text-sm font-medium">Important</span>
+        <span data-tk="shop.entry.importantHint" class="block text-[11px] text-ink/45 leading-snug">Stands out in red on the list – a note appears at the top.</span>
+      </span>
+    </label>
+
     <p id="lsItemError" class="hidden text-xs text-red-500 mb-3"></p>
     <div class="flex items-center gap-2 mt-1 flex-wrap">
       <button data-tk="common.delete" id="lsItemDeleteBtn" type="button" class="px-3 py-2 rounded-lg border border-red-300 text-sm text-red-500 hover:bg-red-50 transition">Delete</button>

@@ -148,6 +148,12 @@ html.dark .ls-plan-head { border-bottom-color: rgba(255,255,255,0.1); }
 html.dark .shop-row.is-important { background: rgba(217,74,69,.16); border-color: rgba(240,120,112,.55); box-shadow: inset 4px 0 0 #F07870; }
 html.dark .shop-row.is-important .shop-name { color: #FFB4AD; }
 html.dark .shop-imp-ico { color: #F07870; }
+/* Important entries of the other lists (packing, gifts, wishes, checklists, ideas – since 1.167.0) */
+.ls-row.is-important { background: #FCEDEC; border-color: rgba(217,74,69,.45); box-shadow: inset 4px 0 0 #D94A45; }
+.ls-row.is-important .ls-main { color: #A8322E; font-weight: 600; display: flex; align-items: center; gap: .375rem; }
+.ls-row.is-important .ls-check { border-color: rgba(217,74,69,.6); }
+html.dark .ls-row.is-important { background: rgba(217,74,69,.16); border-color: rgba(240,120,112,.55); box-shadow: inset 4px 0 0 #F07870; }
+html.dark .ls-row.is-important .ls-main { color: #FFB4AD; }
 
 .shop-imp-hint { display: flex; align-items: center; gap: .6rem; padding: .7rem .85rem; border-radius: 1rem;
   border: 1px solid rgba(217,74,69,.35); background: #FCEDEC; color: #A8322E; font-size: .85rem; font-weight: 500;

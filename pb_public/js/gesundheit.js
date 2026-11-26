@@ -833,7 +833,7 @@ async function ghScanPack(file, body) {
     const timer = ctrl ? setTimeout(() => ctrl.abort(), 120000) : null;
     let res;
     try {
-      res = await apiFetch('/api/pinn/ki/packung', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ dateien: [part] }), signal: ctrl ? ctrl.signal : undefined });
+      res = await apiFetch('/api/pinn/ki/packung', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ dateien: [part], sprache: recipeKiLocale().sprache }), signal: ctrl ? ctrl.signal : undefined });
     } finally { if (timer) clearTimeout(timer); }
     let data = {};
     try { data = await res.json(); } catch (e) { data = {}; }
@@ -1044,6 +1044,84 @@ function ghRunRxTasks() {
     });
   });
   if (created) { try { rebuildAufgaben(); renderTasks(); flushOutbox(); } catch (e) { /* tasks not ready */ } }
+}
+
+/* ---------- Ticking off "get a prescription" (since 1.167.0) ----------
+   The task belongs to a medicine (ID from person, medicine and the day of the running-low phase, see ghRunRxTasks).
+   Ticking it off opens a short popup: enter the new pack right away (the supply is correct again and the next
+   phase can start) or just tick it off. The health data is loaded lazily - the first look at the tasks loads it once. */
+var ghRxKicked = false;
+function ghRxTaskMed(task) {
+  if (!task || !ghState.loaded || typeof fzTaskId !== 'function') return null;
+  const fam = typeof finFamilyKey === 'function' ? finFamilyKey() : '';
+  for (const mid of Object.keys(ghState.people)) {
+    if (!ghCanEdit(mid)) continue;
+    const p = ghState.people[mid];
+    const d = ghNorm(p.daten, p.kind);
+    const med = d.meds.list.find(m => ghStockOn(m) && m.stock.taskAt && fzTaskId('gh|' + fam + '|' + mid + '|' + m.id + '|' + m.stock.taskAt) === task.id);
+    if (med) return { mid, med };
+  }
+  return null;
+}
+function ghTaskAction(task) {
+  if (!task || task.done || task.household || isCurrentUserGuest()) return null;
+  if (!ghState.loaded) {
+    // Load once in the background; the task list is drawn again if a prescription task is among them
+    if (!ghRxKicked && !ghState.loading && typeof aufgaben !== 'undefined' && aufgaben.some(t => !t.done && !t.household)) {
+      ghRxKicked = true;
+      ghLoad().then(() => {
+        if (aufgaben.some(t => !t.done && ghRxTaskMed(t))) { try { renderTasks(); } catch (e) { /* tasks not built */ } }
+      });
+    }
+    return null;
+  }
+  const hit = ghRxTaskMed(task);
+  if (!hit) return null;
+  return { label: tk('qdone.rxAction'), run: () => ghOpenRxDone(task.id, hit.mid, hit.med.id) };
+}
+function ghOpenRxDone(taskId, mid, medId) {
+  const p = ghState.people[mid];
+  const med = p ? ghNorm(p.daten, p.kind).meds.list.find(m => m.id === medId) : null;
+  if (!med || !ghStockOn(med) || typeof fzOpenModal2 !== 'function') return;
+  const s = med.stock;
+  const who = memberLabel(memberById(mid));
+  const tick = () => {
+    const t = aufgaben.find(x => x.id === taskId);
+    if (t && !t.done) { queueTaskDone(taskId, true); rebuildAufgaben(); try { renderTasks(); } catch (e) { /* ignore */ } flushOutbox(); }
+  };
+  fzOpenModal2(`
+    <h3 class="font-serif text-lg mb-1 pr-6">💊 ${escapeHtml(tk('qdone.rxTitle'))}</h3>
+    <div class="text-xs text-ink/50 mb-2">${escapeHtml(med.name + (who ? ' · ' + who : ''))}</div>
+    <p class="text-sm text-ink/70 mb-3">${escapeHtml(tk('qdone.rxText', { name: med.name }))}</p>
+    ${fzIn('ghRxQty', tk('qdone.rxPack') + (s.unit ? ' · ' + ghUnitLabel(s.unit) : ''), Number(s.pack) > 0 ? String(s.pack) : '', { mode: 'decimal', max: 8 })}
+    <p id="ghRxError" class="hidden text-xs text-red-500 mt-2"></p>
+    <div class="flex items-center gap-3 mt-2"><button type="button" id="ghRxPlain" class="text-xs text-ink/50 hover:text-ink hover:underline">${escapeHtml(tk('qdone.plain'))}</button></div>
+    <div class="flex items-center gap-2 mt-3">
+      <div class="flex-1"></div>
+      <button type="button" id="ghRxCancel" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">${tk('common.cancel')}</button>
+      <button type="button" id="ghRxSave" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">${escapeHtml(tk('qdone.rxSave'))}</button>
+    </div>`, () => {
+    document.getElementById('ghRxCancel').addEventListener('click', fzCloseModal2);
+    document.getElementById('ghRxPlain').addEventListener('click', () => { fzCloseModal2(); tick(); finShowToast(tk('pet.done')); });
+    document.getElementById('ghRxSave').addEventListener('click', () => {
+      const n = parseFloat(String(document.getElementById('ghRxQty').value || '').replace(',', '.'));
+      if (!(n > 0) || n > 100000) { fzShowErr('ghRxError', tk('qdone.rxNeedQty')); return; }
+      ghChange(mid, (d) => {
+        const m = d.meds.list.find(x => x.id === medId);
+        if (!ghStockOn(m)) return;
+        const info = ghStockInfo(m);
+        m.stock.qty = ghRound(info.left + n);
+        m.stock.at = Date.now();
+        m.stock.exp = '';
+        if (!(Number(m.stock.pack) > 0)) m.stock.pack = ghRound(n);
+        delete m.stock.taskAt;
+        ghStockStamp(m);
+      });
+      fzCloseModal2();
+      tick();
+      finShowToast(tk('qdone.rxSaved', { name: med.name }));
+    });
+  });
 }
 
 /* ---------- Link with the page Vorrat (since 1.161.0) ----------

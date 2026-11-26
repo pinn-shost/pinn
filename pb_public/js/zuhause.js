@@ -2653,7 +2653,7 @@ async function hsReadMeterPhoto(file) {
     try {
       res = await apiFetch('/api/pinn/ki/zaehler', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ dateien: [part], art: t.label, einheit: t.unit, letzter: rs.length ? Number(rs[rs.length - 1].value) : 0, nummer: m.number || '' }),
+        body: JSON.stringify({ dateien: [part], art: t.label, einheit: t.unit, letzter: rs.length ? Number(rs[rs.length - 1].value) : 0, nummer: m.number || '', sprache: recipeKiLocale().sprache }),
         signal: ctrl ? ctrl.signal : undefined,
       });
     } finally { if (timer) clearTimeout(timer); }

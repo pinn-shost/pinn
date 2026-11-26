@@ -211,6 +211,8 @@ function kzTaskSheet(household) {
 function kzTaskTick(id) {
   const t = deriveTasks().find(x => x.id === id);
   if (!t) return;
+  // Task with its own input (since 1.167.0): the short popup opens instead (it ticks the task off itself)
+  if (typeof taskActionFor === 'function' && taskActionFor(t)) { kzSheetClose(); toggleTaskDone(t); return; }
   toggleTaskDone(t);
   finShowToast(kzT('taskDone', { name: t.title }));
 }

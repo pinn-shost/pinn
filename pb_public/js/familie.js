@@ -3333,7 +3333,7 @@ async function skKiTimetable(mid, file) {
   renderFamily();
   try {
     const part = await skFilePart(file);
-    const data = await skKiPost('/api/pinn/ki/stundenplan', { dateien: [part], kind: memberLabelRaw(memberById(mid)), klasse: p.group || '' });
+    const data = await skKiPost('/api/pinn/ki/stundenplan', { dateien: [part], kind: memberLabelRaw(memberById(mid)), klasse: p.group || '', sprache: recipeKiLocale().sprache });
     const r = data.stundenplan || {};
     const stunden = Array.isArray(r.stunden) ? r.stunden : [];
     if (!stunden.length) throw new Error(tk('school.noTimetableRecognised'));
@@ -3386,6 +3386,7 @@ async function skKiLetter(file) {
       dateien: [part], heute: skToday(),
       kinder: st.kids.map(id => memberLabelRaw(memberById(id))),
       einrichtungen: st.kids.map(id => skProfile(id)).filter(Boolean).map(skName),
+      sprache: recipeKiLocale().sprache,
     });
     const b = data.brief || {};
     if (!skModal || skModal !== st) return;

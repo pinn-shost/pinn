@@ -22,6 +22,15 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.167', datum: '26.11.2026', titel: 'Abhaken mit Eingabe, Wichtig in allen Listen',
+    punkte: [
+      ['neu', 'Aufgaben mit eigener Eingabe: Wer „Winterreifen aufziehen“, die HU oder die Inspektion abhakt, bekommt jetzt ein kurzes Fenster nur dafür – welche Reifen jetzt drauf sind bzw. Ergebnis und nächste HU, dazu Datum, Kilometerstand und auf Wunsch die Kosten. Speichern hakt die Aufgabe ab und bringt das Fahrzeug auf den neuen Stand. Dasselbe Fenster öffnet „Erledigt“ unter Fahrzeuge; „Mehr Angaben …“ führt zum ausführlichen Eintrag. Auch „Zählerstände ablesen“ öffnet beim Abhaken die Ablesung, und „Rezept holen“ fragt nach der neuen Packung, damit der Medikamentenvorrat wieder stimmt. „Nur abhaken“ geht weiterhin.'],
+      ['neu', 'Wichtig und Filter jetzt in allen Listen: Packlisten, Geschenke, Wunschlisten, Checklisten und Ideen kennen den Haken „Wichtig“ (rot, Hinweis oben, rotes Zeichen auf der Karte). Der Filter bietet Wichtig, bei Geschenken „Noch besorgen“ und „Noch verschenken“, bei fremden Wunschlisten „Noch frei“ und „Von mir“. Auch die gemeinsame Ansicht eines geplanten Einkaufs mit mehreren Läden hat jetzt Hinweis und Filter.'],
+      ['info', 'KI-Fotos in deiner Sprache: Hinweise beim Ablesen von Zählern und Packungen, Stundenpläne (Fächer) und Elternbriefe (Titel, Zusammenfassung, Schließtage) kommen jetzt in der Sprache der App statt immer auf Deutsch – ein deutscher Elternbrief wird so z. B. auf Ukrainisch zusammengefasst. Fehlermeldungen der KI sind ebenfalls übersetzt.'],
+      ['fix', 'Rezepte am PC/Tablet: Nach einem Besuch der Übersicht stand die Rezepte-Seite nur in der rechten Hälfte und war unten abgeschnitten – jetzt wieder über die volle Breite und Höhe (das galt auch für Aufgaben).'],
+    ],
+  },
+  {
     v: '1.166', datum: '25.11.2026', titel: 'Familiendaten aufgeräumt',
     punkte: [
       ['info', 'Unter der Haube: Alle Familiendaten liegen jetzt nur noch in ihren eigenen Bereichen (Rezepte, Einkauf, Aufgaben, Mitglieder, Einstellungen …). Der alte große Familien-Datensatz wird beim Update aufgelöst – vorher wird eine Sicherung angelegt, es geht nichts verloren. Laden, Speichern und der Abgleich zwischen den Geräten sind dadurch schlanker.'],

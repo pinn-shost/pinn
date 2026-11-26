@@ -379,6 +379,8 @@ function languageCode(v) {
     return LANGUAGE_NAMES[c] ? c : "";
 }
 function languageName(code) { return LANGUAGE_NAMES[code] || "English"; }
+// Rule for the short note of the photo readers (meter, pack, timetable, letter): in the app language (since 1.167.0)
+function noteRule(lang) { return "- hinweis: a short note in " + (lang || "German") + " if something is unclear, otherwise empty."; }
 // Page request: the app language first, then any language (so the page is not forced into German)
 function acceptLanguage(code) {
     const c = languageCode(code);
@@ -660,9 +662,9 @@ function analyzeRecipe(input) {
 // ---------------------------------------------------------------------------------------------
 // Meter reading from a photo (menu "House" → Meters)
 // ---------------------------------------------------------------------------------------------
-// input: { dateien: [{ mime, daten }], art (e.g. "Strom"), einheit ("kWh" | "m³"), letzter (number), nummer }
-// -> { stand, nummer, sicher (0..1), hinweis }
-function meterInstructions(art, unit, last, number) {
+// input: { dateien: [{ mime, daten }], art (e.g. "Strom"), einheit ("kWh" | "m³"), letzter (number), nummer, sprache }
+// -> { stand, nummer, sicher (0..1), hinweis }  (hinweis in the app language "sprache", since 1.167.0)
+function meterInstructions(art, unit, last, number, lang) {
     return [
         "Du liest Zählerstände für die Familien-App pinn. von einem Foto ab.",
         "Zählerart laut Nutzer: " + (art || "unbekannt") + ", Einheit: " + (unit || "unbekannt") + ".",
@@ -676,7 +678,7 @@ function meterInstructions(art, unit, last, number) {
         "- nummer: die Zählernummer bzw. Zähler-ID, falls lesbar, sonst leer.",
         "- sicher: 0 bis 1 – wie sicher der Stand richtig abgelesen ist (unscharf, verdeckt, spiegelnd = niedrig).",
         "- ist_zaehler: false, wenn kein Zähler zu sehen ist.",
-        "- hinweis: kurzer deutscher Hinweis, falls etwas unklar ist, sonst leer.",
+        noteRule(lang),
     ].filter(Boolean).join("\n");
 }
 const METER_SCHEMA = {
@@ -712,7 +714,7 @@ function analyzeMeter(input) {
     const last = Number(data.letzter) > 0 ? Number(data.letzter) : 0;
     const number = cleanText(data.nummer, 40);
     parts.unshift({ text: "Bitte den Zählerstand auf diesem Foto ablesen." });
-    const r = callGemini(parts, [], [], { system: meterInstructions(art, unit, last, number), schema: METER_SCHEMA });
+    const r = callGemini(parts, [], [], { system: meterInstructions(art, unit, last, number, languageName(languageCode(data.sprache) || "de")), schema: METER_SCHEMA });
     const stand = Number(r.stand);
     if (r.ist_zaehler === false || !isFinite(stand) || stand < 0) throw new Error("Auf dem Foto war kein Zählerstand zu erkennen.");
     const sicher = Number(r.sicher);
@@ -728,8 +730,8 @@ function analyzeMeter(input) {
 // ---------------------------------------------------------------------------------------------
 // Medicine pack from a photo (Health -> medication supply, since 1.161.0)
 // ---------------------------------------------------------------------------------------------
-// input: { dateien: [{ mime, daten }] }
-// -> { name, staerke, packung, einheit, rezeptpflichtig, verfall, hinweis }
+// input: { dateien: [{ mime, daten }], sprache }
+// -> { name, staerke, packung, einheit, rezeptpflichtig, verfall, hinweis }  (hinweis in the app language, since 1.167.0)
 const PACK_SCHEMA = {
     type: "OBJECT",
     properties: {
@@ -745,7 +747,7 @@ const PACK_SCHEMA = {
     required: ["ist_packung", "name", "staerke", "packung", "einheit", "rezeptpflichtig", "verfall", "hinweis"],
     propertyOrdering: ["ist_packung", "name", "staerke", "packung", "einheit", "rezeptpflichtig", "verfall", "hinweis"],
 };
-function packInstructions() {
+function packInstructions(lang) {
     return [
         "Du liest die Angaben einer Medikamenten- oder Vitamin-Packung für die Familien-App pinn. von einem Foto ab.",
         "Regeln:",
@@ -756,14 +758,14 @@ function packInstructions() {
         "- rezeptpflichtig: true nur, wenn \"Rp\", \"verschreibungspflichtig\" oder ein Rezeptvermerk zu sehen ist; ohne Hinweis false.",
         "- verfall: Verfalldatum als YYYY-MM-DD (bei Monat/Jahr den letzten Tag des Monats), sonst leer.",
         "- ist_packung: false, wenn keine Packung zu sehen ist.",
-        "- hinweis: kurzer deutscher Hinweis, falls etwas unklar ist, sonst leer. Keine Dosierungsempfehlung geben.",
+        noteRule(lang) + " Never give a dosage recommendation.",
     ].join("\n");
 }
 function analyzePack(input) {
     const data = input && typeof input === "object" ? input : {};
     const parts = schoolParts(data, 2);
     parts.unshift({ text: "Bitte die Packung auf diesem Foto auslesen." });
-    const r = callGemini(parts, [], [], { system: packInstructions(), schema: PACK_SCHEMA });
+    const r = callGemini(parts, [], [], { system: packInstructions(languageName(languageCode(data.sprache) || "de")), schema: PACK_SCHEMA });
     if (r.ist_packung === false || !cleanText(r.name, 80)) throw new Error("Auf dem Foto war keine Packung zu erkennen.");
     const units = ["Tablette", "Kapsel", "Stück", "ml", "Beutel"];
     const unit = cleanText(r.einheit, 12);
@@ -807,9 +809,9 @@ function isIso(s) { return /^\d{4}-\d{2}-\d{2}$/.test(String(s || "")); }
 // ---------------------------------------------------------------------------------------------
 // Timetable from a photo (Family → School & daycare)
 // ---------------------------------------------------------------------------------------------
-// input: { dateien: [{ mime, daten }], kind, klasse }
+// input: { dateien: [{ mime, daten }], kind, klasse, sprache }
 // -> { zeiten: [{ von, bis }], stunden: [{ tag 1–5, stunde from 1, fach, raum }], hinweis }
-function timetableInstructions(kind, klasse) {
+function timetableInstructions(kind, klasse, lang) {
     return [
         "Du liest Stundenpläne für die Familien-App pinn. von einem Foto oder PDF ab.",
         kind ? "Kind: " + kind + (klasse ? ", Klasse " + klasse : "") + ". Stehen mehrere Klassen auf dem Blatt, nur diese nehmen." : "",
@@ -817,10 +819,10 @@ function timetableInstructions(kind, klasse) {
         "- zeiten: Beginn und Ende jeder Unterrichtsstunde (HH:MM, 24 Stunden) in der Reihenfolge der Stunden. Pausen sind KEINE Stunde. Stehen keine Uhrzeiten auf dem Plan, zeiten leer lassen.",
         "- stunden: jede belegte Stunde als eigener Eintrag. tag: 1 = Montag bis 5 = Freitag (Samstag und Sonntag weglassen). stunde: Nummer der Stunde ab 1, passend zur Reihenfolge in zeiten.",
         "- Doppelstunden als zwei Einträge. Leere Felder weglassen.",
-        "- fach: ausgeschrieben auf Deutsch, Abkürzungen auflösen (D = Deutsch, M/Ma = Mathe, E/En = Englisch, SU/Sach = Sachunterricht, Sp = Sport, Mu = Musik, Ku/BK = Kunst, Rel/ev/kath = Religion, Eth = Ethik, Bio = Biologie, Ge = Geschichte, Ek/Erd = Erdkunde, Ph = Physik, Ch = Chemie, F/Fr = Französisch, L = Latein, Inf = Informatik). Unbekannte Abkürzungen so lassen.",
+        "- fach: the subject written out in " + lang + ". Resolve abbreviations (German plans e.g. D = Deutsch, M/Ma = Mathe, E/En = Englisch, SU/Sach = Sachunterricht, Sp = Sport, Mu = Musik, Ku/BK = Kunst, Rel/ev/kath = Religion, Eth = Ethik, Bio = Biologie, Ge = Geschichte, Ek/Erd = Erdkunde, Ph = Physik, Ch = Chemie, F/Fr = Französisch, L = Latein, Inf = Informatik) and name the subject in " + lang + ". Keep unknown abbreviations as they are.",
         "- raum: Raum, falls angegeben, sonst leer. Kürzel von Lehrkräften NICHT als Raum nehmen.",
         "- ist_stundenplan: false, wenn kein Stundenplan zu sehen ist.",
-        "- hinweis: kurzer deutscher Hinweis, falls etwas unklar ist (z. B. A/B-Wochen), sonst leer.",
+        noteRule(lang) + " (e.g. A/B weeks)",
     ].filter(Boolean).join("\n");
 }
 const TIMETABLE_SCHEMA = {
@@ -838,7 +840,7 @@ function analyzeTimetable(input) {
     const data = input && typeof input === "object" ? input : {};
     const parts = schoolParts(data, 2);
     parts.unshift({ text: "Bitte diesen Stundenplan auslesen." });
-    const r = callGemini(parts, [], [], { system: timetableInstructions(cleanText(data.kind, 60), cleanText(data.klasse, 30)), schema: TIMETABLE_SCHEMA });
+    const r = callGemini(parts, [], [], { system: timetableInstructions(cleanText(data.kind, 60), cleanText(data.klasse, 30), languageName(languageCode(data.sprache) || "de")), schema: TIMETABLE_SCHEMA });
     if (r.ist_stundenplan === false) throw new Error("Auf dem Foto war kein Stundenplan zu erkennen.");
     const zeiten = (Array.isArray(r.zeiten) ? r.zeiten : []).slice(0, 14)
         .map(z => ({ von: hm(z && z.von), bis: hm(z && z.bis) }))
@@ -853,25 +855,27 @@ function analyzeTimetable(input) {
 // ---------------------------------------------------------------------------------------------
 // Parent letter from a photo or PDF (Family → School & daycare)
 // ---------------------------------------------------------------------------------------------
-// input: { dateien: [{ mime, daten }], heute (YYYY-MM-DD), kinder[], einrichtungen[] }
+// input: { dateien: [{ mime, daten }], heute (YYYY-MM-DD), kinder[], einrichtungen[], sprache }
+// titel, zusammenfassung, grund and hinweis come in the app language (since 1.167.0) - a letter in German is
+// summarised e.g. in Ukrainian for a family that uses the app in Ukrainian.
 // -> { titel, absender, aktion, frist, betrag, zusammenfassung, schliesstage: [{ von, bis, grund }], hinweis }
 const LETTER_ACTIONS = ["unterschreiben", "bezahlen", "mitbringen", "anmelden", "lesen"];
-function letterInstructions(today, kids, places) {
+function letterInstructions(today, kids, places, lang) {
     return [
         "Du liest Elternbriefe von Schule oder Kita für die Familien-App pinn. aus (Foto oder PDF).",
         "Heute ist " + today + ". Relative Angaben wie „bis Freitag“ oder „bis nächste Woche“ von heute aus in ein Datum umrechnen. Jahreszahlen ohne Angabe: das nächste passende Datum ab heute.",
         kids.length ? "Kinder der Familie: " + kids.join(", ") + "." : "",
         places.length ? "Einrichtungen: " + places.join(", ") + "." : "",
         "Regeln:",
-        "- titel: worum es geht, kurz (max. 60 Zeichen), z. B. „Ausflug in den Zoo“ oder „Elternabend“.",
+        "- titel: worum es geht, kurz (max. 60 Zeichen), z. B. „Ausflug in den Zoo“ oder „Elternabend“ – written in " + lang + ".",
         "- absender: wer den Brief schreibt (z. B. Klassenlehrerin Frau Müller, Kita-Leitung), sonst leer.",
         "- aktion: was die Eltern tun müssen – unterschreiben (Abschnitt/Einverständnis zurückgeben), bezahlen (Geld mitgeben oder überweisen), mitbringen (Dinge mitgeben), anmelden (zurückmelden, anmelden, Termin zusagen) oder lesen (nur zur Information).",
         "- frist: bis wann (JJJJ-MM-TT), sonst leer. Bei einer Veranstaltung ohne Rückgabefrist: das Datum der Veranstaltung.",
-        "- betrag: Betrag in Euro als Zahl, sonst 0.",
-        "- zusammenfassung: die wichtigsten Punkte in 1–3 kurzen deutschen Sätzen (Datum, Uhrzeit, was mitbringen).",
-        "- schliesstage: alle im Brief genannten Tage, an denen Schule oder Kita geschlossen ist bzw. kein Unterricht/keine Betreuung stattfindet (Schließtage, Teamtage, Brückentage, Schließzeiten), je Zeitraum von/bis (JJJJ-MM-TT) und grund. Normale Schulferien nur, wenn sie ausdrücklich als Schließzeit genannt werden. Sonst leer.",
+        "- betrag: Betrag als Zahl (in der Währung des Briefs), sonst 0.",
+        "- zusammenfassung: the most important points in 1–3 short sentences in " + lang + " (date, time, what to bring).",
+        "- schliesstage: alle im Brief genannten Tage, an denen Schule oder Kita geschlossen ist bzw. kein Unterricht/keine Betreuung stattfindet (Schließtage, Teamtage, Brückentage, Schließzeiten), je Zeitraum von/bis (JJJJ-MM-TT) und grund (in " + lang + "). Normale Schulferien nur, wenn sie ausdrücklich als Schließzeit genannt werden. Sonst leer.",
         "- ist_brief: false, wenn kein Brief oder Schreiben zu sehen ist.",
-        "- hinweis: kurzer deutscher Hinweis, falls etwas unklar ist, sonst leer.",
+        noteRule(lang),
     ].filter(Boolean).join("\n");
 }
 const LETTER_SCHEMA = {
@@ -896,7 +900,7 @@ function analyzeLetter(input) {
     if (parts.length > 1) parts.unshift({ text: "Die folgenden " + parts.length + " Dateien gehören zu EINEM Brief (mehrere Seiten)." });
     parts.unshift({ text: "Bitte diesen Elternbrief auslesen." });
     const today = isIso(data.heute) ? data.heute : new Date().toISOString().slice(0, 10);
-    const r = callGemini(parts, [], [], { system: letterInstructions(today, cleanList(data.kinder, 8, 60), cleanList(data.einrichtungen, 8, 120)), schema: LETTER_SCHEMA });
+    const r = callGemini(parts, [], [], { system: letterInstructions(today, cleanList(data.kinder, 8, 60), cleanList(data.einrichtungen, 8, 120), languageName(languageCode(data.sprache) || "de")), schema: LETTER_SCHEMA });
     if (r.ist_brief === false) throw new Error("Darin war kein Elternbrief zu erkennen.");
     const betrag = Number(r.betrag);
     const schliesstage = (Array.isArray(r.schliesstage) ? r.schliesstage : []).slice(0, 20)

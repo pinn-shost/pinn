@@ -614,10 +614,43 @@ function renderShoppingCombinedDetail() {
   metaEl.textContent = metaParts.join(' · ');
   emptyEl.classList.add('hidden');
 
-  const sectionsHtml = lists.map(list => {
+  // Filter and "important" across all lists of the trip (since 1.167.0, same as on a single list)
+  const perList = lists.map(list => {
     const isMeal = listHasRecipeItems(list.id);
-    const manual = shoppingItemsOfList(list.id);
-    const items = isMeal ? recipeItemsForList(list.id, recipeItems) : [];
+    return { list, isMeal, manual: shoppingItemsOfList(list.id), items: isMeal ? recipeItemsForList(list.id, recipeItems) : [] };
+  });
+  const counts = {};
+  SHOPPING_FILTERS.forEach(f => {
+    counts[f] = perList.reduce((n, p) => n + p.manual.filter(it => !it.done && shoppingManualMatchesFilter(it, f)).length
+      + (shoppingRecipeMatchesFilter(f) ? p.items.filter(i => !getShoppingItemAdjustment(i.key).excluded).length : 0), 0);
+  });
+  if (shoppingFilter && !SHOPPING_FILTERS.includes(shoppingFilter)) shoppingFilter = '';
+  const filter = shoppingFilter;
+  const filterChoices = SHOPPING_FILTERS.filter(f => counts[f] > 0 || f === filter);
+  const impOpen = counts.important;
+  const hintHtml = impOpen && filter !== 'important' ? `
+    <button type="button" id="shoppingImportantHint" class="shop-imp-hint mx-auto w-full max-w-xl mb-2.5">
+      <span class="shop-imp-hint-ico">${wxIcon('alert')}</span>
+      <span class="flex-1 min-w-0 text-left">${escapeHtml(tk('shop.importantHint'))}</span>
+      <span class="shop-imp-hint-n">${impOpen}</span>
+      <span class="shop-imp-hint-go">${escapeHtml(tk('shop.importantShow'))}</span>
+    </button>` : '';
+  const toolbarHtml = filterChoices.length ? `
+    <div class="mx-auto w-full max-w-xl flex justify-end items-center gap-2 mb-2">
+      <button type="button" id="shoppingFilterBtn" class="shop-filter-btn ${filter ? 'is-active' : ''}" aria-expanded="${shoppingFilterOpen ? 'true' : 'false'}">${wxIcon('filter')}<span>${escapeHtml(filter ? tk('shop.filter.' + filter) : tk('shop.filter.button'))}</span></button>
+    </div>
+    ${shoppingFilterOpen || filter ? `
+    <div class="mx-auto w-full max-w-xl flex justify-end mb-3">
+      <div class="ls-tabs shop-filter-chips">
+        <button type="button" class="ls-tab ${filter ? '' : 'active'}" data-shop-filter="">${escapeHtml(tk('lists.filterAll'))}</button>
+        ${filterChoices.map(f => `<button type="button" class="ls-tab ${f === filter ? 'active' : ''} ${f === 'important' ? 'is-imp' : ''}" data-shop-filter="${f}">${escapeHtml(tk('shop.filter.' + f))}<b>${counts[f]}</b></button>`).join('')}
+      </div>
+    </div>` : ''}` : '';
+
+  const sectionsHtml = perList.map(({ list, isMeal, manual: allManual, items: allItems }) => {
+    const manual = allManual.filter(it => shoppingManualMatchesFilter(it, filter));
+    const items = shoppingRecipeMatchesFilter(filter) ? allItems : [];
+    if (filter && !manual.length && !items.length) return ''; // filtered: lists without a match are left out
     const showRoute = list.id === SHOPPING_MEAL_LIST_ID;
     const { count } = shoppingListSummary(list.id);
     const color = shoppingListColor(list);
@@ -633,7 +666,7 @@ function renderShoppingCombinedDetail() {
             <div class="font-serif text-base leading-tight truncate">${escapeHtml(list.name || '')}</div>
             <div class="text-[11px] text-ink/50 leading-tight">${count ? escapeHtml(tk('shop.nOpen', { n: count })) : escapeHtml(tk('shop.nothingOpen'))}</div>
           </div>
-          ${manual.length ? `<button type="button" class="shopping-section-all shrink-0 px-2.5 py-1 rounded-lg border border-ink/15 bg-white text-[11px] text-ink/60 hover:text-pine hover:border-pine transition" data-list-id="${escapeHtml(list.id)}">${allDone ? tk('shop.selectNone') : tk('shop.selectAll')}</button>` : ''}
+          ${manual.length ? `<button type="button" class="shopping-section-all shrink-0 px-2.5 py-1 rounded-lg border border-ink/15 bg-white text-[11px] text-ink/60 hover:text-pine hover:border-pine transition" data-list-id="${escapeHtml(list.id)}"${filter ? ` data-ids="${escapeHtml(manual.map(it => it.id).join(','))}"` : ''}>${allDone ? tk('shop.selectNone') : tk('shop.selectAll')}</button>` : ''}
           <button type="button" class="shopping-section-open shrink-0 px-2.5 py-1 rounded-lg text-[11px] font-medium hover:bg-white/60 transition" style="color:${color}" data-list-id="${escapeHtml(list.id)}">${escapeHtml(tk('shop.open'))}</button>
         </div>
         <div class="shopping-combined-paper shop-list-body px-3 py-3">
@@ -642,7 +675,9 @@ function renderShoppingCombinedDetail() {
       </section>`;
   }).join('');
 
-  contentEl.innerHTML = `<div class="flex flex-col gap-5">${sectionsHtml}</div>`;
+  const filteredEmpty = filter && !sectionsHtml.trim()
+    ? `<div class="text-center py-6"><p class="text-sm text-ink/45 mb-2">${escapeHtml(tk('shop.filter.empty'))}</p><button type="button" class="shop-filter-reset text-sm text-pine underline">${escapeHtml(tk('shop.filter.reset'))}</button></div>` : '';
+  contentEl.innerHTML = hintHtml + toolbarHtml + filteredEmpty + `<div class="flex flex-col gap-5">${sectionsHtml}</div>`;
 
   actionsEl.classList.remove('hidden');
   actionsEl.classList.add('flex');
@@ -650,7 +685,23 @@ function renderShoppingCombinedDetail() {
   finishBtn.classList.toggle('hidden', !task || !!task.done || !!(plan && plan.bookedAt));
 
   contentEl.querySelectorAll('.shopping-section-all').forEach(btn => {
-    btn.addEventListener('click', () => toggleAllShoppingItemsOfList(btn.dataset.listId));
+    btn.addEventListener('click', () => toggleAllShoppingItemsOfList(btn.dataset.listId, btn.dataset.ids ? new Set(btn.dataset.ids.split(',')) : null));
+  });
+  const setFilter = (f) => { shoppingFilter = f; if (!f) shoppingFilterOpen = false; renderShoppingList(); };
+  const filterBtn = document.getElementById('shoppingFilterBtn');
+  if (filterBtn) filterBtn.addEventListener('click', () => {
+    if (shoppingFilter) { setFilter(''); return; }
+    shoppingFilterOpen = !shoppingFilterOpen;
+    renderShoppingList();
+  });
+  contentEl.querySelectorAll('[data-shop-filter]').forEach(b => b.addEventListener('click', () => setFilter(b.dataset.shopFilter)));
+  contentEl.querySelectorAll('.shop-filter-reset').forEach(b => b.addEventListener('click', () => setFilter('')));
+  const hintBtn = document.getElementById('shoppingImportantHint');
+  if (hintBtn) hintBtn.addEventListener('click', () => {
+    shoppingFilterOpen = true;
+    setFilter('important');
+    const scroller = document.querySelector('#shoppingDetail .overflow-y-auto');
+    if (scroller) scroller.scrollTop = 0;
   });
   contentEl.querySelectorAll('.shopping-section-open').forEach(btn => {
     btn.addEventListener('click', () => openShoppingList(btn.dataset.listId, { backToPlanTaskId: taskId }));

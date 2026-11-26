@@ -641,6 +641,8 @@ function openRecipeDetailPage(recipeId, publicEntry = null) {
   if (recipeDetailOpenedFromUebersicht) {
     // every overview section except the recipes (since 1.150.2 taken from OVERVIEW_SECTION_IDS: shortcuts and pin board too)
     Object.keys(OVERVIEW_SECTION_IDS).filter(k => k !== 'essen').forEach(k => { const el = document.getElementById(OVERVIEW_SECTION_IDS[k]); if (el) el.classList.add('hidden'); });
+    // The recipes may sit in the side column of the overview (tablet/PC) – back into the grid for the full width
+    overviewUndock();
     const mainGrid = document.getElementById('mainGrid');
     const recipeSection = document.getElementById('recipeSection');
     mainGrid.classList.remove('grid-cols-[1.3fr_1fr]', 'grid-cols-[1.3fr_minmax(0,1fr)]');
