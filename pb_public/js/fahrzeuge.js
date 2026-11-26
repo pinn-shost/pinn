@@ -2244,12 +2244,13 @@ function fzSaveLog() {
 }
 // Stores an entry and applies it to the vehicle (next HU, service interval, fitted tyres), books the expense and ticks off
 // the task of the occasion. Used by the full entry popup and by the short "done" popups (fzOpenQuickDone, since 1.167.0).
-function fzCommitLog(v, log, { existing = null, huNext = '', fromDue = null, pending = [], close = null } = {}) {
+// patch: extra fields for the vehicle (e.g. the new insurance plate, since 1.168.0)
+function fzCommitLog(v, log, { existing = null, huNext = '', fromDue = null, pending = [], close = null, patch = null } = {}) {
   const id = log.id, t = log.type, date = log.date, odo = Number(log.odo) || 0, booked = !!log.booked;
   finance.vehicleLog = existing ? fzLogs().map(x => x.id === id ? log : x) : [...fzLogs(), log];
 
   // Effects on the vehicle
-  let nv = { ...v };
+  let nv = { ...v, ...(patch || {}) };
   if (t === 'hu' && huNext) nv.hu = { ...(nv.hu || {}), due: huNext, months: (nv.hu && nv.hu.months) || fzKind(v.kind).hu || 24 };
   if (t === 'wartung' && log.inspection) {
     const sv = nv.service || {};
@@ -2731,7 +2732,7 @@ function fzDueDone(vid, key) {
   if (!v) return;
   const it = fzDueItems(v, finTodayIso(), true).find(x => x.key === key);
   if (!it) return;
-  if (it.act === 'hu' || it.act === 'service' || it.act === 'reifen') return fzOpenQuickDone(v, it);
+  if (it.act === 'hu' || it.act === 'service' || it.act === 'reifen' || it.act === 'vk') return fzOpenQuickDone(v, it);
   if (it.act === 'vk') return fzOpenLogModal({ vehicleId: vid, type: 'sonstiges', fromDue: { key, type: 'vk' } });
   if (it.act === 'frist') {
     if (confirm(`${tk('vehicle.doneDeadlineWillRemoved', { title: it.title })}`)) {
@@ -2747,6 +2748,7 @@ function fzDueFull(vid, it) {
   if (it.act === 'hu') return fzOpenLogModal({ vehicleId: vid, type: 'hu', fromDue: { key, type: 'hu' } });
   if (it.act === 'service') return fzOpenLogModal({ vehicleId: vid, type: 'wartung', fromDue: { key, type: 'service' } });
   if (it.act === 'reifen') return fzOpenLogModal({ vehicleId: vid, type: 'reifen', fromDue: { key, type: 'reifen', need: it.need } });
+  if (it.act === 'vk') return fzOpenLogModal({ vehicleId: vid, type: 'sonstiges', fromDue: { key, type: 'vk' } });
 }
 // Short popup: tyre change (which tyres are on now), HU (result, next HU) or service – plus date, odometer and cost.
 // Saving stores a normal entry (fzCommitLog): the vehicle is updated, the cost booked, the task ticked off.
@@ -2760,8 +2762,9 @@ function fzOpenQuickDone(v, it) {
   const huMonths = (v.hu && parseInt(v.hu.months, 10)) || k.hu || 24;
   const nextHu = vtAddMonths(today.slice(0, 7) + '-01', huMonths, false).slice(0, 7);
   const st = { tires: it.need || 'winter' };
-  const title = it.act === 'reifen' ? tk('qdone.tyresTitle') : it.act === 'hu' ? tk('qdone.huTitle') : tk('qdone.serviceTitle');
-  const icon = it.act === 'reifen' ? '🛞' : it.act === 'hu' ? '🔍' : '🔧';
+  const vkYear = it.act === 'vk' ? String(it.key || '').slice(3) : '';
+  const title = it.act === 'reifen' ? tk('qdone.tyresTitle') : it.act === 'hu' ? tk('qdone.huTitle') : it.act === 'vk' ? tk('qdone.vkTitle', { year: vkYear }) : tk('qdone.serviceTitle');
+  const icon = it.act === 'reifen' ? '🛞' : it.act === 'hu' ? '🔍' : it.act === 'vk' ? '🪪' : '🔧';
   const tireOpts = [['winter', tk('vehicle.winterTyres')], ['sommer', tk('vehicle.summerTyres')], ['ganzjahr', tk('vehicle.allSeasonTyres')]];
   const html = `
     <h3 class="font-serif text-lg mb-1 pr-6">${icon} ${escapeHtml(title)}</h3>
@@ -2776,9 +2779,10 @@ function fzOpenQuickDone(v, it) {
         ${fzYmIn('fzqHuNext', tk('vehicle.nextMot'), nextHu)}
       </div>` : ''}
     ${it.act === 'service' ? fzIn('fzqDesc', tk('fin.csv.description'), '', { ph: tk('vehicle.eGOilChange'), max: 120 }) : ''}
+    ${it.act === 'vk' ? fzIn('fzqPlate', tk('qdone.vkPlate'), '', { ph: v.plate ? fzPlateText(v.plate) : tk('doc.optional'), max: 16 }) : ''}
     <div class="fz-grid2">
       ${fzIn('fzqDate', tk('fin.csv.date'), today, { type: 'date' })}
-      ${fzIn('fzqOdo', tk('vehicle.odometerReading'), '', { mode: 'numeric', unit: 'km', ph: lastOdo ? tk('vehicle.lastOdoPh', { odo: fzNum(fzD(lastOdo)) }) : tk('doc.optional') })}
+      ${it.act === 'vk' ? '<div></div>' : fzIn('fzqOdo', tk('vehicle.odometerReading'), '', { mode: 'numeric', unit: 'km', ph: lastOdo ? tk('vehicle.lastOdoPh', { odo: fzNum(fzD(lastOdo)) }) : tk('doc.optional') })}
     </div>
     <div class="fz-grid2">
       ${fzIn('fzqAmount', tk('qdone.costOptional'), '', { mode: 'decimal', unit: curSym() })}
@@ -2817,7 +2821,7 @@ function fzSaveQuickDone(vid, it, st) {
   const err = msg => fzShowErr('fzqError', msg);
   const date = fzVal('fzqDate');
   if (!vtIsIso(date)) return err(tk('fin.err.needDate'));
-  const odoRaw = fzVal('fzqOdo');
+  const odoRaw = it.act === 'vk' ? '' : fzVal('fzqOdo');
   const odo = odoRaw ? fzParseKm(odoRaw) : 0;
   if (odoRaw && (!isFinite(odo) || odo < 0 || odo > 3000000)) return err(tk('vehicle.pleaseEnterValidOdometer'));
   const amountRaw = fzVal('fzqAmount');
@@ -2837,11 +2841,11 @@ function fzSaveQuickDone(vid, it, st) {
       if (!confirm(tk('vehicle.odometerReadingDoesntFit'))) return;
     }
   }
-  const type = it.act === 'reifen' ? 'reifen' : it.act === 'hu' ? 'hu' : 'wartung';
+  const type = it.act === 'reifen' ? 'reifen' : it.act === 'hu' ? 'hu' : it.act === 'vk' ? 'sonstiges' : 'wartung';
   const log = {
     id: newRecordId(), vehicle: v.id, type, date, odo: odo || '',
     fuel: '', sort: '', where: '', qty: '', price: '', full: false, station: '',
-    desc: type === 'wartung' ? fzVal('fzqDesc').slice(0, 120) : '',
+    desc: type === 'wartung' ? fzVal('fzqDesc').slice(0, 120) : it.act === 'vk' ? tk('vehicle.insurancePlate') + ' ' + String(it.key || '').slice(3) : '',
     inspection: type === 'wartung',
     huResult: type === 'hu' ? (fzVal('fzqHuResult') || 'ohne Mängel') : '',
     tireSwitch: type === 'reifen' ? st.tires : '',
@@ -2851,7 +2855,9 @@ function fzSaveQuickDone(vid, it, st) {
     note: '', created: new Date().toISOString(),
   };
   const fromDue = { key: it.key, type: it.act === 'service' ? 'service' : it.act, need: it.need };
-  fzCommitLog(v, log, { huNext, fromDue, close: fzCloseModal2 });
+  // Insurance plate: the new number replaces the old one on the vehicle (empty = keep it)
+  const plate = it.act === 'vk' ? fzPlateText(fzVal('fzqPlate')).slice(0, 16) : '';
+  fzCommitLog(v, log, { huNext, fromDue, close: fzCloseModal2, patch: plate ? { plate } : null });
 }
 function fzDueOpen(vid, key) {
   const v = fzVehicle(vid);

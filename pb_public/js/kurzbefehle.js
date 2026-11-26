@@ -84,9 +84,15 @@ function kzRowMode() { return kzRows[kzDeviceKind()] || 'multi'; }
 // Tile may appear: apps are usable, or nothing is chosen (then it offers the selection)
 function kzTileAvailable() { return kzEnabled.length === 0 || kzActiveApps().length > 0; }
 // Can this app be used by the signed-in profile right now? (guests, child lock, finances not loaded …)
+// Locked areas behind a shortcut (js/menuesperre.js, since 1.168.0); SOS is never hidden
+var KZ_LOCK_SUBS = {
+  trinken: 'familie:gesundheit', haende: 'familie:gesundheit', medikamente: 'familie:gesundheit', haustier: 'familie:tiere',
+  unterwegs: 'familie:ortung', ausgabe: 'finanzen:ausgaben', einnahme: 'finanzen:ausgaben', pflanzen: 'haus:garten',
+};
 function kzAvailable(a) {
   try {
     if ((a.health || a.notGuest) && isCurrentUserGuest()) return false;
+    if (a.id !== 'sos' && typeof mlsHidden === 'function' && mlsHidden([a.view].concat(KZ_LOCK_SUBS[a.id] || []))) return false;
     if (a.finance && !(typeof finance !== 'undefined' && finance)) return false;
     return isViewAllowed(a.view);
   } catch (e) { return false; }

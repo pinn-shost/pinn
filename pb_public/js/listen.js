@@ -338,6 +338,33 @@ function lsOpenItems(l) {
 let listsItemFilter = '';
 let listsItemFilterOpen = false;
 function lsItemFilterReset() { listsItemFilter = ''; listsItemFilterOpen = false; }
+// "Important on top" (since 1.168.0): personal setting of this device for every list incl. shopping
+var LS_IMP_TOP_KEY = 'pinn.listen.wichtigOben';
+function lsImpTop() { try { return localStorage.getItem(LS_IMP_TOP_KEY) === '1'; } catch (e) { return false; } }
+function lsSetImpTop(on) { try { if (on) localStorage.setItem(LS_IMP_TOP_KEY, '1'); else localStorage.removeItem(LS_IMP_TOP_KEY); } catch (e) { /* private mode */ } }
+var LS_IMP_GROUP = '\u0001imp'; // group key of the important entries at the top (never a real section name)
+// Long press on an entry (since 1.168.0): small sheet "important on/off" or "edit"
+function lsQuickSheet(title, important, onImportant, onEdit) {
+  if (typeof fzOpenModal2 !== 'function') { onEdit(); return; }
+  const btn = 'w-full px-4 py-2.5 rounded-xl text-sm font-medium transition flex items-center justify-center gap-2';
+  fzOpenModal2(`
+    <h3 class="font-serif text-lg mb-3 pr-6 truncate">${escapeHtml(title)}</h3>
+    <div class="flex flex-col gap-2">
+      <button type="button" id="lsqImp" class="${btn} ${important ? 'border border-ink/15 hover:border-pine' : 'shop-imp-sheet-btn'}">${wxIcon('alert')}<span>${escapeHtml(tk(important ? 'lists.quick.notImportant' : 'lists.quick.important'))}</span></button>
+      <button type="button" id="lsqEdit" class="${btn} border border-ink/15 hover:border-pine">✏️ <span>${escapeHtml(tk('home.edit'))}</span></button>
+    </div>`, () => {
+    document.getElementById('lsqImp').addEventListener('click', () => { fzCloseModal2(); onImportant(); });
+    document.getElementById('lsqEdit').addEventListener('click', () => { fzCloseModal2(); onEdit(); });
+  });
+}
+function lsToggleImportant(listId, itemId) {
+  lsUpdateItem(listId, itemId, i => {
+    const n = { ...i };
+    if (n.important) delete n.important; else n.important = true;
+    return n;
+  });
+  lsCommit();
+}
 function lsItemIsOpen(l, it) {
   const t = lsType(l.type);
   if (t.gift) return (it.status || 'idee') !== 'verschenkt';
@@ -389,7 +416,8 @@ function lsFilterBarHtml(l, items) {
         <button type="button" class="ls-tab ${filter ? '' : 'active'}" data-lsf="">${escapeHtml(tk('lists.filterAll'))}</button>
         ${choices.map(f => `<button type="button" class="ls-tab ${f === filter ? 'active' : ''} ${f === 'important' ? 'is-imp' : ''}" data-lsf="${f}">${escapeHtml(tk('lists.filter.' + f))}<b>${counts[f]}</b></button>`).join('')}
       </div>
-    </div>` : ''}`;
+    </div>
+    ${imp ? `<div class="flex justify-end mb-3 -mt-1"><button type="button" class="ls-imp-top${lsImpTop() ? ' is-on' : ''}" data-lsimptop="1" aria-pressed="${lsImpTop() ? 'true' : 'false'}">⬆ ${escapeHtml(tk('lists.importantTop'))}</button></div>` : ''}` : ''}`;
 }
 function lsWhoHtml(m) {
   if (!m) return '';
@@ -645,7 +673,14 @@ function lsGroupItems(l, items) {
   // Group without a name first (or last for gifts)
   const named = order.filter(k => k);
   const groups = t.gift ? [...named, ''] : ['', ...named];
-  return groups.filter(k => map.has(k) && map.get(k).length).map(k => ({ key: k, items: map.get(k) }));
+  const out = groups.filter(k => map.has(k) && map.get(k).length).map(k => ({ key: k, items: map.get(k) }));
+  // Important entries on top (setting of this device, since 1.168.0)
+  if (lsImpTop()) {
+    const imp = [];
+    out.forEach(g => { g.items = g.items.filter(i => { if (lsItemImportant(l, i)) { imp.push(i); return false; } return true; }); });
+    if (imp.length) return [{ key: LS_IMP_GROUP, items: imp }, ...out.filter(g => g.items.length)];
+  }
+  return out;
 }
 
 function lsRowHtml(l, it) {
@@ -762,9 +797,13 @@ function lsRenderDetail(l) {
   const content = document.getElementById('listsDetailContent');
   const filteredEmpty = listsItemFilter && unfiltered && !shown.length
     ? `<div class="text-center py-6"><p class="text-sm text-ink/45 mb-2">${escapeHtml(tk('shop.filter.empty'))}</p><button type="button" class="text-sm text-pine underline" data-lsf="">${escapeHtml(tk('shop.filter.reset'))}</button></div>` : '';
-  content.innerHTML = filterBar + filteredEmpty + groups.map(g => {
+  // Travel pharmacy (since 1.168.0): only packing lists, not for guests
+  const tpBtn = l.type === 'pack' && !isCurrentUserGuest() && typeof ghLoad === 'function'
+    ? `<div class="flex justify-start mb-2"><button type="button" class="ls-imp-top" data-lstp="1">💊 ${escapeHtml(tk('qdone.tpButton'))}</button></div>` : '';
+  content.innerHTML = tpBtn + filterBar + filteredEmpty + groups.map(g => {
     let head = '';
     if (showHeads) {
+      if (g.key === LS_IMP_GROUP) return `<div class="ls-sec ls-sec-imp"><span>❗ ${escapeHtml(tk('lists.filter.important'))}</span><b>${g.items.length}</b></div>` + g.items.map(i => lsRowHtml(l, i)).join('');
       const label = g.key || (t.gift ? tk('lists.noRecipient') : tk('lists.general'));
       let right = '';
       if (t.gift) { const s = g.items.reduce((a, i) => a + (lsPrice(i.price) || 0), 0); right = s ? lsMoney(s) : ''; }
@@ -777,6 +816,14 @@ function lsRenderDetail(l) {
     return head + g.items.map(i => lsRowHtml(l, i)).join('');
   }).join('');
 
+  // Long press on an entry (since 1.168.0): sheet "important on/off" / "edit"
+  if (typeof attachIngredientLongPress === 'function') content.querySelectorAll('.ls-body[data-act="edit"]').forEach(b => {
+    attachIngredientLongPress(b, () => {
+      b.dataset.lsLong = '1';
+      const it = l.items.find(i => i.id === b.dataset.iid);
+      if (it) lsQuickSheet(it.text, !!it.important, () => lsToggleImportant(l.id, it.id), () => lsOpenItemModal(l.id, it.id));
+    });
+  });
   const empty = document.getElementById('listsDetailEmpty');
   const hasRows = groups.some(g => g.items.length) || !!filteredEmpty;
   empty.classList.toggle('hidden', hasRows);
@@ -816,6 +863,78 @@ function lsRenderDetail(l) {
   }
 }
 
+/* ---------- Travel pharmacy for a packing list (since 1.168.0) ----------
+   Collects the regular medicines of the family from Health (with the amount for the trip and a warning if the supply
+   does not last - then the entry is marked important) plus the usual items of a first-aid bag. Everything is added
+   as a section "Travel pharmacy" with one entry per person and medicine. */
+var LS_TP_BASICS = ['lists.t.i.plastersBandages', 'qdone.tp.painFever', 'qdone.tp.diarrhoea', 'qdone.tp.travelSickness', 'qdone.tp.allergy',
+  'lists.t.i.disinfectant', 'lists.t.i.thermometer', 'lists.t.i.tickTweezers', 'lists.t.i.insectRepellent2', 'lists.t.i.sunscreen'];
+async function lsOpenTravelPharmacy(listId) {
+  const l = lsGetList(listId);
+  if (!l || typeof fzOpenModal2 !== 'function') return;
+  try { if (!ghState.loaded) await ghLoad(); } catch (e) { /* no health data - only the basics */ }
+  const meds = [];
+  try {
+    Object.keys(ghState.people || {}).forEach(mid => {
+      const p = ghState.people[mid];
+      ghNorm(p.daten, p.kind).meds.list.forEach(m => {
+        if (m.paused || m.ended) return;
+        meds.push({ mid, med: m, info: ghStockInfo(m) });
+      });
+    });
+  } catch (e) { /* ignore */ }
+  const have = new Set(l.items.map(i => String(i.text || '').toLowerCase()));
+  const row = (id, label, sub, checked, warn) => `<label class="flex items-start gap-2.5 py-1.5 cursor-pointer">
+      <input type="checkbox" data-tp="${escapeHtml(id)}" ${checked ? 'checked' : ''} class="shrink-0 w-4 h-4 mt-0.5" />
+      <span class="min-w-0"><span class="block text-sm">${escapeHtml(label)}</span>${sub ? `<span class="block text-[11px] ${warn ? 'text-red-600 font-medium' : 'text-ink/45'}">${escapeHtml(sub)}</span>` : ''}</span></label>`;
+  const render = () => {
+    const days = Math.max(1, Math.min(90, parseInt(fzVal('tpDays'), 10) || 7));
+    document.getElementById('tpMeds').innerHTML = meds.length ? meds.map((x, n) => {
+      const who = memberLabel(memberById(x.mid));
+      const need = x.info && x.info.perDay > 0 ? Math.ceil(x.info.perDay * days) : 0;
+      const short = x.info && need > 0 && x.info.left < need;
+      const sub = [who, need ? tk('qdone.tpNeed', { n: need }) : '', short ? tk('qdone.tpShort', { left: x.info.left }) : ''].filter(Boolean).join(' · ');
+      return row('m' + n, x.med.name + (x.med.dose ? ' ' + x.med.dose : ''), sub, true, short);
+    }).join('') : `<p class="text-xs text-ink/45 italic py-1">${escapeHtml(tk('qdone.tpNoMeds'))}</p>`;
+  };
+  fzOpenModal2(`
+    <h3 class="font-serif text-lg mb-1 pr-6">💊 ${escapeHtml(tk('qdone.tpTitle'))}</h3>
+    <p class="text-[11px] text-ink/45 mb-3">${escapeHtml(tk('qdone.tpIntro'))}</p>
+    ${fzIn('tpDays', tk('qdone.tpDays'), '7', { mode: 'numeric', max: 2 })}
+    <div class="text-[11px] uppercase tracking-wide text-ink/40 mt-1">${escapeHtml(tk('qdone.tpMedsHead'))}</div>
+    <div id="tpMeds" class="mb-2"></div>
+    <div class="text-[11px] uppercase tracking-wide text-ink/40">${escapeHtml(tk('qdone.tpBasicsHead'))}</div>
+    <div class="mb-1">${LS_TP_BASICS.map((k, n) => row('b' + n, tk(k), '', !have.has(tk(k).toLowerCase()), false)).join('')}</div>
+    <div class="flex items-center gap-2 mt-3">
+      <div class="flex-1"></div>
+      <button type="button" id="tpCancel" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">${tk('common.cancel')}</button>
+      <button type="button" id="tpSave" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">${escapeHtml(tk('qdone.tpAdd'))}</button>
+    </div>`, (body) => {
+    render();
+    document.getElementById('tpDays').addEventListener('input', render);
+    document.getElementById('tpCancel').addEventListener('click', fzCloseModal2);
+    document.getElementById('tpSave').addEventListener('click', () => {
+      const days = Math.max(1, Math.min(90, parseInt(fzVal('tpDays'), 10) || 7));
+      const on = id => { const cb = body.querySelector(`[data-tp="${id}"]`); return !!(cb && cb.checked); };
+      const section = tk('qdone.tpTitle');
+      const now = Date.now();
+      const add = [];
+      meds.forEach((x, n) => {
+        if (!on('m' + n)) return;
+        const need = x.info && x.info.perDay > 0 ? Math.ceil(x.info.perDay * days) : 0;
+        const it = { id: lsId('fi'), text: x.med.name + (x.med.dose ? ' ' + x.med.dose : '') + (need ? ' · ' + need + '×' : ''), done: false, createdAt: now + add.length, section, memberId: x.mid };
+        if (x.info && need > 0 && x.info.left < need) { it.important = true; it.note = tk('qdone.tpShort', { left: x.info.left }); }
+        add.push(it);
+      });
+      LS_TP_BASICS.forEach((k, n) => { if (on('b' + n)) add.push({ id: lsId('fi'), text: tk(k), done: false, createdAt: now + add.length, section }); });
+      fzCloseModal2();
+      if (!add.length) return;
+      lsUpdateList(l.id, x => ({ ...x, items: [...x.items, ...add] }));
+      lsCommit();
+      finShowToast(tk('qdone.tpAdded', { n: add.length }));
+    });
+  });
+}
 function lsAddFromBar() {
   const l = lsGetList(listsDetailId);
   if (!l) return;
@@ -1494,6 +1613,7 @@ function lsOpenShopModal() {
   });
   document.getElementById('listsDetailContent').addEventListener('click', (e) => {
     const b = e.target.closest('[data-act]');
+    if (b && b.dataset.lsLong) { delete b.dataset.lsLong; return; } // click after a long press
     if (b) { lsRowAction(b.dataset.act, b.dataset.iid); return; }
     // Filter (since 1.167.0): button opens the choices, an active filter is switched off with one tap
     const f = e.target.closest('[data-lsf]');
@@ -1503,6 +1623,8 @@ function lsOpenShopModal() {
       renderShoppingList();
       return;
     }
+    if (e.target.closest('[data-lstp]')) { lsOpenTravelPharmacy(listsDetailId); return; }
+    if (e.target.closest('[data-lsimptop]')) { lsSetImpTop(!lsImpTop()); renderShoppingList(); return; }
     if (e.target.closest('[data-lsimp]')) {
       listsItemFilter = 'important';
       listsItemFilterOpen = true;
@@ -1945,6 +2067,15 @@ function gsCollect(q) {
     });
   });
 
+  // Locked menus/areas (js/menuesperre.js, since 1.168.0): their entries are left out; menu items stay (they ask to unlock)
+  if (typeof mlsHidden === 'function') {
+    const lockOf = {
+      event: 'termine', task: 'aufgaben', recipe: 'rezepte', precipe: 'rezepte', list: 'einkauf', item: 'einkauf', pantry: 'vorrat',
+      pin: 'pinnwand', doc: 'dokumente', contract: ['finanzen', 'finanzen:vertraege'], recurring: ['finanzen', 'finanzen:ausgaben'],
+      expense: ['finanzen', 'finanzen:ausgaben'], vehicle: 'fahrzeuge', member: 'familie', birthday: 'familie',
+    };
+    for (let i = out.length - 1; i >= 0; i--) if (lockOf[out[i].type] && mlsHidden(lockOf[out[i].type])) out.splice(i, 1);
+  }
   // Sort, limit per kind
   out.sort((a, b) => a.score - b.score || (GS_TYPE_BIAS[a.type] || 0) - (GS_TYPE_BIAS[b.type] || 0) || a.tie - b.tie || a.title.localeCompare(b.title, 'de'));
   const counts = {};

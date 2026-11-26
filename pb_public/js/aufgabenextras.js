@@ -72,6 +72,7 @@ function taskActionFor(task) {
     if (typeof hsTaskAction === 'function') { const a = hsTaskAction(task); if (a) return a; }
     if (typeof fzTaskAction === 'function') { const a = fzTaskAction(task); if (a) return a; }
     if (typeof ghTaskAction === 'function') { const a = ghTaskAction(task); if (a) return a; }
+    if (typeof skTaskAction === 'function') { const a = skTaskAction(task); if (a) return a; }
   } catch (e) { /* area not ready */ }
   return null;
 }

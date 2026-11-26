@@ -1264,7 +1264,17 @@ function ntActNormalize(x) {
 }
 // May this profile see the notice? (guests, child lock, private lists)
 // The server only sends finances, contracts and documents to those allowed anyway (members of the cash box).
+// Locked menus/areas (js/menuesperre.js, since 1.168.0): their activities are not shown in the bell
+const NT_LOCK_KEYS = {
+  einkauf: 'einkauf', einkaufsliste: 'einkauf', 'einkauf-ab': 'einkauf', 'einkauf-weg': 'einkauf', 'einkaufsliste-um': 'einkauf', 'einkaufsliste-weg': 'einkauf',
+  liste: 'einkauf', 'liste-neu': 'einkauf', 'liste-ab': 'einkauf', 'liste-um': 'einkauf', 'liste-weg': 'einkauf',
+  essen: 'rezepte', rezept: 'rezepte', aufgabe: 'aufgaben', 'aufgabe-ab': 'aufgaben', termin: 'termine', vorrat: 'vorrat',
+  notfallpass: ['familie', 'familie:gesundheit'], pinnwand: 'pinnwand', 'pinnwand-antwort': 'pinnwand',
+  ausgabe: ['finanzen', 'finanzen:ausgaben'], ausgleich: ['finanzen', 'finanzen:ausgaben'], vertrag: ['finanzen', 'finanzen:vertraege'],
+  fahrzeug: 'fahrzeuge', 'fahrzeug-log': 'fahrzeuge', dokument: 'dokumente',
+};
 function ntActAllowed(a) {
+  if (NT_LOCK_KEYS[a.art] && typeof mlsHidden === 'function' && mlsHidden(NT_LOCK_KEYS[a.art])) return false;
   switch (a.art) {
     case 'push': return true; // personal message to this profile
     case 'einkauf': case 'einkaufsliste': case 'einkauf-ab': case 'einkauf-weg':

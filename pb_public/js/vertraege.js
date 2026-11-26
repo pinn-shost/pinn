@@ -282,7 +282,7 @@ function vtDueList(today = finTodayIso()) {
     const rem = vtReminder(c);
     const window = rem.on ? rem.days : 14;
     if (s.state === 'aktiv' && s.kind === 'fixed' && !s.unknown && s.daysLeft <= window) {
-      out.push({ c, date: s.deadline, tone: s.daysLeft <= 7 ? 'urgent' : 'warn', title: c.name, sub: tk('contract.dueSub', { date: vtFmt(s.deadline), renew: vtMonthsText(s.renew) }), when: vtInDays(s.daysLeft), days: s.daysLeft });
+      out.push({ c, dk: 'deadline', date: s.deadline, tone: s.daysLeft <= 7 ? 'urgent' : 'warn', title: c.name, sub: tk('contract.dueSub', { date: vtFmt(s.deadline), renew: vtMonthsText(s.renew) }), when: vtInDays(s.daysLeft), days: s.daysLeft });
     } else if (s.state === 'aktiv' && s.kind === 'once' && !s.unknown && s.daysLeft <= window) {
       out.push({ c, date: s.end, tone: 'warn', title: c.name, sub: tk('contract.endsOnLower', { date: vtFmt(s.end) }), when: vtInDays(s.daysLeft), days: s.daysLeft });
     }
@@ -1723,7 +1723,7 @@ function renderContractTile() {
     return `
       <div class="ov-bday-swipe" data-bday-key="${key}">
       <button type="button" class="ov-bday-action" data-vt-hide="${key}">${escapeHtml(tk('overview.hide'))}</button>
-      <button type="button" class="ov-bday-row vt-tile-row w-full text-left${d.tone === 'urgent' ? ' is-urgent' : ''}" data-vtopen="${escapeHtml(d.c.id)}">
+      <button type="button" class="ov-bday-row vt-tile-row w-full text-left${d.tone === 'urgent' ? ' is-urgent' : ''}" data-vtopen="${escapeHtml(d.c.id)}"${d.dk === 'deadline' ? ` data-vtdl="${key}"` : ''}>
         <div class="ov-bday-date"><b>${Number(d.date.slice(8, 10))}</b><span>${escapeHtml(month)}</span></div>
         <div class="ov-bday-text">
           <div class="ov-bday-name">${escapeHtml(d.title)}</div>
@@ -1757,10 +1757,31 @@ document.getElementById('contractTileBody').addEventListener('click', (e) => {
   if (e.target.closest('.ov-bday-swipe.is-open')) return;
   const row = e.target.closest('[data-vtopen]');
   if (!row) return;
+  // Cancellation deadline (since 1.168.0): short popup "cancel now / let it run / open"
+  if (row.dataset.vtdl && typeof fzOpenModal2 === 'function') { vtOpenDeadlineQuick(row.dataset.vtopen, row.dataset.vtdl); return; }
   setView('finanzen');
   finSetTab('vertraege');
   openContractDetail(row.dataset.vtopen);
 });
+function vtOpenDeadlineQuick(id, key) {
+  const d = vtTileList().find(x => x.c.id === id && x.dk === 'deadline');
+  if (!d) return;
+  const btn = 'w-full px-4 py-2.5 rounded-xl text-sm font-medium transition';
+  fzOpenModal2(`
+    <h3 class="font-serif text-lg mb-1 pr-6">📄 ${escapeHtml(d.c.name)}</h3>
+    <div class="text-xs text-ink/50 mb-2">${escapeHtml(d.sub)} · ${escapeHtml(d.when)}</div>
+    <p class="text-sm text-ink/70 mb-4">${escapeHtml(tk('qdone.vtIntro'))}</p>
+    <div class="flex flex-col gap-2">
+      <button type="button" id="vtqCancel" class="${btn} bg-pine text-white hover:bg-pine/90">✉️ ${escapeHtml(tk('qdone.vtCancel'))}</button>
+      <button type="button" id="vtqKeep" class="${btn} border border-ink/15 hover:border-pine">↻ ${escapeHtml(tk('qdone.vtKeep'))}</button>
+      <button type="button" id="vtqOpen" class="${btn} text-ink/60 hover:text-ink">${escapeHtml(tk('qdone.vtOpen'))}</button>
+    </div>`, () => {
+    const go = (fn) => { fzCloseModal2(); setView('finanzen'); finSetTab('vertraege'); fn(); };
+    document.getElementById('vtqCancel').addEventListener('click', () => go(() => openContractCancel(id)));
+    document.getElementById('vtqOpen').addEventListener('click', () => go(() => openContractDetail(id)));
+    document.getElementById('vtqKeep').addEventListener('click', () => { fzCloseModal2(); vtHideTileItem(key); finShowToast(tk('qdone.vtKept')); });
+  });
+}
 // Opens a contract (also from a chat reference); false if it does not exist any more
 function vtOpenContract(id) {
   if (isCurrentUserGuest()) return false;

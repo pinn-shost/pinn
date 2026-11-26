@@ -473,9 +473,14 @@ function renderFamily() {
   if (placesBtn) placesBtn.classList.toggle('hidden', !inOrtung || !famOrtungAllowed() || !famCanEdit());
   if (setupBtn) setupBtn.classList.toggle('hidden', !inOrtung || !isCurrentUserAdmin());
   try { skSyncFromTasks(); } catch (e) { /* ignore */ }
+  // Locked area (js/menuesperre.js, since 1.168.0): lock card instead of the content; Health also covers the emergency pass
+  const subLock = (sub) => typeof mlsSubLocked === 'function' && mlsSubLocked('familie', sub);
   if (famDetailId) {
     const m = memberById(famDetailId);
-    pane.innerHTML = famDetailMode === 'pass' ? famDetailHtml(m) : famProfileHtml(m);
+    if (famDetailMode === 'pass' && subLock('gesundheit')) pane.innerHTML = mlsLockedPaneHtml('familie', 'gesundheit');
+    else pane.innerHTML = famDetailMode === 'pass' ? famDetailHtml(m) : famProfileHtml(m);
+  } else if (famTab !== 'uebersicht' && subLock(famTab)) {
+    pane.innerHTML = mlsLockedPaneHtml('familie', famTab);
   } else if (famTab === 'schule') {
     pane.innerHTML = skPaneHtml();
     skKiCheck();
@@ -2218,7 +2223,7 @@ function famHomeHtml() {
     ? `<div id="famGrid" class="fam-grid"></div>`
     : `<div class="fam-card text-center py-6"><div class="text-4xl mb-2">${PINN_I18N.famIcon()}</div><div class="font-serif text-lg mb-1">${tk('family.noFamilyMembersYet')}</div><p class="text-sm text-ink/50">${tk('family.adminCreatesMembersUnder')}</p></div>`;
   return `${grid}
-    ${skTodayCardHtml()}
+    ${typeof mlsSubLocked === 'function' && mlsSubLocked('familie', 'schule', true) ? '' : skTodayCardHtml()}
     ${famQuickCardsHtml()}
     ${members.length ? ('<p class="text-[11px] text-ink/40 text-center">' + tk('family.tapPersonOpenTheir') + '</p>') : ''}`;
 }
@@ -2298,8 +2303,15 @@ function famProfileHtml(m) {
       </div>
     </div>
     <div id="famDetailLoc">${famDetailLocHtml(m)}</div>
-    ${school}
-    ${famPassSummaryHtml(m)}`;
+    ${typeof mlsSubLocked === 'function' && mlsSubLocked('familie', 'schule', true) ? '' : school}
+    ${typeof mlsSubLocked === 'function' && mlsSubLocked('familie', 'gesundheit', true) ? famPassLockedHtml() : famPassSummaryHtml(m)}`;
+}
+// Health locked (js/menuesperre.js, since 1.168.0): only a row that leads to the lock card of the emergency pass
+function famPassLockedHtml() {
+  return `<button type="button" class="fz-card w-full text-left flex items-center gap-3" data-famact="pass">
+      <span class="text-xl">🔒</span>
+      <span class="min-w-0 flex-1"><span class="block text-sm font-medium">${tk('family.emergencyCard')}</span><span class="block text-[11px] text-ink/50">${tk('mlock.subTitle', { area: tk('gh.title') })}</span></span>
+    </button>`;
 }
 function famPassSummaryHtml(m) {
   const p = famPass(m.id) || {};
@@ -2759,6 +2771,52 @@ function skSyncLetterTask(l, prev) {
   }
   if (changed) { try { rebuildAufgaben(); renderTasks(); flushOutbox(); } catch (e) { /* ignore */ } }
   return l;
+}
+/* Ticking off the task of a letter with an amount (since 1.168.0): short popup "paid?" - books the amount in Finance
+   (category children) on request; the letter is done either way. Letters without an amount are ticked off right away. */
+function skTaskAction(task) {
+  if (!task || task.done || isCurrentUserGuest() || typeof fzOpenModal2 !== 'function') return null;
+  const l = (schoolLetters || []).find(x => x.taskId === task.id && !x.done);
+  if (!l || !(Number(l.amount) > 0)) return null;
+  return { label: tk('qdone.letterAction'), run: () => skOpenLetterDone(l.id, task.id) };
+}
+function skOpenLetterDone(letterId, taskId) {
+  const l = (schoolLetters || []).find(x => x.id === letterId);
+  if (!l) return;
+  const fin = typeof finance !== 'undefined' && finance && typeof finQueueSave === 'function' && isViewAllowed('finanzen');
+  const amount = Math.round(Number(l.amount) * 100) / 100;
+  fzOpenModal2(`
+    <h3 class="font-serif text-lg mb-1 pr-6">✉️ ${escapeHtml(l.title || tk('school.parentLetter'))}</h3>
+    <div class="text-xs text-ink/50 mb-3">${escapeHtml([l.sender, fmtEur(amount)].filter(Boolean).join(' · '))}</div>
+    ${fin ? `<label class="flex items-start gap-2.5 rounded-xl border border-ink/10 px-3 py-2.5 mb-3 cursor-pointer">
+      <input id="skqBook" type="checkbox" checked class="shrink-0 w-4 h-4 mt-0.5" />
+      <span class="min-w-0"><span class="block text-sm font-medium">${escapeHtml(tk('qdone.letterBook', { amount: fmtEur(amount) }))}</span>
+      <span class="block text-[11px] text-ink/45 leading-snug">${escapeHtml(tk('qdone.letterBookHint'))}</span></span>
+    </label>
+    ${fzSel('skqPaidBy', tk('fin.csv.paidBy'), fzMemberOptions(), currentMember() ? currentMember().id : '')}` : ''}
+    <div class="flex items-center gap-2 mt-3">
+      <div class="flex-1"></div>
+      <button type="button" id="skqCancel" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">${tk('common.cancel')}</button>
+      <button type="button" id="skqSave" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">✓ ${escapeHtml(tk('school.done2'))}</button>
+    </div>`, () => {
+    document.getElementById('skqCancel').addEventListener('click', fzCloseModal2);
+    document.getElementById('skqSave').addEventListener('click', () => {
+      const book = fin && document.getElementById('skqBook').checked;
+      if (book) {
+        finQueueSave({
+          id: newRecordId(), amount, date: finTodayIso(), category: 'kinder',
+          title: l.title || tk('school.parentLetter'), note: l.sender || '', paidBy: fzVal('skqPaidBy'), link: '',
+          store: '', listId: '', items: [], createdBy: (currentUser() && currentUser().id) || '', created: new Date().toISOString(),
+        });
+      }
+      fzCloseModal2();
+      queueTaskDone(taskId, true);
+      try { rebuildAufgaben(); renderTasks(); flushOutbox(); } catch (e) { /* ignore */ }
+      skSyncFromTasks();
+      if (currentView === 'familie') renderFamily();
+      finShowToast(book ? tk('qdone.letterBooked', { amount: fmtEur(amount) }) : tk('pet.done'));
+    });
+  });
 }
 // Task ticked off (also on another device) → letter done
 function skSyncFromTasks() {
@@ -4472,14 +4530,16 @@ function ptDeleteCare() {
   ptCloseModal();
   ptRefresh();
 }
-function ptCareDone(petId, careId) {
+// opts (since 1.168.0): { date (YYYY-MM-DD, done on that day), note } from the short popup of vet appointments
+function ptCareDone(petId, careId, opts = {}) {
   const p = ptById(petId);
   const c = p && (p.care || []).find(x => x.id === careId);
   if (!c || !ptCanEdit()) return;
-  const today = ptToday();
+  const today = opts.date && /^\d{4}-\d{2}-\d{2}$/.test(opts.date) && opts.date <= ptToday() ? opts.date : ptToday();
   const every = Number(c.every) || 0;
   // Diary entry (since 1.150.10): remembers the state before, so a mistaken tap can be undone from the diary
-  ptAddLog({ pet: petId, kind: 'vorsorge', note: c.title || '', careId: careId, prev: { last: c.last || '', next: c.next || '' } });
+  const note = [c.title || '', opts.note || ''].filter(Boolean).join(' – ');
+  ptAddLog({ pet: petId, kind: 'vorsorge', note, careId: careId, prev: { last: c.last || '', next: c.next || '' } });
   ptUpdate(petId, x => ({ ...x, care: (x.care || []).map(y => {
     if (y.id !== careId) return y;
     const n = { ...y, last: today };
@@ -4488,6 +4548,52 @@ function ptCareDone(petId, careId) {
   }) }));
   ptRefresh();
   finShowToast(every ? tk('pet.doneNextOn', { date: famFmtDate(addDaysToDateStr(today, every)) }) : tk('pet.done'));
+}
+/* Vet appointments (vaccination, check-up; since 1.168.0): "done" opens a short popup - the day (if it was earlier),
+   the cost (booked in Finance under "Other", title = pet + appointment) and a note for the diary. Everything else
+   (deworming, claws, cleaning …) is ticked off right away as before. */
+const PT_CARE_INPUT = ['impfung', 'tierarzt'];
+function ptCareDoneAsk(petId, careId) {
+  const p = ptById(petId);
+  const c = p && (p.care || []).find(x => x.id === careId);
+  if (!c || !ptCanEdit()) return;
+  if (!PT_CARE_INPUT.includes(c.type) || typeof fzOpenModal2 !== 'function') { ptCareDone(petId, careId); return; }
+  const t = ptCareType(c.type);
+  const fin = !isCurrentUserGuest() && typeof finance !== 'undefined' && finance && typeof finQueueSave === 'function';
+  fzOpenModal2(`
+    <h3 class="font-serif text-lg mb-1 pr-6">${t.icon} ${escapeHtml(c.title || t.label)}</h3>
+    <div class="text-xs text-ink/50 mb-3">${escapeHtml(p.name)}</div>
+    ${fzIn('ptqDate', tk('fin.csv.date'), ptToday(), { type: 'date' })}
+    ${fin ? `<div class="fz-grid2">
+      ${fzIn('ptqAmount', tk('qdone.costOptional'), '', { mode: 'decimal', unit: curSym() })}
+      <div class="fin-paidby-wrap min-w-0">${fzSel('ptqPaidBy', tk('fin.csv.paidBy'), fzMemberOptions(), currentMember() ? currentMember().id : '')}</div>
+    </div>` : ''}
+    ${fzIn('ptqNote', tk('fin.csv.note'), '', { ph: tk('qdone.petNotePh'), max: 200 })}
+    <p id="ptqError" class="hidden text-xs text-red-500 mt-2"></p>
+    <div class="flex items-center gap-2 mt-3">
+      <div class="flex-1"></div>
+      <button type="button" id="ptqCancel" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">${tk('common.cancel')}</button>
+      <button type="button" id="ptqSave" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">✓ ${escapeHtml(tk('school.done2'))}</button>
+    </div>`, () => {
+    document.getElementById('ptqCancel').addEventListener('click', fzCloseModal2);
+    document.getElementById('ptqSave').addEventListener('click', () => {
+      const date = fzVal('ptqDate');
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || date > ptToday()) { fzShowErr('ptqError', tk('fin.err.needDate')); return; }
+      const raw = fin ? fzVal('ptqAmount') : '';
+      const amount = raw ? parseEuro(raw) : 0;
+      if (raw && (!isFinite(amount) || amount < 0 || amount > 1000000)) { fzShowErr('ptqError', tk('home.pleaseEnterValidAmount')); return; }
+      const note = fzVal('ptqNote').slice(0, 200);
+      fzCloseModal2();
+      if (amount > 0) {
+        finQueueSave({
+          id: newRecordId(), amount: Math.round(amount * 100) / 100, date, category: 'sonstiges',
+          title: p.name + ' · ' + (c.title || t.label), note, paidBy: fzVal('ptqPaidBy'), link: '',
+          store: '', listId: '', items: [], createdBy: (currentUser() && currentUser().id) || '', created: new Date().toISOString(),
+        });
+      }
+      ptCareDone(petId, careId, { date, note: note + (amount > 0 ? (note ? ' · ' : '') + fmtEur(amount) : '') });
+    });
+  });
 }
 // Takes a "done" back: the care task gets its old dates again (only while nobody has ticked it off again since)
 function ptUndoCare(entry) {
@@ -4761,7 +4867,7 @@ function ptPaneClick(e) {
     case 'adopt': ptAdoptMember(id); break;
     case 'togglegone': ptShowGone = !ptShowGone; renderFamily(); break;
     case 'care': ptOpenCare(id, b.dataset.cid); break;
-    case 'caredone': ptCareDone(id, b.dataset.cid); break;
+    case 'caredone': ptCareDoneAsk(id, b.dataset.cid); break;
     case 'feederfilled': ptFeederFilled(id); break;
     case 'careadd': ptOpenCare(id, ''); break;
     case 'presets': ptAddPresets(id); break;

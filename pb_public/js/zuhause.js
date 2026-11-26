@@ -612,8 +612,85 @@ function hsMeterLabel(m) { return m.name || hsMeterType(m.type).label; }
 function hsTaskAction(task) {
   if (!task || task.done || !hsCanEdit() || !finance) return null;
   const m = hsMeterMaintForTask(task);
-  if (!m) return null;
-  return { label: tk('home.enterMeterReadings'), run: () => hsMeterTaskRun(task.id) };
+  if (m) return { label: tk('home.enterMeterReadings'), run: () => hsMeterTaskRun(task.id) };
+  const mt = hsMaintForTask(task);
+  if (mt && hsMaintWantsInput(mt)) return { label: tk('qdone.maintAction'), run: () => hsOpenMaintDone(mt.id, task.id) };
+  return null;
+}
+/* ---------- Maintenance done with cost and note (since 1.168.0) ----------
+   Maintenance that usually costs something (heating service, gutters, fire extinguisher, mower service and every own
+   entry) opens a short popup when its task is ticked off: cost (booked under Home → Costs and in Finance) and a note
+   (company, findings …). Small chores (smoke alarm test, filters, garden year) stay a simple tick. */
+const HS_MAINT_COST_TPLS = ['heizwartung', 'dachrinne', 'feuerloescher', 'g_maeher'];
+function hsMaintForTask(task) {
+  if (!task || !task.household) return null;
+  return hsMaintItems().find(m => hsMaintKey(m) === task.household) || null;
+}
+function hsMaintWantsInput(m) {
+  return !!m && !hsMaintIsMeter(m) && (!m.tpl || HS_MAINT_COST_TPLS.includes(m.tpl)) && hsActiveHomes().length > 0;
+}
+function hsOpenMaintDone(id, taskId) {
+  const m = hsMaintItems().find(x => x.id === id);
+  if (!m || !hsCanEdit() || typeof fzOpenModal2 !== 'function') return;
+  const homes = hsActiveHomes();
+  const cur = hsCurrent();
+  const homeId = cur && homes.some(h => h.id === cur.id) ? cur.id : homes[0].id;
+  const html = `
+    <h3 class="font-serif text-lg mb-1 pr-6">${hsEsc((m.icon || '🔧') + ' ' + m.title)}</h3>
+    <p class="text-[11px] text-ink/45 mb-3">${hsEsc(tk('qdone.maintIntro'))}</p>
+    ${homes.length > 1 ? fzSel('hsqHome', tk('qdone.maintHome'), homes.map(h => [h.id, hsName(h)]), homeId) : ''}
+    <div class="fz-grid2">
+      ${fzIn('hsqAmount', tk('qdone.costOptional'), '', { mode: 'decimal', unit: curSym() })}
+      <div class="fin-paidby-wrap min-w-0">${fzSel('hsqPaidBy', tk('fin.csv.paidBy'), fzMemberOptions(), currentMember() ? currentMember().id : '')}</div>
+    </div>
+    ${fzIn('hsqNote', tk('fin.csv.note'), '', { ph: tk('qdone.maintNotePh'), max: 300 })}
+    <p id="hsqError" class="hidden text-xs text-red-500 mt-2"></p>
+    <div class="flex items-center gap-3 mt-2"><button type="button" id="hsqPlain" class="text-xs text-ink/50 hover:text-ink hover:underline">${hsEsc(tk('qdone.plain'))}</button></div>
+    <div class="flex items-center gap-2 mt-3">
+      <div class="flex-1"></div>
+      <button type="button" id="hsqCancel" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">${tk('common.cancel')}</button>
+      <button type="button" id="hsqSave" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">✓ ${hsEsc(tk('school.done2'))}</button>
+    </div>`;
+  const finish = () => {
+    const t = taskId ? aufgaben.find(x => x.id === taskId) : hsMaintOpen(m);
+    if (t && !t.done) hsCompleteTask(t);
+    hsMaintSyncFromTasks();
+    if (currentView === 'haus') renderHouse();
+  };
+  fzOpenModal2(html, () => {
+    document.getElementById('hsqCancel').addEventListener('click', fzCloseModal2);
+    document.getElementById('hsqPlain').addEventListener('click', () => { fzCloseModal2(); finish(); finShowToast(tk('pet.done')); });
+    document.getElementById('hsqSave').addEventListener('click', () => {
+      const raw = fzVal('hsqAmount');
+      const amount = raw ? parseEuro(raw) : 0;
+      if (raw && (!isFinite(amount) || amount < 0 || amount > 1000000)) { fzShowErr('hsqError', tk('home.pleaseEnterValidAmount')); return; }
+      const note = fzVal('hsqNote').slice(0, 300);
+      const home = homes.length > 1 ? fzVal('hsqHome') : homeId;
+      let booked = false;
+      if (amount > 0 || note) {
+        const date = finTodayIso();
+        const type = hsMaintIsGarden(m) ? 'garten' : 'handwerker';
+        const log = {
+          id: newRecordId(), home, type, date, desc: String(m.title || '').slice(0, 120),
+          amount: amount > 0 ? Math.round(amount * 100) / 100 : '', labor: '', booked: amount > 0, paidBy: fzVal('hsqPaidBy'),
+          project: '', room: '', warranty: '', note, docLinks: [], created: new Date().toISOString(),
+        };
+        hsUpsert('homeLog', log);
+        if (log.booked) {
+          booked = true;
+          finQueueSave({
+            id: log.id, amount: log.amount, date, category: HS_FIN_CATEGORY,
+            title: log.desc + ' · ' + hsName(hsHomeById(home)), note, paidBy: log.paidBy, link: 'haus:' + home,
+            store: '', listId: '', items: [], createdBy: (currentUser() && currentUser().id) || '', created: new Date().toISOString(),
+          });
+        }
+        hsAfterChange();
+      }
+      fzCloseModal2();
+      finish();
+      finShowToast(booked ? tk('home.savedAndBooked') : tk('pet.done'));
+    });
+  });
 }
 function hsCompleteTask(task) {
   if (!task || task.done || typeof queueTaskDone !== 'function') return;
@@ -695,6 +772,7 @@ function hsMaintAct(id) {
   const open = m ? hsMaintOpen(m) : null;
   if (!open || !hsCanEdit()) return;
   if (hsMaintIsMeter(m)) { hsMeterTaskRun(open.id); return; }
+  if (hsMaintWantsInput(m)) { hsOpenMaintDone(m.id, open.id); return; }
   hsCompleteTask(open);
   finShowToast(tk('pet.done'));
   if (currentView === 'haus') renderHouse();
@@ -733,6 +811,12 @@ function renderHouse() {
   const labels = { uebersicht: h ? tk('home.edit') : tk('home.home'), maengel: tk('home.defect'), kosten: tk('home.invoice'), zaehler: tk('home.meterReading'), wartung: tk('home.maintenance'), garten: tk('home.plant') };
   hb.textContent = labels[hsTab] || '+';
   hb.classList.toggle('hidden', !hsCanEdit() || (!h && hsTab !== 'uebersicht' && hsTab !== 'wartung'));
+  // Locked area (js/menuesperre.js, since 1.168.0): lock card instead of the tab
+  if (hsTab !== 'uebersicht' && typeof mlsSubLocked === 'function' && mlsSubLocked('haus', hsTab)) {
+    hb.classList.add('hidden');
+    pane.innerHTML = mlsLockedPaneHtml('haus', hsTab);
+    return;
+  }
   if (hsTab === 'wartung') { pane.innerHTML = hsMaintPageHtml(); return; }
   if (!h) { pane.innerHTML = hsEmptyHtml(); return; }
   const switcher = hsSwitcherHtml(h);

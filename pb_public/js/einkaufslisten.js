@@ -471,8 +471,11 @@ function shoppingRecipeRowHtml(item, showRoute = false) {
 // Content of a list: open items by category (order from the settings), below it
 // everything checked off. Own entries come before the recipe ingredients within their category.
 function shoppingGroupedBodyHtml(manual, recipeItems, showRoute) {
-  const openManual = manual.filter(it => !it.done);
+  let openManual = manual.filter(it => !it.done);
   const doneManual = manual.filter(it => it.done);
+  // Important on top (setting of this device, js/listen.js lsImpTop, since 1.168.0)
+  const impManual = typeof lsImpTop === 'function' && lsImpTop() ? openManual.filter(it => it.important) : [];
+  if (impManual.length) openManual = openManual.filter(it => !it.important);
   const openRecipe = [], doneRecipe = [];
   (recipeItems || []).forEach(i => (getShoppingItemAdjustment(i.key).excluded ? doneRecipe : openRecipe).push(i));
   const groups = shoppingCategoriesOrdered().map(c => ({
@@ -480,7 +483,12 @@ function shoppingGroupedBodyHtml(manual, recipeItems, showRoute) {
     manual: openManual.filter(it => shoppingItemCategory(it) === c.id),
     recipe: openRecipe.filter(i => shoppingAutoCategory(shoppingRecipeLabelQty(i).label) === c.id),
   })).filter(g => g.manual.length || g.recipe.length);
-  const groupHtml = groups.map(g => `
+  const impHtml = impManual.length ? `
+    <div class="shop-group">
+      <h3 class="shop-group-head shop-group-imp"><span class="text-sm">❗</span>${escapeHtml(tk('lists.filter.important'))}<span class="text-ink/30 normal-case tracking-normal">· ${impManual.length}</span></h3>
+      <div class="flex flex-col gap-1.5">${impManual.map(shoppingManualRowHtml).join('')}</div>
+    </div>` : '';
+  const groupHtml = impHtml + groups.map(g => `
     <div class="shop-group">
       <h3 class="shop-group-head"><span class="text-sm">${escapeHtml(g.cat.icon || '')}</span>${escapeHtml(i18nT(g.cat.label))}<span class="text-ink/30 normal-case tracking-normal">· ${g.manual.length + g.recipe.length}</span></h3>
       <div class="flex flex-col gap-1.5">${g.manual.map(shoppingManualRowHtml).join('')}${g.recipe.map(i => shoppingRecipeRowHtml(i, showRoute)).join('')}</div>
@@ -506,7 +514,7 @@ function toggleAllShoppingItemsOfList(listId, onlyIds = null) {
   persistState();
   renderShoppingList();
 }
-// Own entries: tap = check off (in the cart), long press = edit/delete.
+// Own entries: tap = check off (in the cart), long press = sheet "important on/off" / "edit" (since 1.168.0; before: edit).
 // Recipe ingredients: tap = "Hab ich noch zu Hause", long press = breakdown.
 // Plus/minus: change the quantity directly (recipe ingredients only for this shopping trip).
 function wireShoppingRows(rootEl, recipeItems, from, to) {
@@ -516,7 +524,17 @@ function wireShoppingRows(rootEl, recipeItems, from, to) {
     attachIngredientLongPress(row, () => {
       suppressClick = true;
       const it = shoppingItems.find(x => x.id === id);
-      if (it) openShoppingItemModal({ editId: it.id });
+      if (!it) return;
+      lsQuickSheet(it.name, !!it.important, () => {
+        shoppingItems = shoppingItems.map(x => {
+          if (x.id !== id) return x;
+          const n = { ...x };
+          if (n.important) delete n.important; else n.important = true;
+          return n;
+        });
+        persistState();
+        renderShoppingList();
+      }, () => openShoppingItemModal({ editId: it.id }));
     });
     row.addEventListener('pointerdown', () => { suppressClick = false; });
     row.addEventListener('click', () => {
@@ -645,7 +663,8 @@ function renderShoppingCombinedDetail() {
         <button type="button" class="ls-tab ${filter ? '' : 'active'}" data-shop-filter="">${escapeHtml(tk('lists.filterAll'))}</button>
         ${filterChoices.map(f => `<button type="button" class="ls-tab ${f === filter ? 'active' : ''} ${f === 'important' ? 'is-imp' : ''}" data-shop-filter="${f}">${escapeHtml(tk('shop.filter.' + f))}<b>${counts[f]}</b></button>`).join('')}
       </div>
-    </div>` : ''}` : '';
+    </div>
+    ${impOpen ? `<div class="mx-auto w-full max-w-xl flex justify-end mb-3 -mt-1"><button type="button" class="ls-imp-top${lsImpTop() ? ' is-on' : ''}" data-shop-imptop="1" aria-pressed="${lsImpTop() ? 'true' : 'false'}">⬆ ${escapeHtml(tk('lists.importantTop'))}</button></div>` : ''}` : ''}` : '';
 
   const sectionsHtml = perList.map(({ list, isMeal, manual: allManual, items: allItems }) => {
     const manual = allManual.filter(it => shoppingManualMatchesFilter(it, filter));
@@ -695,6 +714,7 @@ function renderShoppingCombinedDetail() {
     renderShoppingList();
   });
   contentEl.querySelectorAll('[data-shop-filter]').forEach(b => b.addEventListener('click', () => setFilter(b.dataset.shopFilter)));
+  contentEl.querySelectorAll('[data-shop-imptop]').forEach(b => b.addEventListener('click', () => { lsSetImpTop(!lsImpTop()); renderShoppingList(); }));
   contentEl.querySelectorAll('.shop-filter-reset').forEach(b => b.addEventListener('click', () => setFilter('')));
   const hintBtn = document.getElementById('shoppingImportantHint');
   if (hintBtn) hintBtn.addEventListener('click', () => {
@@ -848,7 +868,8 @@ function renderShoppingDetail() {
         <button type="button" class="ls-tab ${filter ? '' : 'active'}" data-shop-filter="">${escapeHtml(tk('lists.filterAll'))}</button>
         ${filterChoices.map(f => `<button type="button" class="ls-tab ${f === filter ? 'active' : ''} ${f === 'important' ? 'is-imp' : ''}" data-shop-filter="${f}">${escapeHtml(tk('shop.filter.' + f))}<b>${counts[f]}</b></button>`).join('')}
       </div>
-    </div>` : ''}` : '';
+    </div>
+    ${impOpen ? `<div class="mx-auto w-full max-w-xl flex justify-end mb-3 -mt-1"><button type="button" class="ls-imp-top${lsImpTop() ? ' is-on' : ''}" data-shop-imptop="1" aria-pressed="${lsImpTop() ? 'true' : 'false'}">⬆ ${escapeHtml(tk('lists.importantTop'))}</button></div>` : ''}` : ''}` : '';
 
   const bodyHtml = (shownManual.length || shownItems.length)
     ? shoppingGroupedBodyHtml(shownManual, shownItems, isMeal)
@@ -870,6 +891,7 @@ function renderShoppingDetail() {
     renderShoppingList();
   });
   contentEl.querySelectorAll('[data-shop-filter]').forEach(b => b.addEventListener('click', () => setFilter(b.dataset.shopFilter)));
+  contentEl.querySelectorAll('[data-shop-imptop]').forEach(b => b.addEventListener('click', () => { lsSetImpTop(!lsImpTop()); renderShoppingList(); }));
   contentEl.querySelectorAll('.shop-filter-reset').forEach(b => b.addEventListener('click', () => setFilter('')));
   const hintBtn = document.getElementById('shoppingImportantHint');
   if (hintBtn) hintBtn.addEventListener('click', () => {

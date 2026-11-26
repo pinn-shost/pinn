@@ -97,8 +97,14 @@ function applyOverviewPrefs(w) {
   try { kzApplyPrefs(w.ovShortcuts, w.ovShortcutsSet === true); kzApplyLayout({ phone: w.ovShortcutsRowsPhone, tablet: w.ovShortcutsRowsTablet }); } catch (e) { /* file not loaded yet */ }
 }
 
+// Menus/areas whose lock hides a tile (js/menuesperre.js, since 1.168.0)
+const OVERVIEW_LOCK_KEYS = {
+  kalender: 'termine', essen: 'rezepte', aufgaben: 'aufgaben', geburtstage: 'familie', vertraege: ['finanzen', 'finanzen:vertraege'],
+  pinnwand: 'pinnwand', familie: ['familie', 'familie:ortung'], sicherheit: 'haus',
+};
 // Can the tile appear at all right now (regardless of the setting)?
 function overviewTileAvailable(id) {
+  if (typeof mlsHidden === 'function' && mlsHidden(OVERVIEW_LOCK_KEYS[id])) return false;
   if (id === 'kalender') return !isCalendarHiddenForGuest();
   if (id === 'geburtstage') {
     if (isCurrentUserGuest()) return false;

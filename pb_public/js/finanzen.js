@@ -752,6 +752,24 @@ function renderFinance() {
     b.classList.toggle('active', on);
     b.setAttribute('aria-selected', on ? 'true' : 'false');
   });
+  // Locked area (js/menuesperre.js, since 1.168.0): lock card instead of the tab
+  const finLocked = typeof mlsSubLocked === 'function' && mlsSubLocked('finanzen', finTab);
+  let lockEl = document.getElementById('finPaneLocked');
+  if (!lockEl && finLocked) {
+    const first = document.getElementById('finPaneAusgaben');
+    lockEl = document.createElement('div');
+    lockEl.id = 'finPaneLocked';
+    lockEl.className = 'max-w-3xl mx-auto';
+    first.parentNode.insertBefore(lockEl, first);
+  }
+  if (lockEl) lockEl.classList.toggle('hidden', !finLocked);
+  if (finLocked) {
+    lockEl.innerHTML = mlsLockedPaneHtml('finanzen', finTab);
+    ['finPaneAusgaben', 'finPaneSparen', 'finPaneTaschengeld', 'finPaneVertraege', 'finPeriodBar', 'finContractBar', 'openExpenseModalBtn', 'openFinanceSettingsBtn']
+      .forEach(id => { const el = document.getElementById(id); if (el) el.classList.add('hidden'); });
+    return;
+  }
+  document.getElementById('openFinanceSettingsBtn').classList.remove('hidden');
   document.getElementById('finPaneAusgaben').classList.toggle('hidden', finTab !== 'ausgaben');
   document.getElementById('finPaneSparen').classList.toggle('hidden', finTab !== 'sparen');
   document.getElementById('finPaneTaschengeld').classList.toggle('hidden', finTab !== 'taschengeld');

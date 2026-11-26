@@ -185,3 +185,13 @@ html.dark .shop-filter-chips .ls-tab.is-imp:not(.active) { color: #FFB4AD; }
 .shop-imp-check.is-on { background: #FCEDEC; border-color: rgba(217,74,69,.45); }
 .shop-imp-check input { accent-color: #D94A45; }
 html.dark .shop-imp-check.is-on { background: rgba(217,74,69,.16); border-color: rgba(240,120,112,.45); }
+/* "Important on top" switch, the important group and the long-press sheet (since 1.168.0) */
+.ls-imp-top { font-size: 12px; padding: 4px 10px; border-radius: 999px; border: 1px solid rgba(34,34,34,.15); color: rgba(34,34,34,.6); background: #fff; }
+.ls-imp-top.is-on { border-color: #D94A45; color: #A8322E; background: #FCEDEC; font-weight: 600; }
+.ls-sec-imp span, .shop-group-imp { color: #A8322E; }
+.shop-imp-sheet-btn { background: #D94A45; color: #fff; }
+.shop-imp-sheet-btn:hover { background: #C23E39; }
+.shop-imp-sheet-btn svg, #lsqImp svg { width: 16px; height: 16px; }
+html.dark .ls-imp-top { background: transparent; border-color: rgba(255,255,255,.2); color: rgba(255,255,255,.65); }
+html.dark .ls-imp-top.is-on { background: rgba(217,74,69,.18); border-color: #F07870; color: #FFB4AD; }
+html.dark .ls-sec-imp span, html.dark .shop-group-imp { color: #FFB4AD; }

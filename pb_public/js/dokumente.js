@@ -749,6 +749,40 @@ function docTileHtml(docId, f, opts = {}) {
       <span class="doc-tile-name">${escapeHtml(f.name || tk('contract.file'))}</span>${state}${del}
     </button>`;
 }
+/* Expired or expiring ID card, passport, licence … (since 1.168.0): "Renewed" asks only for the new expiry date (and a
+   note) - the reminder starts again by itself. A photo of the new document can be added afterwards with "Edit". */
+function docOpenRenew(id) {
+  const d = docById(id);
+  if (!d || typeof fzOpenModal2 !== 'function') { if (d) openDocEditModal(id); return; }
+  const cat = docCategory(d.kategorie);
+  fzOpenModal2(`
+    <h3 class="font-serif text-lg mb-1 pr-6">🔄 ${escapeHtml(d.titel || tk('search.type.doc'))}</h3>
+    <div class="text-xs text-ink/50 mb-3">${escapeHtml(i18nT(cat.label))}${d.gueltig_bis ? ' · ' + escapeHtml(tk('qdone.docOld', { date: vtFmt(d.gueltig_bis) })) : ''}</div>
+    ${fzIn('docqDate', tk('qdone.docNewDate'), '', { type: 'date' })}
+    ${fzIn('docqNote', tk('fin.csv.note'), '', { ph: tk('qdone.docNotePh'), max: 200 })}
+    <p class="text-[11px] text-ink/45 -mt-1 mb-2">${escapeHtml(tk('qdone.docHint'))}</p>
+    <p id="docqError" class="hidden text-xs text-red-500 mt-2"></p>
+    <div class="flex items-center gap-2 mt-3">
+      <div class="flex-1"></div>
+      <button type="button" id="docqCancel" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">${tk('common.cancel')}</button>
+      <button type="button" id="docqSave" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">${escapeHtml(tk('common.save'))}</button>
+    </div>`, () => {
+    document.getElementById('docqCancel').addEventListener('click', () => { fzCloseModal2(); openDocDetail(id); });
+    document.getElementById('docqSave').addEventListener('click', async () => {
+      const date = fzVal('docqDate');
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || date <= finTodayIso()) { fzShowErr('docqError', tk('qdone.docNeedFuture')); return; }
+      const note = fzVal('docqNote').slice(0, 200);
+      const fields = { gueltig_bis: date };
+      if (note) fields.notiz = [d.notiz || '', note].filter(Boolean).join('\n').slice(0, 2000);
+      fzCloseModal2();
+      await docEnqueueSave(id, false, fields, [], [], []);
+      renderDocuments();
+      docFlush();
+      finShowToast(tk('qdone.docRenewed', { date: vtFmt(date) }));
+      openDocDetail(id);
+    });
+  });
+}
 function renderDocDetail() {
   const body = document.getElementById('docDetailBody');
   const d = docById(docDetailId);
@@ -810,7 +844,7 @@ function renderDocDetail() {
         ${d.kasse ? `<div class="text-[11px] text-ink/50 mt-0.5">${tk('doc.fund', { docKasseName: escapeHtml(docKasseName(d.kasse)) })}</div>` : ''}
       </div>
     </div>
-    ${dl ? `<div class="vt-status-box ${dl.tone === 'ok' ? '' : dl.tone} mb-3"><div class="text-sm font-semibold">${escapeHtml(i18nT(dl.label))}</div><div class="text-xs opacity-80">${escapeHtml(dl.tone === 'ok' ? (dl.field === 'gueltig_bis' ? tk('doc.dl.expiresLower', { when: docInText(dl.days) }) : tk('doc.dl.endsLower', { when: docInText(dl.days) })) : dl.long + ' ' + vtFmt(dl.date))}</div></div>` : ''}
+    ${dl ? `<div class="vt-status-box ${dl.tone === 'ok' ? '' : dl.tone} mb-3"><div class="text-sm font-semibold">${escapeHtml(i18nT(dl.label))}</div><div class="text-xs opacity-80">${escapeHtml(dl.tone === 'ok' ? (dl.field === 'gueltig_bis' ? tk('doc.dl.expiresLower', { when: docInText(dl.days) }) : tk('doc.dl.endsLower', { when: docInText(dl.days) })) : dl.long + ' ' + vtFmt(dl.date))}</div>${dl.field === 'gueltig_bis' && dl.tone !== 'ok' ? `<button type="button" id="docRenewBtn" class="mt-2 px-3 py-1.5 rounded-lg bg-white/80 border border-ink/15 text-xs font-medium hover:border-pine">🔄 ${escapeHtml(tk('qdone.docRenew'))}</button>` : ''}</div>` : ''}
     ${d.pending ? `<p class="vt-info mb-3">${navigator.onLine ? tk('doc.beingTransferredNas') : tk('doc.notNasYetWill')}</p>` : ''}
     <div class="doc-file-grid mb-1">${tiles}</div>
     ${files.length ? '' : ('<p class="text-xs text-ink/45 italic">' + tk('doc.noFiles') + '</p>')}
@@ -831,6 +865,8 @@ function renderDocDetail() {
     if (f) docOpenFile(d, f, files);
   }));
   document.getElementById('docDetailEditBtn').addEventListener('click', () => { const id = d.id; closeDocDetail(); openDocEditModal(id); });
+  const renew = document.getElementById('docRenewBtn');
+  if (renew) renew.addEventListener('click', () => { const id = d.id; closeDocDetail(); docOpenRenew(id); });
   body.querySelectorAll('[data-docveh]').forEach(b => b.addEventListener('click', () => { const vid = b.dataset.docveh; closeDocDetail(); fzOpenVehicle(vid); }));
   const shareBtn = document.getElementById('docShareBtn');
   if (shareBtn) shareBtn.addEventListener('click', () => docShare(d, shareBtn));

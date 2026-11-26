@@ -15,7 +15,15 @@
    - Stored on the device only (localStorage pinn.menuesperre): { user, views: [view ids], after: minutes }. Until 1.163 it
      also held an own Face ID key ("bio") and an own PIN ("pin"): the key is taken over as the Face ID of the device, the
      own PIN is dropped (the PIN of the profile applies). This is a lock inside the app for a personal device – it does not
-     replace the screen lock of the device. Not for guests, the main admin and the family dashboard. */
+     replace the screen lock of the device. Not for guests, the main admin and the family dashboard.
+   - Since 1.168.0 single areas of a menu can be locked as well (MLS_SUBS: Family → School, Pets, Location, Health;
+     Finance → Expenses, Savings, Pocket money, Contracts; Home → Defects, Costs, Meters, Maintenance, Garden). They are
+     stored in the same list as "<menu>:<area>" (e.g. "familie:gesundheit"). The menu stays usable, only the locked tab
+     shows a lock card instead of its content (mlsSubLocked / mlsLockedPaneHtml, asked by renderFamily, renderFinance and
+     renderHouse). One unlock opens the area for the chosen time; "immediately" locks it again when another tab or menu is
+     opened. Health also covers the emergency pass in the profile of a member.
+   - Outside their page the content of locked menus and areas is left out as well: overview tiles, shortcuts, search
+     results and activities of the bell (mlsHidden, since 1.168.0). The SOS shortcut and the way home stay. */
 
 var MLS_KEY = 'pinn.menuesperre';
 var MLS_VIEWS = [
@@ -30,6 +38,29 @@ var mlsOpenView = '';                // unlocked view for "immediately"
 var mlsLastFree = 'konto';           // last view that was not locked (target of "back")
 var mlsGate = null;                  // { view, el }
 var mlsBusy = false;
+// Lockable areas inside a menu (since 1.168.0): view -> [[area id, text key]]; Home takes its names from HS_MODULES
+var MLS_SUBS = {
+  familie: [['schule', 'school.title'], ['tiere', 'pet.pets4'], ['ortung', 'family.location3'], ['gesundheit', 'gh.title']],
+  finanzen: [['ausgaben', 'fin.expenses'], ['sparen', 'fin.savings'], ['taschengeld', 'depot.pocketMoney'], ['vertraege', 'contract.contracts']],
+  haus: [['maengel', ''], ['kosten', ''], ['zaehler', ''], ['wartung', ''], ['garten', '']],
+};
+function mlsIsKey(k) {
+  if (MLS_VIEWS.some(function (x) { return x[0] === k; })) return true;
+  var i = String(k).indexOf(':');
+  if (i < 0) return false;
+  var list = MLS_SUBS[k.slice(0, i)];
+  return !!list && list.some(function (x) { return x[0] === k.slice(i + 1); });
+}
+function mlsSubName(view, sub) {
+  var list = MLS_SUBS[view] || [];
+  var hit = list.find(function (x) { return x[0] === sub; });
+  if (hit && hit[1]) return tk(hit[1]);
+  if (view === 'haus' && typeof HS_MODULES !== 'undefined') {
+    var m = HS_MODULES.find(function (x) { return x.id === sub; });
+    if (m) return m.tabLabel || m.label;
+  }
+  return sub;
+}
 
 /* ---------- Stored settings ---------- */
 function mlsNormView(view) { return view === 'haushalt' ? 'aufgaben' : view; }
@@ -37,7 +68,7 @@ function mlsCfg() {
   var c = null;
   try { c = JSON.parse(localStorage.getItem(MLS_KEY) || 'null'); } catch (e) { c = null; }
   if (!c || typeof c !== 'object' || !c.user) return null;
-  c.views = Array.isArray(c.views) ? c.views.filter(function (v) { return MLS_VIEWS.some(function (x) { return x[0] === v; }); }) : [];
+  c.views = Array.isArray(c.views) ? c.views.filter(mlsIsKey) : [];
   c.after = [0, 1, 5, 15].indexOf(Number(c.after)) >= 0 ? Number(c.after) : 5;
   if ('bio' in c || 'pin' in c) {
     // Stored by 1.162/1.163: an own Face ID key becomes the Face ID of this device (if it has none yet), an own PIN is dropped
@@ -86,11 +117,85 @@ function mlsCheck(view) {
   var c = mlsActive();
   var v = mlsNormView(view);
   if (!c) { mlsHideGate(); return; }
-  if (c.after === 0 && mlsOpenView && mlsOpenView !== v) mlsOpenView = '';
+  // "Immediately": leaving the menu locks it again (an unlocked area of this menu stays open while the menu is shown)
+  if (c.after === 0 && mlsOpenView && mlsOpenView !== v && mlsOpenView.indexOf(v + ':') !== 0) mlsOpenView = '';
   if (c.views.indexOf(v) < 0) { mlsLastFree = v; mlsHideGate(); return; }
   if (mlsIsOpen(c, v)) { if (c.after > 0) mlsOpenUntil = Date.now() + c.after * 60000; mlsHideGate(); return; }
   mlsShowGate(v);
 }
+
+/* ---------- Content of locked menus/areas outside their page (since 1.168.0) ----------
+   Overview tiles, shortcuts, the search and the activities of the bell ask here before they show something of a
+   menu or area. keys: one key or a list (e.g. ["finanzen", "finanzen:vertraege"]). Only asks, changes nothing:
+   with "immediately" the content shows only while that page itself is unlocked; with 1/5/15 min. while the time runs. */
+function mlsHidden(keys) {
+  var c = mlsActive();
+  if (!c || !keys) return false;
+  var list = Array.isArray(keys) ? keys : [keys];
+  return list.some(function (k) {
+    if (c.views.indexOf(k) < 0) return false;
+    if (c.after > 0) return Date.now() >= mlsOpenUntil;
+    return mlsOpenView !== k && mlsOpenView !== String(k).split(':')[0];
+  });
+}
+
+/* ---------- Locked areas inside a menu (since 1.168.0) ---------- */
+// Asked by the page while it draws the tab "sub" of "view": true = show the lock card instead of the content.
+// peek: only asks (for small cards of the area shown elsewhere, e.g. the emergency pass in a profile) – the tab that is
+// drawn decides what stays unlocked with "immediately".
+function mlsSubLocked(view, sub, peek) {
+  var c = mlsActive();
+  if (!c) return false;
+  var key = view + ':' + sub;
+  if (!peek && c.after === 0 && mlsOpenView && mlsOpenView !== key && mlsOpenView !== view) mlsOpenView = '';
+  if (c.views.indexOf(key) < 0) return false;
+  if (c.after === 0 ? (mlsOpenView === key || mlsOpenView === view) : Date.now() < mlsOpenUntil) {
+    if (c.after > 0 && !peek) mlsOpenUntil = Date.now() + c.after * 60000;
+    return false;
+  }
+  return true;
+}
+function mlsLockedPaneHtml(view, sub) {
+  var bioOk = lkBioReady(), pinOk = lkHasPin();
+  var name = mlsSubName(view, sub);
+  var main = 'px-4 py-2.5 rounded-xl bg-pine text-white text-sm font-medium hover:bg-pine/90 transition w-full max-w-xs';
+  var second = 'px-4 py-2.5 rounded-xl border border-ink/15 text-sm hover:border-pine transition w-full max-w-xs';
+  return '<div class="mls-sub-lock max-w-md mx-auto my-6 rounded-2xl border border-ink/10 bg-white px-6 py-8 text-center flex flex-col items-center gap-3" data-mls-sub="' + escapeHtml(view + ':' + sub) + '">' +
+    '<div class="text-4xl leading-none">🔒</div>' +
+    '<div class="font-serif text-lg font-semibold">' + escapeHtml(tk('mlock.subTitle', { area: name })) + '</div>' +
+    '<p class="text-sm text-ink/55 max-w-xs" data-mls-sub-msg>' + escapeHtml(tk('mlock.subMsg', { method: bioMethodName() })) + '</p>' +
+    (bioOk ? '<button type="button" data-mls-sub-act="bio" class="' + main + '">' + escapeHtml(tk('lock.unlock', { method: bioMethodName() })) + '</button>' : '') +
+    (pinOk ? '<button type="button" data-mls-sub-act="pin" class="' + (bioOk ? second : main) + '">' + escapeHtml(tk('mlock.enterPin')) + '</button>' : '') +
+    '</div>';
+}
+function mlsRedraw(view) {
+  try {
+    if (view === 'familie' && typeof renderFamily === 'function') renderFamily();
+    else if (view === 'finanzen' && typeof renderFinance === 'function') renderFinance();
+    else if (view === 'haus' && typeof renderHouse === 'function') renderHouse();
+  } catch (e) { /* page not built */ }
+}
+async function mlsSubUnlock(box, how) {
+  var c = mlsActive();
+  var key = box.dataset.mlsSub;
+  if (!c || mlsBusy) return;
+  var ok = false;
+  mlsBusy = true;
+  try { ok = how === 'bio' ? await lkBioVerify() : await lkAskPin(); } finally { mlsBusy = false; }
+  if (!ok) {
+    var msg = box.querySelector('[data-mls-sub-msg]');
+    if (msg && how === 'bio') msg.textContent = tk('lock.failed');
+    return;
+  }
+  mlsMarkOpen(c, key);
+  mlsRedraw(key.split(':')[0]);
+}
+document.addEventListener('click', function (ev) {
+  var b = ev.target.closest && ev.target.closest('[data-mls-sub-act]');
+  if (!b) return;
+  var box = b.closest('[data-mls-sub]');
+  if (box) mlsSubUnlock(box, b.dataset.mlsSubAct);
+});
 
 /* ---------- Lock screen over a locked menu ---------- */
 function mlsHideGate() {
@@ -184,10 +289,14 @@ document.addEventListener('visibilitychange', function () {
   var c = mlsActive();
   if (!c || typeof currentView === 'undefined') return;
   var v = mlsNormView(currentView);
-  if (c.views.indexOf(v) < 0) return;
+  var hasSub = c.views.some(function (k) { return k.indexOf(v + ':') === 0; });
+  if (c.views.indexOf(v) < 0 && !hasSub) return;
   var away = 0;
   try { away = Date.now() - Number(localStorage.getItem(MLS_AWAY_KEY) || Date.now()); } catch (e) { away = 0; }
-  if (away >= c.after * 60000) { mlsOpenView = ''; mlsOpenUntil = 0; mlsShowGate(v); }
+  if (away < c.after * 60000) return;
+  mlsOpenView = ''; mlsOpenUntil = 0;
+  if (c.views.indexOf(v) >= 0) mlsShowGate(v);
+  else mlsRedraw(v); // a locked area that is shown right now gets its lock card again
 });
 
 /* ---------- Settings → "Unlock & lock" → Lock menus ---------- */
@@ -213,6 +322,7 @@ function mlsRenderCard() {
   box.innerHTML =
     '<p class="text-xs text-ink/50 leading-relaxed mb-2">' + escapeHtml(tk('mlock.intro', { method: bioMethodName() })) + '</p>' +
     '<div class="grid grid-cols-2 gap-x-4 mb-3">' + items + '</div>' +
+    mlsSubsCardHtml(c) +
     '<div class="flex items-center gap-3 mb-2"><span class="text-sm">' + escapeHtml(tk('account.bio.after')) + '</span>' +
       '<select id="mlsAfter" class="rounded-lg border border-ink/15 px-2 py-1.5 text-sm bg-white">' +
       [[0, 'account.bio.now'], [1, 'account.bio.min1'], [5, 'account.bio.min5'], [15, 'account.bio.min15']].map(function (o) {
@@ -220,6 +330,20 @@ function mlsRenderCard() {
       }).join('') + '</select></div>' +
     '<p id="mlsStatus" class="text-xs text-ink/50 mt-2"></p>' +
     (c.views.length ? '<button type="button" data-mls-act="reset" class="mt-2 ' + btnCls + ' text-ink/60">' + escapeHtml(tk('mlock.reset')) + '</button>' : '');
+}
+// Single areas (since 1.168.0): one small group per menu
+function mlsSubsCardHtml(c) {
+  var groups = Object.keys(MLS_SUBS).map(function (view) {
+    var subs = MLS_SUBS[view].filter(function (x) { return !(view === 'finanzen' && x[0] === 'taschengeld' && typeof wgShowAllowanceTab === 'function' && !wgShowAllowanceTab()); });
+    return '<div class="mb-2"><div class="text-[11px] uppercase tracking-wide text-ink/40 mb-0.5">' + escapeHtml(mlsMenuName(view)) + '</div>' +
+      '<div class="grid grid-cols-2 gap-x-4">' + subs.map(function (x) {
+        var key = view + ':' + x[0];
+        return '<label class="flex items-center gap-2 text-sm cursor-pointer py-1"><input type="checkbox" data-mls-view="' + key + '"' + (c.views.indexOf(key) >= 0 ? ' checked' : '') +
+          ' class="w-4 h-4 accent-[var(--c-pine)]"><span>' + escapeHtml(mlsSubName(view, x[0])) + '</span></label>';
+      }).join('') + '</div></div>';
+  }).join('');
+  return '<div class="border-t border-ink/10 pt-3 mb-3"><div class="text-sm font-medium">' + escapeHtml(tk('mlock.subsTitle')) + '</div>' +
+    '<p class="text-xs text-ink/50 leading-relaxed mb-2">' + escapeHtml(tk('mlock.subsHint')) + '</p>' + groups + '</div>';
 }
 function mlsStatus(text) {
   var s = document.getElementById('mlsStatus');

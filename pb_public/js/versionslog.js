@@ -22,6 +22,17 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.168', datum: '26.11.2026', titel: 'Bereiche sperren, mehr Abhaken mit Eingabe, Reiseapotheke, Woche aus dem Vorrat',
+    punkte: [
+      ['neu', 'Einzelne Bereiche sperren: Unter Einstellungen → Entsperren & Sperren → Menüs sperren lassen sich jetzt auch einzelne Bereiche wählen – in Familie Schule, Haustiere, Ortung und Gesundheit, in Finanzen Ausgaben, Sparen, Taschengeld und Verträge, in Zuhause Mängel, Kosten, Zähler, Wartung und Garten. Das Menü bleibt offen, nur der gesperrte Bereich zeigt ein Schloss und öffnet mit Face ID/Fingerabdruck oder PIN. Gesundheit sperrt auch den Notfallpass im Profil, Schule auch die Schulkarten.'],
+      ['info', 'Gesperrtes bleibt auch woanders verborgen: Kacheln der Übersicht, Kurzbefehle, die Suche und die Aktivitäten unter der Glocke zeigen nichts aus gesperrten Menüs oder Bereichen (z. B. keine Kündigungsfristen bei gesperrten Verträgen). SOS bleibt immer da.'],
+      ['neu', 'Abhaken mit Eingabe – weitere Fälle: Wartungen mit Kosten (Heizung, Dachrinne, Feuerlöscher, Mäher-Service, eigene) fragen nach Kosten und Notiz; das Versicherungskennzeichen nach neuem Kennzeichen und Kosten; Impfung und Tierarzt bei Haustieren nach Tag, Kosten und Notiz; Elternbriefe mit Betrag fragen „Bezahlt?“ und buchen auf Wunsch in Finanzen. Ausweise & Co. mit Ablaufdatum haben „Erneuert – neues Ablaufdatum“, Kündigungsfristen auf der Übersicht fragen „Kündigen / Läuft weiter / Öffnen“.'],
+      ['neu', 'Listen: Langes Drücken auf einen Eintrag öffnet „Als wichtig markieren / Bearbeiten“ (Einkauf und alle anderen Listen). Im Filter lässt sich „Wichtiges oben“ einschalten – wichtige Einträge stehen dann gesammelt ganz oben (Einstellung dieses Geräts).'],
+      ['neu', 'Reiseapotheke: In jeder Packliste stellt „💊 Reiseapotheke“ die regelmäßigen Medikamente der Familie mit der Menge für die Reise zusammen – reicht der Vorrat nicht, wird der Eintrag wichtig – plus die übliche Grundausstattung.'],
+      ['neu', 'Woche aus dem Vorrat: Im Fenster „Essen planen“ schlägt „🥫 Woche aus dem Vorrat vorschlagen“ für die freien Tage der nächsten Woche Rezepte vor, für die schon viel im Vorrat ist – was bald abläuft, zuerst. ↻ tauscht ein Rezept, „Einplanen“ übernimmt die Auswahl.'],
+    ],
+  },
+  {
     v: '1.167', datum: '26.11.2026', titel: 'Abhaken mit Eingabe, Wichtig in allen Listen',
     punkte: [
       ['neu', 'Aufgaben mit eigener Eingabe: Wer „Winterreifen aufziehen“, die HU oder die Inspektion abhakt, bekommt jetzt ein kurzes Fenster nur dafür – welche Reifen jetzt drauf sind bzw. Ergebnis und nächste HU, dazu Datum, Kilometerstand und auf Wunsch die Kosten. Speichern hakt die Aufgabe ab und bringt das Fahrzeug auf den neuen Stand. Dasselbe Fenster öffnet „Erledigt“ unter Fahrzeuge; „Mehr Angaben …“ führt zum ausführlichen Eintrag. Auch „Zählerstände ablesen“ öffnet beim Abhaken die Ablesung, und „Rezept holen“ fragt nach der neuen Packung, damit der Medikamentenvorrat wieder stimmt. „Nur abhaken“ geht weiterhin.'],
