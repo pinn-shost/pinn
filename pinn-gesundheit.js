@@ -1,0 +1,529 @@
+// pb_hooks/pinn-gesundheit.js
+// Health page per person (since 1.149.0): blocks such as drinking, medication & vitamins, hand washing,
+// values (weight, blood pressure), vaccinations and doctor's appointments. The emergency pass stays in the
+// family data (area "notfall") and is visible to the whole family as before.
+//
+// Collection "gesundheit" (one record per family member):
+//   familie (relation, deleted with the family), mitglied (member ID), daten (JSON, see js/gesundheit.js),
+//   created, updated. Collection API locked for everyone - only the routes in gesundheit.pb.js.
+//
+// Who may see and change the data of a member:
+//   - the profile linked to that member (the person themself)
+//   - for a child: every adult of the family (profiles that are not children, admins included)
+//   Guests never. A child is a member with child lock, an active kids' page or younger than 18
+//   (birthday of the member or of the emergency pass).
+//
+// Push reminders (since 1.149.1, runCron every 5 minutes from gesundheit.pb.js): the settings live in the
+// health data of the member (drink.remind, meds.remind, hands.remind). Times follow the time zone of the receiving
+// profile (since 1.150.0, pinn-zeit.js; Europe/Berlin without a stored zone). A reminder goes to the profile(s)
+// linked to that member. For a CHILD it goes to the parents too (since 1.150.3; every adult profile of the family
+// except guests and the main admin; switch "remindParents" in the health data of the child, default on) - with the
+// name of the child in front of the title. A child without an own profile only reaches the parents. The times are
+// those of the child's clock (own profile, otherwise the family clock), so the parents get the message at the same moment.
+// Since 1.153.1 also: sun.remind { on, time } (only if today's UV index at home is at least UV_MIN, weather from
+// pinn-zuhause.js), sleep.remind { on, morning, morningTime } (30 minutes before sleep.bed; in the morning "How did you
+// sleep?" unless rated), fruit.remind { on, times } (only below the goal), tick.remind { on, time } (April-October, unless
+// ticked off) and checkup.remind { on } (10:00 on the day a check-up or a child's U/J examination is due, then every
+// 7 days while it is still open; due = last + every months, without "last" the day it was added).
+// Never to other family members. Texts come from the key files (push.health.*) in the
+// language of the receiving profile. Markers against double sending: pb_data/pinn_gesundheit_push.json
+// (entries older than two days are discarded). Tapping the message opens /?gesundheit=<trinken|medikamente|haende>&person=<member ID>.
+
+const COL = "gesundheit";
+const DATA_MAX = 400 * 1024;
+const MEMBER_RE = /^[A-Za-z0-9_-]{1,40}$/;
+
+function findCol(name) {
+    try { return $app.findCollectionByNameOrId(name); } catch (e) { return null; }
+}
+
+function ensureSchema() {
+    if (findCol(COL)) return true;
+    const fam = findCol("familien");
+    if (!fam) {
+        console.log("[Gesundheit] Collection \"familien\" missing - set up at the next start.");
+        return false;
+    }
+    try {
+        $app.save(new Collection({
+            type: "base",
+            name: COL,
+            fields: [
+                { name: "familie", type: "relation", collectionId: fam.id, cascadeDelete: true, maxSelect: 1, minSelect: 0, required: false },
+                { name: "mitglied", type: "text", max: 40, required: true },
+                { name: "daten", type: "json", maxSize: DATA_MAX },
+                { name: "created", type: "autodate", onCreate: true, onUpdate: false },
+                { name: "updated", type: "autodate", onCreate: true, onUpdate: true },
+            ],
+            indexes: ["CREATE INDEX `idx_gesundheit_familie` ON `" + COL + "` (`familie`)"],
+            listRule: null, viewRule: null, createRule: null, updateRule: null, deleteRule: null,
+        }));
+        console.log("[Gesundheit] Collection \"" + COL + "\" created.");
+        return true;
+    } catch (err) {
+        console.log("[Gesundheit] Could not create the collection: " + err.message);
+        return false;
+    }
+}
+
+// ---------------------------------------------------------------------------------------------
+// Access
+// ---------------------------------------------------------------------------------------------
+function ageOf(birth) {
+    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(birth || ""));
+    if (!m) return null;
+    const now = new Date();
+    let age = now.getFullYear() - Number(m[1]);
+    if (now.getMonth() + 1 < Number(m[2]) || (now.getMonth() + 1 === Number(m[2]) && now.getDate() < Number(m[3]))) age--;
+    return age;
+}
+function isChild(member, passes) {
+    if (!member) return false;
+    if (member.childLock) return true;
+    if (member.kid && member.kid.enabled) return true;
+    const pass = passes && passes[member.id];
+    const age = ageOf(member.birthday) !== null ? ageOf(member.birthday) : ageOf(pass && pass.birth);
+    return age !== null && age < 18;
+}
+function familyContext(familyId) {
+    const data = require(`${__hooks}/pinn-benutzer.js`).loadFamilyDataFor(familyId) || {};
+    const members = Array.isArray(data.members) ? data.members.filter(m => m && m.id) : [];
+    const passes = (data.emergencyPasses && typeof data.emergencyPasses === "object") ? data.emergencyPasses : {};
+    return { members, passes };
+}
+// Member IDs whose health data the signed-in profile may see
+function visibleMembers(e, ctx) {
+    const lib = require(`${__hooks}/pinn-benutzer.js`);
+    if (!e.auth || lib.isGuest(e)) return [];
+    const own = e.auth.getString("mitglied");
+    const ownMember = ctx.members.find(m => m.id === own) || null;
+    const adult = (ownMember ? !isChild(ownMember, ctx.passes) : lib.isAdmin(e));
+    return ctx.members.filter(m => m.id === own || (adult && isChild(m, ctx.passes))).map(m => m.id);
+}
+
+// ---------------------------------------------------------------------------------------------
+// Read / write
+// ---------------------------------------------------------------------------------------------
+function recordOf(familyId, memberId) {
+    try { return $app.findFirstRecordByFilter(COL, "familie = {:f} && mitglied = {:m}", { f: familyId, m: memberId }); } catch (e) { return null; }
+}
+function parse(raw) {
+    try {
+        const v = require(`${__hooks}/calendar-sync.js`).parseRecordData(raw);
+        return (v && typeof v === "object" && !Array.isArray(v)) ? v : {};
+    } catch (e) { return {}; }
+}
+
+function list(e) {
+    const familyId = require(`${__hooks}/pinn-benutzer.js`).familyOf(e);
+    if (!familyId) return { personen: [] };
+    ensureSchema();
+    const ctx = familyContext(familyId);
+    const ids = visibleMembers(e, ctx);
+    const personen = ids.map(id => {
+        const rec = recordOf(familyId, id);
+        return { mitglied: id, kind: isChild(ctx.members.find(m => m.id === id), ctx.passes), daten: rec ? parse(rec.get("daten")) : {}, updated: rec ? rec.getString("updated") : "" };
+    });
+    return { personen, ich: e.auth.getString("mitglied") };
+}
+
+function save(e, body) {
+    const familyId = require(`${__hooks}/pinn-benutzer.js`).familyOf(e);
+    if (!familyId) throw new Error("Dein Profil gehört zu keiner Familie.");
+    const memberId = String((body && body.mitglied) || "");
+    if (!MEMBER_RE.test(memberId)) throw new Error("Unbekannte Person.");
+    const daten = body && body.daten;
+    if (!daten || typeof daten !== "object" || Array.isArray(daten)) throw new Error("daten fehlt.");
+    let size = 0;
+    try { size = JSON.stringify(daten).length; } catch (err) { size = DATA_MAX + 1; }
+    if (size > DATA_MAX) throw new Error("Die Gesundheitsdaten sind zu groß.");
+    if (!ensureSchema()) throw new Error("Die Sammlung für Gesundheit fehlt auf dem Server.");
+    const ctx = familyContext(familyId);
+    if (visibleMembers(e, ctx).indexOf(memberId) < 0) {
+        const err = new Error("Diese Gesundheitsdaten darfst du nicht ändern.");
+        err.status = 403;
+        throw err;
+    }
+    let result = null;
+    $app.runInTransaction((tx) => {
+        let rec = null;
+        try { rec = tx.findFirstRecordByFilter(COL, "familie = {:f} && mitglied = {:m}", { f: familyId, m: memberId }); } catch (err) { rec = null; }
+        const current = rec ? rec.getString("updated") : "";
+        if (body.expected !== undefined && String(body.expected || "") !== current) {
+            result = { status: 409, body: { conflict: true, updated: current, daten: rec ? parse(rec.get("daten")) : {} } };
+            return;
+        }
+        if (!rec) {
+            rec = new Record(tx.findCollectionByNameOrId(COL));
+            rec.set("familie", familyId);
+            rec.set("mitglied", memberId);
+        }
+        rec.set("daten", daten);
+        tx.save(rec);
+        result = { status: 200, body: { success: true, updated: rec.getString("updated") } };
+    });
+    return result;
+}
+
+// ---------------------------------------------------------------------------------------------
+// Push reminders
+// ---------------------------------------------------------------------------------------------
+const STATUS_FILE = "/pb_data/pinn_gesundheit_push.json";
+const GRACE_MIN = 12;          // a due reminder is still sent up to 12 minutes late (the schedule runs every 5 minutes)
+const MED_WINDOW_MIN = 90;     // medication: made up for up to 90 minutes after the planned time (e.g. after a restart)
+const DRINK_EVERY = [30, 45, 60, 90, 120, 150, 180, 240];
+const UV_MIN = 3;                          // same as GH_UV_MIN in js/gesundheit.js
+const TICK_MONTHS = [4, 5, 6, 7, 8, 9, 10];
+const CHECKUP_AT = 10 * 60;                // check-up reminders at 10:00
+const STOCK_AT = 10 * 60;                  // medication supply warnings at 10:00 (since 1.161.0)
+const CHECKUP_KINDS = ["dentist", "general", "eyes", "skin", "gyn"];
+// German children's examinations, window in days after birth (same as GH_U_EXAMS in js/gesundheit.js)
+const U_EXAMS = [
+    { id: "U2", from: 3, to: 10 }, { id: "U3", from: 21, to: 35 }, { id: "U4", from: 60, to: 120 },
+    { id: "U5", from: 150, to: 210 }, { id: "U6", from: 270, to: 365 }, { id: "U7", from: 600, to: 730 },
+    { id: "U7a", from: 990, to: 1095 }, { id: "U8", from: 1350, to: 1460 }, { id: "U9", from: 1770, to: 1945 },
+    { id: "J1", from: 4383, to: 5113 },
+];
+function dayNum(iso) {
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso || ""));
+    return m ? Math.round(Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3])) / 86400000) : null;
+}
+function isoOfDay(n) { return new Date(n * 86400000).toISOString().slice(0, 10); }
+function addMonthsIso(iso, months) {
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso || ""));
+    if (!m) return "";
+    const d = new Date(Date.UTC(Number(m[1]), Number(m[2]) - 1 + months, Math.min(Number(m[3]), 28)));
+    return d.toISOString().slice(0, 10);
+}
+// true on the due day and every 7 days after it (while still open)
+function dueToday(dueIso, todayIso) {
+    const a = dayNum(dueIso), b = dayNum(todayIso);
+    return a !== null && b !== null && b >= a && (b - a) % 7 === 0;
+}
+
+function pad2(n) { return (n < 10 ? "0" : "") + n; }
+function toMin(hhmm) {
+    const m = /^(\d{1,2}):(\d{2})$/.exec(String(hhmm || ""));
+    if (!m) return null;
+    const v = Number(m[1]) * 60 + Number(m[2]);
+    return Number(m[1]) < 24 && Number(m[2]) < 60 ? v : null;
+}
+function hhmm(min) { return pad2(Math.floor(min / 60)) + ":" + pad2(min % 60); }
+
+// Reminder settings with defaults (same defaults as js/gesundheit.js)
+function remindSettings(daten) {
+    const d = daten && typeof daten === "object" ? daten : {};
+    const dr = Object.assign({ on: false, every: 120, from: "08:00", to: "20:00" }, (d.drink && d.drink.remind) || {});
+    const every = Number(dr.every);
+    const out = {
+        drink: { on: dr.on === true, every: DRINK_EVERY.indexOf(every) >= 0 ? every : 120, from: toMin(dr.from) !== null ? toMin(dr.from) : 480, to: toMin(dr.to) !== null ? toMin(dr.to) : 1200 },
+        meds: { on: !!(d.meds && d.meds.remind && d.meds.remind.on === true) },
+        hands: { on: false, times: [] },
+    };
+    const hr = (d.hands && d.hands.remind) || {};
+    out.hands.on = hr.on === true;
+    const times = Array.isArray(hr.times) ? hr.times : ["10:00", "14:00", "18:00"];
+    out.hands.times = times.map(toMin).filter(v => v !== null).filter((v, i, a) => a.indexOf(v) === i).sort((a, b) => a - b).slice(0, 6);
+    // since 1.153.1
+    const rem = (k) => (d[k] && d[k].remind && typeof d[k].remind === "object") ? d[k].remind : {};
+    const minOr = (v, def) => (toMin(v) !== null ? toMin(v) : def);
+    out.sun = { on: rem("sun").on === true, at: minOr(rem("sun").time, 540) };
+    const bed = minOr(d.sleep && d.sleep.bed, 22 * 60 + 30);
+    out.sleep = { on: rem("sleep").on === true, at: (bed - 30 + 1440) % 1440, bed: bed, morning: rem("sleep").morning === true, morningAt: minOr(rem("sleep").morningTime, 450) };
+    const ft = Array.isArray(rem("fruit").times) ? rem("fruit").times : ["12:00", "17:00"];
+    out.fruit = { on: rem("fruit").on === true, times: ft.map(toMin).filter(v => v !== null).filter((v, i, a) => a.indexOf(v) === i).sort((a, b) => a - b).slice(0, 6) };
+    out.tick = { on: rem("tick").on === true, at: minOr(rem("tick").time, 1140) };
+    out.checkup = { on: rem("checkup").on === true };
+    // since 1.161.0: medication supply - on as soon as one medicine tracks its supply with warnings (switch per medicine)
+    out.stock = { on: !!(d.meds && Array.isArray(d.meds.list) && d.meds.list.some(m => m && m.stock && m.stock.on === true && m.stock.warn !== false)) };
+    return out;
+}
+
+// Markers against double sending: key -> time sent (ms). The keys contain the local date of the receiving profile,
+// so profiles in different time zones never block each other. Entries older than two days are dropped.
+function readStatus() {
+    let o = null;
+    try {
+        const calendarSync = require(`${__hooks}/calendar-sync.js`);
+        o = JSON.parse(calendarSync.bytesToText($os.readFile(STATUS_FILE)));
+    } catch (e) { o = null; }
+    if (!o || typeof o !== "object") o = {};
+    if (!o.gesendet || typeof o.gesendet !== "object") o.gesendet = {};
+    const limit = Date.now() - 2 * 86400000;
+    Object.keys(o.gesendet).forEach(k => { if (!(Number(o.gesendet[k]) > limit)) delete o.gesendet[k]; });
+    return { gesendet: o.gesendet };
+}
+function writeStatus(s) {
+    try { $os.writeFile(STATUS_FILE, JSON.stringify(s), 420); } catch (e) { console.log("[Gesundheit] " + STATUS_FILE + " not writable: " + e.message); }
+}
+
+// Texts in the language of the receiving profile (key files, "push.health.*")
+function text(lang, key, vals) {
+    let t = null;
+    try { t = require(`${__hooks}/pinn-pushtext.js`).tk(lang, key, vals || {}, false); } catch (e) { t = null; }
+    return t || "";
+}
+
+// Due reminders of one member: [{ key, kind, titel, text, url, tag }] - nothing is sent here
+// extra (since 1.153.1): { uv: () => today's highest UV index at home or null, birth: "YYYY-MM-DD" | "" }
+function dueReminders(rec, daten, rs, w, lang, extra) {
+    const ex = extra || {};
+    const out = [];
+    const memberId = rec.getString("mitglied");
+    const person = encodeURIComponent(memberId);
+    const today = w.iso;
+
+    if (rs.drink.on && rs.drink.to > rs.drink.from) {
+        const log = (daten.drink && daten.drink.log && Array.isArray(daten.drink.log[today])) ? daten.drink.log[today] : [];
+        const total = log.reduce((s, x) => s + (Number(x && x.ml) || 0), 0);
+        const goal = Number(daten.drink && daten.drink.goal) || 2000;
+        let slot = null;
+        for (let t = rs.drink.from; t <= rs.drink.to; t += rs.drink.every) { if (t <= w.min) slot = t; }
+        if (slot !== null && w.min - slot < GRACE_MIN) {
+            // Already reached the goal, or drank something shortly before: no message for this time
+            let lastDrink = -1;
+            log.forEach(x => { const m = toMin(x && x.t); if (m !== null && m > lastDrink) lastDrink = m; });
+            const recent = lastDrink >= 0 && w.min - lastDrink < Math.min(rs.drink.every / 2, 60);
+            const rest = goal - total;
+            out.push({
+                key: "d|" + rec.id + "|" + slot, kind: "drink", skip: rest <= 0 || recent,
+                titel: text(lang, "push.health.drinkTitle"),
+                text: text(lang, "push.health.drinkText", { ml: String(total), goal: String(goal), rest: String(Math.max(0, rest)) }),
+                url: "/?gesundheit=trinken&person=" + person, tag: "gesundheit-trinken-" + today,
+            });
+        }
+    }
+
+    if (rs.meds.on && daten.meds && Array.isArray(daten.meds.list)) {
+        const taken = (daten.meds.taken && Array.isArray(daten.meds.taken[today])) ? daten.meds.taken[today] : [];
+        const byTime = {};
+        daten.meds.list.forEach(med => {
+            if (!med || !med.id || !Array.isArray(med.times)) return;
+            med.times.forEach(tm => {
+                const m = toMin(tm);
+                if (m === null || w.min < m || w.min >= m + MED_WINDOW_MIN) return;
+                if (taken.indexOf(med.id + "@" + tm) >= 0) return;
+                const label = String(med.name || "").slice(0, 80) + (med.dose ? " (" + String(med.dose).slice(0, 40) + ")" : "");
+                (byTime[m] = byTime[m] || []).push(label);
+            });
+        });
+        Object.keys(byTime).forEach(m => {
+            out.push({
+                key: "m|" + rec.id + "|" + m, kind: "meds", skip: false,
+                titel: text(lang, "push.health.medsTitle", { time: hhmm(Number(m)) }),
+                text: byTime[m].join(", "),
+                url: "/?gesundheit=medikamente&person=" + person, tag: "gesundheit-med-" + today + "-" + hhmm(Number(m)).replace(":", ""),
+            });
+        });
+    }
+
+    if (rs.hands.on) {
+        const n = Number(daten.hands && daten.hands.log && daten.hands.log[today]) || 0;
+        rs.hands.times.forEach(t => {
+            if (w.min < t || w.min - t >= GRACE_MIN) return;
+            out.push({
+                key: "h|" + rec.id + "|" + t, kind: "hands", skip: false,
+                titel: text(lang, "push.health.handsTitle"),
+                text: text(lang, "push.health.handsText", { count: String(n) }),
+                url: "/?gesundheit=haende&person=" + person, tag: "gesundheit-haende-" + today,
+            });
+        });
+    }
+
+    // ----- since 1.153.1 -----
+    const inSlot = (t) => w.min >= t && w.min - t < GRACE_MIN;
+    const dayLog = (k) => (daten[k] && daten[k].log && typeof daten[k].log === "object") ? daten[k].log : {};
+    if (rs.sun && rs.sun.on && inSlot(rs.sun.at) && !dayLog("sun")[today]) {
+        const uv = typeof ex.uv === "function" ? ex.uv() : null;
+        if (uv !== null && uv >= UV_MIN) {
+            out.push({
+                key: "s|" + rec.id, kind: "sun", skip: false,
+                titel: text(lang, "push.health.sunTitle"), text: text(lang, "push.health.sunText", { uv: String(uv) }),
+                url: "/?gesundheit=sonne&person=" + person, tag: "gesundheit-sonne-" + today,
+            });
+        }
+    }
+    if (rs.sleep && rs.sleep.on) {
+        if (inSlot(rs.sleep.at)) {
+            out.push({
+                key: "b|" + rec.id, kind: "sleep", skip: false,
+                titel: text(lang, "push.health.bedTitle"), text: text(lang, "push.health.bedText", { time: hhmm(rs.sleep.bed) }),
+                url: "/?gesundheit=schlaf&person=" + person, tag: "gesundheit-schlaf-" + today,
+            });
+        }
+        if (rs.sleep.morning && inSlot(rs.sleep.morningAt) && !dayLog("sleep")[today]) {
+            out.push({
+                key: "w|" + rec.id, kind: "sleep", skip: false,
+                titel: text(lang, "push.health.morningTitle"), text: text(lang, "push.health.morningText"),
+                url: "/?gesundheit=geschlafen&person=" + person, tag: "gesundheit-morgen-" + today,
+            });
+        }
+    }
+    if (rs.fruit && rs.fruit.on) {
+        const n = Number(dayLog("fruit")[today]) || 0;
+        const goal = Math.max(1, Math.min(10, Number(daten.fruit && daten.fruit.goal) || 5));
+        rs.fruit.times.forEach(t => {
+            if (!inSlot(t)) return;
+            out.push({
+                key: "f|" + rec.id + "|" + t, kind: "fruit", skip: n >= goal,
+                titel: text(lang, "push.health.fruitTitle"), text: text(lang, "push.health.fruitText", { n: String(n), goal: String(goal) }),
+                url: "/?gesundheit=obst&person=" + person, tag: "gesundheit-obst-" + today,
+            });
+        });
+    }
+    if (rs.tick && rs.tick.on && inSlot(rs.tick.at) && !dayLog("tick")[today] && TICK_MONTHS.indexOf(Number(today.slice(5, 7))) >= 0) {
+        out.push({
+            key: "z|" + rec.id, kind: "tick", skip: false,
+            titel: text(lang, "push.health.tickTitle"), text: text(lang, "push.health.tickText"),
+            url: "/?gesundheit=zecken&person=" + person, tag: "gesundheit-zecken-" + today,
+        });
+    }
+    if (rs.checkup && rs.checkup.on && inSlot(CHECKUP_AT)) {
+        const cu = daten.checkup && typeof daten.checkup === "object" ? daten.checkup : {};
+        const names = [];
+        (Array.isArray(cu.list) ? cu.list : []).forEach(c => {
+            if (!c || typeof c !== "object") return;
+            const due = c.last ? addMonthsIso(c.last, Number(c.every) || 12) : String(c.added || "");
+            if (!dueToday(due, today)) return;
+            const known = CHECKUP_KINDS.indexOf(c.kind) >= 0 && !c.name;
+            names.push(known ? (text(lang, "gh.checkup." + c.kind) || c.kind) : String(c.name || "").slice(0, 60));
+        });
+        if (cu.u === true && ex.birth) {
+            const done = Array.isArray(cu.uDone) ? cu.uDone : [];
+            const b = dayNum(ex.birth), t = dayNum(today);
+            const next = U_EXAMS.find(u => done.indexOf(u.id) < 0 && b !== null && t !== null && b + u.to >= t);
+            if (next && dueToday(isoOfDay(b + next.from), today)) names.push(next.id);
+        }
+        if (names.length) {
+            out.push({
+                key: "c|" + rec.id, kind: "checkup", skip: false,
+                titel: text(lang, "push.health.checkupTitle"), text: text(lang, "push.health.checkupText", { name: names.filter(Boolean).join(", ") }),
+                url: "/?gesundheit=vorsorge&person=" + person, tag: "gesundheit-vorsorge-" + today,
+            });
+        }
+    }
+    // ----- since 1.161.0: medication supply (dates are calculated by the app, see ghStockStamp in gesundheit.js) -----
+    if (rs.stock && rs.stock.on && inSlot(STOCK_AT) && daten.meds && Array.isArray(daten.meds.list)) {
+        const isoOk = (v) => /^\d{4}-\d{2}-\d{2}$/.test(String(v || ""));
+        daten.meds.list.forEach(med => {
+            const st = med && med.stock;
+            if (!st || st.on !== true || st.warn === false || !med.id) return;
+            const name = String(med.name || "").slice(0, 60);
+            const url = "/?gesundheit=medikamente&person=" + person;
+            const add = (kind, key, tx, vals) => out.push({
+                key: "s|" + rec.id + "|" + med.id + "|" + kind + "|" + today, kind: "stock", skip: false,
+                titel: text(lang, "push.health.stockTitle"), text: text(lang, key, vals),
+                url: url, tag: "gesundheit-vorrat-" + med.id + "-" + kind,
+            });
+            // empty beats "running low": only one message per medicine and day
+            if (isoOk(st.emptyOn) && dueToday(st.emptyOn, today)) add("e", "push.health.stockEmptyText", "", { name: name });
+            else if (isoOk(st.soonOn) && dueToday(st.soonOn, today)) add("s", st.rx ? "push.health.stockSoonRxText" : "push.health.stockSoonText", "", { name: name });
+            if (isoOk(st.exp)) {
+                const e = dayNum(st.exp), t = dayNum(today);
+                if (e !== null && t !== null && t >= e - 30 && dueToday(isoOfDay(e - 30), today)) {
+                    add("x", t > e ? "push.health.stockExpText" : "push.health.stockExpSoonText", "", { name: name, date: st.exp });
+                }
+            }
+        });
+    }
+    return out;
+}
+
+// Adult profiles of a family (parents): not guests, not the main admin, not children
+function parentsOf(familyId, ctx) {
+    let users = [];
+    try { users = $app.findRecordsByFilter("benutzer", "familie = {:f}", "", 0, 0, { f: familyId }); } catch (e) { users = []; }
+    return users.filter(u => {
+        const r = u.getString("rolle");
+        if (r === "gast" || r === "hauptadmin") return false;
+        const mid = u.getString("mitglied");
+        const m = mid ? ctx.members.find(x => x.id === mid) : null;
+        return m ? !isChild(m, ctx.passes) : r === "admin";
+    });
+}
+
+// Called every 5 minutes: sends the reminders that are due. Returns { gesendet }.
+function runCron() {
+    if (!findCol(COL)) return { skipped: "no collection" };
+    const Z = require(`${__hooks}/pinn-zeit.js`);
+    let recs = [];
+    try { recs = $app.findRecordsByFilter(COL, "mitglied != ''", "", 0, 0); } catch (e) { return { skipped: e.message }; }
+    if (!recs.length) return { gesendet: 0 };
+    const status = readStatus();
+    const ctxCache = {};   // family -> { members, passes, parents } (only loaded when a child has a reminder switched on)
+    let dirty = false, sent = 0, push = null;
+    recs.forEach(rec => {
+        const daten = parse(rec.get("daten"));
+        const rs = remindSettings(daten);
+        if (!rs.drink.on && !rs.meds.on && !rs.hands.on && !rs.sun.on && !rs.sleep.on && !rs.fruit.on && !rs.tick.on && !rs.checkup.on && !rs.stock.on) return;
+        const familyId = rec.getString("familie");
+        let own = [];
+        try { own = $app.findRecordsByFilter("benutzer", "familie = {:f} && mitglied = {:m}", "", 5, 0, { f: familyId, m: rec.getString("mitglied") }); } catch (e) { own = []; }
+        own = own.filter(u => u.getString("rolle") !== "gast");
+        // recipients: the person themself, for a child also the parents (title with the name of the child)
+        let recipients = own.map(u => ({ u: u, prefix: "" }));
+        if (daten.remindParents !== false) {
+            if (!ctxCache[familyId]) { const c = familyContext(familyId); c.parents = null; ctxCache[familyId] = c; }
+            const ctx = ctxCache[familyId];
+            const member = ctx.members.find(m => m.id === rec.getString("mitglied"));
+            if (member && isChild(member, ctx.passes)) {
+                if (!ctx.parents) ctx.parents = parentsOf(familyId, ctx);
+                const label = String(member.name || member.role || "").slice(0, 40);
+                ctx.parents.forEach(u => {
+                    if (own.some(o => o.id === u.id)) return;
+                    recipients.push({ u: u, prefix: label ? label + ": " : "" });
+                });
+            }
+        }
+        if (!recipients.length) return;
+        // clock for the due times: the child's own profile, otherwise the family
+        const refClock = own.length ? Z.clockOfUser(own[0].id, familyId) : Z.clockOfFamily(familyId);
+        const w = refClock.wall();
+        // since 1.153.1: UV index of the home (only fetched when a sunscreen reminder is due) and the birthday (U/J examinations)
+        let uvCache;
+        const extra = {
+            uv: () => {
+                if (uvCache !== undefined) return uvCache;
+                uvCache = null;
+                try {
+                    const wx = require(`${__hooks}/pinn-zuhause.js`).weather(familyId);
+                    const day = wx && Array.isArray(wx.tage) ? wx.tage.find(x => x && x.date === w.iso) : null;
+                    if (day && day.uv !== null && isFinite(day.uv)) uvCache = Math.round(day.uv);
+                } catch (e) { uvCache = null; }
+                return uvCache;
+            },
+            birth: "",
+        };
+        if (rs.checkup.on && daten.checkup && daten.checkup.u === true) {
+            if (!ctxCache[familyId]) { const c = familyContext(familyId); c.parents = null; ctxCache[familyId] = c; }
+            const cx = ctxCache[familyId];
+            const mem = cx.members.find(m => m.id === rec.getString("mitglied"));
+            const pass = cx.passes[rec.getString("mitglied")];
+            const b = (mem && mem.birthday) || (pass && pass.birth) || "";
+            extra.birth = /^\d{4}-\d{2}-\d{2}$/.test(String(b)) ? String(b) : "";
+        }
+        recipients.forEach(rcp => {
+            const u = rcp.u;
+            const lang = require(`${__hooks}/pinn-pushtext.js`).langOfUser(u);
+            dueReminders(rec, daten, rs, w, lang, extra).forEach(r => {
+                const key = w.iso + "|" + u.id + "|" + r.key;
+                if (status.gesendet[key]) return;
+                // remember first: even on an error along the way, a message never comes twice
+                status.gesendet[key] = Date.now();
+                dirty = true;
+                if (r.skip || !r.titel) return;
+                if (!push) push = require(`${__hooks}/pinn-push.js`);
+                try {
+                    sent += push.notifyUser(u.id, { titel: rcp.prefix + r.titel, text: r.text, url: r.url, tag: r.tag + (rcp.prefix ? "-" + rec.getString("mitglied") : ""), urgency: "normal", roh: true }) || 0;
+                } catch (e) {
+                    console.log("[Gesundheit] Push: " + e.message);
+                }
+            });
+        });
+    });
+    if (dirty) writeStatus(status);
+    if (sent) console.log("[Gesundheit] " + sent + " reminder(s) sent.");
+    return { gesendet: sent };
+}
+
+module.exports = { COL, ensureSchema, isChild, visibleMembers, list, save, runCron, remindSettings, dueReminders };

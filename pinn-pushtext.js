@@ -1,0 +1,815 @@
+// pb_hooks/pinn-pushtext.js
+// Not a *.pb.js file -> PocketBase does NOT load it as a hook by itself, it is only included with require().
+//
+// Push texts of the server in the recipient's language and matching the household type (family or flat share).
+//
+// Every push of the server goes through pinn-push.js#notifyUserDetailed. There each message is rewritten once per
+// recipient with localize(userId, msg) – before it goes into the queue for the phone and under the 🔔 bell.
+// The modules (location, board, funds, contracts …) keep building their texts in German; this file recognises
+// them by fixed patterns per kind of message (tag of the message, e.g. "sos-…", "termin-…").
+//
+// Since 1.117.0 the translations are no longer in this file: every pattern names a text key ("push.…") and the
+// texts come from the same language files as the app (pb_public/i18n/<code>.i18n.js). Plural forms and
+// placeholders are filled by pinn-textkern.js – the same table the app uses. A flat share uses the variant
+// "<key>#wg" of the language file (created by .github/scripts/i18n-keys.js from the TERMS of js/sprachen.js).
+//
+//  - Language: from the profile (personal design, value "sprache": de, en, fr, es, it, pt, zh, ja, ko, ru, nl, tr, pl, uk, cs, sv, da, nb, fi, hu). Without one: German.
+//  - Household type: from the family settings (field "wohnform": 'familie' or 'wg'). Only this one field is read
+//    via SQL (json_extract), not the big family data; the result stays cached until the family data changes.
+//  - Freely entered content (names, event titles, note texts, addresses) stays unchanged. Whatever matches no
+//    pattern stays as it is (German, or already translated by the module itself) – an unknown message is never lost.
+//    For a flat share such texts still get the flat share terms (applyTerms, same rules as TERMS in js/sprachen.js).
+
+const LANGS = ["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr", "pl", "uk", "cs", "sv", "da", "nb", "fi", "hu"];
+
+// ---------------------------------------------------------------------------------------------
+// Language and household type of the recipient
+// ---------------------------------------------------------------------------------------------
+function langOfUser(userRec) {
+    try {
+        const w = require(`${__hooks}/pinn-design.js`).readDesign(userRec).werte || {};
+        const c = String(w.sprache || "").slice(0, 2).toLowerCase();
+        return LANGS.indexOf(c) >= 0 ? c : (c ? "en" : "de");
+    } catch (e) { return "de"; }
+}
+
+const WF_KEY = "pinnWohnform:";
+function wohnformOf(familyId) {
+    if (!familyId) return "familie";
+    let stamp = "";
+    try { stamp = require(`${__hooks}/pinn-benutzer.js`).familyDataStamp(familyId); } catch (e) { stamp = ""; }
+    try {
+        const raw = $app.store().get(WF_KEY + familyId);
+        if (raw) {
+            const c = JSON.parse(String(raw));
+            if (c && c.s === stamp && stamp) return c.w === "wg" ? "wg" : "familie";
+        }
+    } catch (e) { /* read again */ }
+    let w = "";
+    try {
+        // In the area "einstellungen" (pinn-bereiche.js)
+        w = require(`${__hooks}/pinn-bereiche.js`).fieldText(familyId, "einstellungen", "wohnform");
+    } catch (e) {
+        // SQLite without JSON functions (should not exist): read the family data once
+        try { w = String((require(`${__hooks}/pinn-benutzer.js`).loadFamilyDataFor(familyId) || {}).wohnform || ""); } catch (e2) { w = ""; }
+    }
+    w = w === "wg" ? "wg" : "familie";
+    try { $app.store().set(WF_KEY + familyId, JSON.stringify({ s: stamp, w: w })); } catch (e) { /* never mind */ }
+    return w;
+}
+
+// ---------------------------------------------------------------------------------------------
+// Flat share terms for texts without a text key (same rules as the app: js/sprachen.js → TERMS)
+// ---------------------------------------------------------------------------------------------
+function cap(up, s) { return up ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
+const FAM_EMOJI = /\uD83D\uDC68\u200D\uD83D\uDC69\u200D\uD83D\uDC67(?:\u200D\uD83D\uDC66)?/g;
+const WG_EMOJI = "\uD83E\uDDD1\u200D\uD83E\uDD1D\u200D\uD83E\uDDD1";
+// Russian (since 1.120.9): the endings of "член семьи" / "семья" / "семейный" map case by case to "сосед" / "квартира" / "общий"
+// (same tables as .github/scripts/i18n-keys.js). The pattern engine of PocketBase has no Unicode lookbehind and no \p{L},
+// so the rules use explicit Cyrillic classes: a captured character in front (re-inserted) and a lookahead behind the word.
+const RU_NEIGHBOUR = { "": "", "а": "а", "у": "у", "ом": "ом", "е": "е", "ы": "и", "ов": "ей", "ам": "ям", "ами": "ями", "ах": "ях" };
+const RU_FLAT = { "ья": "а", "ьи": "ы", "ье": "е", "ью": "у", "ьёй": "ой", "ьей": "ой", "ей": "", "ьям": "ам", "ьями": "ами", "ьях": "ах" };
+const RU_COMMON = { "ый": "ий", "ая": "ая", "ое": "ее", "ые": "ие", "ого": "его", "ому": "ему", "ой": "ей", "ом": "ем", "ых": "их", "ым": "им", "ую": "ую", "ыми": "ими" };
+// Turkish endings (same tables as .github/scripts/i18n-keys.js): aile + ending -> ev + ending
+const TR_HOME = { nin: "in", ndeki: "indeki", nde: "inde", nden: "inden", ne: "ine", ni: "ini", n: "in",
+    sinin: "inin", sine: "ine", sini: "ini", sinde: "inde", sinden: "inden", si: "i", ye: "e", yi: "i", yle: "le" };
+const TR_MATE = { si: "ı", leri: "ları", sinin: "ının", lerinin: "larının", sine: "ına", lerine: "larına", sini: "ını", lerini: "larını",
+    sinde: "ında", lerinde: "larında", sinden: "ından", lerinden: "larından" };
+// Polish (since 1.132.16): "rodzina" + case ending -> "wspolne mieszkanie" in the same case, "czlonek rodziny" -> "wspollokator"
+// (same tables as .github/scripts/i18n-keys.js). No Unicode lookbehind and no \\p{L} in this engine: explicit Polish letter classes,
+// a captured character in front (re-inserted) and a lookahead behind the word.
+const PL_HOME = { "": "wspólnych mieszkań", a: "wspólne mieszkanie", y: "wspólnego mieszkania", ie: "wspólnym mieszkaniu", "ę": "wspólne mieszkanie",
+    "ą": "wspólnym mieszkaniem", o: "wspólne mieszkanie", om: "wspólnym mieszkaniom", ami: "wspólnymi mieszkaniami", ach: "wspólnych mieszkaniach" };
+const PL_MATE = { ek: "współlokator", ka: "współlokatora", kowi: "współlokatorowi", kiem: "współlokatorem", ku: "współlokatorze",
+    kowie: "współlokatorzy", "ków": "współlokatorów", kom: "współlokatorom", kami: "współlokatorami", kach: "współlokatorach" };
+// A feminine determiner in front of "rodzina" (twoja, cala, kazda, ta ...) becomes neuter in the case of the noun
+function plDet(stem, end) {
+    const kind = end === undefined || end === "a" || end === "o" || end === "ę" ? "nom" : end === "y" ? "gen" : "loc";
+    if (kind === "nom") return stem === "t" ? "to" : stem === "jedn" ? "jedno" : stem + "e";
+    if (kind === "gen") return stem + "ego";
+    return stem === "twoj" ? "twoim" : stem + "ym";
+}
+const PL_L = "A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż0-9";
+// Czech (since 1.155.0): "rodina" -> "domácnost", "člen rodiny" -> "spolubydlící", "rodinný" -> "společný" in the same case
+// (same tables as .github/scripts/i18n-keys.js). No lookbehind and no \p{L} in this engine: explicit letter class,
+// a captured character in front (re-inserted) and a lookahead behind the word.
+const CS_HOME = { "": "domácností", a: "domácnost", u: "domácnost", y: "domácnosti", "ě": "domácnosti", o: "domácnosti", ou: "domácností",
+    "ám": "domácnostem", "ách": "domácnostech", ami: "domácnostmi" };
+const CS_MATE = { "": "spolubydlící", a: "spolubydlícího", u: "spolubydlícímu", ovi: "spolubydlícímu", em: "spolubydlícím", "ové": "spolubydlící",
+    y: "spolubydlící", "ů": "spolubydlících", "ům": "spolubydlícím", ech: "spolubydlících" };
+// Swedish (since 1.156.0): "familj" -> "hushåll" (neuter: "en familj" -> "ett hushåll", "familjen" -> "hushållet"), "familjemedlem" -> "medboende",
+// "familje-" (compound prefix) -> "hushålls-" (same tables as .github/scripts/i18n-keys.js). Explicit letter class and a captured prefix instead of lookbehind.
+const SV_END = { "": "hushåll", en: "hushållet", ens: "hushållets", er: "hushåll", erna: "hushållen", ernas: "hushållens" };
+const SV_DET = { en: "ett", din: "ditt", min: "mitt", sin: "sitt", er: "ert", "vår": "vårt", ny: "nytt", annan: "annat", ingen: "inget", "någon": "något", denna: "detta" };
+// Danish (since 1.157.0): "familie" -> "husstand", "familiemedlem" -> "bofælle" (neuter -> common gender: "et familiemedlem" -> "en bofælle"),
+// "familie-" (compound prefix) -> "husstands-" (same tables as .github/scripts/i18n-keys.js). Explicit letter class and a captured prefix instead of lookbehind.
+const DA_HOME = { "": "husstand", n: "husstanden", ns: "husstandens", r: "husstande", rne: "husstandene", rnes: "husstandenes", rs: "husstandes" };
+const DA_MATE = { "": "bofælle", met: "bofællen", mer: "bofæller", merne: "bofællerne", mets: "bofællens", mers: "bofællers", mernes: "bofællernes" };
+const DA_DET = { et: "en", dit: "din", mit: "min", sit: "sin", hvert: "hver", ethvert: "enhver", intet: "ingen", noget: "nogen", andet: "anden", nyt: "ny", dette: "denne" };
+// Norwegian Bokmål (since 1.158.0): "familie" -> "husstand", "familiemedlem" (neuter) -> "bofelle" (masculine: "et familiemedlem" -> "en bofelle"),
+// "familie-" (compound prefix) -> "husstands-" (same tables as .github/scripts/i18n-keys.js). Explicit letter class and a captured prefix instead of lookbehind.
+const NB_HOME = { "": "husstand", en: "husstanden", ens: "husstandens", er: "husstander", ene: "husstandene", enes: "husstandenes", ers: "husstanders" };
+const NB_MATE = { "": "bofelle", met: "bofellen", mer: "bofeller", mene: "bofellene", mets: "bofellens", mers: "bofellers", menes: "bofellenes" };
+const NB_DET = { et: "en", ditt: "din", mitt: "min", sitt: "sin", hvert: "hver", ethvert: "enhver", intet: "ingen", annet: "annen", nytt: "ny", dette: "denne" };
+// Hungarian (since 1.160.0): "család" -> "háztartás", "családtag" -> "lakótárs". Both stems have back vowels, so the suffixes stay the same;
+// only "j" of the possessive is dropped ("családja" -> "háztartása") and "d" of "-dal/-dá" becomes "s" ("családdal" -> "háztartással").
+function huRest(r) {
+    if (/^j/.test(r)) r = r.slice(1);
+    else if (/^d(al|el|á|é)/.test(r)) r = "s" + r.slice(1);
+    return r;
+}
+function huMate(r) {
+    // "családtag" -> "lakótárs": plural/accusative vowels follow the new stem ("-ok" -> "-ak", "-ot" -> "-at"), "-gal" -> "-sal"
+    if (/^j/.test(r)) r = r.slice(1);
+    else if (/^gal/.test(r)) r = "s" + r.slice(1);
+    else if (/^o(k|t)/.test(r)) r = "a" + r.slice(1);
+    return r;
+}
+// Finnish (since 1.159.0): "perhe" -> "kotitalous", "perheenjäsen" -> "asukas" (case endings are mapped one by one, the stems differ), "perhe-" (compound prefix) -> "kotitalous-".
+// Same tables as .github/scripts/i18n-keys.js. Explicit letter class and a captured prefix instead of lookbehind. Write source texts without possessive suffixes on "perheenjäsen".
+const FI_HOME = { "": "kotitalous", en: "kotitalouden", ttä: "kotitaloutta", essä: "kotitaloudessa", estä: "kotitaloudesta", eseen: "kotitalouteen", ellä: "kotitaloudella", eltä: "kotitaloudelta", elle: "kotitaloudelle", enä: "kotitaloutena", eksi: "kotitaloudeksi", et: "kotitaloudet", iden: "kotitalouksien", itä: "kotitalouksia", issä: "kotitalouksissa", istä: "kotitalouksista", isiin: "kotitalouksiin", illä: "kotitalouksilla", iltä: "kotitalouksilta", ille: "kotitalouksille", iksi: "kotitalouksiksi", inä: "kotitalouksina", esi: "kotitaloutesi", emme: "kotitaloutemme", enne: "kotitaloutenne" };
+const FI_MATE = { "": "asukas", en: "asukkaan", tä: "asukasta", essä: "asukkaassa", estä: "asukkaasta", een: "asukkaaseen", ellä: "asukkaalla", eltä: "asukkaalta", elle: "asukkaalle", enä: "asukkaana", eksi: "asukkaaksi", et: "asukkaat", ten: "asukkaiden", iä: "asukkaita", issä: "asukkaissa", istä: "asukkaista", iin: "asukkaisiin", illä: "asukkailla", iltä: "asukkailta", ille: "asukkaille", inä: "asukkaina", iksi: "asukkaiksi" };
+// Ukrainian (since 1.135.16): "сім’я" -> "квартира", "член сім’ї" -> "співмешканець" in the same case (same tables as
+// .github/scripts/i18n-keys.js). No Unicode lookbehind and no \p{L} in this engine: explicit Cyrillic letter class,
+// a captured character in front (re-inserted) and a lookahead behind the word.
+const UK_MATE = { "": "співмешканець", "а": "співмешканця", "у": "співмешканцю", "ом": "співмешканцем", "і": "співмешканці", "ові": "співмешканцеві",
+    "и": "співмешканці", "ів": "співмешканців", "ам": "співмешканцям", "ами": "співмешканцями", "ах": "співмешканцях" };
+const UK_FLAT = { "я": "а", "ї": "и", "ю": "у", "єю": "ою", "ям": "ам", "ями": "ами", "ях": "ах", "ей": "" };
+const UK_L = "А-Яа-яЁёІіЇїЄєҐґ";
+const TERMS = {
+    de: { keep: /Familienstammbuch|Familienkutsche/g, rules: [
+        [/\b([Jj])edes Familienmitglied\b/g, "$1eder Mitbewohner"],
+        [/\b([Dd])as Familienmitglied\b/g, "$1er Mitbewohner"],
+        [/\b([Ee])in weiteres Familienmitglied\b/g, "$1inen weiteren Mitbewohner"],
+        [/\b(an|für|über|Bitte|bitte) ein Familienmitglied\b/g, "$1 einen Mitbewohner"],
+        [/\b([Nn])eues Familienmitglied\b/g, "$1euer Mitbewohner"],
+        [/Familienmitgliedern/g, "Mitbewohnern"],
+        [/Familienmitglieds/g, "Mitbewohners"],
+        [/Familienmitglieder/g, "Mitbewohner"],
+        [/Familienmitglied/g, "Mitbewohner"],
+        [/\b(den|allen|zwischen) Familien(?![-\wÄÖÜäöüß])/g, "$1 Haushalten"],
+        [/\bFamilien(?![-\wÄÖÜäöüß])/g, "Haushalte"],
+        [/\b[Ff]amilien-(?=[A-Za-zÄÖÜäöü])/g, "WG-"],
+        [/\b([Ff])amilien([a-zäöüß])/g, (m, f, c) => "WG-" + (f === "F" ? c.toUpperCase() : c)],
+        [/\b[Ff]amilie\b/g, "WG"],
+    ] },
+    en: { keep: /family register|[Ff]amily bus/g, rules: [
+        [/\b([Ff])amily members\b/g, (m, f) => cap(f === "F", "flatmates")],
+        [/\b([Ff])amily member\b/g, (m, f) => cap(f === "F", "flatmate")],
+        [/\b([Ff])amilies\b/g, (m, f) => cap(f === "F", "households")],
+        [/\b([Ff])amily\b/g, (m, f) => cap(f === "F", "flatshare")],
+    ] },
+    fr: { keep: /livret de famille|nom de famille|voiture familiale/g, rules: [
+        [/\b([Mm])embres de (?:la|ta|votre|cette) famille\b/g, (m, f) => cap(f === "M", "colocataires")],
+        [/\b([Mm])embre de (?:la|ta|votre|cette) famille\b/g, (m, f) => cap(f === "M", "colocataire")],
+        [/\b([Tt])outes les familles\b/g, "$1ous les foyers"],
+        [/\b([Ff])amilles\b/g, (m, f) => cap(f === "F", "foyers")],
+        [/\bfamili(?:aux|ales|ale|al)\b/g, "de la colocation"],
+        [/\b([Ff])amille\b/g, (m, f) => cap(f === "F", "colocation")],
+    ] },
+    es: { keep: /libro de familia|coche familiar/g, rules: [
+        [/\b([Mm])iembros de (?:la|tu|esta) familia\b/g, (m, f) => cap(f === "M", "compañeros de piso")],
+        [/\b([Mm])iembro de (?:la|tu|esta) familia\b/g, (m, f) => cap(f === "M", "compañero de piso")],
+        [/\b([Tt])odas las familias\b/g, "$1odos los hogares"],
+        [/\b([Ll])as familias\b/g, "$1os hogares"],
+        [/\b([Ff])amilias\b/g, (m, f) => cap(f === "F", "hogares")],
+        [/\bde la familia\b/g, "del piso compartido"],
+        [/\ba la familia\b/g, "al piso compartido"],
+        [/\b([Tt])oda la familia\b/g, "$1odo el piso compartido"],
+        [/\b([Ll])a familia\b/g, (m, f) => cap(f === "L", "el piso compartido")],
+        [/\b([Uu])na familia\b/g, (m, f) => cap(f === "U", "un piso compartido")],
+        [/\b([Ee])sta familia\b/g, (m, f) => cap(f === "E", "este piso compartido")],
+        [/\b([Oo])tra familia\b/g, (m, f) => cap(f === "O", "otro piso compartido")],
+        [/\b([Nn])inguna familia\b/g, (m, f) => cap(f === "N", "ningún piso compartido")],
+        [/\bfamiliares\b/g, "del piso"],
+        [/\bfamiliar\b/g, "del piso"],
+        [/\b([Ff])amilia\b/g, (m, f) => cap(f === "F", "piso compartido")],
+    ] },
+    it: { keep: /libro di famiglia|auto di famiglia/g, rules: [
+        [/\b([Mm])embri della famiglia\b/g, (m, f) => cap(f === "M", "coinquilini")],
+        [/\b([Mm])embro della famiglia\b/g, (m, f) => cap(f === "M", "coinquilino")],
+        [/\b([Tt])utta la famiglia\b/g, "$1utta la casa"],
+        [/\b([Tt])utte le famiglie\b/g, "$1utte le case"],
+        [/\b([Ll])e famiglie\b/g, "$1e case"],
+        [/\b([Ff])amiglie\b/g, (m, f) => cap(f === "F", "case")],
+        [/\bfamiliari\b/g, "coinquilini"],
+        [/\bfamiliare\b/g, "della casa"],
+        [/\b([Ff])amiglia\b/g, (m, f) => cap(f === "F", "casa condivisa")],
+    ] },
+    pt: { keep: /livro de família|carro de família|carro da família/g, rules: [
+        [/\b([Mm])embros da família\b/g, (m, f) => cap(f === "M", "colegas de casa")],
+        [/\b([Mm])embro da família\b/g, (m, f) => cap(f === "M", "colega de casa")],
+        [/\b([Tt])oda a família\b/g, "$1oda a casa"],
+        [/\b([Tt])odas as famílias\b/g, "$1odas as casas"],
+        [/\b([Ff])amília toda\b/g, (m, f) => cap(f === "F", "casa toda")],
+        [/\b([Ff])amílias\b/g, (m, f) => cap(f === "F", "casas")],
+        [/\bfamiliares\b/g, "da casa"],
+        [/\bfamiliar\b/g, "da casa"],
+        [/\b([Ff])amília\b/g, (m, f) => cap(f === "F", "casa compartilhada")],
+    ] },
+    zh: { keep: /家庭医生/g, rules: [
+        [/家庭成员/g, "室友"],
+        [/全家/g, "整个合租"],
+        [/家庭/g, "合租"],
+    ] },
+    ja: { keep: /家族登録簿/g, rules: [
+        [/家族メンバー/g, "ルームメイト"],
+        [/家族全員/g, "ルームシェア全員"],
+        [/家族/g, "ルームシェア"],
+    ] },
+    ko: { keep: /가족관계 등록부|가족용 밴/g, rules: [
+        [/가족 구성원이/g, "룸메이트가"],
+        [/가족 구성원은/g, "룸메이트는"],
+        [/가족 구성원을/g, "룸메이트를"],
+        [/가족 구성원과/g, "룸메이트와"],
+        [/가족 구성원으로/g, "룸메이트로"],
+        [/가족 구성원/g, "룸메이트"],
+        [/온 가족/g, "셰어하우스 전체"],
+        [/가족 전체/g, "셰어하우스 전체"],
+        [/가족이/g, "셰어하우스가"],
+        [/가족은/g, "셰어하우스는"],
+        [/가족을/g, "셰어하우스를"],
+        [/가족과/g, "셰어하우스와"],
+        [/가족으로/g, "셰어하우스로"],
+        [/가족/g, "셰어하우스"],
+    ] },
+    ru: { keep: /[Сс]емейн[А-Яа-яЁё]*\s+(?:врач|автомобил|бюджет)[А-Яа-яЁё]*/g, rules: [
+        [/(^|[^А-Яа-яЁё0-9])([Чч])лен(|а|у|ом|е|ы|ов|ам|ами|ах)(\s+(?:вашей|твоей|нашей|этой|своей|всей)?\s*)семьи(?![А-Яа-яЁё0-9])/g,
+            (m, pre, c, end) => pre + cap(c === "Ч", "сосед" + RU_NEIGHBOUR[end])],
+        [/(^|[^А-Яа-яЁё0-9])([Сс])ем(ья|ьи|ье|ью|ьёй|ьей|ей|ьям|ьями|ьях)(?![А-Яа-яЁё0-9])/g,
+            (m, pre, c, end) => pre + cap(c === "С", "квартир" + RU_FLAT[end])],
+        [/(^|[^А-Яа-яЁё0-9])([Сс])емейн(ый|ая|ое|ые|ого|ому|ой|ом|ых|ым|ую|ыми)(?![А-Яа-яЁё0-9])/g,
+            (m, pre, c, end) => pre + cap(c === "С", "общ" + RU_COMMON[end])],
+    ] },
+    // Turkish (since 1.130.11): "aile" -> "ortak ev", "aile üyesi" -> "ev arkadaşı". Turkish adds endings to the word, so the
+    // endings of "aile" are mapped to the matching endings of "ev" ("ailenin" -> "ortak evin", "aileye" -> "ortak eve",
+    // "ailesi" -> "ortak evi"). No Unicode lookbehind here: a captured character in front (re-inserted) and a lookahead behind.
+    tr: { keep: /[Aa]ile\s+(?:doktor|hekim|araba|bütçe)[A-Za-zÇĞİÖŞÜçğıöşüâîû]*/g, rules: [
+        [/(^|[^A-Za-zÇĞİÖŞÜçğıöşüâîû0-9])([Aa])ile üye(sinin|lerinin|sine|lerine|sini|lerini|sinde|lerinde|sinden|lerinden|leri|si)(?![A-Za-zÇĞİÖŞÜçğıöşüâîû0-9])/g,
+            (m, pre, c, end) => pre + cap(c === "A", "ev arkadaş" + TR_MATE[end])],
+        [/(^|[^A-Za-zÇĞİÖŞÜçğıöşüâîû0-9])([Tt])üm aile(?![A-Za-zÇĞİÖŞÜçğıöşüâîû0-9])/g,
+            (m, pre, c) => pre + cap(c === "T", "tüm ev")],
+        [/(^|[^A-Za-zÇĞİÖŞÜçğıöşüâîû0-9])([Aa])ile(nin|ndeki|nde|nden|ne|ni|n|sinin|sine|sini|sinde|sinden|si|ye|yi|yle|de|den|deki|ler|lerin|lere|leri|lerde)?(?![A-Za-zÇĞİÖŞÜçğıöşüâîû0-9])/g,
+            (m, pre, c, end) => pre + cap(c === "A", "ortak " + (end === undefined ? "ev" : "ev" + (TR_HOME[end] === undefined ? end : TR_HOME[end])))],
+    ] },
+    // Polish (since 1.132.16): same rules as the app (TERMS.pl in .github/scripts/i18n-keys.js), written without lookbehind
+    pl: { keep: /[Rr]odzinn[A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż]*\s+(?:lekarz|samoch|budżet)[A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż]*|(?:lekarz|samoch|budżet)[A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż]*\s+rodzinn[A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż]*/g, rules: [
+        [/(^|[^A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż0-9])([Cc])złon(ek|ka|kowi|kiem|ku|kowie|ków|kom|kami|kach)\s+(?:(?:Twojej|twojej|waszej|naszej|tej|całej)\s+)?rodziny(?![A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż0-9])/g,
+            (m, pre, c, end) => pre + cap(c === "C", PL_MATE[end])],
+        [/(^|[^A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż0-9])([Tt]woj|[Cc]ał|[Kk]ażd|[Nn]asz|[Ww]asz|[Jj]edn|[Żż]adn)(?:a|ą|ej)\s+[Rr]odzin(a|y|ie|ę|ą|o)?(?![A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż0-9])/g,
+            (m, pre, stem, end) => pre + cap(stem.charAt(0) === stem.charAt(0).toUpperCase(), plDet(stem.toLowerCase(), end)) + " " + PL_HOME[end === undefined ? "" : end]],
+        [/(^|[^A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż0-9])([Tt])(?:a|ę|ą|ej)\s+[Rr]odzin(a|y|ie|ę|ą|o)?(?![A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż0-9])/g,
+            (m, pre, t, end) => pre + cap(t === "T", plDet("t", end)) + " " + PL_HOME[end === undefined ? "" : end]],
+        [/(^|[^A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż0-9])([Rr])odzin(a|y|ie|ę|ą|o|om|ami|ach)?(?![A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż0-9])/g,
+            (m, pre, c, end) => pre + cap(c === "R", PL_HOME[end === undefined ? "" : end])],
+        [/(^|[^A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż0-9])([Rr])odzinn(y|a|e|ego|ej|emu|ym|ą|ych|ymi)(?![A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż0-9])/g,
+            (m, pre, c, end) => pre + cap(c === "R", "wspóln" + end)],
+        // "w" / "z" in front of the new words need a vowel ("w wspolnym" -> "we wspolnym")
+        [/(^|[^A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż0-9])([WwZz]) (wspóln[A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż]*|współlokator[A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż]*)/g, (m, pre, c, word) => pre + c + "e " + word],
+    ] },
+    // Ukrainian (since 1.135.16): same rules as the app (TERMS.uk in .github/scripts/i18n-keys.js), written without lookbehind
+    uk: { keep: /[Сс]імейн[А-Яа-яЁёІіЇїЄєҐґ]*\s+(?:лікар|автомобіл|авто|бюджет)[А-Яа-яЁёІіЇїЄєҐґ]*/g, rules: [
+        [/(^|[^А-Яа-яЁёІіЇїЄєҐґ0-9])([Чч])лен(|а|у|ом|і|ові|и|ів|ам|ами|ах)(\s+(?:вашої|твоєї|нашої|цієї|своєї|усієї|всієї|цілої|кожної)?\s*)сім[’'ʼ]ї(?![А-Яа-яЁёІіЇїЄєҐґ0-9])/g,
+            (m, pre, c, end) => pre + cap(c === "Ч", UK_MATE[end])],
+        [/(^|[^А-Яа-яЁёІіЇїЄєҐґ0-9])([Уу]|[Вв]|[Пп]ри|[Нн]а|[Пп]о)(\s+(?:вашій|твоїй|нашій|цій|своїй|усій|всій|цілій|кожній)?\s*)сім[’'ʼ]ї(?![А-Яа-яЁёІіЇїЄєҐґ0-9])/g,
+            (m, pre, prep, det) => pre + prep + det + "квартирі"],
+        [/(^|[^А-Яа-яЁёІіЇїЄєҐґ0-9])([Сс])ім[’'ʼ](я|ї|ю|єю|ям|ями|ях)(?![А-Яа-яЁёІіЇїЄєҐґ0-9])/g,
+            (m, pre, c, end) => pre + cap(c === "С", "квартир" + UK_FLAT[end])],
+        [/(^|[^А-Яа-яЁёІіЇїЄєҐґ0-9])([Сс])імей(?![А-Яа-яЁёІіЇїЄєҐґ0-9])/g, (m, pre, c) => pre + cap(c === "С", "квартир")],
+        [/(^|[^А-Яа-яЁёІіЇїЄєҐґ0-9])([Сс])імейн(ий|а|е|і|ого|ому|ої|ій|ім|им|их|у|ою|ими)(?![А-Яа-яЁёІіЇїЄєҐґ0-9])/g,
+            (m, pre, c, end) => pre + cap(c === "С", "спільн" + end)],
+        // "з" before the new words needs a vowel ("з співмешканцями" -> "зі співмешканцями")
+        [/(^|[^А-Яа-яЁёІіЇїЄєҐґ0-9])([Зз]) (співмешканц[А-Яа-яЁёІіЇїЄєҐґ]*|спільн[А-Яа-яЁёІіЇїЄєҐґ]*)/g, (m, pre, c, word) => pre + c + "і " + word],
+    ] },
+    // Czech (since 1.155.0): same rules as the app (TERMS.cs in .github/scripts/i18n-keys.js), written without lookbehind
+    cs: { keep: /[Rr]odinn[A-Za-zÁČĎÉĚÍŇÓŘŠŤÚŮÝŽáčďéěíňóřšťúůýž]*\s+(?:lékař|auto|rozpočet|doktor)[A-Za-zÁČĎÉĚÍŇÓŘŠŤÚŮÝŽáčďéěíňóřšťúůýž]*|(?:lékař|auto|rozpočet|doktor)[A-Za-zÁČĎÉĚÍŇÓŘŠŤÚŮÝŽáčďéěíňóřšťúůýž]*\s+rodinn[A-Za-zÁČĎÉĚÍŇÓŘŠŤÚŮÝŽáčďéěíňóřšťúůýž]*/g, rules: [
+        // instrumental plural ("s členy rodiny" -> "se spolubydlícími"; the plural accusative "členy" is handled below)
+        [/(^|[^A-Za-zÁČĎÉĚÍŇÓŘŠŤÚŮÝŽáčďéěíňóřšťúůýž0-9])([Ss]) členy(\s+(?:vaší|tvé|naší|své|této|celé|každé)?\s*)rodiny(?![A-Za-zÁČĎÉĚÍŇÓŘŠŤÚŮÝŽáčďéěíňóřšťúůýž0-9])/g, (m, pre, c) => pre + c + "e spolubydlícími"],
+        [/(^|[^A-Za-zÁČĎÉĚÍŇÓŘŠŤÚŮÝŽáčďéěíňóřšťúůýž0-9])([Čč])len(|a|u|ovi|em|ové|y|ů|ům|ech)(\s+(?:vaší|tvé|naší|své|této|celé|každé)?\s*)rodiny(?![A-Za-zÁČĎÉĚÍŇÓŘŠŤÚŮÝŽáčďéěíňóřšťúůýž0-9])/g,
+            (m, pre, c, end) => pre + cap(c === "Č", CS_MATE[end])],
+        [/(^|[^A-Za-zÁČĎÉĚÍŇÓŘŠŤÚŮÝŽáčďéěíňóřšťúůýž0-9])([Rr])odin(ou|ám|ách|ami|a|u|y|ě|o)?(?![A-Za-zÁČĎÉĚÍŇÓŘŠŤÚŮÝŽáčďéěíňóřšťúůýž0-9])/g,
+            (m, pre, c, end) => pre + cap(c === "R", CS_HOME[end === undefined ? "" : end])],
+        [/(^|[^A-Za-zÁČĎÉĚÍŇÓŘŠŤÚŮÝŽáčďéěíňóřšťúůýž0-9])([Rr])odinn(ý|á|é|í|ého|ému|ém|ým|ou|ých|ými)(?![A-Za-zÁČĎÉĚÍŇÓŘŠŤÚŮÝŽáčďéěíňóřšťúůýž0-9])/g,
+            (m, pre, c, end) => pre + cap(c === "R", "společn" + end)],
+        // v / s / z / k in front of the new words need a vowel ("s společnou" -> "se společnou")
+        [/(^|[^A-Za-zÁČĎÉĚÍŇÓŘŠŤÚŮÝŽáčďéěíňóřšťúůýž0-9])([VvSsZzKk]) (spolubydl[A-Za-zÁČĎÉĚÍŇÓŘŠŤÚŮÝŽáčďéěíňóřšťúůýž]*|společn[A-Za-zÁČĎÉĚÍŇÓŘŠŤÚŮÝŽáčďéěíňóřšťúůýž]*)/g, (m, pre, c, word) => pre + c + "e " + word],
+    ] },
+    // Swedish (since 1.156.0): same rules as the app (TERMS.sv in .github/scripts/i18n-keys.js), written without lookbehind
+    sv: { keep: /familjeläkare[A-Za-zÅÄÖåäöÉéÈèÜüÆæØø]*|familjebil[A-Za-zÅÄÖåäöÉéÈèÜüÆæØø]*|familjebuss[A-Za-zÅÄÖåäöÉéÈèÜüÆæØø]*/gi, rules: [
+        [/(^|[^A-Za-zÅÄÖåäöÉéÈèÜüÆæØø0-9])([Ff])amiljemedlem(men|mar|marna|mens|mars|marnas)?(?![A-Za-zÅÄÖåäöÉéÈèÜüÆæØø0-9])/g,
+            (m, pre, f, end) => pre + cap(f === "F", "medboende") + (end && end.slice(-1) === "s" ? "s" : "")],
+        // a neuter noun needs the neuter form of the word in front ("din familj" -> "ditt hushåll")
+        [/(^|[^A-Za-zÅÄÖåäöÉéÈèÜüÆæØø0-9])(en|din|min|sin|er|vår|ny|annan|ingen|någon|denna)(\s+)familj(?![A-Za-zÅÄÖåäöÉéÈèÜüÆæØø0-9])/gi,
+            (m, pre, d, sp) => { const r = SV_DET[d.toLowerCase()]; return pre + (d.charAt(0) === d.charAt(0).toUpperCase() ? r.charAt(0).toUpperCase() + r.slice(1) : r) + sp + "hushåll"; }],
+        [/(^|[^A-Za-zÅÄÖåäöÉéÈèÜüÆæØø0-9])([Dd])en (här|nya|andra|valda|aktuella) familjen(?![A-Za-zÅÄÖåäöÉéÈèÜüÆæØø0-9])/g,
+            (m, pre, c, w) => pre + (c === "D" ? "Det " : "det ") + w + " hushållet"],
+        [/(^|[^A-Za-zÅÄÖåäöÉéÈèÜüÆæØø0-9])([Ff])amilj(ernas|erna|er|ens|en)?(?![A-Za-zÅÄÖåäöÉéÈèÜüÆæØø0-9])/g,
+            (m, pre, f, end) => pre + cap(f === "F", SV_END[end === undefined ? "" : end])],
+        [/(^|[^A-Za-zÅÄÖåäöÉéÈèÜüÆæØø0-9])([Ff])amilje(?=[A-Za-zÅÄÖåäöÉéÈèÜüÆæØø])/g, (m, pre, f) => pre + cap(f === "F", "hushålls")],
+    ] },
+    // Danish (since 1.157.0): same rules as the app (TERMS.da in .github/scripts/i18n-keys.js), written without lookbehind
+    da: { keep: /familielæge[A-Za-zÆØÅæøåÉéÈèÜüÄäÖö]*|familiebil[A-Za-zÆØÅæøåÉéÈèÜüÄäÖö]*|familiebus[A-Za-zÆØÅæøåÉéÈèÜüÄäÖö]*/gi, rules: [
+        [/(^|[^A-Za-zÆØÅæøåÉéÈèÜüÄäÖö0-9])([Ee]t)(\s+)(nyt|andet)(\s+)familiemedlem(?![A-Za-zÆØÅæøåÉéÈèÜüÄäÖö0-9])/g,
+            (m, pre, d, sp, adj, sp2) => pre + (d.charAt(0) === "E" ? "En" : "en") + sp + DA_DET[adj] + sp2 + "bofælle"],
+        [/(^|[^A-Za-zÆØÅæøåÉéÈèÜüÄäÖö0-9])([Dd])et (nye|valgte|aktuelle|andre|øvrige) familiemedlem(?![A-Za-zÆØÅæøåÉéÈèÜüÄäÖö0-9])/g,
+            (m, pre, c, w) => pre + (c === "D" ? "Den " : "den ") + w + " bofælle"],
+        // a common-gender noun needs the common-gender form of the word in front ("dit familiemedlem" -> "din bofælle")
+        [/(^|[^A-Za-zÆØÅæøåÉéÈèÜüÄäÖö0-9])(et|dit|mit|sit|hvert|ethvert|intet|noget|andet|nyt|dette)(\s+)familiemedlem(?![A-Za-zÆØÅæøåÉéÈèÜüÄäÖö0-9])/gi,
+            (m, pre, d, sp) => { const r = DA_DET[d.toLowerCase()]; return pre + (d.charAt(0) === d.charAt(0).toUpperCase() ? r.charAt(0).toUpperCase() + r.slice(1) : r) + sp + "bofælle"; }],
+        [/(^|[^A-Za-zÆØÅæøåÉéÈèÜüÄäÖö0-9])([Ff])amiliemedlem(met|mer|merne|mets|mers|mernes)?(?![A-Za-zÆØÅæøåÉéÈèÜüÄäÖö0-9])/g,
+            (m, pre, f, end) => pre + cap(f === "F", DA_MATE[end === undefined ? "" : end])],
+        [/(^|[^A-Za-zÆØÅæøåÉéÈèÜüÄäÖö0-9])([Ff])amili(en|ens|e|erne|ernes|ers|er)(?![A-Za-zÆØÅæøåÉéÈèÜüÄäÖö0-9])/g,
+            (m, pre, f, end) => pre + cap(f === "F", DA_HOME[end === "e" ? "" : end.slice(1)])],
+        [/(^|[^A-Za-zÆØÅæøåÉéÈèÜüÄäÖö0-9])([Ff])amilie(?=[A-Za-zÆØÅæøåÉéÈèÜüÄäÖö])/g, (m, pre, f) => pre + cap(f === "F", "husstands")],
+    ] },
+    // Norwegian Bokmål (since 1.158.0): same rules as the app (TERMS.nb in .github/scripts/i18n-keys.js), written without lookbehind
+    nb: { keep: /familielege[A-Za-zÆØÅæøåÉéÈèÜüÄäÖö]*|familiebil[A-Za-zÆØÅæøåÉéÈèÜüÄäÖö]*|familiebuss[A-Za-zÆØÅæøåÉéÈèÜüÄäÖö]*/gi, rules: [
+        [/(^|[^A-Za-zÆØÅæøåÉéÈèÜüÄäÖö0-9])([Ee]t)(\s+)(nytt|annet)(\s+)familiemedlem(?:met)?(?![A-Za-zÆØÅæøåÉéÈèÜüÄäÖö0-9])/g,
+            (m, pre, d, sp, adj, sp2) => pre + (d.charAt(0) === "E" ? "En" : "en") + sp + NB_DET[adj] + sp2 + "bofelle"],
+        [/(^|[^A-Za-zÆØÅæøåÉéÈèÜüÄäÖö0-9])([Dd])et (nye|valgte|aktuelle|andre|øvrige) familiemedlem(?:met)?(?![A-Za-zÆØÅæøåÉéÈèÜüÄäÖö0-9])/g,
+            (m, pre, c, w) => pre + (c === "D" ? "Den " : "den ") + w + " bofellen"],
+        // a masculine noun needs the masculine form of the word in front ("ditt familiemedlem" -> "din bofelle")
+        [/(^|[^A-Za-zÆØÅæøåÉéÈèÜüÄäÖö0-9])(et|ditt|mitt|sitt|hvert|ethvert|intet|annet|nytt|dette)(\s+)familiemedlem(?![A-Za-zÆØÅæøåÉéÈèÜüÄäÖö0-9])/gi,
+            (m, pre, d, sp) => { const r = NB_DET[d.toLowerCase()]; return pre + (d.charAt(0) === d.charAt(0).toUpperCase() ? r.charAt(0).toUpperCase() + r.slice(1) : r) + sp + "bofelle"; }],
+        [/(^|[^A-Za-zÆØÅæøåÉéÈèÜüÄäÖö0-9])([Ff])amiliemedlem(met|mer|mene|mets|mers|menes)?(?![A-Za-zÆØÅæøåÉéÈèÜüÄäÖö0-9])/g,
+            (m, pre, f, end) => pre + cap(f === "F", NB_MATE[end === undefined ? "" : end])],
+        [/(^|[^A-Za-zÆØÅæøåÉéÈèÜüÄäÖö0-9])([Ff])amili(ens|en|ene|enes|ers|er|e)(?![A-Za-zÆØÅæøåÉéÈèÜüÄäÖö0-9])/g,
+            (m, pre, f, end) => pre + cap(f === "F", NB_HOME[end === "e" ? "" : end])],
+        [/(^|[^A-Za-zÆØÅæøåÉéÈèÜüÄäÖö0-9])([Ff])amilie(?=[A-Za-zÆØÅæøåÉéÈèÜüÄäÖö])/g, (m, pre, f) => pre + cap(f === "F", "husstands")],
+    ] },
+    // Finnish (since 1.159.0): same rules as the app (TERMS.fi in .github/scripts/i18n-keys.js), written without lookbehind
+    fi: { keep: /perhelääkäri[A-Za-zÆØÅæøåÄäÖöÉéÈèÜü]*|perheauto[A-Za-zÆØÅæøåÄäÖöÉéÈèÜü]*|perhekirja[A-Za-zÆØÅæøåÄäÖöÉéÈèÜü]*/gi, rules: [
+        [/(^|[^A-Za-zÆØÅæøåÄäÖöÉéÈèÜü0-9])([Pp])erheenjäsen(en|tä|essä|estä|een|ellä|eltä|elle|enä|eksi|et|ten|iä|issä|istä|iin|illä|iltä|ille|inä|iksi)?(?![A-Za-zÆØÅæøåÄäÖöÉéÈèÜü0-9])/g,
+            (m, pre, f, end) => pre + cap(f === "P", FI_MATE[end === undefined ? "" : end])],
+        [/(^|[^A-Za-zÆØÅæøåÄäÖöÉéÈèÜü0-9])([Pp])erhe(en|ttä|essä|estä|eseen|ellä|eltä|elle|enä|eksi|et|iden|itä|issä|istä|isiin|illä|iltä|ille|iksi|inä|esi|emme|enne)?(?![A-Za-zÆØÅæøåÄäÖöÉéÈèÜü0-9])/g,
+            (m, pre, f, end) => pre + cap(f === "P", FI_HOME[end === undefined ? "" : end])],
+        [/(^|[^A-Za-zÆØÅæøåÄäÖöÉéÈèÜü0-9])([Pp])erhe(?=[A-Za-zÆØÅæøåÄäÖöÉéÈèÜü])/g, (m, pre, f) => pre + cap(f === "P", "kotitalous")],
+    ] },
+    // Hungarian (since 1.160.0): same rules as the app (TERMS.hu in .github/scripts/i18n-keys.js), written without lookbehind
+    hu: { keep: /csal[aá]dorvos[A-Za-zÆØÅæøåÄäÖöÉéÈèÜüÁáÍíÓóŐőÚúŰű]*|csal[aá]dn[eé]v[A-Za-zÆØÅæøåÄäÖöÉéÈèÜüÁáÍíÓóŐőÚúŰű]*|csal[aá]dfa[A-Za-zÆØÅæøåÄäÖöÉéÈèÜüÁáÍíÓóŐőÚúŰű]*|csal[aá]di\s+(?:orvos|aut[oó])[A-Za-zÆØÅæøåÄäÖöÉéÈèÜüÁáÍíÓóŐőÚúŰű]*/gi, rules: [
+        [/(^|[^A-Za-zÆØÅæøåÄäÖöÉéÈèÜüÁáÍíÓóŐőÚúŰű0-9])([Cc])sal[aá]dtag([A-Za-zÆØÅæøåÄäÖöÉéÈèÜüÁáÍíÓóŐőÚúŰű]*)/g,
+            (m, pre, f, r) => pre + (f === "C" ? "L" : "l") + "akótárs" + huMate(r)],
+        [/(^|[^A-Za-zÆØÅæøåÄäÖöÉéÈèÜüÁáÍíÓóŐőÚúŰű0-9])([Cc])sal[aá]d([A-Za-zÆØÅæøåÄäÖöÉéÈèÜüÁáÍíÓóŐőÚúŰű]*)/g,
+            (m, pre, f, r) => pre + (f === "C" ? "H" : "h") + "áztartás" + huRest(r)],
+    ] },
+};
+const TERM_HINT = /[Pp]erhe|[Cc]sal[a\u00E1]d|[Aa]ile|[Ff]amil|[Ff]am\u00EDli|[Ff]amigli|\u5BB6\u5EAD|\u5168\u5BB6|\u5BB6\u65CF|\uAC00\uC871|\uD83D\uDC68\u200D\uD83D\uDC69|[\u0421\u0441]\u0435\u043C|[\u0427\u0447]\u043B\u0435\u043D|[Rr]odzin|[Rr]odin|[\u010C\u010D]len|[Cc]z\u0142on|[\u0421\u0441]\u0456\u043C/;
+function applyTerms(s, lang) {
+    const T = TERMS[lang] || TERMS.de;
+    if (!s || !TERM_HINT.test(s)) return s;
+    const kept = [];
+    s = s.replace(T.keep, m => { kept.push(m); return "\u0001" + (kept.length - 1) + "\u0002"; });
+    for (let i = 0; i < T.rules.length; i++) s = s.replace(T.rules[i][0], T.rules[i][1]);
+    s = s.replace(FAM_EMOJI, WG_EMOJI);
+    if (kept.length) s = s.replace(/\u0001(\d+)\u0002/g, (m, i) => kept[+i]);
+    return s;
+}
+
+// ---------------------------------------------------------------------------------------------
+// Language files (pb_public/i18n/<code>.i18n.js) – only the keys "push.…" are kept
+// ---------------------------------------------------------------------------------------------
+const KERN = require(`${__hooks}/pinn-textkern.js`);
+const PREFIX = "push.";
+// Inside the container pb_public is /pb_public; next to the hooks for tests and other set-ups
+const I18N_DIRS = ["/pb_public/i18n", `${__hooks}/../pb_public/i18n`];
+const STORE_KEY = "pinnPushTexts:";
+let LOADED = {};   // per JavaScript engine of PocketBase; the shared app store keeps it for the others
+
+function bytesText(raw) {
+    try {
+        if (typeof toString === "function") {
+            const t = toString(raw);
+            if (typeof t === "string" && t.indexOf("[object") !== 0) return t;
+        }
+    } catch (e) { /* fall back */ }
+    return String(raw || "");
+}
+function readLangFile(code) {
+    for (let i = 0; i < I18N_DIRS.length; i++) {
+        try { return bytesText($os.readFile(I18N_DIRS[i] + "/" + code + ".i18n.js")); } catch (e) { /* next place */ }
+    }
+    return "";
+}
+// The language file is a script: window.PINN_I18N.keys("<code>", { … }). It is run with a stand-in window.
+function parseLangFile(src) {
+    let data = null;
+    if (!src) return null;
+    const win = { PINN_I18N: { keys: (c, d) => { data = d; } } };
+    try { (new Function("window", src))(win); } catch (e) { console.log("[Push] Language file not readable: " + e.message); return null; }
+    if (!data || typeof data !== "object") return null;
+    const out = {};
+    for (const k in data) if (Object.prototype.hasOwnProperty.call(data, k) && k.indexOf(PREFIX) === 0) out[k] = data[k];
+    return out;
+}
+function texts(code) {
+    if (LOADED[code]) return LOADED[code];
+    let t = null;
+    try { const raw = $app.store().get(STORE_KEY + code); if (raw) t = JSON.parse(String(raw)); } catch (e) { t = null; }
+    if (!t) {
+        t = parseLangFile(readLangFile(code));
+        if (t && Object.keys(t).length) { try { $app.store().set(STORE_KEY + code, JSON.stringify(t)); } catch (e) { /* never mind */ } }
+        else t = {};
+    }
+    LOADED[code] = t;
+    return t;
+}
+// Forget the cached texts (after an update of the language files without a restart, and for tests)
+function resetTexts() {
+    LOADED = {};
+    for (let i = 0; i < LANGS.length; i++) { try { $app.store().remove(STORE_KEY + LANGS[i]); } catch (e) { /* never mind */ } }
+}
+
+// Text of a key in a language; null if neither the language nor English has it.
+// wg = flat share: the variant "<key>#wg" wins.
+function tk(code, key, vals, wg) {
+    const order = code === "en" ? ["en"] : [code, "en"];
+    for (let i = 0; i < order.length; i++) {
+        const t = texts(order[i]);
+        const e = wg && t[key + "#wg"] !== undefined ? t[key + "#wg"] : t[key];
+        if (e !== undefined) return KERN.text(e, order[i], vals || {});
+    }
+    return null;
+}
+
+// ---------------------------------------------------------------------------------------------
+// Patterns of the German texts
+// A rule is [pattern, key, values] – values name the placeholders of the text:
+//   "<n>" = part n unchanged (names, titles …) · "{n}" = part n, translated as well (if a pattern fits)
+//   "[n]" = part n as a list of names („A, B und C“) · a number = fixed value (e.g. n: 1)
+// Instead of key and values a function (g, h) may build the text: h.k(key, values), h.t(part), h.names(part).
+// The first group whose tag fits is used; then the patterns that apply everywhere (SHARED).
+// ---------------------------------------------------------------------------------------------
+const WEEKDAYS = { So: "push.wd.sun", Mo: "push.wd.mon", Di: "push.wd.tue", Mi: "push.wd.wed", Do: "push.wd.thu", Fr: "push.wd.fri", Sa: "push.wd.sat" };
+
+// Words and phrases that also appear as part of other texts (valid everywhere)
+const EXACT = {
+    "Morgen": "push.word.tomorrowCap",
+    "heute": "push.word.today",
+    "morgen": "push.word.tomorrow",
+    "Zuhause": "push.word.home",
+    "Ohne Titel": "push.word.untitled",
+    "Standort noch unbekannt": "push.word.locationUnknown",
+    "Standort bekannt": "push.word.locationKnown",
+    "heute Morgen": "push.word.thisMorning",
+    "heute Mittag": "push.word.thisLunchtime",
+    "heute Nachmittag": "push.word.thisAfternoon",
+    "heute Abend": "push.word.thisEvening",
+    "Jemand": "push.word.someone",
+    "Der Hilferuf": "push.word.callForHelp",
+    "Dein Einkauf": "push.word.yourShopping",
+    "Ein Ausgleich": "push.word.aSettlement",
+    "Neue Umfrage": "push.word.newPoll",
+    "Countdown": "push.word.countdown",
+};
+
+// Patterns valid everywhere (date, time, duration …)
+const SHARED = [
+    [/^(So|Mo|Di|Mi|Do|Fr|Sa), (\d\d)\.(\d\d)\.(?: (\d\d:\d\d))?$/, (g, h) => {
+        const v = { wd: h.k(WEEKDAYS[g[1]]), d: Number(g[2]), m: Number(g[3]), time: g[4] || "" };
+        return h.k(g[4] ? "push.date.weekdayTime" : "push.date.weekday", v);
+    }],
+    [/^(\d\d)\.(\d\d)\.(\d{4})$/, "push.date.full", { d: "<1>", m: "<2>", y: "<3>" }],
+    [/^(\d\d:\d\d) Uhr$/, "push.time", { time: "<1>" }],
+    [/^In (\d+) Minuten$/, "push.inMinutes", { n: "<1>" }],
+    [/^In ([\d.]+) Stunden?$/, "push.inHours", { n: "<1>" }],
+    [/^Morgen, ([^·]+)$/, "push.tomorrowComma", { when: "{1}" }],
+    [/^in (\d+) Tagen$/, "push.inDays", { n: "<1>" }],
+    [/^(\d+) Std\. (\d+) Min\.$/, "push.durHM", { h: "<1>", m: "<2>" }],
+    [/^(\d+) Min\.$/, "push.durMin", { n: "<1>" }],
+];
+
+// Patterns per kind of message (tag)
+const GROUPS = [
+    // --- Test message (Settings → Notifications) ---
+    { tag: /^test$/, rules: [
+        [/^Hallo (.+)! 👋$/, "push.test.hello", { name: "<1>" }],
+        [/^Benachrichtigungen von pinn\. kommen auf diesem Gerät an\.$/, "push.test.arrives", {}],
+    ] },
+    // --- Event reminder ---
+    { tag: /^termin-/, rules: [
+        [/^(.+) um (\d\d:\d\d)$/, "push.event.at", { title: "<1>", time: "<2>" }],
+        [/^mit ([^·]+)$/, "push.event.with", { names: "[1]" }],
+    ] },
+    // --- Daily summary ---
+    { tag: /^tagesuebersicht-/, rules: [
+        [/^Guten Morgen, (.+)!$/, "push.daily.morning", { name: "<1>" }],
+        [/^Hallo, (.+)!$/, "push.daily.hello", { name: "<1>" }],
+        [/^Guten Abend, (.+)!$/, "push.daily.evening", { name: "<1>" }],
+        [/^Heute steht für dich nichts im Kalender\.$/, "push.daily.nothing", {}],
+        [/^([^·]*) \((\d+)x nicht erledigt\)$/, "push.daily.notDone", { task: "<1>", n: "<2>" }],
+        [/^Mittag: ([^·]+)$/, "push.daily.lunch", { meal: "{1}" }],
+        [/^Abend: ([^·]+)$/, "push.daily.dinner", { meal: "{1}" }],
+    ] },
+    // --- New assignment (event/task) ---
+    { tag: /^zuweisung-/, rules: [
+        [/^Neue Aufgabe für dich$/, "push.assign.task", {}],
+        [/^Neuer Termin für dich$/, "push.assign.event", {}],
+        [/^fällig ([^·]+)$/, "push.assign.due", { when: "{1}" }],
+        [/^von ([^·]+)$/, "push.assign.from", { name: "<1>" }],
+    ] },
+    // --- Children: task done / everything done ---
+    { tag: /^kind-/, rules: [
+        [/^(.+) hat eine Aufgabe erledigt ✅$/, "push.kid.taskDone", { name: "<1>" }],
+        [/^(.+) hat alles geschafft! 🏆$/, "push.kid.allDone", { name: "<1>" }],
+        [/^Alle Aufgaben bis jetzt sind erledigt\.$/, "push.kid.allSoFar", {}],
+        [/^Alle Aufgaben bis jetzt sind erledigt – zuletzt „([\s\S]*)“\.$/, "push.kid.allSoFarLast", { task: "<1>" }],
+        [/^Alle Aufgaben für jetzt sind erledigt – zuletzt „([\s\S]*)“\.$/, "push.kid.allNowLast", { task: "<1>" }],
+        [/^Alle Aufgaben für (heute Morgen|heute Mittag|heute Nachmittag|heute Abend) sind erledigt – zuletzt „([\s\S]*)“\.$/, "push.kid.allPeriodLast", { period: "{1}", task: "<2>" }],
+    ] },
+    // --- Someone has done all tasks ---
+    { tag: /^alle-erledigt-/, rules: [
+        [/^(.+) hat alle Aufgaben erledigt 🎉$/, "push.allDone.title", { name: "<1>" }],
+        [/^Alle Aufgaben bis jetzt sind abgehakt – zuletzt „([\s\S]*)“\.$/, "push.allDone.lastChecked", { task: "<1>" }],
+    ] },
+    // --- New pinn. version for the admins who may install updates (pinn-system.js#updateHinweise) ---
+    { tag: /^update-/, rules: [
+        [/^pinn\. (\S+) ist da$/, "push.update.title", { version: "<1>" }],
+        [/^Installiert ist (\S+)\. Antippen, um das Update unter Einstellungen → System zu installieren\.$/, "push.update.text", { installed: "<1>" }],
+    ] },
+    // --- SOS ---
+    { tag: /^sos-/, rules: [
+        [/^SOS: (.+) braucht Hilfe!$/, "push.sos.title", { name: "{1}" }],
+        [/^Erneuter Hilferuf: (.+) braucht Hilfe!$/, "push.sos.again", { name: "{1}" }],
+        [/^TEST: (.+) braucht Hilfe!$/, "push.sos.test", { name: "{1}" }],
+        [/^(.+) \(Test\)$/, "push.sos.testSuffix", { name: "<1>" }],
+        [/^Dein Hilferuf wurde gesendet$/, "push.sos.sent", {}],
+        [/^Entwarnung: (.+)$/, "push.sos.allClear", { name: "{1}" }],
+        [/^([\s\S]+)\. Tippe für Karte, Anruf und Notruf ([^.]+)\.$/, "push.sos.tapFor", { where: "{1}", number: "<2>" }],
+        [/^([\s\S]+)\. Nur ein Test – nur du bekommst diese Meldung\.$/, "push.sos.testOnly", { where: "{1}" }],
+        [/^Deine Familie wurde alarmiert \((\d+) Geräte?\) und sieht deinen Standort\.$/, "push.sos.familyAlerted", { n: "<1>" }],
+        [/^Kein Gerät deiner Familie ist für Push angemeldet – bitte zusätzlich anrufen \(([^)]+)\)\.$/, "push.sos.noDevices", { number: "<1>" }],
+        [/^(.+) hat den Hilferuf von (\d\d:\d\d) Uhr beendet\.$/, "push.sos.ended", { name: "<1>", time: "<2>" }],
+        [/^([\s\S]+) · (\d\d:\d\d) Uhr( \(± \d+ m\))?$/, "push.sos.whereTime", { where: "{1}", time: "<2>", accuracy: "<3>" }],
+        [/^Standort (-?\d+\.\d+), (-?\d+\.\d+)$/, "push.sos.coords", { lat: "<1>", lon: "<2>" }],
+    ] },
+    // --- Location: location sharing changed ---
+    { tag: /^ortung-teilen-/, rules: [
+        [/^Standort geteilt$/, "push.share.on", {}],
+        [/^Standort nicht mehr geteilt$/, "push.share.off", {}],
+        [/^(.+) hat deine Standortfreigabe in pinn\. eingeschaltet\.$/, "push.share.turnedOn", { name: "<1>" }],
+        [/^(.+) hat deine Standortfreigabe in pinn\. ausgeschaltet\.$/, "push.share.turnedOff", { name: "<1>" }],
+    ] },
+    // --- Location: "I'm on my way home" ---
+    { tag: /^ortung-unterwegs-/, rules: [
+        [/^(.+) ist unterwegs nach Hause$/, "push.wayHome.onWay", { name: "<1>" }],
+        [/^(.+) ist zu Hause angekommen$/, "push.wayHome.arrived", { name: "<1>" }],
+        [/^Antippen für Live-Standort, Karte und Anruf\. Meldung kommt beim Ankommen\.$/, "push.wayHome.tap", {}],
+        [/^Heimweg beendet \((.+)\)\.$/, "push.wayHome.ended", { info: "{1}" }],
+    ] },
+    // --- Location: arriving at / leaving a place ---
+    { tag: /^ortung-/, rules: [
+        [/^(.+) \((\d\d:\d\d) Uhr\)$/, "push.place.titleTime", { title: "{1}", time: "<2>" }],
+        [/^(.+) ist zu Hause angekommen\.$/, "push.place.arrivedHome", { name: "<1>" }],
+        [/^(.+) ist bei „(.+)“ angekommen\.$/, "push.place.arrivedAt", { name: "<1>", place: "<2>" }],
+        [/^(.+) hat das Zuhause verlassen\.$/, "push.place.leftHome", { name: "<1>" }],
+        [/^(.+) hat „(.+)“ verlassen\.$/, "push.place.left", { name: "<1>", place: "<2>" }],
+    ] },
+    // --- Location: shopping checked off automatically at the shop ---
+    { tag: /^einkauf-/, rules: [
+        [/^Einkauf abgehakt$/, "push.shop.checked", {}],
+        [/^(.+) ist erledigt \((\d+) Min\. bei (.+)\)\. Tippe hier, um den Betrag einzutragen\.$/, "push.shop.doneTap", { task: "{1}", min: "<2>", shop: "<3>" }],
+    ] },
+    // --- Location: arrived at a shop ---
+    { tag: /^laden-/, rules: [
+        [/^Du bist bei (.+)$/, "push.store.youreAt", { shop: "<1>" }],
+        [/^Geplant: (.+)\. Tippe hier für die Einkaufsliste\.$/, "push.store.planned", { items: "<1>" }],
+        [/^Tippe hier für die Einkaufsliste\.$/, "push.store.tapList", {}],
+    ] },
+    // --- Board: reaction / votes / reply / reminder / new note ---
+    { tag: /^pinnwand-reaktion-/, rules: [
+        [/^Reaktion auf deinen Zettel$/, "push.board.reaction", {}],
+        [/^([\s\S]+) – „([\s\S]*)“$/, "push.board.reactionLine", { names: "[1]", text: "<2>" }],
+    ] },
+    { tag: /^pinnwand-stimme-/, rules: [
+        [/^Neue Stimmen$/, "push.board.votes", {}],
+        [/^(.+) hat abgestimmt – „([\s\S]*)“$/, "push.board.voted", { name: "<1>", text: "<2>" }],
+        [/^(.+) haben abgestimmt – „([\s\S]*)“$/, "push.board.votedMany", { names: "[1]", text: "<2>" }],
+    ] },
+    { tag: /^pinnwand-antwort-/, rules: [
+        [/^(.+) hat geantwortet$/, "push.board.replied", { name: "<1>" }],
+    ] },
+    { tag: /^pinnwand-erinnerung-/, rules: [
+        [/^Erinnerung von der Pinnwand$/, "push.board.reminder", {}],
+    ] },
+    { tag: /^pinnwand-/, rules: [
+        [/^(.+) \(für ([^()]+)\)$/, "push.board.forNames", { title: "{1}", names: "[2]" }],
+        [/^(.+) sagt Danke$/, "push.board.thanks", { name: "<1>" }],
+        [/^(.+): neue Liste$/, "push.board.newList", { name: "<1>" }],
+        [/^(.+) hat ein Foto angepinnt$/, "push.board.photo", { name: "<1>" }],
+        [/^Umfrage von (.+)$/, "push.board.poll", { name: "<1>" }],
+        [/^(.+) hat etwas angepinnt$/, "push.board.pinned", { name: "<1>" }],
+        [/^Einfach so\. 💛$/, "push.board.justBecause", {}],
+        [/^([^:]+): Einfach so\. 💛$/, "push.board.justBecauseTo", { names: "[1]" }],
+        [/^Tippe zum Ansehen\.$/, "push.board.tapView", {}],
+        [/^([\s\S]+) – jetzt abstimmen$/, "push.board.voteNow", { question: "{1}" }],
+        [/^Heute!( – [\s\S]*)?$/, "push.board.today", { rest: "<1>" }],
+        [/^Morgen!( – [\s\S]*)?$/, "push.board.tomorrow", { rest: "<1>" }],
+        [/^Noch (\d+) Tage( – [\s\S]*)?$/, "push.board.daysLeft", { n: "<1>", rest: "<2>" }],
+        [/^Neuer Countdown von (.+)$/, "push.board.countdownFrom", { name: "<1>" }],
+    ] },
+    // --- Documents: expiry, manufacturer's warranty, statutory warranty ---
+    { tag: /^dokument-/, rules: [
+        [/^Läuft ab: (.+)$/, "push.doc.expires", { title: "<1>" }],
+        [/^Garantie endet: (.+)$/, "push.doc.warrantyEnds", { title: "<1>" }],
+        [/^Gewährleistung endet: (.+)$/, "push.doc.statWarrantyEnds", { title: "<1>" }],
+        [/^Gültig bis (\S+) \((.+?)\) – rechtzeitig verlängern oder erneuern\.$/, "push.doc.validUntil", { date: "{1}", when: "{2}" }],
+        [/^Die Herstellergarantie endet am (\S+) \((.+?)\)\. Mängel am besten vorher melden\.$/, "push.doc.mfrWarranty", { date: "{1}", when: "{2}" }],
+        [/^Die gesetzliche Gewährleistung endet am (\S+) \((.+?)\)\. Mängel vorher beim Händler reklamieren\.$/, "push.doc.statWarranty", { date: "{1}", when: "{2}" }],
+    ] },
+    // --- Contracts: notice period, end of contract, own reminder ---
+    { tag: /^vertrag-/, rules: [
+        [/^Letzte Chance: (.+) kündigen$/, "push.contract.lastChance", { name: "<1>" }],
+        [/^Kündigungsfrist: (.+)$/, "push.contract.notice", { name: "<1>" }],
+        [/^Vertrag endet: (.+)$/, "push.contract.ends", { name: "<1>" }],
+        [/^Kündigung bis (\S+) \((.+?)\) zum (\S+) – sonst verlängert er sich um einen Monat\.$/, "push.contract.cancelBy", { date: "{1}", when: "{2}", end: "{3}", n: 1 }],
+        [/^Kündigung bis (\S+) \((.+?)\) zum (\S+) – sonst verlängert er sich um (\d+) Monate\.$/, "push.contract.cancelBy", { date: "{1}", when: "{2}", end: "{3}", n: "<4>" }],
+        [/^Der Vertrag endet am (\S+) \((.+?)\)\.$/, "push.contract.endsOn", { date: "{1}", when: "{2}" }],
+        [/^Erinnerung zu diesem Vertrag$/, "push.contract.reminder", {}],
+    ] },
+    // --- Pantry: best-before date (pinn-vorrat.js) ---
+    { tag: /^vorrat-/, rules: [
+        [/^Läuft heute ab: (.+)$/, "push.pantry.today", { item: "<1>" }],
+        [/^Läuft morgen ab: (.+)$/, "push.pantry.tomorrow", { item: "<1>" }],
+        [/^Läuft bald ab: (.+)$/, "push.pantry.soon", { item: "<1>" }],
+        [/^Abgelaufen: (.+)$/, "push.pantry.expired", { item: "<1>" }],
+        [/^(\d+) Vorrats-Artikel laufen bald ab$/, "push.pantry.many", { n: "<1>" }],
+        [/^([^·]+) \(heute\)$/, "push.pantry.itemToday", { item: "<1>" }],
+        [/^([^·]+) \(morgen\)$/, "push.pantry.itemTomorrow", { item: "<1>" }],
+        [/^([^·]+) \(in (\d+) Tagen\)$/, "push.pantry.itemInDays", { item: "<1>", n: "<2>" }],
+        [/^([^·]+) \(seit gestern abgelaufen\)$/, "push.pantry.itemYesterday", { item: "<1>" }],
+        [/^([^·]+) \(seit (\d+) Tagen abgelaufen\)$/, "push.pantry.itemDaysAgo", { item: "<1>", n: "<2>" }],
+        [/^Tippe hier für Rezeptideen mit dem, was da ist\.$/, "push.pantry.tapIdeas", {}],
+    ] },
+    // --- Extra reminder for tasks (pinn-push.js) – the task title stays unchanged ---
+    { tag: /^aufgabe-erinnerung-/, rules: [
+        [/^Heute fällig – du bist dran\.$/, "push.task.dueYourTurn", {}],
+        [/^Heute fällig\.$/, "push.task.due", {}],
+    ] },
+    // --- Bin collection the day before (pinn-push.js) – the waste types stay as in the calendar ---
+    { tag: /^muell-/, rules: [
+        [/^Morgen ist Müllabfuhr$/, "push.waste.tomorrow", {}],
+        [/^Du bist dran: (.+)$/, "push.waste.yourTurn", { bins: "<1>" }],
+        [/^Dran: (.+)$/, "push.waste.turn", { names: "<1>" }],
+    ] },
+    // --- Security: profile locked after too many wrong passwords (pinn-sitzungen.js) ---
+    { tag: /^sicherheit-/, rules: [
+        [/^🔒 Anmeldung gesperrt$/, "push.security.locked", {}],
+        [/^Zu viele falsche Passwörter für „(.+)“\. Das Profil ist vorübergehend gesperrt – die Sperre lässt sich unter Konto → Profile verwalten aufheben\.$/, "push.security.tooMany", { name: "<1>" }],
+        // since 1.152.0: security warnings with the visitor details (pinn-alarm.js)
+        [/^🚨 Sicherheitswarnung$/, "push.security.alertTitle", {}],
+        [/^Viele falsche Anmeldeversuche von einer Adresse – sie ist vorübergehend gesperrt\.$/, "push.security.ipLocked", {}],
+        [/^Zu viele falsche PINs für „(.+)“ am Familien-Dashboard – das Profil ist vorübergehend gesperrt\.$/, "push.security.pinLocked", { name: "<1>" }],
+        [/^Jemand hat versucht, sich aus dem Internet mit dem Start-Passwort anzumelden – abgewiesen\.$/, "push.security.startPassword", {}],
+        [/^Zugriffsversuche auf die PocketBase-Verwaltung aus dem Internet – abgewiesen\.$/, "push.security.adminAccess", {}],
+        [/^Viele Ortungsmeldungen mit unbekannten Geräte-IDs – die Adresse wird 1 Stunde ignoriert\.$/, "push.security.locationGuess", {}],
+        [/^Viele ungültige Zugangsschlüssel \(Familien-Dashboard, Widget oder Smart Home\) von einer Adresse – abgewiesen\.$/, "push.security.keyGuess", {}],
+        [/^Adresse: (.+) \(aus dem Internet\)$/, "push.security.addrOutside", { ip: "<1>" }],
+        [/^Adresse: (.+) \(Heimnetz\)$/, "push.security.addrInside", { ip: "<1>" }],
+        [/^Gerät: (.+)$/, "push.security.device", { name: "<1>" }],
+        [/^Versuche: (\d+)$/, "push.security.attempts", { n: "<1>" }],
+        [/^Alle Angaben im Fehlerprotokoll \(Sicherheit\)\.$/, "push.security.seeLog", {}],
+    ] },
+    // --- Funds: settlement recorded / added to a fund ---
+    { tag: /^ausgleich-/, rules: [
+        [/^Ausgleich: (.+)$/, "push.settle.title", { text: "<1>" }],
+        [/^([\s\S]+) wurde für dich eingetragen\.$/, "push.settle.recorded", { what: "{1}" }],
+    ] },
+    // --- Lending list (pinn-ausleihe.js): several things in one message are joined with " · " ---
+    { tag: /^ausleihe-/, rules: [
+        [/^Ausleihe$/, "push.loan.title", {}],
+        [/^Morgen zurückgeben: „(.+)“ an (.+)$/, "push.loan.borrowTomorrow", { thing: "<1>", name: "<2>" }],
+        [/^Heute zurückgeben: „(.+)“ an (.+)$/, "push.loan.borrowToday", { thing: "<1>", name: "<2>" }],
+        [/^Überfällig: „(.+)“ an (.+) zurückgeben$/, "push.loan.borrowOverdue", { thing: "<1>", name: "<2>" }],
+        [/^Heute fällig: (.+) gibt „(.+)“ zurück$/, "push.loan.lendToday", { name: "<1>", thing: "<2>" }],
+        [/^(.+) hat „(.+)“ noch nicht zurückgegeben$/, "push.loan.lendOverdue", { name: "<1>", thing: "<2>" }],
+    ] },
+    // --- Date polls in the calendar (pinn-abstimmung.js); date and time of the decided date are translated piece by piece ---
+    { tag: /^abstimmung-/, rules: [
+        [/^Terminabstimmung: (.+)$/, "push.poll.newTitle", { title: "<1>" }],
+        [/^(.+) hat eine Terminabstimmung gestartet – bitte antworte\.$/, "push.poll.newText", { name: "<1>" }],
+        [/^Alle haben geantwortet: (.+)$/, "push.poll.completeTitle", { title: "<1>" }],
+        [/^Du kannst jetzt den Termin festlegen\.$/, "push.poll.completeText", {}],
+        [/^Termin steht: (.+)$/, "push.poll.decidedTitle", { title: "<1>" }],
+    ] },
+    { tag: /^kasse-/, rules: [
+        [/^(.+) hat dich zur Kasse „(.+)“ hinzugefügt\.$/, "push.fund.added", { name: "{1}", fund: "<2>" }],
+        [/^(.+) hat dich zur Kasse „(.+)“ hinzugefügt\. Ausgaben werden geteilt\.$/, "push.fund.addedShared", { name: "{1}", fund: "<2>" }],
+    ] },
+];
+
+// ---------------------------------------------------------------------------------------------
+// Translator
+// ---------------------------------------------------------------------------------------------
+const LETTER = /[A-Za-zÄÖÜäöüßÀ-ÿ0-9]/;
+// Edges without letters (emojis, ❗, spaces) that are cut off for the second attempt
+const EDGE = /^([^A-Za-zÄÖÜäöüßÀ-ÿ0-9„"(¡¿]*)([\s\S]*?)([^A-Za-zÄÖÜäöüßÀ-ÿ0-9“"').!?…]*)$/;
+
+function groupFor(tag) {
+    const t = String(tag || "");
+    for (let i = 0; i < GROUPS.length; i++) if (GROUPS[i].tag.test(t)) return GROUPS[i];
+    return null;
+}
+
+function makeTranslator(lang, group, wg) {
+    const rules = (group ? group.rules : []).concat(SHARED);
+    const k = (key, vals) => {
+        const r = tk(lang, key, vals, wg);
+        return r === null ? null : r;
+    };
+    // „A, B und C“ → the list of names of the language
+    const names = s => {
+        const i = s.lastIndexOf(" und ");
+        if (i < 0) return s;
+        const r = k("push.namesAnd", { a: s.slice(0, i), b: s.slice(i + 5) });
+        return r === null ? s : r;
+    };
+    function fill(rule, g, depth) {
+        const h = { k: (key, vals) => k(key, vals), t: v => valueOf(v, depth), names: names };
+        if (typeof rule[1] === "function") return rule[1](g, h);
+        const spec = rule[2] || {};
+        const vals = {};
+        for (const name in spec) {
+            const s = spec[name];
+            if (typeof s === "number") { vals[name] = s; continue; }
+            const m = /^([<{[])(\d)[>}\]]$/.exec(String(s));
+            if (!m) { vals[name] = s; continue; }
+            const part = g[+m[2]] || "";
+            vals[name] = m[1] === "{" ? h.t(part) : m[1] === "[" ? names(part) : part;
+        }
+        return k(rule[1], vals);
+    }
+    function core(s, depth) {
+        if (!s || !LETTER.test(s)) return null;
+        if (Object.prototype.hasOwnProperty.call(EXACT, s)) return k(EXACT[s], {});
+        for (let i = 0; i < rules.length; i++) {
+            const m = rules[i][0].exec(s);
+            if (m) return fill(rules[i], m, depth + 1);
+        }
+        return null;
+    }
+    // Whole text, otherwise without emojis/signs at the edges
+    function loose(s, depth) {
+        if (depth > 6) return null;
+        const r = core(s, depth);
+        if (r !== null) return r;
+        const m = EDGE.exec(s);
+        if (m && (m[1] || m[3]) && m[2]) {
+            const c = core(m[2], depth);
+            if (c !== null) return m[1] + c + m[3];
+        }
+        return null;
+    }
+    // Part of another text: translated if a pattern fits, otherwise unchanged
+    function valueOf(v, depth) {
+        const r = loose(String(v || ""), depth);
+        return r === null ? String(v || "") : r;
+    }
+    // Whole message text: as a whole, otherwise line by line and part by part („ · “).
+    // Pieces without a pattern keep their text (flat share: with the flat share terms).
+    function text(s, depth) {
+        const r = loose(s, depth);
+        if (r !== null) return r;
+        if (s.indexOf("\n") >= 0) return s.split("\n").map(x => text(x, depth + 1)).join("\n");
+        if (s.indexOf(" · ") >= 0) return s.split(" · ").map(x => text(x, depth + 1)).join(" · ");
+        return wg ? applyTerms(s, lang) : s;
+    }
+    return s => text(String(s || ""), 0);
+}
+
+function translateFor(lang, wohnform, msg) {
+    const out = Object.assign({}, msg);
+    const wg = wohnform === "wg";
+    const tr = makeTranslator(LANGS.indexOf(lang) >= 0 ? lang : "en", groupFor(msg.tag), wg);
+    if (msg.titel) out.titel = tr(msg.titel);
+    if (msg.text) out.text = tr(msg.text);
+    return out;
+}
+
+// Rewrite a message for a profile. Errors never change anything: then the German text stays.
+function localize(userId, msg) {
+    if (!msg || !userId) return msg;
+    try {
+        const user = $app.findRecordById("benutzer", String(userId));
+        const lang = langOfUser(user);
+        const wohnform = wohnformOf(user.getString("familie"));
+        if (lang === "de" && wohnform !== "wg") return msg;
+        return translateFor(lang, wohnform, msg);
+    } catch (e) {
+        console.log("[Push] Text not translated: " + e.message);
+        return msg;
+    }
+}
+
+// Stand-in text for the device with this push address (language of its profile), used when a device is
+// woken up but the message can no longer be fetched
+function fallbackForEndpoint(endpoint) {
+    try {
+        const abo = $app.findFirstRecordByFilter("push_abos", "endpoint = {:e}", { e: String(endpoint || "") });
+        const user = $app.findRecordById("benutzer", abo.getString("benutzer"));
+        const lang = langOfUser(user);
+        const text = tk(lang, "push.fallback", {}, wohnformOf(user.getString("familie")) === "wg");
+        return { tag: "pinn-allgemein", url: "/", titel: "pinn.", text: text || "Es gibt Neuigkeiten in pinn." };
+    } catch (e) { return null; }
+}
+
+module.exports = { localize, translateFor, fallbackForEndpoint, wohnformOf, langOfUser, applyTerms, tk, resetTexts, GROUPS, SHARED, EXACT };
