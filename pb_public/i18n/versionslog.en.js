@@ -3,6 +3,10 @@
    language other than German. One entry per version of PINN_CHANGELOG: t = title, p = points in the same order
    (null = no translation, the German text is shown). Older versions are not translated. */
 window.PINN_CHANGELOG_EN = {
+  "1.166": {"t": "Family data tidied up", "p": [
+"Under the hood: all family data now live only in their own areas (recipes, shopping, tasks, members, settings \u2026). The old big family record is dissolved during the update \u2013 a backup is made first, nothing gets lost. Loading, saving and syncing between devices are leaner as a result.",
+"The bridge for very old app versions (before 1.104) has been removed. New families start with their areas right away. In the data export the family data now show their proper name (\u201cCalendar, lists, recipes, members & settings\u201d)."
+]},
   "1.165": {"t": "Shopping lists: mark important things and filter", "p": [
 "Mark as important: the popup for adding (or a long press on an entry) has the tick \u201cImportant\u201d. The entry turns red but stays in its place. A note appears at the top of the list \u2013 tap it to see only the important things. In the overview a red marker shows which list has something important on it.",
 "Filter next to \u201cCheck all\u201d: Important, Low (almost used up in the pantry), Pantry and Meal plan, each with a count. \u201cCheck all\u201d then only applies to what is shown.",

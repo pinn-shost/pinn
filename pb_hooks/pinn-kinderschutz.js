@@ -14,8 +14,8 @@
 //   everything outside /api/ (the app itself, pictures, service worker)
 //   /api/health
 //   renewing the sign-in (auth-refresh), reading profiles and the family name
-//   the family data (familien_daten: read, create, change - never delete) and the areas (/api/pinn/bereiche…)
-//   /api/pinn/save, stars and rewards, birthdays, reminders/push, weather, time, design, language status
+//   the family areas (/api/pinn/bereiche…) - the old family record (familien_daten) is dissolved since 1.166.0
+//   /api/pinn/save (only answers "nothing to do" since 1.166.0), stars and rewards, birthdays, reminders/push, weather, time, design, language status
 //   /api/pinn/kassen (load only - the server sends nothing but the child's own pocket money, see pinn-kassen.js)
 //   the dashboard routes of the device (profile selection, back to the dashboard) and the own sessions (sign out)
 //   files (/api/files/…) but no file token - protected files (documents, receipts) stay closed
@@ -56,7 +56,6 @@ const PREFIXES = [
 const COLLECTIONS = {
     benutzer: { GET: true },
     familien: { GET: true },
-    familien_daten: { GET: true, POST: true, PATCH: true },
 };
 
 function hasPrefix(path, prefix) {

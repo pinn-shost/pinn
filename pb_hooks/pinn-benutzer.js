@@ -117,9 +117,10 @@ function familyDataRecord(familyId) {
     if (!familyId) return null;
     try { return $app.findFirstRecordByFilter("familien_daten", "familie = {:f}", { f: String(familyId) }); } catch (e) { return null; }
 }
-// Family data including areas (recipes, shopping, board ... have lived in "familien_bereiche" since 1.104,
-// pinn-bereiche.js) - so all server functions keep seeing the complete state. For reading only:
-// familien_daten is always written via familyDataRecord() and the areas via pinn-bereiche.js.
+// Family data = all areas (recipes, shopping, board ... live in "familien_bereiche", pinn-bereiche.js) - so all
+// server functions keep seeing the complete state. For reading only: the areas are written via pinn-bereiche.js.
+// Since 1.166.0 there is no old family record any more (familien_daten is dissolved); if one is still there
+// (e.g. right after importing an old export), its content is the base and the areas are put on top.
 function loadFamilyDataFor(familyId) {
     const rec = familyDataRecord(familyId);
     let data = {};
@@ -426,20 +427,24 @@ function ensureSchema() {
             $app.save(f);
         }
     } catch (err) { setupError("Regeln für \"" + FAMILIEN + "\" nicht setzbar: " + err.message); }
-    ["familien_daten", "rezept_bilder"].forEach(name => {
-        try {
-            const c = findCol(name);
-            const u = findCol(USERS);
-            if (!c || !hasField(c, "familie") || !u || !hasField(u, "familie")) return;
-            // The family data can never be deleted through the interface (since 1.165.1) - the app never does it, and
-            // otherwise every member could wipe the whole record. Recipe images stay deletable within the family.
-            const del = name === "familien_daten" ? null : FAM_READ_RULE;
-            if (setRules(c, { listRule: FAM_READ_RULE, viewRule: FAM_READ_RULE, createRule: FAM_CREATE_RULE, updateRule: FAM_UPDATE_RULE, deleteRule: del })) {
-                $app.save(c);
-                console.log("[Familien] Sammlung \"" + name + "\" ist jetzt je Familie getrennt.");
-            }
-        } catch (err) { setupError("Regeln für \"" + name + "\" nicht setzbar: " + err.message); }
-    });
+    try {
+        const c = findCol("rezept_bilder");
+        const u = findCol(USERS);
+        if (c && hasField(c, "familie") && u && hasField(u, "familie") &&
+            setRules(c, { listRule: FAM_READ_RULE, viewRule: FAM_READ_RULE, createRule: FAM_CREATE_RULE, updateRule: FAM_UPDATE_RULE, deleteRule: FAM_READ_RULE })) {
+            $app.save(c);
+            console.log("[Familien] Sammlung \"rezept_bilder\" ist jetzt je Familie getrennt.");
+        }
+    } catch (err) { setupError("Regeln für \"rezept_bilder\" nicht setzbar: " + err.message); }
+    try {
+        // The old family record is dissolved since 1.166.0 (everything lives in the areas): the app no longer uses
+        // it, so the interface is closed completely. Only the server itself still reads it (import of old exports).
+        const c = findCol("familien_daten");
+        if (c && setRules(c, { listRule: null, viewRule: null, createRule: null, updateRule: null, deleteRule: null })) {
+            $app.save(c);
+            console.log("[Familien] Sammlung \"familien_daten\" ist jetzt gesperrt (Familiendaten liegen in den Bereichen).");
+        }
+    } catch (err) { setupError("Regeln für \"familien_daten\" nicht setzbar: " + err.message); }
 
     // 10) Remove the old, publicly retrievable calendar file
     try { $os.remove("/pb_public/kalender.ics"); } catch (err) { /* does not exist */ }
@@ -617,45 +622,14 @@ function addProfileMembers(list, profiles) {
     return changed;
 }
 // Reconciles a family's members with their profiles. true = something changed.
-// Since 1.108 the members live in the area "mitglieder" and the family name in the area "einstellungen"
-// (pinn-bereiche.js); as long as a family has not been migrated yet, the old way via familien_daten applies.
+// The members live in the area "mitglieder" and the family name in the area "einstellungen" (pinn-bereiche.js).
+// A family without areas yet gets them first (since 1.166.0 there is no old family record to fall back on).
 function syncFamilyMembers(familyId) {
     if (!familyId) return false;
     const B = areasLib();
-    if (B && B.isMoved(familyId, "mitglieder")) return syncFamilyMembersArea(B, familyId);
-    try {
-        let fam = null;
-        try { fam = $app.findRecordById(FAMILIEN, String(familyId)); } catch (e) { return false; }
-        let rec = familyDataRecord(familyId);
-        let isNew = false;
-        if (!rec) {
-            const col = findCol("familien_daten");
-            if (!col) return false;
-            rec = new Record(col);
-            rec.set("familie", fam.id);
-            isNew = true;
-        }
-        let data = {};
-        if (!isNew) {
-            try { data = require(`${__hooks}/calendar-sync.js`).parseRecordData(rec.get("data")) || {}; } catch (e) { data = {}; }
-        }
-        let changed = isNew || !Array.isArray(data.members);
-        if (!Array.isArray(data.members)) data.members = [];
-        if (stripExampleMembers(familyId, data)) changed = true;
-        const profiles = linkProfilesToMembers(familyId, data.members);
-        if (addProfileMembers(data.members, profiles)) changed = true;
-        if (data.lastName === undefined || data.lastName === "Mustermann") {
-            data.lastName = lastNameFromFamily(fam.getString("name"));
-            changed = true;
-        }
-        if (!changed) return false;
-        rec.set("data", data);
-        $app.save(rec);
-        return true;
-    } catch (err) {
-        console.log("[Familien] Abgleich der Familienmitglieder fehlgeschlagen: " + err.message);
-        return false;
-    }
+    if (!B) return false;
+    try { if (!B.ensureMoved(familyId)) return false; } catch (e) { return false; }
+    return syncFamilyMembersArea(B, familyId);
 }
 // Reconciliation via the areas. Everything that reads or writes other records (profiles, example members)
 // happens beforehand - in the transaction of updateArea only the list is changed.
@@ -681,15 +655,13 @@ function syncFamilyMembersArea(B, familyId) {
             return changed;
         });
         let changed = r1.changed;
-        if (B.isMoved(familyId, "einstellungen")) {
-            const name = lastNameFromFamily(fam.getString("name"));
-            const r2 = B.updateArea(familyId, "einstellungen", (data) => {
-                if (data.lastName !== undefined && data.lastName !== "Mustermann") return false;
-                data.lastName = name;
-                return true;
-            });
-            if (r2.changed) changed = true;
-        }
+        const name = lastNameFromFamily(fam.getString("name"));
+        const r2 = B.updateArea(familyId, "einstellungen", (data) => {
+            if (data.lastName !== undefined && data.lastName !== "Mustermann") return false;
+            data.lastName = name;
+            return true;
+        });
+        if (r2.changed) changed = true;
         return changed;
     } catch (err) {
         console.log("[Familien] Abgleich der Familienmitglieder fehlgeschlagen: " + err.message);
@@ -700,47 +672,26 @@ function syncAllFamilyMembers() {
     allFamilies().forEach(f => syncFamilyMembers(f.id));
 }
 // Remove a member (including emergency pass) from the family data, e.g. when their profile was deleted.
-// Since 1.108 from the areas "mitglieder" and "notfall", otherwise (not migrated yet) from familien_daten.
+// Members and emergency passes live in the areas "mitglieder" and "notfall" (pinn-bereiche.js).
 function removeFamilyMember(familyId, memberId) {
     if (!familyId || !memberId) return false;
     const B = areasLib();
-    const movedMembers = !!(B && B.isMoved(familyId, "mitglieder"));
-    const movedPasses = !!(B && B.isMoved(familyId, "notfall"));
+    if (!B) return false;
     let removed = false;
     try {
-        if (movedMembers) {
-            const r = B.updateArea(familyId, "mitglieder", (data) => {
-                if (!Array.isArray(data.members) || !data.members.some(m => m && m.id === memberId)) return false;
-                data.members = data.members.filter(m => !m || m.id !== memberId);
-                return true;
-            });
-            removed = r.changed;
-        }
-        if (movedPasses) {
-            B.updateArea(familyId, "notfall", (data) => {
-                const passes = data.emergencyPasses;
-                if (!passes || typeof passes !== "object" || Array.isArray(passes) || !Object.prototype.hasOwnProperty.call(passes, memberId)) return false;
-                delete passes[memberId];
-                return true;
-            });
-        }
-        if (movedMembers && movedPasses) return removed;
-        const rec = familyDataRecord(familyId);
-        if (!rec) return removed;
-        const data = require(`${__hooks}/calendar-sync.js`).parseRecordData(rec.get("data")) || {};
-        let changed = false;
-        if (!movedMembers && Array.isArray(data.members) && data.members.some(m => m && m.id === memberId)) {
+        if (!B.ensureMoved(familyId)) return false;
+        const r = B.updateArea(familyId, "mitglieder", (data) => {
+            if (!Array.isArray(data.members) || !data.members.some(m => m && m.id === memberId)) return false;
             data.members = data.members.filter(m => !m || m.id !== memberId);
-            changed = true;
-            removed = true;
-        }
-        if (!movedPasses && data.emergencyPasses && typeof data.emergencyPasses === "object" && Object.prototype.hasOwnProperty.call(data.emergencyPasses, memberId)) {
-            delete data.emergencyPasses[memberId];
-            changed = true;
-        }
-        if (!changed) return removed;
-        rec.set("data", data);
-        $app.save(rec);
+            return true;
+        });
+        removed = r.changed;
+        B.updateArea(familyId, "notfall", (data) => {
+            const passes = data.emergencyPasses;
+            if (!passes || typeof passes !== "object" || Array.isArray(passes) || !Object.prototype.hasOwnProperty.call(passes, memberId)) return false;
+            delete passes[memberId];
+            return true;
+        });
         return removed;
     } catch (err) {
         console.log("[Familien] Mitglied konnte nicht entfernt werden: " + err.message);

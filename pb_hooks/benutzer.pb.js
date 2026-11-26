@@ -5,7 +5,7 @@
 // - creates the collections "benutzer" and "familien" or completes them
 // - makes the profile "Admin" the main admin (without a family) or creates it ("Admin"/"Admin")
 // - on an existing installation, takes over all data into the family "Familie"
-// - separates familien_daten and rezept_bilder per family
+// - separates rezept_bilder per family and keeps the dissolved familien_daten locked (since 1.166.0)
 // - creates the push collections "push_abos" and "push_nachrichten"
 // The Apple calendar credentials per family are managed by apple_credentials.pb.js (pinn-apple.js),
 // the Google account (Android calendar) per family by google_credentials.pb.js (pinn-google.js).
@@ -383,7 +383,7 @@ routerAdd("GET", "/api/pinn/familien", (e) => {
 }, $apis.requireAuth("benutzer"));
 
 // New family including the first family admin: {name, adminName, adminPassword, wohnform}
-// wohnform: 'familie' (default) or 'wg' - is afterwards in the family data (field "wohnform")
+// wohnform: 'familie' (default) or 'wg' - is afterwards in the settings area (field "wohnform")
 // and can later be changed under Settings → Family members → Living arrangement.
 routerAdd("POST", "/api/pinn/familien/create", (e) => {
     const lib = require(`${__hooks}/pinn-benutzer.js`);
@@ -399,6 +399,7 @@ routerAdd("POST", "/api/pinn/familien/create", (e) => {
     if (adminPassword.length < 8) return e.json(400, { error: "Das Start-Passwort muss mindestens 8 Zeichen lang sein." });
     const problem = lib.ensureReady();
     if (problem) return e.json(400, { error: problem });
+    if (!require(`${__hooks}/pinn-bereiche.js`).ensureSchema()) return e.json(503, { error: "Die Familienbereiche sind auf dem Server noch nicht eingerichtet." });
     let familyId = "";
     let step = "";
     const adminMember = "m" + Date.now();
@@ -410,16 +411,14 @@ routerAdd("POST", "/api/pinn/familien/create", (e) => {
             tx.save(fam);
             familyId = fam.id;
             step = "Familiendaten anlegen";
-            const fd = new Record(tx.findCollectionByNameOrId("familien_daten"));
-            fd.set("familie", fam.id);
+            // Since 1.166.0 straight into the family areas (pinn-bereiche.js) - there is no family record any more.
             // No example members: the family starts with only its admin as a member
             const startData = {
                 members: [{ id: adminMember, name: adminName, role: "", color: lib.MEMBER_COLORS[0], displayMode: "name" }],
                 lastName: lib.lastNameFromFamily(name),
             };
             if (wohnform === "wg") startData.wohnform = "wg";
-            fd.set("data", startData);
-            tx.save(fd);
+            require(`${__hooks}/pinn-bereiche.js`).seedNew(tx, fam.id, startData);
             step = "Familien-Admin anlegen";
             const u = new Record(tx.findCollectionByNameOrId(lib.USERS));
             u.set("username", adminName);

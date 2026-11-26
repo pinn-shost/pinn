@@ -1,9 +1,9 @@
 // pb_hooks/bereiche.pb.js
 // Family areas: parts of the family data in records of their own (logic: pinn-bereiche.js).
 //
-// At start: creates the collection "familien_bereiche", moves the areas of every family out of
-// familien_daten (with a backup file before, see pinn-bereiche.js) and removes copies of the move
-// that are older than 30 days.
+// At start: creates the collection "familien_bereiche", makes sure every family has all its areas (an old
+// family record, e.g. from an imported export, is moved with a backup file before and then deleted, see
+// pinn-bereiche.js) and removes backup files of the move that are older than 30 days.
 //
 // Routes (signed in, own family only):
 //   POST /api/pinn/bereiche            { stand: { <area>: '<updated>' } } -> { bereiche: [{ name, keys,

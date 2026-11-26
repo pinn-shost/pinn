@@ -39,28 +39,27 @@
 //
 // Fields of "familien_bereiche":
 //   familie (relation, deleted together with the family), bereich (name of the area),
-//   data (JSON: the keys of this area, exactly as they used to be in familien_daten),
-//   altbestand (JSON: copy of the state at the time of the move), altbestand_bis (YYYY-MM-DD: until
-//   then the copy is kept), created, updated.
+//   data (JSON: the keys of this area, exactly as they used to be in familien_daten), created, updated.
+//   (Until 1.165 there were also "altbestand" / "altbestand_bis" – a 30-day copy of the move. Schema step 3
+//   removes both fields, see dissolveAll.)
 // Access only through the routes in bereiche.pb.js (collection API locked for everyone).
 //
 // The move (migrateFamily, at every start for all families and lazily on the first request):
 //   1. Before anything is changed, the complete family record is written to
-//      pb_data/pinn_umzug/familien_daten_<family>_<date>.json (kept for COPY_DAYS days). If that file
+//      pb_data/pinn_umzug/familien_daten_<family>_<date>.json (kept for BACKUP_DAYS days). If that file
 //      cannot be written, nothing is moved – the next start tries again.
-//   2. In one transaction: the area record is created with the keys of this area, the same state is
-//      kept in "altbestand" for COPY_DAYS days, and the keys are removed from familien_daten.
+//   2. In one transaction: the area record is created with the keys of this area and the keys are removed
+//      from familien_daten.
+//   3. Leftovers in familien_daten (e.g. from an imported old export) are added to the areas (takeLeftovers,
+//      never deletes or overwrites anything) and then removed from the block.
+//   4. Once the old record is empty, it is deleted (dropEmptyRecord).
 //
-// Safety net for devices that still run an older app version:
-//   - They keep seeing everything: when familien_daten is read through the collection API, every area
-//     the device does not know yet is added to the answer (overlay). The app tells which areas it handles
-//     itself: ?bereiche=<names, comma separated> (1.104 sent ?bereiche=1 = rezepte,essensplan); the same
-//     list comes with /api/pinn/save as "bereiche" (1.104 sent true). No list = app without areas.
-//   - What they still send in the old block is added to the areas (absorb): missing entries are added,
-//     empty values filled – never deleted or overwritten. After COPY_DAYS days this stops; by then
-//     every device has long had the new app.
-//   - Leftovers in familien_daten itself (e.g. a family record created by the app after the move) are
-//     always added and then removed from the block.
+// Family data dissolved (since 1.166.0, schema step 3 "Familiendaten abbauen"):
+//   The app no longer reads or writes familien_daten – everything lives in the areas. The old safety net for
+//   devices with an app from before the areas (absorb / overlay on reading, "known areas") is gone: the 30 days
+//   after the last move ended on 22.11.2026. New families get their areas right away (seedNew), no family
+//   record any more. The collection itself stays (locked, see pinn-benutzer.js) only so that an old data export
+//   can still be imported: its family record is moved into the areas at the next start and then deleted.
 
 const COL = "familien_bereiche";
 const AREAS = {
@@ -85,14 +84,12 @@ const AREAS = {
     haushalt: ["rooms", "roomSchedules", "trashBins", "cleaningCategories", "smartDevices"],
     kalender: ["appleCalendar"],
 };
-// Areas app 1.104 knew (it sent bereiche=true / ?bereiche=1)
-const AREAS_1104 = ["rezepte", "essensplan"];
 // Other areas the bell needs to describe a change (a new meal gets the title of its recipe)
 const CONTEXT = { essensplan: ["rezepte"], notfall: ["mitglieder"] };
 // Keys of an area a guest account cannot change (the stored value is kept)
 const GUEST_LOCKED = { einstellungen: ["guestHiddenViews", "dashboardCounts"] };
-const DATA_MAX = 50 * 1024 * 1024;   // same limit as familien_daten (recipe photos of old versions are embedded)
-const COPY_DAYS = 30;
+const DATA_MAX = 50 * 1024 * 1024;   // same limit as the old familien_daten (recipe photos of old versions are embedded)
+const BACKUP_DAYS = 30;               // backup files of the move in pb_data/pinn_umzug are kept this long
 // Old default-view keys (before the desktop/mobile split) -> the keys of the settings area that replace them
 const LEGACY_VIEW = {
     defaultViewMode: ["defaultViewModeDesktop", "defaultViewModeMobile"],
@@ -181,8 +178,6 @@ function ensureSchema() {
                 { name: "familie", type: "relation", collectionId: fam.id, cascadeDelete: true, maxSelect: 1, minSelect: 0, required: false },
                 { name: "bereich", type: "text", max: 40 },
                 { name: "data", type: "json", maxSize: DATA_MAX },
-                { name: "altbestand", type: "json", maxSize: DATA_MAX },
-                { name: "altbestand_bis", type: "text", max: 10 },
                 { name: "created", type: "autodate", onCreate: true, onUpdate: false },
                 { name: "updated", type: "autodate", onCreate: true, onUpdate: true },
             ],
@@ -230,7 +225,7 @@ function readMany(familyId, list) {
     });
     return out;
 }
-// Adds the areas to a family data object (for older app versions and server functions that need them).
+// Adds the areas to a family data object (for server functions that need several areas at once).
 // names: only these areas (default: all moved ones)
 function overlay(familyId, data, names) {
     const base = isObj(data) ? data : {};
@@ -241,18 +236,14 @@ function overlay(familyId, data, names) {
     return base;
 }
 // One value of an area as SQLite returns it (json_extract: text as is, lists/objects as JSON text), without
-// parsing the area in JS. Until the area has moved (or if the key is missing there) familien_daten is read.
-// -> "" if the value is not there
+// parsing the area in JS. -> "" if the value is not there
 function fieldText(familyId, name, key) {
-    if (!familyId || !/^[A-Za-z0-9_]+$/.test(String(key || ""))) return "";
-    const fromFamily = "(SELECT json_extract(data, '$." + key + "') FROM familien_daten WHERE familie = {:f} LIMIT 1)";
-    const fromArea = "(SELECT json_extract(data, '$." + key + "') FROM " + COL + " WHERE familie = {:f} AND bereich = {:b} LIMIT 1)";
-    const sql = findCol(COL) && AREAS[name]
-        ? "SELECT COALESCE(" + fromArea + ", " + fromFamily + ", '') AS t"
-        : "SELECT COALESCE(" + fromFamily + ", '') AS t";
+    if (!familyId || !AREAS[name] || !/^[A-Za-z0-9_]+$/.test(String(key || "")) || !findCol(COL)) return "";
+    const sql = "SELECT COALESCE((SELECT json_extract(data, '$." + key + "') FROM " + COL +
+        " WHERE familie = {:f} AND bereich = {:b} LIMIT 1), '') AS t";
     try {
         const m = new DynamicModel({ t: "" });
-        $app.db().newQuery(sql).bind({ f: String(familyId), b: String(name || "") }).one(m);
+        $app.db().newQuery(sql).bind({ f: String(familyId), b: String(name) }).one(m);
         return String(m.t === null || m.t === undefined ? "" : m.t);
     } catch (e) { return ""; }
 }
@@ -350,11 +341,11 @@ function backupFamilyData(familyId, rec, list) {
         return false;
     }
 }
-// Remove backups older than COPY_DAYS days
+// Remove backups older than BACKUP_DAYS days
 function cleanupBackups() {
     let entries = [];
     try { entries = $os.readDir(BACKUP_DIR); } catch (e) { return; }
-    const limit = ymd(Date.now() - COPY_DAYS * 86400000);
+    const limit = ymd(Date.now() - BACKUP_DAYS * 86400000);
     entries.forEach(en => {
         let n = "";
         try { n = String(en.name()); } catch (e) { n = ""; }
@@ -367,10 +358,11 @@ function cleanupBackups() {
 // ---------------------------------------------------------------------------------------------
 // Move
 // ---------------------------------------------------------------------------------------------
-// Creates the missing areas of a family (content from familien_daten) and takes leftovers over.
-// -> { created: [names], leftovers: number }
+// Creates the missing areas of a family (content from familien_daten, if there still is a record), takes
+// leftovers over and deletes the old record once it is empty.
+// -> { created: [names], leftovers: number, dropped: true/false, kept: [keys still in the old record] }
 function migrateFamily(familyId) {
-    const result = { created: [], leftovers: 0 };
+    const result = { created: [], leftovers: 0, dropped: false, kept: [] };
     if (!validFamily(familyId) || !ensureSchema()) return result;
     const missing = names().filter(n => movedNames(familyId).indexOf(n) < 0);
     if (missing.length) {
@@ -394,10 +386,6 @@ function migrateFamily(familyId) {
                     rec.set("familie", String(familyId));
                     rec.set("bereich", n);
                     rec.set("data", content);
-                    if (Object.keys(content).length) {
-                        rec.set("altbestand", content);
-                        rec.set("altbestand_bis", ymd(Date.now() + COPY_DAYS * 86400000));
-                    }
                     tx.save(rec);
                     keys.forEach(k => { if (Object.prototype.hasOwnProperty.call(data, k)) { delete data[k]; changed = true; } });
                     result.created.push(n);
@@ -415,7 +403,44 @@ function migrateFamily(familyId) {
         if (result.created.length) console.log("[Bereiche] Familie " + familyId + ": " + result.created.join(", ") + " in eigene Datensätze umgezogen.");
     }
     result.leftovers = takeLeftovers(familyId);
+    const drop = dropEmptyRecord(familyId);
+    result.dropped = drop.dropped;
+    result.kept = drop.kept;
     return result;
+}
+// Deletes the old family record once nothing is left in it. Something the areas do not know (e.g. "finance"
+// before the funds have taken it over, see pinn-kassen.js) keeps the record – nothing is ever thrown away.
+// -> { dropped: true/false, kept: [keys] }
+function dropEmptyRecord(familyId) {
+    const out = { dropped: false, kept: [] };
+    if (!validFamily(familyId)) return out;
+    let rec = null;
+    try { rec = $app.findFirstRecordByFilter("familien_daten", "familie = {:f}", { f: String(familyId) }); } catch (e) { rec = null; }
+    if (!rec) return out;
+    const data = parse(rec.get("data"));
+    out.kept = Object.keys(isObj(data) ? data : {}).filter(k => data[k] !== undefined && data[k] !== null);
+    if (out.kept.length) return out;
+    try {
+        $app.delete(rec);
+        out.dropped = true;
+        console.log("[Bereiche] Familie " + familyId + ": alter Familien-Datensatz (leer) entfernt.");
+    } catch (err) {
+        console.log("[Bereiche] Alter Familien-Datensatz nicht entfernbar: " + err.message);
+    }
+    return out;
+}
+// Creates all areas of a NEW family inside the transaction that creates the family (benutzer.pb.js).
+// seed: start values, e.g. { members, lastName, wohnform } – each key goes into its own area.
+function seedNew(tx, familyId, seed) {
+    const col = tx.findCollectionByNameOrId(COL);
+    const start = isObj(seed) ? seed : {};
+    names().forEach(n => {
+        const rec = new Record(col);
+        rec.set("familie", String(familyId));
+        rec.set("bereich", n);
+        rec.set("data", pick(start, keysOf(n)));
+        tx.save(rec);
+    });
 }
 // Area keys that are (again) in familien_daten: add them to the areas, then remove them from the block
 function takeLeftovers(familyId) {
@@ -449,48 +474,6 @@ function takeLeftovers(familyId) {
         return 0;
     }
     if (added) console.log("[Bereiche] Familie " + familyId + ": " + added + " Einträge aus den Familiendaten ergänzt.");
-    return added;
-}
-// Takes area keys out of an object about to be saved in familien_daten (sent by an older app version):
-// within COPY_DAYS days after the move missing entries are added to the area, afterwards they are only
-// dropped. Changes "incoming" in place. -> number of added entries
-function absorb(familyId, incoming) {
-    if (!validFamily(familyId) || !isObj(incoming) || !hasAny(incoming, allKeys())) return 0;
-    const moved = movedNames(familyId);
-    if (!moved.length) return 0;
-    let added = 0;
-    let toolsAdded = false;
-    moved.forEach(n => {
-        const keys = keysOf(n);
-        if (!hasAny(incoming, keys)) return;
-        const part = pick(incoming, keys);
-        cleanArea(n, part);
-        const before = added;
-        keys.forEach(k => { delete incoming[k]; });
-        try {
-            $app.runInTransaction((tx) => {
-                const rec = areaRecord(familyId, n, tx);
-                if (!rec) return;
-                const created = Date.parse(String(rec.getString("created") || "").replace(" ", "T"));
-                if (isFinite(created) && Date.now() - created > COPY_DAYS * 86400000) return;
-                const stats = { n: 0 };
-                const current = parse(rec.get("data"));
-                const merged = unionMerge(isObj(current) ? current : {}, part, stats);
-                if (!stats.n) return;
-                rec.set("data", merged);
-                tx.save(rec);
-                added += stats.n;
-            });
-        } catch (err) {
-            console.log("[Bereiche] Daten eines älteren Geräts nicht übernehmbar: " + err.message);
-        }
-        if (n === "einstellungen" && added > before && part.kitchenTools !== undefined) toolsAdded = true;
-    });
-    if (added) console.log("[Bereiche] Familie " + familyId + ": " + added + " Einträge von einem älteren Gerät ergänzt.");
-    if (toolsAdded) {
-        // New kitchen tools from an older device: the public recipes show them as well
-        try { syncPublicRecipes(familyId); } catch (err) { console.log("[Rezepte] Abgleich öffentlicher Rezepte fehlgeschlagen: " + err.message); }
-    }
     return added;
 }
 // ---------------------------------------------------------------------------------------------
@@ -555,20 +538,46 @@ function cleanLegacyAll() {
     return true;
 }
 
-// Copies of the move are only kept for COPY_DAYS days
-function expireCopies() {
-    if (!findCol(COL)) return;
-    let recs = [];
-    try { recs = $app.findRecordsByFilter(COL, "altbestand_bis != '' && altbestand_bis < {:t}", "", 0, 0, { t: today() }); } catch (e) { recs = []; }
-    recs.forEach(rec => {
+// ---------------------------------------------------------------------------------------------
+// Family data dissolved (schema step 3 "Familiendaten abbauen", since 1.166.0)
+// ---------------------------------------------------------------------------------------------
+// For every family: all areas there, leftovers taken over, empty old record deleted. Then the 30-day copies
+// of the move ("altbestand", "altbestand_bis") are removed from the collection. A family whose old record
+// still holds something unknown keeps it (log line) – the step still counts as done.
+// Throws if the areas cannot be set up (the step is then not recorded and runs again at the next start).
+function dissolveAll() {
+    if (!ensureSchema()) throw new Error("Sammlung familien_bereiche fehlt");
+    let families = [];
+    try { families = $app.findRecordsByFilter("familien", "", "created", 0, 0); } catch (e) { families = []; }
+    let dropped = 0;
+    let failed = 0;
+    families.forEach(f => {
         try {
-            rec.set("altbestand", null);
-            rec.set("altbestand_bis", "");
-            $app.save(rec);
-        } catch (err) { console.log("[Bereiche] Kopie nicht entfernbar: " + err.message); }
+            const r = migrateFamily(f.id);
+            if (r.dropped) dropped++;
+            if (movedNames(f.id).length < names().length) failed++;
+            if (r.kept.length) console.log("[Bereiche] Familie " + f.id + ": alter Familien-Datensatz bleibt, er enthält noch " + r.kept.join(", ") + ".");
+        } catch (e) {
+            failed++;
+            console.log("[Bereiche] Familie " + f.id + ": " + e.message);
+        }
     });
-    cleanupBackups();
+    if (failed) throw new Error(failed + " Familie(n) ohne vollständige Bereiche");
+    const col = findCol(COL);
+    const gone = [];
+    ["altbestand", "altbestand_bis"].forEach(n => {
+        let has = false;
+        try { has = !!col.fields.getByName(n); } catch (e) { has = false; }
+        if (!has) return;
+        col.fields.removeByName(n);
+        gone.push(n);
+    });
+    if (gone.length) $app.save(col);
+    console.log("[Bereiche] Familiendaten abgebaut: " + dropped + " alte(r) Datensatz/Datensätze entfernt" +
+        (gone.length ? ", Kopien des Umzugs gelöscht" : "") + ".");
+    return true;
 }
+
 // Removes Apple credentials that might have reached a calendar area before (safety net at every start)
 function scrubSecrets() {
     if (!findCol(COL)) return;
@@ -577,10 +586,8 @@ function scrubSecrets() {
     recs.forEach(rec => {
         try {
             let changed = false;
-            ["data", "altbestand"].forEach(f => {
-                const d = parseOrNull(rec.get(f));
-                if (d && cleanArea("kalender", d)) { rec.set(f, d); changed = true; }
-            });
+            const d = parseOrNull(rec.get("data"));
+            if (d && cleanArea("kalender", d)) { rec.set("data", d); changed = true; }
             if (changed) {
                 $app.save(rec);
                 console.log("[Bereiche] Alte Apple-Zugangsdaten aus der Kalender-Auswahl entfernt.");
@@ -595,10 +602,16 @@ function migrateAll() {
     families.forEach(f => {
         try { migrateFamily(f.id); } catch (e) { console.log("[Bereiche] Familie " + f.id + ": " + e.message); }
     });
-    try { expireCopies(); } catch (e) { console.log("[Bereiche] Aufräumen: " + e.message); }
+    try { cleanupBackups(); } catch (e) { console.log("[Bereiche] Aufräumen: " + e.message); }
     try { scrubSecrets(); } catch (e) { console.log("[Bereiche] Kalender-Auswahl: " + e.message); }
 }
-// Before answering: missing areas or leftovers? Only checked again when familien_daten has changed.
+// Makes sure a family has all its areas (server functions that change an area call this first)
+function ensureMoved(familyId) {
+    if (!validFamily(familyId)) return false;
+    if (movedNames(familyId).length < names().length) migrateFamily(familyId);
+    return movedNames(familyId).length === names().length;
+}
+// Before answering: missing areas or leftovers? Only checked again when the family data stamp has changed.
 function ensureFamily(familyId) {
     const s = stamp(familyId);
     const key = CHECK_KEY + familyId;
@@ -660,18 +673,6 @@ function save(familyId, body, opts) {
     });
     return { status: result.status, body: result.body, previous: previous, saved: result.status === 200 ? incoming : null, name: name };
 }
-// Areas an app handles itself: true / "1" = app 1.104, array or "a,b" = these names, anything else = none
-function knownAreas(value) {
-    if (value === true || value === "1") return AREAS_1104.slice();
-    let list = [];
-    if (Array.isArray(value)) list = value;
-    else if (typeof value === "string" && value) list = value.split(",");
-    return list.map(x => String(x || "").trim()).filter(n => !!AREAS[n]);
-}
-// Moved areas an app does not know yet (they are added to familien_daten for it)
-function unknownAreas(familyId, known) {
-    return movedNames(familyId).filter(n => (known || []).indexOf(n) < 0);
-}
 // Changes one area on the server itself (e.g. voice control). fn(data) changes data in place and returns
 // true if something changed. -> { changed, before, after } (before/after: the area keys only)
 function updateArea(familyId, name, fn) {
@@ -730,7 +731,7 @@ function afterSave(familyId, name, previous, saved, auth) {
         require(`${__hooks}/pinn-hinweise.js`).afterSave(familyId, oldView, newView, auth);
     } catch (err) { console.log("[Hinweise] Auswertung nach dem Speichern fehlgeschlagen: " + err.message); }
 }
-// Public recipes after a change of the kitchen tools in familien_daten
+// Public recipes after a change of the kitchen tools (settings area)
 function syncPublicRecipes(familyId, kitchenTools) {
     const recipes = readMany(familyId, ["rezepte"]).recipes || [];
     require(`${__hooks}/pinn-rezepte.js`).syncFamily(familyId, { recipes: recipes, kitchenTools: Array.isArray(kitchenTools) ? kitchenTools : kitchenToolsOf(familyId) });
@@ -763,9 +764,10 @@ function httpFail(e, where, ex, status) {
 }
 
 module.exports = {
-    COL, AREAS, COPY_DAYS, GUEST_LOCKED,
-    ensureSchema, migrateAll, migrateFamily, ensureFamily, expireCopies, takeLeftovers, absorb, cleanLegacyFamily, cleanLegacyAll,
+    COL, AREAS, BACKUP_DAYS, GUEST_LOCKED,
+    ensureSchema, migrateAll, migrateFamily, ensureFamily, ensureMoved, seedNew, dropEmptyRecord, cleanupBackups, takeLeftovers,
+    cleanLegacyFamily, cleanLegacyAll, dissolveAll,
     names, keysOf, allKeys, areaOfKey, cleanArea, scrubSecrets, movedNames, isMoved, readMany, overlay, fieldText, kitchenToolsOf, leftoverKeys,
-    list, save, afterSave, syncPublicRecipes, unionMerge, knownAreas, unknownAreas, updateArea, areasStamp,
+    list, save, afterSave, syncPublicRecipes, unionMerge, updateArea, areasStamp,
     httpSend, httpBody, httpFamily, httpFail,
 };

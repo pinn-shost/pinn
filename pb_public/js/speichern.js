@@ -2,30 +2,23 @@
    Part of the app code that used to be a single block in index.html. Classic script, no build step:
    it is loaded right after the inline script of index.html and before the other files in js/
    (the load order is listed at the bottom of index.html and in pinn-setup.sh).
-   Contents: the sync state (syncBase, syncBaseUpdated, in-flight/rerun/retry), pending changes and the cache on the device
-   (readPending, writePending, clearPending, writeCache, readCache), the sync status (setSyncStatus) and applyFamilyData,
-   which takes a data state into the app variables incl. migrations. Loading, saving and merging run in js/familiensync.js. */
+   Contents: the sync status (setSyncStatus), applyFamilyData (takes a data state into the app variables incl.
+   migrations) and read access to what an app from before 1.166 left on the device (readPending, readCache,
+   clearPending). Loading and saving run in js/familiensync.js and js/bereiche.js. */
 
 /* ==========================================================
    Saving & syncing (works offline, without overwriting each other)
    ----------------------------------------------------------
-   - syncBase / syncBaseUpdated: the state last confirmed by the server and its timestamp.
-   - Every change is first saved locally (localStorage) as "pending" and then sent to the
-     server. The server only saves if its state has not changed since syncBaseUpdated
-     (pb_hooks/save_family_data.pb.js). Otherwise the app merges both states
-     (mergeFamilyData) and tries again.
-   - Without a connection the change stays saved locally and is sent automatically as soon as
-     the server can be reached again - even after reloading the page.
+   Since 1.166.0 everything is saved in the family areas (js/bereiche.js): every change is first queued on the
+   device and then sent with conflict protection; without a connection it stays queued and is sent as soon as the
+   server can be reached again - even after reloading the page.
+   Until 1.165 the app also kept a queue and a cache of the old family record ("pinn.pendingSync", "pinn.cache").
+   They are only read once more after the update (adoptOldFamilyCache, kassenStashRescue) and then removed.
    ========================================================== */
 const LS_PENDING_KEY = 'pinn.pendingSync';
 const LS_CACHE_KEY = 'pinn.cache';
-let syncBase = null;
-let syncBaseUpdated = '';
-let syncInFlight = false;
-let syncRerun = false;
 let syncRetryTimer = null;
 let pendingMemory = null; // Fallback in case localStorage is not available
-let pendingSeq = 0;
 
 function readPending() {
   try {
@@ -34,16 +27,9 @@ function readPending() {
   } catch (e) { /* localStorage may not be available */ }
   return pendingMemory;
 }
-function writePending(p) {
-  pendingMemory = p;
-  try { localStorage.setItem(LS_PENDING_KEY, JSON.stringify(p)); } catch (e) { /* in memory only */ }
-}
 function clearPending() {
   pendingMemory = null;
   try { localStorage.removeItem(LS_PENDING_KEY); } catch (e) { /* ignore */ }
-}
-function writeCache() {
-  try { localStorage.setItem(LS_CACHE_KEY, JSON.stringify({ recordId: familyRecordId, familie: (currentUser() && currentUser().familie) || '', updated: syncBaseUpdated, data: syncBase })); } catch (e) { /* ignore */ }
 }
 function readCache() {
   try { const raw = localStorage.getItem(LS_CACHE_KEY); return raw ? JSON.parse(raw) : null; } catch (e) { return null; }

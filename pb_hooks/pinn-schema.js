@@ -117,6 +117,9 @@ const MIGRATIONS = [
     { version: 1, name: "Grundbestand", up: baseline },
     // 1.122.0: old default-view keys of the family record move into the settings area (backup file first)
     { version: 2, name: "Familiendaten-Altlasten", up: () => require(`${__hooks}/pinn-bereiche.js`).cleanLegacyAll() },
+    // 1.166.0: the old family record is dissolved – every family has all its areas, empty old records are
+    // deleted and the 30-day copies of the move are removed from "familien_bereiche"
+    { version: 3, name: "Familiendaten abbauen", up: () => require(`${__hooks}/pinn-bereiche.js`).dissolveAll() },
 ];
 
 function latest() {

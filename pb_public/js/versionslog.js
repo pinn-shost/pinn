@@ -22,6 +22,13 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.166', datum: '25.11.2026', titel: 'Familiendaten aufgeräumt',
+    punkte: [
+      ['info', 'Unter der Haube: Alle Familiendaten liegen jetzt nur noch in ihren eigenen Bereichen (Rezepte, Einkauf, Aufgaben, Mitglieder, Einstellungen …). Der alte große Familien-Datensatz wird beim Update aufgelöst – vorher wird eine Sicherung angelegt, es geht nichts verloren. Laden, Speichern und der Abgleich zwischen den Geräten sind dadurch schlanker.'],
+      ['fix', 'Die Übergangslösung für sehr alte App-Versionen (vor 1.104) ist entfernt. Neue Familien starten direkt mit ihren Bereichen. Im Datenexport stehen die Familiendaten jetzt mit ihrem richtigen Namen („Kalender, Listen, Rezepte, Mitglieder & Einstellungen“).'],
+    ],
+  },
+  {
     v: '1.165', datum: '24.11.2026', titel: 'Einkaufslisten: Wichtiges markieren und filtern',
     punkte: [
       ['neu', 'Wichtig markieren: Im Fenster beim Hinzufügen (oder lange auf einen Eintrag drücken) gibt es den Haken „Wichtig“. Der Eintrag wird rot, bleibt aber an seinem Platz. Oben auf der Liste erscheint ein Hinweis – antippen zeigt nur die wichtigen Dinge. In der Übersicht zeigt ein rotes Zeichen, auf welcher Liste etwas Wichtiges steht.'],

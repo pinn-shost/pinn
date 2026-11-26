@@ -47,7 +47,7 @@ function wohnformOf(familyId) {
     } catch (e) { /* read again */ }
     let w = "";
     try {
-        // Since 1.108 in the area "einstellungen" (pinn-bereiche.js), before in familien_daten - fieldText reads both
+        // In the area "einstellungen" (pinn-bereiche.js)
         w = require(`${__hooks}/pinn-bereiche.js`).fieldText(familyId, "einstellungen", "wohnform");
     } catch (e) {
         // SQLite without JSON functions (should not exist): read the family data once

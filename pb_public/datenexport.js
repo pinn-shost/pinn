@@ -51,7 +51,7 @@
     abgebrochen: 'Export abgebrochen.', zuGross: 'Der Export ist größer als 4 GB – das kann ein ZIP ohne Erweiterung nicht aufnehmen.',
     keinAdmin: 'Den Export können nur Admins erstellen.',
     S: {
-      familien: '{F}', benutzer: 'Profile', familien_daten: 'Kalender, Listen, Rezepte, Mitglieder & Einstellungen',
+      familien: '{F}', benutzer: 'Profile', familien_daten: 'Kalender, Listen, Rezepte, Mitglieder & Einstellungen', familien_bereiche: 'Kalender, Listen, Rezepte, Mitglieder & Einstellungen',
       rezept_bilder: 'Rezeptbilder', oeffentliche_rezepte: 'Geteilte Rezepte', aufgaben: 'Aufgaben',
       haushalt_verlauf: 'Haushalt-Verlauf', kassen: 'Kassen, Depots & Verträge', ausgaben: 'Buchungen',
       finanz_dokumente: 'Vertragsdokumente', dokumente: 'Dokumente', pinnwand_bilder: 'Pinnwand-Bilder',
@@ -103,7 +103,7 @@
     abgebrochen: 'Export cancelled.', zuGross: 'The export is larger than 4 GB – a plain ZIP cannot hold that.',
     keinAdmin: 'Only admins can create the export.',
     S: {
-      familien: '{F}', benutzer: 'Profiles', familien_daten: 'Calendar, lists, recipes, members & settings',
+      familien: '{F}', benutzer: 'Profiles', familien_daten: 'Calendar, lists, recipes, members & settings', familien_bereiche: 'Calendar, lists, recipes, members & settings',
       rezept_bilder: 'Recipe pictures', oeffentliche_rezepte: 'Shared recipes', aufgaben: 'Tasks',
       haushalt_verlauf: 'Household history', kassen: 'Funds, depots & contracts', ausgaben: 'Transactions',
       finanz_dokumente: 'Contract documents', dokumente: 'Documents', pinnwand_bilder: 'Board pictures',
@@ -155,7 +155,7 @@
     abgebrochen: 'Export annulé.', zuGross: 'L\u2019export dépasse 4 Go – un ZIP standard ne peut pas le contenir.',
     keinAdmin: 'Seuls les admins peuvent créer l\u2019export.',
     S: {
-      familien: '{F}', benutzer: 'Profils', familien_daten: 'Calendrier, listes, recettes, membres et réglages',
+      familien: '{F}', benutzer: 'Profils', familien_daten: 'Calendrier, listes, recettes, membres et réglages', familien_bereiche: 'Calendrier, listes, recettes, membres et réglages',
       rezept_bilder: 'Images de recettes', oeffentliche_rezepte: 'Recettes partagées', aufgaben: 'Tâches',
       haushalt_verlauf: 'Historique du ménage', kassen: 'Caisses, dépôts et contrats', ausgaben: 'Opérations',
       finanz_dokumente: 'Documents de contrats', dokumente: 'Documents', pinnwand_bilder: 'Images du tableau',
@@ -207,7 +207,7 @@
     abgebrochen: 'Exportación cancelada.', zuGross: 'La exportación supera 4 GB – un ZIP normal no puede contenerla.',
     keinAdmin: 'Solo los administradores pueden crear la exportación.',
     S: {
-      familien: '{F}', benutzer: 'Perfiles', familien_daten: 'Calendario, listas, recetas, miembros y ajustes',
+      familien: '{F}', benutzer: 'Perfiles', familien_daten: 'Calendario, listas, recetas, miembros y ajustes', familien_bereiche: 'Calendario, listas, recetas, miembros y ajustes',
       rezept_bilder: 'Imágenes de recetas', oeffentliche_rezepte: 'Recetas compartidas', aufgaben: 'Tareas',
       haushalt_verlauf: 'Historial del hogar', kassen: 'Cajas, depósitos y contratos', ausgaben: 'Movimientos',
       finanz_dokumente: 'Documentos de contratos', dokumente: 'Documentos', pinnwand_bilder: 'Imágenes del tablón',
@@ -275,7 +275,7 @@
     S: {
       familien: '{F}',
       benutzer: 'Profili',
-      familien_daten: 'Calendario, liste, ricette, membri e impostazioni',
+      familien_daten: 'Calendario, liste, ricette, membri e impostazioni', familien_bereiche: 'Calendario, liste, ricette, membri e impostazioni',
       rezept_bilder: 'Immagini delle ricette',
       oeffentliche_rezepte: 'Ricette condivise',
       aufgaben: 'Attività',
@@ -354,7 +354,7 @@
     S: {
       familien: '{F}',
       benutzer: 'Perfis',
-      familien_daten: 'Calendário, listas, receitas, membros e ajustes',
+      familien_daten: 'Calendário, listas, receitas, membros e ajustes', familien_bereiche: 'Calendário, listas, receitas, membros e ajustes',
       rezept_bilder: 'Imagens de receitas',
       oeffentliche_rezepte: 'Receitas compartilhadas',
       aufgaben: 'Tarefas',
@@ -433,7 +433,7 @@
     S: {
       familien: '{F}',
       benutzer: '个人资料',
-      familien_daten: '日历、清单、食谱、成员与设置',
+      familien_daten: '日历、清单、食谱、成员与设置', familien_bereiche: '日历、清单、食谱、成员与设置',
       rezept_bilder: '食谱图片',
       oeffentliche_rezepte: '共享食谱',
       aufgaben: '任务',
@@ -512,7 +512,7 @@
     S: {
       familien: '{F}',
       benutzer: 'プロフィール',
-      familien_daten: 'カレンダー、リスト、レシピ、メンバー、設定',
+      familien_daten: 'カレンダー、リスト、レシピ、メンバー、設定', familien_bereiche: 'カレンダー、リスト、レシピ、メンバー、設定',
       rezept_bilder: 'レシピの画像',
       oeffentliche_rezepte: '共有レシピ',
       aufgaben: 'タスク',
@@ -576,7 +576,7 @@
     abgebrochen: 'Экспорт отменён.', zuGross: 'Экспорт больше 4 ГБ – обычный ZIP столько не вмещает.',
     keinAdmin: 'Создавать экспорт могут только администраторы.',
     S: {
-      familien: '{F}', benutzer: 'Профили', familien_daten: 'Календарь, списки, рецепты, участники и настройки',
+      familien: '{F}', benutzer: 'Профили', familien_daten: 'Календарь, списки, рецепты, участники и настройки', familien_bereiche: 'Календарь, списки, рецепты, участники и настройки',
       rezept_bilder: 'Изображения рецептов', oeffentliche_rezepte: 'Общие рецепты', aufgaben: 'Задачи',
       haushalt_verlauf: 'История хозяйства', kassen: 'Кассы, депо и договоры', ausgaben: 'Операции',
       finanz_dokumente: 'Документы договоров', dokumente: 'Документы', pinnwand_bilder: 'Изображения доски',
@@ -643,7 +643,7 @@
     S: {
       familien: '{F}',
       benutzer: '프로필',
-      familien_daten: '캘린더, 목록, 레시피, 구성원, 설정',
+      familien_daten: '캘린더, 목록, 레시피, 구성원, 설정', familien_bereiche: '캘린더, 목록, 레시피, 구성원, 설정',
       rezept_bilder: '레시피 사진',
       oeffentliche_rezepte: '공유 레시피',
       aufgaben: '할 일',
@@ -708,7 +708,7 @@
     abgebrochen: 'Export geannuleerd.', zuGross: 'De export is groter dan 4 GB – een gewone ZIP kan dat niet bevatten.',
     keinAdmin: 'Alleen beheerders kunnen de export maken.',
     S: {
-      familien: '{F}', benutzer: 'Profielen', familien_daten: 'Agenda, lijsten, recepten, leden & instellingen',
+      familien: '{F}', benutzer: 'Profielen', familien_daten: 'Agenda, lijsten, recepten, leden & instellingen', familien_bereiche: 'Agenda, lijsten, recepten, leden & instellingen',
       rezept_bilder: 'Receptafbeeldingen', oeffentliche_rezepte: 'Gedeelde recepten', aufgaben: 'Taken',
       haushalt_verlauf: 'Huishoudgeschiedenis', kassen: 'Kassen, depots & contracten', ausgaben: 'Boekingen',
       finanz_dokumente: 'Contractdocumenten', dokumente: 'Documenten', pinnwand_bilder: 'Prikbordafbeeldingen',
@@ -762,7 +762,7 @@
     abgebrochen: "Dışa aktarım iptal edildi.", zuGross: "Dışa aktarım 4 GB'tan büyük – düz bir ZIP bunu taşıyamaz.",
     keinAdmin: "Dışa aktarımı yalnızca yöneticiler oluşturabilir.",
     S: {
-      familien: "{F}", benutzer: "Profiller", familien_daten: "Takvim, listeler, tarifler, üyeler ve ayarlar",
+      familien: "{F}", benutzer: "Profiller", familien_daten: "Takvim, listeler, tarifler, üyeler ve ayarlar", familien_bereiche: "Takvim, listeler, tarifler, üyeler ve ayarlar",
       rezept_bilder: "Tarif resimleri", oeffentliche_rezepte: "Paylaşılan tarifler", aufgaben: "Görevler",
       haushalt_verlauf: "Ev işi geçmişi", kassen: "Kasalar, portföyler ve sözleşmeler", ausgaben: "İşlemler",
       finanz_dokumente: "Sözleşme belgeleri", dokumente: "Belgeler", pinnwand_bilder: "Pano resimleri",
@@ -816,7 +816,7 @@
     abgebrochen: "Eksport anulowany.", zuGross: "Eksport jest większy niż 4 GB – zwykły plik ZIP tego nie pomieści.",
     keinAdmin: "Eksport mogą tworzyć tylko administratorzy.",
     S: {
-      familien: "{F}", benutzer: "Profile", familien_daten: "Kalendarz, listy, przepisy, członkowie i ustawienia",
+      familien: "{F}", benutzer: "Profile", familien_daten: "Kalendarz, listy, przepisy, członkowie i ustawienia", familien_bereiche: "Kalendarz, listy, przepisy, członkowie i ustawienia",
       rezept_bilder: "Obrazy przepisów", oeffentliche_rezepte: "Udostępnione przepisy", aufgaben: "Zadania",
       haushalt_verlauf: "Historia obowiązków domowych", kassen: "Kasy, portfele i umowy", ausgaben: "Transakcje",
       finanz_dokumente: "Dokumenty umów", dokumente: "Dokumenty", pinnwand_bilder: "Obrazy z tablicy",
@@ -868,7 +868,7 @@
     abgebrochen: 'Export zrušen.', zuGross: 'Export je větší než 4 GB – prostý ZIP to neunese.',
     keinAdmin: 'Export mohou vytvořit jen správci.',
     S: {
-      familien: '{F}', benutzer: 'Profily', familien_daten: 'Kalendář, seznamy, recepty, členové a nastavení',
+      familien: '{F}', benutzer: 'Profily', familien_daten: 'Kalendář, seznamy, recepty, členové a nastavení', familien_bereiche: 'Kalendář, seznamy, recepty, členové a nastavení',
       rezept_bilder: 'Obrázky receptů', oeffentliche_rezepte: 'Sdílené recepty', aufgaben: 'Úkoly',
       haushalt_verlauf: 'Historie domácnosti', kassen: 'Pokladny, portfolia a smlouvy', ausgaben: 'Transakce',
       finanz_dokumente: 'Dokumenty ke smlouvám', dokumente: 'Dokumenty', pinnwand_bilder: 'Obrázky z nástěnky',
@@ -922,7 +922,7 @@
     abgebrochen: 'Exporten avbröts.', zuGross: 'Exporten är större än 4 GB – en vanlig ZIP-fil kan inte rymma det.',
     keinAdmin: 'Bara administratörer kan skapa exporten.',
     S: {
-      familien: '{F}', benutzer: 'Profiler', familien_daten: 'Kalender, listor, recept, medlemmar och inställningar',
+      familien: '{F}', benutzer: 'Profiler', familien_daten: 'Kalender, listor, recept, medlemmar och inställningar', familien_bereiche: 'Kalender, listor, recept, medlemmar och inställningar',
       rezept_bilder: 'Receptbilder', oeffentliche_rezepte: 'Delade recept', aufgaben: 'Uppgifter',
       haushalt_verlauf: 'Hushållshistorik', kassen: 'Kassor, depåer och avtal', ausgaben: 'Transaktioner',
       finanz_dokumente: 'Avtalsdokument', dokumente: 'Dokument', pinnwand_bilder: 'Anslagstavlans bilder',
@@ -976,7 +976,7 @@
     abgebrochen: 'Eksporten blev afbrudt.', zuGross: 'Eksporten er større end 4 GB – en almindelig ZIP-fil kan ikke rumme det.',
     keinAdmin: 'Kun administratorer kan oprette eksporten.',
     S: {
-      familien: '{F}', benutzer: 'Profiler', familien_daten: 'Kalender, lister, opskrifter, medlemmer og indstillinger',
+      familien: '{F}', benutzer: 'Profiler', familien_daten: 'Kalender, lister, opskrifter, medlemmer og indstillinger', familien_bereiche: 'Kalender, lister, opskrifter, medlemmer og indstillinger',
       rezept_bilder: 'Opskriftsbilleder', oeffentliche_rezepte: 'Delte opskrifter', aufgaben: 'Opgaver',
       haushalt_verlauf: 'Husholdningshistorik', kassen: 'Kasser, depoter og kontrakter', ausgaben: 'Transaktioner',
       finanz_dokumente: 'Kontraktdokumenter', dokumente: 'Dokumenter', pinnwand_bilder: 'Opslagstavlens billeder',
@@ -1030,7 +1030,7 @@
     abgebrochen: 'Eksporten ble avbrutt.', zuGross: 'Eksporten er større enn 4 GB – en vanlig ZIP-fil rommer ikke det.',
     keinAdmin: 'Bare administratorer kan opprette eksporten.',
     S: {
-      familien: '{F}', benutzer: 'Profiler', familien_daten: 'Kalender, lister, oppskrifter, medlemmer og innstillinger',
+      familien: '{F}', benutzer: 'Profiler', familien_daten: 'Kalender, lister, oppskrifter, medlemmer og innstillinger', familien_bereiche: 'Kalender, lister, oppskrifter, medlemmer og innstillinger',
       rezept_bilder: 'Oppskriftsbilder', oeffentliche_rezepte: 'Delte oppskrifter', aufgaben: 'Oppgaver',
       haushalt_verlauf: 'Husholdningshistorikk', kassen: 'Kasser, depoter og kontrakter', ausgaben: 'Transaksjoner',
       finanz_dokumente: 'Kontraktdokumenter', dokumente: 'Dokumenter', pinnwand_bilder: 'Oppslagstavlens bilder',
@@ -1084,7 +1084,7 @@
     abgebrochen: 'Vienti keskeytettiin.', zuGross: 'Vienti on yli 4 Gt – tavallinen ZIP-tiedosto ei mahdu sitä.',
     keinAdmin: 'Vain ylläpitäjät voivat luoda viennin.',
     S: {
-      familien: '{F}', benutzer: 'Profiilit', familien_daten: 'Kalenteri, listat, reseptit, jäsenet ja asetukset',
+      familien: '{F}', benutzer: 'Profiilit', familien_daten: 'Kalenteri, listat, reseptit, jäsenet ja asetukset', familien_bereiche: 'Kalenteri, listat, reseptit, jäsenet ja asetukset',
       rezept_bilder: 'Reseptikuvat', oeffentliche_rezepte: 'Jaetut reseptit', aufgaben: 'Tehtävät',
       haushalt_verlauf: 'Kotitalouden historia', kassen: 'Kassat, salkut ja sopimukset', ausgaben: 'Tapahtumat',
       finanz_dokumente: 'Sopimusasiakirjat', dokumente: 'Asiakirjat', pinnwand_bilder: 'Ilmoitustaulun kuvat',
@@ -1138,7 +1138,7 @@
     abgebrochen: 'Az export megszakítva.', zuGross: 'Az export 4 GB-nál nagyobb – egy hagyományos ZIP-fájlba nem fér bele.',
     keinAdmin: 'Exportot csak adminisztrátorok készíthetnek.',
     S: {
-      familien: '{F}', benutzer: 'Profilok', familien_daten: 'Naptár, listák, receptek, tagok és beállítások',
+      familien: '{F}', benutzer: 'Profilok', familien_daten: 'Naptár, listák, receptek, tagok és beállítások', familien_bereiche: 'Naptár, listák, receptek, tagok és beállítások',
       rezept_bilder: 'Receptképek', oeffentliche_rezepte: 'Megosztott receptek', aufgaben: 'Feladatok',
       haushalt_verlauf: 'Háztartási előzmények', kassen: 'Alapok, portfóliók és szerződések', ausgaben: 'Tranzakciók',
       finanz_dokumente: 'Szerződéses dokumentumok', dokumente: 'Dokumentumok', pinnwand_bilder: 'Faliújság-képek',
@@ -1191,7 +1191,7 @@
     abgebrochen: "Експорт скасовано.", zuGross: "Експорт більший за 4 ГБ – звичайний ZIP стільки не вмістить.",
     keinAdmin: "Створювати експорт можуть лише адміністратори.",
     S: {
-      familien: "{F}", benutzer: "Профілі", familien_daten: "Календар, списки, рецепти, учасники й налаштування",
+      familien: "{F}", benutzer: "Профілі", familien_daten: "Календар, списки, рецепти, учасники й налаштування", familien_bereiche: "Календар, списки, рецепти, учасники й налаштування",
       rezept_bilder: "Зображення рецептів", oeffentliche_rezepte: "Спільні рецепти", aufgaben: "Завдання",
       haushalt_verlauf: "Історія домашніх справ", kassen: "Каси, портфелі та договори", ausgaben: "Операції",
       finanz_dokumente: "Документи договорів", dokumente: "Документи", pinnwand_bilder: "Зображення з дошки",

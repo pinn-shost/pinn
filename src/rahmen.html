@@ -277,9 +277,8 @@ window.addEventListener('scroll', () => {
   }, { passive: false });
 })();
 
-const PB_COLLECTION = 'familien_daten';
 const ICS_URL = '/api/pinn/kalender'; // only available after sign-in (pb_hooks/benutzer.pb.js)
-let familyRecordId = null; // set after the login
+let familyRecordId = null; // family ID, set once the family data are loaded (js/familiensync.js)
 let lastIcsSync = null;
 
 /* ==========================================================

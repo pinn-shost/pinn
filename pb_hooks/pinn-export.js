@@ -48,7 +48,7 @@ const FELD_AUSSCHLUSS = {
 };
 
 // order in the export (the rest alphabetically after it)
-const ZUERST = ["familien", "benutzer", "familien_daten"];
+const ZUERST = ["familien", "benutzer", "familien_bereiche", "familien_daten"];
 
 // ---------------------------------------------------------------------------------------------
 // Small helpers

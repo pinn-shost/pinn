@@ -1,21 +1,21 @@
-/* pinn. – Family areas: own records for parts of the family data (js/bereiche.js)
+/* pinn. – Family areas: the family data in records of their own (js/bereiche.js)
    Classic script, no build step; loaded right after js/familiensync.js (load order: src/rahmen.html).
-   Since 1.104.0 some parts of the family data live in records of their own on the server
-   (collection "familien_bereiche", pb_hooks/pinn-bereiche.js) – recipes and the meal plan (1.104), shopping and
-   pantry (1.105), board, lists, school & daycare, pets and the maintenance plan (1.106), members, emergency passes
-   and the family settings (1.108), tasks, the household and the calendar selection (1.109). Which keys belong to which area is told by the server, so a new area needs no change here.
-   The server is told which areas this device handles itself (areaKnownList / areaKnownParam); areas it does not
-   know yet are added to the family record for it, so nothing ever disappears while the lists differ.
+   The family data live in records of their own on the server (collection "familien_bereiche",
+   pb_hooks/pinn-bereiche.js) – recipes and the meal plan (since 1.104), shopping and pantry (1.105), board, lists,
+   school & daycare, pets and the maintenance plan (1.106), members, emergency passes and the family settings (1.108),
+   tasks, the household and the calendar selection (1.109), lending list and date polls (1.163). Since 1.166.0 there is
+   nothing else: the old family record is dissolved. Which keys belong to which area is told by the server, so a new
+   area needs no change here.
    The rest of the app does not notice anything: the app variables stay the same, only loading and saving
    is split up here:
    - areasLoad / areasPull: fetch the areas (only those that changed since the last time)
-   - areaOverlay: the current state of all areas, put on top of the family data when it is applied
-   - areaStripPayload: removes the area keys from what is sent to /api/pinn/save
+   - areaOverlay: the current state of all areas, applied to the app (composeFamilyState in js/familiensync.js)
    - areasCapture / areasFlush: changes of an area are queued locally (works offline) and sent with
      conflict protection – if someone else saved in between, both states are merged (mergeFamilyData).
    - areasSettle: waits until the queued changes have been sent (persistState awaits it, so a server action
      right after saving – e.g. "create household tasks now" or "sync calendars now" – sees the new state).
-   Without areas on the server (older server) everything stays in the family record as before. */
+   - areaAdoptFamilyPending: hands a change still queued for the old family record (app from before 1.166 that
+     was offline during the update) to the areas once. */
 
 const LS_AREAS_KEY = 'pinn.bereiche';                  // { familie, areas: { <name>: { keys, base, updated } } }
 const LS_AREAS_PENDING_KEY = 'pinn.bereiche.offen';    // { <name>: { familie, seq, base, baseUpdated, local } }
@@ -31,6 +31,7 @@ let areaFlushTimer = null;
 let areaFlushDone = null;    // promise of the flush that is running right now (areasSettle waits for it)
 let areaLoading = null;
 let areaLoadedAt = 0;
+let areaLoadFailed = false;  // true = the last attempt to reach the server failed (shown as "offline")
 let areaSentJson = {};       // <name> -> JSON of the state last queued or applied (avoids needless sending)
 
 function areaFamily() { return (currentUser() && currentUser().familie) || ''; }
@@ -43,19 +44,6 @@ function areaPick(src, keys) {
 function areasActive() {
   return areaServer === true && areaStateFamily === areaFamily() && Object.keys(areaState).length > 0;
 }
-// Names of the areas this device handles itself – sent with /api/pinn/save and when reading familien_daten
-function areaKnownList() {
-  return areasActive() ? Object.keys(areaState) : [];
-}
-function areaKnownParam() {
-  return areaKnownList().join(',') || 'keine';
-}
-function areaKeyList() {
-  const out = [];
-  Object.keys(areaState).forEach(n => (areaState[n].keys || []).forEach(k => out.push(k)));
-  return out;
-}
-
 /* ---------- Storage on the device ---------- */
 function areaCacheWrite() {
   try { localStorage.setItem(LS_AREAS_KEY, JSON.stringify({ familie: areaStateFamily, areas: areaState })); } catch (e) { /* storage full – kept in memory */ }
@@ -110,26 +98,14 @@ function areaOverlay() {
   Object.keys(areaState).forEach(n => Object.assign(out, areaPick(areaCurrent(n), areaState[n].keys || [])));
   return out;
 }
-// Removes the area keys from the family data that goes to /api/pinn/save
-function areaStripPayload(payload) {
-  if (!areasActive()) return payload;
-  areaKeyList().forEach(k => { delete payload[k]; });
-  return payload;
-}
-
 /* ---------- Loading ---------- */
-// Takes changes of an area still pending in the old family record over (device that was offline
-// during the update) – merged with the server state of the area, then removed from the family record.
-// names: the areas that are new for this device
-function areaAdoptFamilyPending(names) {
-  const p = readPending();
-  if (!p || !p.local) return;
-  const list = (names || Object.keys(areaState)).filter(n => areaState[n]);
-  const keys = [];
-  list.forEach(n => (areaState[n].keys || []).forEach(k => keys.push(k)));
-  if (!keys.some(k => Object.prototype.hasOwnProperty.call(p.local, k))) return;
+// Takes a change still queued for the old family record over (device that was offline during the update to
+// 1.166): per area it is merged with the server state of the area and queued like any other change.
+// p: the old queue entry { base, local }
+function areaAdoptFamilyPending(p) {
+  if (!p || !p.local || !areasActive()) return;
   const items = areaPendingRead();
-  list.forEach(n => {
+  Object.keys(areaState).forEach(n => {
     const ks = areaState[n].keys || [];
     const local = areaPick(p.local, ks);
     const base = areaPick(p.base || {}, ks);
@@ -138,8 +114,6 @@ function areaAdoptFamilyPending(names) {
     items[n] = { familie: areaFamily(), seq: ++areaSeq, base: remote, baseUpdated: areaState[n].updated || '', local: mergeFamilyData(base, local, remote) };
   });
   areaPendingWrite(items);
-  keys.forEach(k => { delete p.local[k]; if (p.base) delete p.base[k]; });
-  writePending(p);
 }
 // -> true if an area has changed (new data from the server)
 async function areasLoad(force) {
@@ -150,7 +124,6 @@ async function areasLoad(force) {
   if (areaLoading) return areaLoading;
   if (!force && areaLoadedAt && Date.now() - areaLoadedAt < 20 * 1000) return false;
   areaLoading = (async () => {
-    const knownBefore = areasActive() ? Object.keys(areaState) : [];
     let res, body;
     try {
       const stand = {};
@@ -160,13 +133,15 @@ async function areasLoad(force) {
         body: JSON.stringify({ stand }),
       });
       body = await res.json().catch(() => ({}));
-    } catch (e) { return false; } // offline – carry on with the cached state
+    } catch (e) { areaLoadFailed = true; return false; } // offline – carry on with the cached state
     if (res.status === 404 && !Array.isArray(body.bereiche)) {
-      // Older server without areas: everything stays in the family record
+      // Server without areas (pinn. older than 1.104 on the server): nothing can be loaded
       if (!areasActive()) areaServer = false;
+      areaLoadFailed = true;
       return false;
     }
-    if (!res.ok || !Array.isArray(body.bereiche)) return false;
+    if (!res.ok || !Array.isArray(body.bereiche)) { areaLoadFailed = true; return false; }
+    areaLoadFailed = false;
     areaLoadedAt = Date.now();
     areaServer = true;
     areaStateFamily = fam;
@@ -194,8 +169,6 @@ async function areasLoad(force) {
     Object.keys(areaState).forEach(n => { if (!seen[n]) { delete areaState[n]; delete items[n]; changed = true; } });
     areaPendingWrite(items);
     areaCacheWrite();
-    const fresh = Object.keys(areaState).filter(n => knownBefore.indexOf(n) < 0);
-    if (fresh.length && areasActive()) areaAdoptFamilyPending(fresh);
     if (areasHavePending()) setTimeout(() => areasFlush(), 0);
     return changed;
   })();
@@ -217,7 +190,7 @@ async function areasRefresh() {
 }
 function areaApplyToApp() {
   try {
-    applyFamilyData(composeFamilyState(familyWorkingData()));
+    applyFamilyData(composeFamilyState());
     rerenderAfterRemoteChange();
   } catch (e) { console.warn('Bereiche: Anzeigen fehlgeschlagen', e); }
 }
@@ -267,6 +240,7 @@ async function areasFlush() {
       const name = names[0];
       const sent = items[name];
       if (!areaState[name] || !sent || !sent.local) { delete items[name]; areaPendingWrite(items); continue; }
+      if (familySyncState === 'ok') setSyncStatus('pending');
       let res, body;
       try {
         res = await apiFetch('/api/pinn/bereiche/speichern', {
@@ -314,7 +288,7 @@ async function areasFlush() {
       areaRetryLater();
       return;
     }
-    if (!areasHavePending() && !readPending() && (familySyncState === 'offline' || familySyncState === 'error')) setSyncStatus('ok');
+    if (!areasHavePending() && familySyncState !== 'ok') { areaLoadFailed = false; setSyncStatus('ok'); }
   } finally {
     areaFlushing = false;
     flushFinished();

@@ -942,47 +942,12 @@ function itemText(it) { return (it.qty ? it.qty + " " : "") + it.name; }
 
 function addItems(familyId, auth, intent, L) {
     if (!intent.items.length) return { antwort: L.noItems };
-    // Since 1.105 the shopping list lives in its own area "einkauf" (pinn-bereiche.js)
-    let bereiche = null;
-    try { bereiche = require(`${__hooks}/pinn-bereiche.js`); } catch (e) { bereiche = null; }
-    if (bereiche && bereiche.isMoved(familyId, "einkauf")) return addItemsArea(bereiche, familyId, auth, intent, L);
-    let reply = "", changed = false;
-    let before = null, after = null;
-    $app.runInTransaction((tx) => {
-        const rec = tx.findFirstRecordByFilter("familien_daten", "familie = {:f}", { f: String(familyId) });
-        const data = require(`${__hooks}/calendar-sync.js`).parseRecordData(rec.get("data")) || {};
-        const items = Array.isArray(data.shoppingItems) ? data.shoppingItems : [];
-        before = Object.assign({}, data, { shoppingItems: items.slice() });
-        const list = targetList(data, intent.laden);
-        const listId = list.id;
-        const added = [], dup = [];
-        intent.items.forEach((it, i) => {
-            const exists = items.find(x => x && !x.done && (x.listId || "essensplanung") === listId && norm(x.name) === norm(it.name));
-            if (exists) { dup.push(it.name); return; }
-            items.push({
-                id: "si" + Date.now().toString(36) + i + Math.random().toString(36).slice(2, 6),
-                name: it.name, qty: it.qty, note: "", done: false, createdAt: Date.now(), listId: listId, voice: true,
-            });
-            added.push(itemText(it));
-        });
-        data.shoppingItems = items;
-        const ll = listLabel(list, L);
-        if (added.length) {
-            rec.set("data", data);
-            tx.save(rec);
-            changed = true;
-            after = data;
-            reply = dup.length ? fill(L.addedSome, lv(list, L, { i: joinList(added, L), d: joinList(dup, L) })) : fill(L.added, lv(list, L, { i: joinList(added, L) }));
-        } else {
-            reply = fill(L.already, lv(list, L, { i: joinList(dup, L) }));
-        }
-    });
-    if (changed) {
-        try { require(`${__hooks}/pinn-hinweise.js`).afterSave(familyId, before, after, auth); } catch (err) { console.log("[Sprache] Hinweise: " + err.message); }
-    }
-    return { antwort: reply, geaendert: changed };
+    // The shopping list lives in its own area "einkauf" (pinn-bereiche.js)
+    const bereiche = require(`${__hooks}/pinn-bereiche.js`);
+    if (!bereiche.ensureMoved(familyId)) throw new Error("Bereich einkauf fehlt.");
+    return addItemsArea(bereiche, familyId, auth, intent, L);
 }
-// The same inside the own area "einkauf"
+// Adds the items inside the area "einkauf"
 function addItemsArea(bereiche, familyId, auth, intent, L) {
     let reply = "";
     const r = bereiche.updateArea(familyId, "einkauf", (data) => {
@@ -1366,19 +1331,9 @@ function setShoppingDone(familyId, itemId, done) {
         data.shoppingItems = (done && it.pantryId) ? items.filter(x => !(x && x.pantryId === it.pantryId && x.id !== it.id && !x.done)) : items;
         return true;
     };
-    let bereiche = null;
-    try { bereiche = require(`${__hooks}/pinn-bereiche.js`); } catch (e) { bereiche = null; }
-    if (bereiche && bereiche.isMoved(familyId, "einkauf")) {
-        bereiche.updateArea(familyId, "einkauf", change);
-    } else {
-        $app.runInTransaction((tx) => {
-            const rec = tx.findFirstRecordByFilter("familien_daten", "familie = {:f}", { f: String(familyId) });
-            const data = require(`${__hooks}/calendar-sync.js`).parseRecordData(rec.get("data")) || {};
-            if (!change(data)) return;
-            rec.set("data", data);
-            tx.save(rec);
-        });
-    }
+    const bereiche = require(`${__hooks}/pinn-bereiche.js`);
+    if (!bereiche.ensureMoved(familyId)) throw new Error("Bereich einkauf fehlt.");
+    bereiche.updateArea(familyId, "einkauf", change);
     return found;
 }
 // Widget tap (since 1.141.0): kind "task" or "shop", id of the task or item, done true / false
