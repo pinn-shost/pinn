@@ -1,0 +1,122 @@
+/* pinn. – Account settings (js/konto.js)
+   Part of the app code that used to be a single block in index.html. Classic script, no build step:
+   it is loaded right after the inline script of index.html and before the other files in js/
+   (the load order is listed at the bottom of index.html and in pinn-setup.sh).
+   Contents: the account card in the settings (renderAccountAvatar, renderAccountSettings with the profile list for admins) and the popup "Change password" (openChangePasswordModal, closeChangePasswordModal) with the logout button. accountProfiles and profileManageId are also used by js/profilverwaltung.js.
+   Since 1.164.0 the former account page is part of the settings: "Logged in as" (always open) at the top, notifications
+   and "Unlock & lock" as cards, everything for admins under "Admin" (profiles, security, system, dashboard). */
+
+let accountProfiles = []; // most recently loaded profiles, for the "Manage profile" popup
+let profileManageId = null; // profile currently being edited in the popup
+
+// Account header card: picture of the linked family member, otherwise the first letter of the profile
+function renderAccountAvatar() {
+  const el = document.getElementById('accountAvatar');
+  if (!el) return;
+  const u = currentUser();
+  const m = (typeof currentMember === 'function') ? currentMember() : null;
+  if (m) {
+    el.innerHTML = memberAvatarInnerHTML(m);
+    el.style.background = (m.photo || m.avatar) ? 'color-mix(in srgb, var(--c-pine) 12%, transparent)' : '';
+    return;
+  }
+  el.style.background = '';
+  el.textContent = u && u.username ? u.username.trim().charAt(0).toUpperCase() : '?';
+}
+
+async function renderAccountSettings() {
+  const u = currentUser();
+  const guest = isCurrentUserGuest();
+  document.getElementById('accountName').textContent = u ? u.username : '';
+  document.getElementById('accountRole').textContent = u ? '(' + roleLabel(u.rolle) + ')' : '';
+  document.getElementById('openChangePasswordBtn').classList.toggle('hidden', guest);
+  document.getElementById('accountGuestHint').classList.toggle('hidden', !guest);
+  renderAccountAvatar();
+  // No personal notifications on a dashboard device and for guests
+  const noPush = guest || isDashboardDevice();
+  document.getElementById('pushSection').classList.toggle('hidden', noPush);
+  // The notification card is filled first (since 1.150.11): an error in one of the other sections below or a slow profile
+  // list must never leave it empty without its "Activate" button
+  if (!noPush) renderPushSettings();
+  const safe = (fn) => { try { fn(); } catch (e) { console.error(e); } };
+  safe(renderDashDeviceSection);
+  safe(renderDashPinSection);
+  safe(renderDevicesSection);
+  if (typeof renderLockCard === 'function') safe(renderLockCard); // Unlock & lock: Face ID, lock pinn., lock menus (js/entsperren.js)
+  const pinsLoaded = guest ? Promise.resolve(dashPinInfo) : loadDashboardPins().then(info => {
+    renderDashPinSection();
+    if (typeof renderLockCard === 'function') safe(renderLockCard); // the PIN is one way to unlock
+    return info;
+  });
+  const famEl = document.getElementById('accountFamily');
+  if (famEl && u && u.familie) {
+    pb.collection('familien').getOne(u.familie).then(f => { famEl.textContent = tk('account.familyName', { name: f.name }); }).catch(() => { /* offline */ });
+  }
+  const adminSection = document.getElementById('profileAdminSection');
+  adminSection.classList.toggle('hidden', !isCurrentUserAdmin());
+  const loaded = await loadFamilyProfiles();
+  renderAccountAvatar();
+  renderSettingsMemberList();
+  if (!isCurrentUserAdmin()) return;
+  const list = document.getElementById('profileList');
+  if (!loaded) {
+    list.innerHTML = `<p class="text-xs text-red-500">${escapeHtml(tk('account.profiles.loadFailed'))}</p>`;
+    return;
+  }
+  accountProfiles = familyProfiles;
+  const pins = await pinsLoaded;
+  list.innerHTML = accountProfiles.map(x => {
+      const linkedMember = x.mitglied ? memberById(x.mitglied) : null;
+      const memberText = x.rolle === 'gast'
+        ? ' · ' + escapeHtml(tk('account.profiles.dashboardOnly'))
+        : (linkedMember ? ' · ' + escapeHtml(linkedMember.name) : ` · <span class="text-mustard">${escapeHtml(tk('account.profiles.noMember'))}</span>`);
+      const pinText = pins.profile && pins.profile[x.id] ? ' · 🔒 PIN' : '';
+      return `
+      <div class="flex items-center gap-2 px-3 py-2 rounded-lg border border-ink/10 bg-white">
+        <div class="flex-1 min-w-0">
+          <p class="text-sm truncate">${escapeHtml(x.username)}${x.id === u.id ? ` <span class="text-xs text-ink/40">${escapeHtml(tk('account.profiles.you'))}</span>` : ''}${x.mustChangePassword ? ` <span class="text-xs text-mustard">${escapeHtml(tk('account.profiles.passwordPending'))}</span>` : ''}</p>
+          <p class="text-xs text-ink/40">${escapeHtml(roleLabel(x.rolle))}${memberText}${pinText}<span class="pdev-info" data-id="${x.id}"></span></p>
+        </div>
+        <button type="button" class="profile-manage-btn px-2 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition" data-id="${x.id}">${escapeHtml(tk('account.profiles.manage'))}</button>
+      </div>`;
+    }).join('');
+  list.querySelectorAll('.profile-manage-btn').forEach(b => b.addEventListener('click', () => openProfileManageModal(b.dataset.id)));
+  renderProfileDeviceInfo();
+  renderGuestMenuSettings();
+  renderDashCountSetting();
+  renderDashBgSettings();
+  renderDashDeviceList();
+}
+
+/* ---------- Change password (popup) ---------- */
+function openChangePasswordModal() {
+  ['accountOldPassword', 'accountNewPassword', 'accountRepeatPassword'].forEach(id => { document.getElementById(id).value = ''; });
+  document.getElementById('accountStatus').textContent = '';
+  document.getElementById('changePasswordModal').classList.remove('hidden');
+  armModalSnapshot('changePasswordModal');
+}
+function closeChangePasswordModal() { document.getElementById('changePasswordModal').classList.add('hidden'); }
+document.getElementById('openChangePasswordBtn').addEventListener('click', openChangePasswordModal);
+document.getElementById('cancelChangePassword').addEventListener('click', () => attemptCloseModal('changePasswordModal', closeChangePasswordModal));
+wireModalOutsideClick('changePasswordModal', closeChangePasswordModal);
+
+document.getElementById('accountChangePasswordBtn').addEventListener('click', async () => {
+  const oldPw = document.getElementById('accountOldPassword').value;
+  const newPw = document.getElementById('accountNewPassword').value;
+  const repeat = document.getElementById('accountRepeatPassword').value;
+  const status = document.getElementById('accountStatus');
+  if (newPw.length < 8) { status.textContent = tk('account.password.tooShort'); return; }
+  if (newPw !== repeat) { status.textContent = tk('account.password.mismatch'); return; }
+  try {
+    await changeOwnPassword(oldPw, newPw);
+    status.textContent = tk('account.password.changed');
+    armModalSnapshot('changePasswordModal'); // field contents now count as "unchanged" again
+    setTimeout(closeChangePasswordModal, 800);
+  } catch (e) {
+    status.textContent = e.message;
+  }
+});
+document.getElementById('logoutBtn').addEventListener('click', logout);
+
+// Marks this file as loaded – the start check in index.html reports missing app files
+(window.PINN_PARTS = window.PINN_PARTS || []).push('konto');

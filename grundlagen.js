@@ -1,0 +1,72 @@
+/* pinn. – Basic helpers and clock (js/grundlagen.js)
+   Part of the app code that used to be a single block in index.html. Classic script, no build step:
+   it is loaded right after the inline script of index.html and before the other files in js/
+   (the load order is listed at the bottom of index.html and in pinn-setup.sh).
+   Contents: weatherData, escapeHtml, the date helpers (startOfWeek, isoDate, fmtDay, fmtWeekLabel, monthGridDays), the clock in the header (tickClock – runs once while loading and then every 30 seconds) and weatherIconForCode. The weather itself is loaded in js/wetter.js. */
+
+/* ==========================================================
+   State (no localStorage any more – everything comes from PocketBase)
+   ========================================================== */
+let weatherData = null; // { temp, code, uv } - reloaded periodically from Open-Meteo
+
+// Escapes text for HTML (text and quoted attribute values): & < > " ' and the backtick
+function escapeHtml(str) {
+  return (str == null ? '' : String(str)).replace(/[&<>"'`]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;', '`': '&#96;' }[ch]));
+}
+
+/* ==========================================================
+   Date helpers
+   ========================================================== */
+function startOfWeek(date) {
+  const d = new Date(date);
+  const day = (d.getDay() + 6) % 7;
+  d.setDate(d.getDate() - day);
+  d.setHours(0,0,0,0);
+  return d;
+}
+function isoDate(d) { return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`; }
+function fmtDay(d) { return d.toLocaleDateString(PINN_I18N.language.locale, { weekday: 'short' }); }
+function fmtWeekLabel(monday, sunday) {
+  const opts = { day: '2-digit', month: 'short' };
+  return monday.toLocaleDateString(PINN_I18N.language.locale, opts) + ' – ' + sunday.toLocaleDateString(PINN_I18N.language.locale, { ...opts, year: 'numeric' });
+}
+function monthGridDays(year, monthIndex) {
+  const first = new Date(year, monthIndex, 1);
+  const startOffset = (first.getDay() + 6) % 7;
+  const gridStart = new Date(year, monthIndex, 1 - startOffset);
+  return [...Array(42)].map((_, i) => { const d = new Date(gridStart); d.setDate(gridStart.getDate() + i); return d; });
+}
+
+/* ==========================================================
+   Clock
+   ========================================================== */
+function tickClock() {
+  const now = new Date();
+  let text = escapeHtml(now.toLocaleDateString(PINN_I18N.language.locale, { weekday: 'long', day: 'numeric', month: 'long' }) + ' · ' + now.toLocaleTimeString(PINN_I18N.language.locale, { hour: '2-digit', minute: '2-digit' }));
+  const hw = document.getElementById('headerWeather');
+  const headerWeatherShown = !!(hw && !hw.classList.contains('hidden'));
+  // Temperature and UV only when the weather tile is switched on in Settings → Overview
+  let wxOff = false;
+  try { wxOff = overviewHidden.includes('wetter'); } catch (e) { wxOff = false; }
+  if (weatherData && !headerWeatherShown && !wxOff) {
+    text += ` | ${weatherIconForCode(weatherData.code)} ${escapeHtml(tDeg(weatherData.temp))}`;
+    if (weatherData.uv !== null) text += ` | UV ${escapeHtml(String(weatherData.uv))}`;
+  }
+  document.getElementById('clock').innerHTML = text;
+}
+tickClock();
+setInterval(tickClock, 30000);
+
+/* ==========================================================
+   Weather (Open-Meteo, but only via the own server: pb_hooks/zuhause.pb.js)
+   ----------------------------------------------------------
+   The basis is the family's „Zuhause“ (Settings → Zuhause). pinn. does NOT ask for the location
+   at start any more - iOS does not remember the permission for home screen apps and would have asked
+   again every time it opened. As long as no home is set, the former weather location
+   (weatherLocation in the family data) serves as a fallback.
+   ========================================================== */
+// Own simple icons (js/wetterlogos.js) instead of emoji; night = moon instead of sun. Returns an <svg> string.
+function weatherIconForCode(code, night) { return wxIcon(wxIconName(code, !!night)); }
+
+// Marks this file as loaded – the start check in index.html reports missing app files
+(window.PINN_PARTS = window.PINN_PARTS || []).push('grundlagen');

@@ -1,0 +1,295 @@
+/* pinn. – Setup assistant loader (js/einrichten.js)
+   Part of the app code that used to be a single block in index.html. Classic script, no build step:
+   it is loaded right after the inline script of index.html and before the other files in js/
+   (the load order is listed at the bottom of index.html and in pinn-setup.sh).
+   Contents: the texts of the setup in twenty languages (PINN_SETUP_TEXTE, pinnSetupText) and loading and opening the assistant (loadPinnSetupScript, openPinnSetup). The assistant itself lives in pb_public/einrichtung.js and is only loaded when first opened. The notice about the open setup is in js/hauptadminseite.js. */
+
+/* ==========================================================
+   Setup (assistant for the main admin)
+   ----------------------------------------------------------
+   The assistant lives in pb_public/einrichtung.js and is only loaded when it is needed
+   (own texts in German, English, French, Spanish, Italian, Portuguese, Chinese, Japanese, Korean, Russian, Dutch, Turkish and Polish). Server: pb_hooks/einrichtung.pb.js.
+   - starts by itself after login as main admin as long as the setup is still open
+     ("Später" holds until the app is closed)
+   - reachable at any time via Main admin → ⚙︎ Einrichtung
+   - on a new installation the login screen shows the way to the main admin login
+   ========================================================== */
+const PINN_SETUP_TEXTE = {
+  de: {
+    btn: '⚙︎ Einrichtung',
+    offen: 'Die Einrichtung von pinn. ist noch nicht abgeschlossen. Ohne sie fehlen HTTPS, Push-Nachrichten und die App auf dem Home-Bildschirm.',
+    fortsetzen: 'Einrichtung fortsetzen',
+    neustart: 'Gespeicherte Einstellungen werden erst nach einem Neustart von pinn. wirksam.',
+    neustartBtn: 'Jetzt übernehmen (kurzer Neustart)',
+    neustartLaeuft: 'pinn. startet neu …',
+    loginHint: 'Neu hier? Die Ersteinrichtung startet nach der Anmeldung als Hauptadmin.',
+    loginBtn: 'Als Hauptadmin anmelden',
+    loginMain: 'Beim ersten Mal lautet das Passwort „Admin“ – danach legst du ein eigenes fest und die Einrichtung startet.',
+    laden: 'Die Einrichtung konnte nicht geladen werden (pb_public/einrichtung.js fehlt?).',
+  },
+  en: {
+    btn: '⚙︎ Setup',
+    offen: 'The setup of pinn. is not finished yet. Without it, HTTPS, push notifications and the home screen app are missing.',
+    fortsetzen: 'Continue setup',
+    neustart: 'Saved settings only take effect after pinn. restarts.',
+    neustartBtn: 'Apply now (short restart)',
+    neustartLaeuft: 'pinn. is restarting …',
+    loginHint: 'New here? The initial setup starts after logging in as main admin.',
+    loginBtn: 'Log in as main admin',
+    loginMain: 'The first time, the password is “Admin” – then you set your own and the setup starts.',
+    laden: 'The setup could not be loaded (pb_public/einrichtung.js missing?).',
+  },
+  fr: {
+    btn: '⚙︎ Configuration',
+    offen: 'La configuration de pinn. n\'est pas encore terminée. Sans elle, HTTPS, les notifications push et l\'app sur l\'écran d\'accueil manquent.',
+    fortsetzen: 'Poursuivre la configuration',
+    neustart: 'Les réglages enregistrés ne prennent effet qu\'après un redémarrage de pinn.',
+    neustartBtn: 'Appliquer maintenant (court redémarrage)',
+    neustartLaeuft: 'pinn. redémarre …',
+    loginHint: 'Nouveau ? La configuration initiale démarre après la connexion en tant qu\'administrateur principal.',
+    loginBtn: 'Se connecter en administrateur principal',
+    loginMain: 'La première fois, le mot de passe est « Admin » – vous en définissez ensuite un vôtre et la configuration démarre.',
+    laden: 'La configuration n\'a pas pu être chargée (pb_public/einrichtung.js manquant ?).',
+  },
+  es: {
+    btn: '⚙︎ Configuración',
+    offen: 'La configuración de pinn. aún no ha terminado. Sin ella faltan HTTPS, las notificaciones push y la app en la pantalla de inicio.',
+    fortsetzen: 'Continuar la configuración',
+    neustart: 'Los ajustes guardados solo se aplican tras reiniciar pinn.',
+    neustartBtn: 'Aplicar ahora (reinicio breve)',
+    neustartLaeuft: 'pinn. se está reiniciando …',
+    loginHint: '¿Eres nuevo? La configuración inicial empieza al iniciar sesión como administrador principal.',
+    loginBtn: 'Iniciar sesión como administrador principal',
+    loginMain: 'La primera vez la contraseña es «Admin» – después eliges una propia y empieza la configuración.',
+    laden: 'No se pudo cargar la configuración (¿falta pb_public/einrichtung.js?).',
+  },
+  it: {
+    btn: '⚙︎ Configurazione',
+    offen: 'La configurazione di pinn. non è ancora terminata. Senza di essa mancano HTTPS, le notifiche push e l’app nella schermata Home.',
+    fortsetzen: 'Continua la configurazione',
+    neustart: 'Le impostazioni salvate diventano attive solo dopo il riavvio di pinn.',
+    neustartBtn: 'Applica ora (breve riavvio)',
+    neustartLaeuft: 'pinn. si sta riavviando …',
+    loginHint: 'Sei nuovo? La configurazione iniziale parte dopo l’accesso come amministratore principale.',
+    loginBtn: 'Accedi come amministratore principale',
+    loginMain: 'La prima volta la password è «Admin»: poi ne imposti una tua e parte la configurazione.',
+    laden: 'Impossibile caricare la configurazione (manca pb_public/einrichtung.js?).',
+  },
+  pt: {
+    btn: '⚙︎ Configuração',
+    offen: 'A configuração do pinn. ainda não foi concluída. Sem ela, faltam HTTPS, notificações push e o app na tela de início.',
+    fortsetzen: 'Continuar a configuração',
+    neustart: 'As configurações salvas só passam a valer depois que o pinn. reiniciar.',
+    neustartBtn: 'Aplicar agora (reinício rápido)',
+    neustartLaeuft: 'O pinn. está reiniciando …',
+    loginHint: 'É novo por aqui? A configuração inicial começa ao entrar como administrador principal.',
+    loginBtn: 'Entrar como administrador principal',
+    loginMain: 'Na primeira vez a senha é “Admin” – depois você define a sua e a configuração começa.',
+    laden: 'Não foi possível carregar a configuração (falta pb_public/einrichtung.js?).',
+  },
+  zh: {
+    btn: '⚙︎ 设置向导',
+    offen: 'pinn. 的设置尚未完成。没有它，就缺少 HTTPS、推送通知和主屏幕上的应用。',
+    fortsetzen: '继续设置',
+    neustart: '保存的设置要在 pinn. 重启后才会生效。',
+    neustartBtn: '立即应用（短暂重启）',
+    neustartLaeuft: 'pinn. 正在重启 …',
+    loginHint: '第一次使用？以主管理员身份登录后，初始设置就会开始。',
+    loginBtn: '以主管理员身份登录',
+    loginMain: '首次登录时密码是“Admin”——之后你设置自己的密码，设置向导随即开始。',
+    laden: '无法加载设置向导（缺少 pb_public/einrichtung.js？）。',
+  },
+  ja: {
+    btn: '⚙︎ 初期設定',
+    offen: 'pinn. の初期設定はまだ完了していません。完了しないと、HTTPS、プッシュ通知、ホーム画面のアプリが使えません。',
+    fortsetzen: '初期設定を続ける',
+    neustart: '保存した設定は pinn. の再起動後に反映されます。',
+    neustartBtn: '今すぐ反映（短い再起動）',
+    neustartLaeuft: 'pinn. を再起動中 …',
+    loginHint: 'はじめての方へ：メイン管理者としてログインすると初期設定が始まります。',
+    loginBtn: 'メイン管理者としてログイン',
+    loginMain: '初回のパスワードは「Admin」です。そのあと自分のパスワードを設定すると、初期設定が始まります。',
+    laden: '初期設定を読み込めませんでした（pb_public/einrichtung.js がありませんか？）。',
+  },
+  ko: {
+    btn: '⚙︎ 초기 설정',
+    offen: 'pinn. 초기 설정이 아직 끝나지 않았어요. 설정하지 않으면 HTTPS, 푸시 알림, 홈 화면 앱을 쓸 수 없어요.',
+    fortsetzen: '초기 설정 계속하기',
+    neustart: '저장한 설정은 pinn.을 다시 시작한 뒤에 적용돼요.',
+    neustartBtn: '지금 적용(잠깐 다시 시작)',
+    neustartLaeuft: 'pinn.을 다시 시작하는 중 …',
+    loginHint: '처음이신가요? 메인 관리자로 로그인하면 초기 설정이 시작돼요.',
+    loginBtn: '메인 관리자로 로그인',
+    loginMain: '처음에는 비밀번호가 “Admin”이에요 – 그다음 내 비밀번호를 정하면 초기 설정이 시작돼요.',
+    laden: '초기 설정을 불러올 수 없어요(pb_public/einrichtung.js가 없나요?).',
+  },
+  // Russian (since 1.120.0) – still hidden in the app until all texts are translated
+  ru: {
+    btn: '⚙︎ Настройка',
+    offen: 'Настройка pinn. ещё не завершена. Без неё не будут работать HTTPS, push-уведомления и приложение на главном экране.',
+    fortsetzen: 'Продолжить настройку',
+    neustart: 'Сохранённые настройки вступят в силу только после перезапуска pinn.',
+    neustartBtn: 'Применить сейчас (короткий перезапуск)',
+    neustartLaeuft: 'pinn. перезапускается …',
+    loginHint: 'Впервые здесь? Первоначальная настройка начнётся после входа главного администратора.',
+    loginBtn: 'Войти как главный администратор',
+    loginMain: 'В первый раз пароль – «Admin», затем вы зададите свой, и начнётся настройка.',
+    laden: 'Не удалось загрузить настройку (нет pb_public/einrichtung.js?).',
+  },
+  // Dutch (since 1.123.11, offered in the app since 1.123.12)
+  nl: {
+    btn: '⚙︎ Installatie',
+    offen: 'De installatie van pinn. is nog niet afgerond. Zonder installatie ontbreken HTTPS, pushmeldingen en de app op het beginscherm.',
+    fortsetzen: 'Installatie voortzetten',
+    neustart: 'Opgeslagen instellingen gaan pas in nadat pinn. opnieuw is opgestart.',
+    neustartBtn: 'Nu toepassen (korte herstart)',
+    neustartLaeuft: 'pinn. start opnieuw op …',
+    loginHint: 'Nieuw hier? De eerste installatie start nadat je als hoofdbeheerder bent ingelogd.',
+    loginBtn: 'Inloggen als hoofdbeheerder',
+    loginMain: 'De eerste keer is het wachtwoord “Admin” – daarna stel je je eigen wachtwoord in en begint de installatie.',
+    laden: 'De installatie kon niet worden geladen (ontbreekt pb_public/einrichtung.js?).',
+  },
+  // Turkish (since 1.130.12, offered in the app since 1.131.0)
+  tr: {
+    btn: '⚙︎ Kurulum',
+    offen: 'pinn. kurulumu henüz tamamlanmadı. Kurulum olmadan HTTPS, anlık bildirimler ve ana ekran uygulaması çalışmaz.',
+    fortsetzen: 'Kuruluma devam et',
+    neustart: 'Kaydedilen ayarlar ancak pinn. yeniden başladıktan sonra geçerli olur.',
+    neustartBtn: 'Şimdi uygula (kısa yeniden başlatma)',
+    neustartLaeuft: 'pinn. yeniden başlıyor …',
+    loginHint: 'Burada yeni misin? İlk kurulum, ana yönetici olarak giriş yaptıktan sonra başlar.',
+    loginBtn: 'Ana yönetici olarak giriş yap',
+    loginMain: 'İlk seferde şifre “Admin” – sonra kendi şifreni belirlersin ve kurulum başlar.',
+    laden: 'Kurulum yüklenemedi (pb_public/einrichtung.js eksik mi?).',
+  },
+  // Polish (since 1.132.17, offered in the app since 1.133.0)
+  pl: {
+    btn: '⚙︎ Konfiguracja',
+    offen: 'Konfiguracja pinn. nie jest jeszcze zakończona. Bez niej nie działają HTTPS, powiadomienia push ani aplikacja na ekranie głównym.',
+    fortsetzen: 'Kontynuuj konfigurację',
+    neustart: 'Zapisane ustawienia zaczną obowiązywać dopiero po ponownym uruchomieniu pinn.',
+    neustartBtn: 'Zastosuj teraz (krótki restart)',
+    neustartLaeuft: 'pinn. uruchamia się ponownie …',
+    loginHint: 'Jesteś tu nowy? Pierwsza konfiguracja rozpocznie się po zalogowaniu jako główny administrator.',
+    loginBtn: 'Zaloguj się jako główny administrator',
+    loginMain: 'Za pierwszym razem hasło to „Admin” – potem ustawisz własne i rozpocznie się konfiguracja.',
+    laden: 'Nie udało się wczytać konfiguracji (brakuje pb_public/einrichtung.js?).',
+  },
+  cs: {
+    btn: '⚙︎ Nastavení',
+    offen: 'Nastavení pinn. ještě nebylo dokončeno. Bez něj nefungují HTTPS, push oznámení a aplikace na ploše.',
+    fortsetzen: 'Pokračovat v nastavení',
+    neustart: 'Uložená nastavení se projeví až po restartu pinn.',
+    neustartBtn: 'Použít nyní (krátký restart)',
+    neustartLaeuft: 'pinn. se restartuje …',
+    loginHint: 'Jsi tu poprvé? První nastavení začne po přihlášení jako hlavní správce.',
+    loginBtn: 'Přihlásit se jako hlavní správce',
+    loginMain: 'Poprvé je heslo „Admin“ – pak si nastavíš vlastní a nastavení začne.',
+    laden: 'Nastavení se nepodařilo načíst (chybí pb_public/einrichtung.js?).',
+  },
+  sv: {
+    btn: '⚙︎ Inställning',
+    offen: 'Inställningen av pinn. är inte klar än. Utan den fungerar inte HTTPS, push-notiser och appen på hemskärmen.',
+    fortsetzen: 'Fortsätt inställningen',
+    neustart: 'De sparade inställningarna gäller först efter en omstart av pinn.',
+    neustartBtn: 'Tillämpa nu (kort omstart)',
+    neustartLaeuft: 'pinn. startar om …',
+    loginHint: 'Ny här? Den första inställningen startar när du loggar in som huvudadministratör.',
+    loginBtn: 'Logga in som huvudadministratör',
+    loginMain: 'Första gången är lösenordet ”Admin” – sedan anger du ett eget och inställningen startar.',
+    laden: 'Inställningen kunde inte laddas (pb_public/einrichtung.js saknas?).',
+  },
+  // Danish (since 1.157.0)
+  da: {
+    btn: '⚙︎ Opsætning',
+    offen: 'Opsætningen af pinn. er ikke færdig endnu. Uden den virker HTTPS, push-beskeder og appen på hjemmeskærmen ikke.',
+    fortsetzen: 'Fortsæt opsætningen',
+    neustart: 'De gemte indstillinger træder først i kraft efter en genstart af pinn.',
+    neustartBtn: 'Anvend nu (kort genstart)',
+    neustartLaeuft: 'pinn. genstarter …',
+    loginHint: 'Ny her? Den første opsætning starter, når du logger ind som hovedadministrator.',
+    loginBtn: 'Log ind som hovedadministrator',
+    loginMain: 'Første gang er adgangskoden »Admin« – derefter vælger du din egen, og opsætningen starter.',
+    laden: 'Opsætningen kunne ikke indlæses (mangler pb_public/einrichtung.js?).',
+  },
+  // Norwegian Bokmål (since 1.158.0)
+  nb: {
+    btn: '⚙︎ Oppsett',
+    offen: 'Oppsettet av pinn. er ikke ferdig ennå. Uten det fungerer ikke HTTPS, push-varsler og appen på hjemmeskjermen.',
+    fortsetzen: 'Fortsett oppsettet',
+    neustart: 'De lagrede innstillingene trer først i kraft etter en omstart av pinn.',
+    neustartBtn: 'Ta i bruk nå (kort omstart)',
+    neustartLaeuft: 'pinn. starter på nytt …',
+    loginHint: 'Ny her? Det første oppsettet starter når du logger inn som hovedadministrator.',
+    loginBtn: 'Logg inn som hovedadministrator',
+    loginMain: 'Første gang er passordet «Admin» – deretter velger du ditt eget, og oppsettet starter.',
+    laden: 'Oppsettet kunne ikke lastes (mangler pb_public/einrichtung.js?).',
+  },
+  // Finnish (since 1.159.0)
+  fi: {
+    btn: '⚙︎ Käyttöönotto',
+    offen: 'pinn.:n käyttöönotto ei ole vielä valmis. Ilman sitä HTTPS, push-ilmoitukset ja kotinäytön sovellus eivät toimi.',
+    fortsetzen: 'Jatka käyttöönottoa',
+    neustart: 'Tallennetut asetukset tulevat voimaan vasta pinn.:n uudelleenkäynnistyksen jälkeen.',
+    neustartBtn: 'Ota käyttöön nyt (lyhyt uudelleenkäynnistys)',
+    neustartLaeuft: 'pinn. käynnistyy uudelleen …',
+    loginHint: 'Uusi täällä? Ensimmäinen käyttöönotto alkaa, kun kirjaudut sisään pääylläpitäjänä.',
+    loginBtn: 'Kirjaudu sisään pääylläpitäjänä',
+    loginMain: 'Ensimmäisellä kerralla salasana on ”Admin” – sen jälkeen valitset oman salasanasi ja käyttöönotto alkaa.',
+    laden: 'Käyttöönottoa ei voitu ladata (puuttuuko pb_public/einrichtung.js?).',
+  },
+  // Hungarian (since 1.160.0)
+  hu: {
+    btn: '⚙︎ Beüzemelés',
+    offen: 'A pinn. beüzemelése még nem fejeződött be. Enélkül a HTTPS, a push-értesítések és a kezdőképernyős alkalmazás nem működik.',
+    fortsetzen: 'Beüzemelés folytatása',
+    neustart: 'A mentett beállítások csak a pinn. újraindítása után lépnek életbe.',
+    neustartBtn: 'Alkalmazás most (rövid újraindítás)',
+    neustartLaeuft: 'A pinn. újraindul …',
+    loginHint: 'Új vagy itt? Az első beüzemelés a főadminisztrátorként való bejelentkezés után indul.',
+    loginBtn: 'Bejelentkezés főadminisztrátorként',
+    loginMain: 'Első alkalommal a jelszó „Admin” – ezután megadsz egy saját jelszót, és elindul a beüzemelés.',
+    laden: 'A beüzemelést nem sikerült betölteni (hiányzik a pb_public/einrichtung.js?).',
+  },
+  uk: {
+    btn: '⚙︎ Конфігурація',
+    offen: 'Конфігурацію pinn. ще не завершено. Без неї не працюють HTTPS, push-сповіщення та застосунок на головному екрані.',
+    fortsetzen: 'Продовжити конфігурацію',
+    neustart: 'Збережені налаштування набудуть чинності лише після перезапуску pinn.',
+    neustartBtn: 'Застосувати зараз (короткий перезапуск)',
+    neustartLaeuft: 'pinn. перезапускається …',
+    loginHint: 'Ти тут уперше? Початкова конфігурація розпочнеться після входу як головний адміністратор.',
+    loginBtn: 'Увійти як головний адміністратор',
+    loginMain: 'Вперше пароль – «Admin», потім ти встановиш власний, і розпочнеться конфігурація.',
+    laden: 'Не вдалося завантажити конфігурацію (бракує pb_public/einrichtung.js?).',
+  },
+};
+function pinnSetupText(key) {
+  const l = (window.PINN_I18N && window.PINN_I18N.current) || 'en';
+  const d = PINN_SETUP_TEXTE[l] || PINN_SETUP_TEXTE.en;
+  return d[key] || PINN_SETUP_TEXTE.en[key] || key;
+}
+let pinnSetupLoading = null;
+function loadPinnSetupScript() {
+  if (window.PinnSetup) return Promise.resolve(window.PinnSetup);
+  if (pinnSetupLoading) return pinnSetupLoading;
+  pinnSetupLoading = new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = 'einrichtung.js?v=' + APP_VERSION;
+    s.onload = () => (window.PinnSetup ? resolve(window.PinnSetup) : reject(new Error('PinnSetup missing')));
+    s.onerror = () => { pinnSetupLoading = null; s.remove(); reject(new Error('einrichtung.js missing')); };
+    document.head.appendChild(s);
+  });
+  return pinnSetupLoading;
+}
+async function openPinnSetup() {
+  try {
+    const ps = await loadPinnSetupScript();
+    ps.open({ apiFetch, onClose: () => { refreshMainAdminSetupBanner(false); loadMainAdminFamilies(); } });
+  } catch (e) {
+    alert(pinnSetupText('laden'));
+  }
+}
+
+// Marks this file as loaded – the start check in index.html reports missing app files
+(window.PINN_PARTS = window.PINN_PARTS || []).push('einrichten');
