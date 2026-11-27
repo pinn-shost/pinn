@@ -28,6 +28,7 @@ const PINN_CHANGELOG = [
       ['info', 'Abweichende Schreibweisen wie „KART. DRILLINGE“ oder „BIO H-MILCH 3,8%“ werden erkannt. Unsichere Treffer sind mit „Bitte prüfen“ markiert, jeder Artikel lässt sich antippen und von Hand zuordnen – pinn. merkt sich das und ordnet beim nächsten Bon selbst richtig zu.'],
       ['info', 'Bonus-Guthaben, PAYBACK-Punkte und Ähnliches werden nie abgezogen, sondern nur in die Notiz der Buchung geschrieben. Echte Coupons auf dem Bon (z. B. bei dm) zählen mit, Pfand und Leergut zählen beim Betrag, landen aber nicht auf Listen oder im Vorrat.'],
       ['neu', 'Später prüfen: Ein Bon bleibt 48 Stunden oben in der Einkaufsübersicht. „Jetzt buchen, später prüfen“ bucht sofort und lässt das Abhaken offen; ein übernommener Bon lässt sich in dieser Zeit noch korrigieren, ohne doppelt zu buchen. Derselbe Bon wird kein zweites Mal eingelesen.'],
+      ['neu', '1.169.1: E-Bons in allen App-Sprachen – pinn. kennt jetzt die Wörter für Summe, Zahlung, Pfand, Rabatt und Bonuspunkte in allen 20 Sprachen, Beträge mit Komma oder Punkt, Währungen ohne Cent (Yen, Won, Forint), Datumsangaben in jeder Reihenfolge und Läden aus vielen Ländern (Tesco, Carrefour, Mercadona, Albert Heijn, Biedronka, Пятёрочка, Migros, ICA, ローソン, 이마트 …). Namen in Kyrillisch, Chinesisch, Japanisch und Koreanisch werden mit der Einkaufsliste verglichen; Punkte anderer Bonusprogramme stehen wörtlich in der Notiz.'],
     ],
   },
   {

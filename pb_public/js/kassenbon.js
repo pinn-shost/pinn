@@ -20,45 +20,165 @@
 const KB_HOURS = 48;
 const KB_RULES_MAX = 800;
 const KB_PANTRY_KEY = 'pinn.kassenbon.vorrat';
-const KB_STORES = [
-  [/\brewe\b/i, 'REWE', false], [/dm-?drogerie|dm-rabatte|\bdm\.de\b|\bdmbio\b|deine payback kartennr[\s\S]*dm/i, 'dm', false],
-  [/\blidl\b/i, 'Lidl', false], [/\baldi\b/i, 'ALDI', false], [/\bedeka\b/i, 'EDEKA', false], [/\bkaufland\b/i, 'Kaufland', false],
-  [/\bpenny\b/i, 'Penny', false], [/\brossmann\b/i, 'Rossmann', false], [/\bm(ü|ue)ller\b/i, 'Müller', false], [/\btegut\b/i, 'tegut', false],
-  [/\bglobus\b/i, 'Globus', false], [/\bnorma\b/i, 'Norma', false], [/\bnetto\b(?!\s*[\d,]|\s+steuer)/i, 'Netto', true],
-  [/\bbudni\b/i, 'Budni', false], [/\bbio company\b/i, 'Bio Company', false], [/\balnatura\b/i, 'Alnatura', false],
-];
-const KB_DRUGSTORES = ['dm', 'Rossmann', 'Müller', 'Budni'];
-// Lines that are never items (totals, payment, tax table …)
-const KB_TOTAL = /^(zwischensumme|summe|total|gesamt(summe|betrag)?|zu zahlen(der betrag)?|endsumme)\b/i;
-const KB_PAY = /^(zu zahlender betrag|geg\.|gegeben|r(ü|ue)ckgeld|visa|mastercard|maestro|girocard|ec[- ]?karte|bar\b|kartenzahlung|betrag eur|amex|paypal)/i;
-const KB_NOT_ITEM = /(mwst|netto|steuer|brutto|bonus|punkte|guthaben|payback|tse-|signatur|beleg-?nr|trace-?nr|terminal|kundenbeleg)/i;
-const KB_ITEM = /^(.*?\S)\s+(-?\d{1,3}(?:\.\d{3})*,\d{2})(?:\s*(?:EUR|€))?(?:\s+(§?[A-Z0-9]{1,2}))?(?:\s*\*)?\s*$/;
-const KB_QTY_PCS = /^(\d+)\s*(?:stk|st|x)\.?\s*x?\s*(\d+,\d{2})\b/i;
-const KB_QTY_KG = /^(\d+,\d{1,3})\s*kg\s*x\s*(\d+,\d{2})/i;
-const KB_DEPOSIT = /(pfand|leergut|leerg\.|leihgebinde)/i;
-const KB_DISCOUNT = /(coupon|rabatt|nachlass|gutschein|preisvorteil|aktion|sofortrabatt|mitarbeiter)/i;
 
-function kbMoney(s) { return Number(String(s || '').replace(/\./g, '').replace(',', '.')) || 0; }
+/* Receipts look different in every country (since 1.169.1). The words for total, amount due, payment, tax, deposit, discount and
+   loyalty programmes are listed for all app languages (compared after kbLow: lower case, accents removed).
+   Amounts with comma or dot, thousands with dot, comma or space, currency before or after the amount; currencies
+   without cents (yen, won, forint) are recognised when the receipt shows no amounts with two decimals. */
+function kbLow(s) {
+  return String(s || '').toLowerCase().replace(/ß/g, 'ss').replace(/ł/g, 'l').replace(/ø/g, 'o').replace(/æ/g, 'ae')
+    .replace(/ı/g, 'i').replace(/đ/g, 'd').normalize('NFD').replace(/[̀-ͯ]/g, '').normalize('NFC');
+}
+function kbEsc(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+const KB_CJK = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/u;
+// mode 'start': word at the start of the line; 'word': whole word anywhere; 'end': also as the end of a compound
+// ("einwegpfand", "sofortrabatt"). Words in Chinese/Japanese/Korean match anywhere (no spaces between words).
+function kbWordsRe(words, mode) {
+  const lat = [], cjk = [];
+  words.forEach(w => { const l = kbEsc(kbLow(w)); if (KB_CJK.test(w)) cjk.push(l); else lat.push(l); });
+  const lead = mode === 'start' ? '^[^\\p{L}\\p{N}]*' : (mode === 'word' ? '(?:^|[^\\p{L}\\p{N}])' : '');
+  const alts = [];
+  if (lat.length) alts.push(lead + '(?:' + lat.join('|') + ')(?![\\p{L}\\p{N}])');
+  if (cjk.length) alts.push((mode === 'start' ? '^[^\\p{L}\\p{N}]*' : '') + '(?:' + cjk.join('|') + ')');
+  return new RegExp(alts.join('|'), 'u');
+}
+const KB_W = {
+  sub: ['zwischensumme', 'subtotal', 'sub-total', 'sub total', 'sous-total', 'sous total', 'subtotale', 'subtotaal', 'podsuma',
+    'промежуточный итог', 'подытог', 'ara toplam', 'проміжний підсумок', 'mezisoučet', 'delsumma', 'mellemsum', 'delsum', 'välisumma',
+    'részösszeg', '小计', '小計', '소계'],
+  total: ['summe', 'gesamt', 'gesamtsumme', 'gesamtbetrag', 'endsumme', 'total', 'totale', 'totale complessivo', 'totaal', 'importe total',
+    'montant', 'suma', 'razem', 'итог', 'итого', 'всего', 'сумма', 'toplam', 'genel toplam', 'разом', 'всього', 'сума', 'celkem',
+    'celková částka', 'summa', 'totalt', 'i alt', 'yhteensä', 'összesen', 'végösszeg', '合计', '合計', '总计', '總計', 'お買上', '합계', '총액', '총합계'],
+  due: ['zu zahlen', 'zu zahlender betrag', 'à payer', 'net à payer', 'total à payer', 'a pagar', 'total a pagar', 'da pagare', 'te betalen',
+    'do zapłaty', 'к оплате', 'ödenecek', 'до сплати', 'k úhradě', 'k zaplacení', 'att betala', 'at betale', 'å betale', 'maksettava',
+    'fizetendő', '应付', '應付', '实付', '實付', 'お支払', 'ご請求', '받을금액', '결제금액', '청구금액', 'amount due', 'balance due', 'to pay', 'total due'],
+  tender: ['geg', 'gegeben', 'rückgeld', 'bar', 'visa', 'mastercard', 'maestro', 'girocard', 'ec-karte', 'ec karte', 'kartenzahlung',
+    'betrag eur', 'amex', 'paypal', 'kreditkarte', 'carte', 'carte bancaire', 'cb', 'espèces', 'rendu', 'monnaie rendue', 'efectivo',
+    'tarjeta', 'cambio', 'contanti', 'contante', 'pagamento', 'bancomat', 'carta di credito', 'resto', 'multibanco', 'mb way', 'numerário',
+    'troco', 'pinnen', 'pin', 'contant', 'wisselgeld', 'gotówka', 'karta', 'reszta', 'наличными', 'наличные', 'безналичными', 'карта',
+    'сдача', 'nakit', 'kredi kartı', 'para üstü', 'готівка', 'картка', 'решта', 'hotově', 'platba', 'vráceno', 'kontant', 'kontanter',
+    'kort', 'kortbetalning', 'växel', 'dankort', 'byttepenge', 'bankaxept', 'bankkort', 'vipps', 'vekselpenger', 'käteinen', 'pankkikortti',
+    'korttimaksu', 'vaihtoraha', 'készpénz', 'bankkártya', 'kártya', 'visszajáró', '现金', '現金', '微信', '支付宝', '找零', '找赎', 'お預',
+    'お釣', '釣銭', 'クレジット', '현금', '카드', '거스름', 'cash', 'card', 'change', 'apple pay', 'google pay', 'contactless', 'debit'],
+  tax: ['mwst', 'ust', 'netto', 'steuer', 'mehrwertsteuer', 'umsatzsteuer', 'brutto', 'tva', 'iva', 'btw', 'vat', 'ptu',
+    'sprzedaż opodatkowana', 'ндс', 'kdv', 'topkdv', 'пдв', 'dph', 'moms', 'mva', 'alv', 'áfa', 'tax', '税', '부가세', '과세', '면세'],
+  bonus: ['bonus', 'bonus-guthaben', 'punkte', 'punktestand', 'guthaben', 'payback', 'deutschlandcard', 'lidl plus', 'points', 'point',
+    'fidélité', 'clubcard', 'nectar', 'puntos', 'punti', 'punten', 'punkty', 'saldo', 'баллы', 'баллов', 'бонус', 'бонусы', 'бали', 'балів',
+    'puan', 'poäng', 'poeng', 'pisteet', 'plussa', 'plussa-pisteet', 'pont', 'pontok', '积分', '積分', 'ポイント', '포인트', '적립'],
+  save: ['savings', 'you saved', 'économisé', 'économie', 'ahorro', 'ha ahorrado', 'risparmio', 'hai risparmiato', 'poupou', 'poupança',
+    'voordeel', 'oszczędzasz', 'oszczędności', 'экономия', 'сэкономили', 'tasarruf', 'kazancınız', 'економія', 'ušetřil', 'ušetřili',
+    'sparat', 'sparet', 'gespart', 'ersparnis', 'säästit', 'säästö', 'megtakarítás', '节省', '節省', '已省', 'お得', '절약'],
+  deposit: ['pfand', 'leergut', 'leerg', 'leihgebinde', 'consigne', 'deposit', 'envase', 'vuoto', 'cauzione', 'statiegeld', 'emballage',
+    'kaucja', 'залог', 'тара', 'depozito', 'застава', 'záloha', 'pant', 'pantti', 'betétdíj', '押金', 'デポジット', '보증금', '공병'],
+  discount: ['coupon', 'rabatt', 'nachlass', 'gutschein', 'preisvorteil', 'aktion', 'mitarbeiter', 'remise', 'réduction', 'promo',
+    'descuento', 'desconto', 'dto', 'oferta', 'sconto', 'promozione', 'korting', 'actie', 'rabat', 'upust', 'promocja', 'скидка', 'акция',
+    'indirim', 'kampanya', 'знижка', 'акція', 'sleva', 'alennus', 'tarjous', 'etu', 'kedvezmény', 'akció', '折扣', '优惠', '優惠', '値引',
+    '割引', '할인', 'discount', 'voucher', 'offer'],
+  noitem: ['tse', 'signatur', 'beleg-nr', 'bon-nr', 'trace-nr', 'terminal', 'kundenbeleg', 'kartennr', 'tel', 'telefon', 'fax', 'uid',
+    'st-nr', 'steuer-nr', 'nip', 'инн', 'тел', 'vergi', 'ičo', 'dič', 'org.nr', 'cvr', 'y-tunnus', 'adószám', 'iban', 'bic', '사업자',
+    '電話', '电话', '登録番号', '税号'],
+};
+const KB_RE = {
+  sub: kbWordsRe(KB_W.sub, 'start'), total: kbWordsRe(KB_W.total, 'start'), due: kbWordsRe(KB_W.due, 'start'),
+  tender: kbWordsRe(KB_W.tender, 'start'), tax: kbWordsRe(KB_W.tax, 'word'), bonus: kbWordsRe(KB_W.bonus, 'word'),
+  save: kbWordsRe(KB_W.save, 'word'), deposit: kbWordsRe(KB_W.deposit, 'end'), discount: kbWordsRe(KB_W.discount, 'end'),
+  noitem: kbWordsRe(KB_W.noitem, 'word'),
+};
+// [words, shop name, only in the head of the receipt (word is too common)]
+const KB_STORE_LIST = [
+  [['rewe'], 'REWE'], [['lidl'], 'Lidl'], [['aldi'], 'ALDI'], [['edeka'], 'EDEKA'], [['kaufland'], 'Kaufland'], [['penny'], 'Penny'],
+  [['rossmann'], 'Rossmann'], [['müller', 'mueller'], 'Müller', true], [['tegut'], 'tegut'], [['globus'], 'Globus'], [['norma'], 'Norma', true],
+  [['netto'], 'Netto', true], [['budni'], 'Budni'], [['bio company'], 'Bio Company'], [['alnatura'], 'Alnatura'],
+  [['tesco'], 'Tesco'], [["sainsbury's", 'sainsburys'], "Sainsbury's"], [['asda'], 'Asda'], [['morrisons'], 'Morrisons'],
+  [['waitrose'], 'Waitrose'], [['boots'], 'Boots', true], [['superdrug'], 'Superdrug'],
+  [['carrefoursa'], 'CarrefourSA'], [['carrefour'], 'Carrefour'], [['e.leclerc', 'leclerc'], 'E.Leclerc'], [['auchan'], 'Auchan'],
+  [['intermarché'], 'Intermarché'], [['monoprix'], 'Monoprix'], [['franprix'], 'Franprix'],
+  [['mercadona'], 'Mercadona'], [['eroski'], 'Eroski'], [['alcampo'], 'Alcampo'], [['consum'], 'Consum', true], [['dia'], 'Dia', true],
+  [['esselunga'], 'Esselunga'], [['conad'], 'Conad'], [['eurospin'], 'Eurospin'], [['despar'], 'Despar'],
+  [['continente'], 'Continente'], [['pingo doce'], 'Pingo Doce'], [['minipreço'], 'Minipreço'],
+  [['albert heijn'], 'Albert Heijn'], [['jumbo'], 'Jumbo', true], [['kruidvat'], 'Kruidvat'], [['etos'], 'Etos', true],
+  [['biedronka'], 'Biedronka'], [['żabka'], 'Żabka'], [['stokrotka'], 'Stokrotka'], [['dino'], 'Dino', true], [['hebe'], 'Hebe', true],
+  [['пятёрочка'], 'Пятёрочка'], [['магнит'], 'Магнит'], [['перекрёсток'], 'Перекрёсток'], [['ашан'], 'Ашан'], [['вкусвилл'], 'ВкусВилл'],
+  [['лента'], 'Лента', true], [['сільпо'], 'Сільпо'], [['атб'], 'АТБ', true], [['новус'], 'Novus'], [['фора'], 'Фора', true],
+  [['migros'], 'Migros'], [['bim'], 'BİM', true], [['a101'], 'A101'], [['şok'], 'ŞOK', true], [['gratis'], 'Gratis', true], [['watsons'], 'Watsons'],
+  [['billa'], 'Billa'], [['albert'], 'Albert', true], [['teta'], 'Teta', true],
+  [['willys'], 'Willys'], [['hemköp'], 'Hemköp'], [['ica'], 'ICA', true], [['apotek'], 'Apotek', true],
+  [['føtex'], 'Føtex'], [['bilka'], 'Bilka'], [['rema 1000'], 'REMA 1000'], [['meny'], 'Meny', true], [['matas'], 'Matas'],
+  [['kiwi'], 'Kiwi', true], [['bunnpris'], 'Bunnpris'], [['joker'], 'Joker', true],
+  [['k-citymarket', 'k-supermarket', 'k-market', 'k-ruoka'], 'K-Ruoka'], [['s-market'], 'S-market'], [['prisma'], 'Prisma', true],
+  [['alepa'], 'Alepa'], [['tokmanni'], 'Tokmanni'], [['cba'], 'CBA', true], [['coop'], 'Coop', true], [['spar'], 'Spar', true],
+  [['ローソン', 'lawson'], 'ローソン'], [['セブン-イレブン', 'セブンイレブン', '7-eleven'], '7-Eleven'], [['ファミリーマート', 'familymart'], 'ファミリーマート'],
+  [['イオン', 'aeon'], 'イオン'], [['永辉'], '永辉'], [['盒马'], '盒马'], [['沃尔玛', 'walmart'], 'Walmart'], [['家乐福'], '家乐福'],
+  [['이마트', 'emart'], '이마트'], [['홈플러스'], '홈플러스'], [['롯데마트'], '롯데마트'], [['gs25'], 'GS25'],
+];
+const KB_STORES = [[/dm-?drogerie|dm-rabatte|\bdm\.de\b|\bdmbio\b/i, 'dm', false]]
+  .concat(KB_STORE_LIST.map(([w, name, head]) => [kbWordsRe(w, 'word'), name, !!head]));
+const KB_DRUGSTORES = ['dm', 'Rossmann', 'Müller', 'Budni', 'Boots', 'Superdrug', 'Kruidvat', 'Etos', 'Hebe', 'Watsons', 'Gratis', 'Matas', 'Apotek'];
+
+// Amount patterns (built per receipt: with or without cents)
+const KB_CPRE = '(?:[€$£¥￥₩₺₴₽]|' + ['EUR', 'USD', 'GBP', 'CHF', 'PLN', 'CZK', 'HUF', 'SEK', 'DKK', 'NOK', 'TRY', 'UAH', 'RUB', 'JPY', 'KRW', 'CNY', 'RMB']
+  .map(c => c + '|' + c.toLowerCase()).join('|') + ')';
+const KB_CPOST = '(?:' + ['€', 'EUR', 'eur', 'zł', 'PLN', 'Kč', 'CZK', 'kr', 'SEK', 'DKK', 'NOK', 'Ft', 'HUF', 'TL', '₺', 'грн', '₴', 'руб', 'р', '₽',
+  '円', '원', '元', '£', '\\$', 'CHF', 'USD', 'GBP', 'RUB', 'UAH', 'TRY', 'JPY', 'KRW', 'CNY'].join('|') + ')\\.?';
+const KB_UNITS = '(?:stk|st|szt|шт|ks|kpl|db|adet|pz|pcs|pc|uds|ud|un|stuks|kg|кг|個|个|개|点)';
+function kbRes(zero) {
+  const amt = zero ? '(?:\\d{1,3}(?:[.,\\u00a0\\u202f ]\\d{3})+|\\d+)' : '(?:\\d{1,3}(?:[.,\\u00a0\\u202f ]\\d{3})+|\\d+)[.,]\\d{2}';
+  const price = `([=*]?\\s*-?\\s*${KB_CPRE}?\\s*[=*]?\\s*-?\\s*${amt}-?)(?:\\s*${KB_CPOST})?`;
+  const marks = '(?:\\s*§[0-9A-Z]{1,2}|\\s*[A-ZА-Я][0-9]{0,2}\\*?|\\s+[0-9]{1,2}|\\s*[*※軽#外内])*';
+  const per = `(?:\\s*${KB_CPOST})?(?:\\s*\\/\\s*\\p{L}{1,3})?`;
+  return {
+    zero,
+    amt: new RegExp('^' + amt + '$', 'u'),
+    item: new RegExp(`^(.*?\\S)\\s+${price}${marks}\\s*$`, 'u'),
+    end: new RegExp(`(?:^|\\s|:)${price}${marks}\\s*$`, 'u'),
+    // "2 Stk x 2,99", "1,180 kg x 19,90 EUR/kg", "1 х 89.99 =89.99", "0.890 kg @ £1.10/kg"
+    qty: new RegExp(`^(\\d+(?:[.,]\\d{1,3})?)\\s*(${KB_UNITS})?\\.?\\s*[x×*@хX]\\s*${KB_CPRE}?\\s*(${amt})${per}(?:\\s*=?\\s*${KB_CPRE}?\\s*(${amt}))?\\s*$`, 'iu'),
+    // "0,820 KG 1,99 €/KG" (Finland)
+    qtyKg: new RegExp(`^(\\d+[.,]\\d{1,3})\\s*(?:kg|кг)\\s+${KB_CPRE}?\\s*(${amt})\\s*(?:${KB_CPOST})?\\s*\\/\\s*(?:kg|кг)\\s*$`, 'iu'),
+    inX: new RegExp(`\\s+(\\d+(?:[.,]\\d{1,3})?)\\s*(${KB_UNITS})?\\.?\\s*[x×*@хX]\\s*${KB_CPRE}?\\s*(${amt})${per}$`, 'iu'),
+    inKg: new RegExp(`\\s+(\\d+[.,]\\d{1,3})\\s*(?:kg|кг)\\s+${KB_CPRE}?\\s*(${amt})\\s*(?:${KB_CPOST})?\\s*\\/\\s*(?:kg|кг)$`, 'iu'),
+    tabUQ: new RegExp(`\\s+${KB_CPRE}?(${amt})\\s+(\\d{1,3})$`, 'u'),   // unit price, quantity (Korea)
+    tabQU: new RegExp(`\\s+(\\d{1,3})\\s+${KB_CPRE}?(${amt})$`, 'u'),   // quantity, unit price (China)
+    tailU: new RegExp(`\\s+${KB_CPRE}?(${amt})$`, 'u'),
+    pre: new RegExp(`^(\\d+)\\s*[x×]\\s+(${amt})\\s+(.+)$`, 'iu'),      // dm: "3x 4,95 babylove Öko Pants"
+  };
+}
+function kbAmt(s, zero) {
+  const str = String(s || '');
+  const neg = /-/.test(str);
+  const d = str.replace(/[^\d.,]/g, '');
+  let n;
+  if (zero) n = Number(d.replace(/[.,]/g, ''));
+  else { const m = /^(.*)[.,](\d{2})$/.exec(d); n = m ? Number(m[1].replace(/[.,]/g, '') + '.' + m[2]) : Number(d.replace(',', '.')); }
+  n = n || 0;
+  return neg ? -n : n;
+}
+function kbMoney(s) { return kbAmt(s, false); }
+function kbNum(s) { return Number(String(s || '').replace(',', '.')) || 0; }
 function kbRound(n) { return Math.round(n * 100) / 100; }
 function kbRound3(n) { return Math.round(n * 1000) / 1000; } // pantry amounts (kg with grams)
+function kbZeroDecimals(texts) {
+  const n = texts.filter(t => /\d[.,]\d{2}(?!\d)/.test(t.replace(/\d{1,4}[./-]\d{1,2}[./-]\d{1,4}\.?/g, ' ').replace(/\d{1,2}:\d{2}(?::\d{2})?/g, ' '))).length;
+  return n < 2;
+}
 function kbPretty(raw) {
   const s = String(raw || '').replace(/\s+/g, ' ').trim();
-  const letters = s.replace(/[^A-Za-zÄÖÜäöüß]/g, '');
-  if (!letters || letters !== letters.toUpperCase()) return s; // already mixed case (dm)
-  return s.toLowerCase().replace(/(^|[\s.\-/(])([a-zäöüß])/g, (m, a, b) => a + b.toUpperCase());
+  const letters = s.replace(/[^\p{L}]/gu, '');
+  if (!letters || letters !== letters.toUpperCase() || letters === letters.toLowerCase()) return s; // mixed case or no case (CJK)
+  return s.toLowerCase().replace(/(^|[\s.\-/(])(\p{Ll})/gu, (m, a, b) => a + b.toUpperCase());
 }
 function kbStoreOf(texts) {
-  const head = texts.slice(0, 8).join('\n');
-  const all = texts.join('\n');
+  const head = kbLow(texts.slice(0, 8).join('\n'));
+  const all = kbLow(texts.join('\n'));
   // The shop name in the head wins; otherwise a clear hint anywhere (dm has no name at the top)
   for (const [re, name] of KB_STORES) if (re.test(head)) return name;
   for (const [re, name, headOnly] of KB_STORES) if (!headOnly && re.test(all)) return name;
-  const first = texts.find(t => /[A-Za-zÄÖÜäöü]{3}/.test(t) && !/\d{2}\.\d{2}\.\d{4}/.test(t));
+  const first = texts.find(t => /\p{L}{2}/u.test(t) && !/\d{1,4}[./-]\d{1,2}[./-]\d{1,4}/.test(t));
   return first ? kbPretty(first).slice(0, 40) : '';
 }
 // Bonus programmes: only information for the note, never part of the amount
-function kbBonusNote(all, store) {
-  const one = all.replace(/\s+/g, ' ');
+function kbBonusNote(texts, store) {
+  const one = texts.join(' ').replace(/\s+/g, ' ');
   const parts = [];
   let m = /hast du\s+(\d+,\d{2})\s*EUR\s+(?:\S+\s+)?Bonus-Guthaben\s+gesammelt/i.exec(one);
   if (m) parts.push(tk('kb.bonusEarned', { prog: (store || 'REWE') + ' Bonus', amount: fmtEur(kbMoney(m[1])) }));
@@ -71,88 +191,222 @@ function kbBonusNote(all, store) {
   }
   m = /Punktestand vor Einkauf:?\s*([\d.]+)/i.exec(one);
   if (m) parts.push(tk('kb.pointsBefore', { n: m[1] }));
-  if (!parts.length && /lidl plus|payback|deutschlandcard|bonus-?guthaben/i.test(one)) parts.push(tk('kb.bonusSeen'));
-  return parts.join(' · ');
+  if (parts.length) return parts.join(' · ');
+  // Any other country/programme: the receipt's own lines about points or credit, word for word
+  const lines = texts.filter(t => KB_RE.bonus.test(kbLow(t)) && !KB_RE.save.test(kbLow(t)) && !/-\s*\d/.test(t));
+  const withNum = lines.filter(t => /\d/.test(t)).slice(0, 3).map(t => t.slice(0, 80));
+  if (withNum.length) return withNum.join(' · ');
+  return lines.length ? tk('kb.bonusSeen') : '';
+}
+// Date in any common order; day/month order is ambiguous only with "/" (US devices: month first)
+function kbDate(texts) {
+  const iso = (y, mo, d) => {
+    y = Number(y); mo = Number(mo); d = Number(d);
+    if (y < 100) y += 2000;
+    if (mo < 1 || mo > 12 || d < 1 || d > 31 || y < 2000 || y > 2099) return '';
+    return y + '-' + String(mo).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+  };
+  const us = typeof sysLocale === 'function' && /^en-US/i.test(sysLocale());
+  for (let i = 0; i < texts.length; i++) {
+    const t = texts[i];
+    let m = /(20\d{2})\s*年\s*(\d{1,2})\s*月\s*(\d{1,2})\s*日/.exec(t);
+    if (m && iso(m[1], m[2], m[3])) return { date: iso(m[1], m[2], m[3]), line: i };
+    m = /(?:^|[^\d])(20\d{2})([-./])(\d{1,2})\2(\d{1,2})(?!\d)/.exec(t);
+    if (m && iso(m[1], m[3], m[4])) return { date: iso(m[1], m[3], m[4]), line: i };
+    m = /(?:^|[^\d.,])(\d{1,2})([./-])(\d{1,2})\2(20\d{2}|\d{2})(?![\d,])/.exec(t);
+    if (m) {
+      const a = Number(m[1]), b = Number(m[3]);
+      const monthFirst = a <= 12 && (b > 12 || (m[2] === '/' && us));
+      const v = monthFirst ? iso(m[4], a, b) : iso(m[4], b, a);
+      if (v) return { date: v, line: i };
+    }
+  }
+  return { date: '', line: -1 };
+}
+function kbTime(texts, dateLine) {
+  const kw = /(?:uhrzeit|zeit|heure|hora|ora|tijd|godz|godzina|время|saat|čas|cas|tid|klo|ido|time|時刻|시간)\D{0,3}(\d{1,2}):(\d{2})/i;
+  const plain = /(?:^|[^\d:])(\d{1,2}):(\d{2})(?!\d)/;
+  for (const t of texts) { const m = kw.exec(kbLow(t)); if (m) return m[1].padStart(2, '0') + ':' + m[2]; }
+  const own = dateLine >= 0 ? plain.exec(texts[dateLine]) : null;
+  if (own) return own[1].padStart(2, '0') + ':' + own[2];
+  for (const t of texts) { const m = plain.exec(t); if (m && Number(m[1]) < 24) return m[1].padStart(2, '0') + ':' + m[2]; }
+  return '';
+}
+function kbCleanName(s) {
+  return String(s || '').replace(/\s*\+\s*\d+[.,]\d{2}\s*€?\s*pfand$/i, '')  // dm: "Vöslauer Limo Himb.+0,25€Pfand" (deposit is an own line)
+    .replace(/\s+%\s?\d{1,2}$/, '')                                         // Turkey: tax rate before the price ("SÜT %1 *24,50")
+    .replace(new RegExp(`\\s*${KB_CPOST}$`, 'u'), '').replace(/[\s*=:]+$/, '').trim();
+}
+// Quantity written into the name ("Chleb 2 x2,79", "Banány 0,850 kg x 29,90", "서울우유 2,980 1", "牛奶 2 5.50", "2 LECHE 0,99")
+function kbInlineQty(name, price, R, tol) {
+  const fits = (q, u) => Math.abs(q * u - Math.abs(price)) <= tol + Math.abs(price) * 0.01;
+  let m = R.inX.exec(name);
+  if (m) {
+    const n = kbNum(m[1]), kg = /[.,]/.test(m[1]) || /kg|кг/i.test(m[2] || '');
+    return { name: name.slice(0, m.index), qty: kg ? 1 : (n || 1), kg: kg ? n : 0 };
+  }
+  m = R.inKg.exec(name);
+  if (m) return { name: name.slice(0, m.index), qty: 1, kg: kbNum(m[1]) };
+  m = R.tabUQ.exec(name);
+  if (m && fits(Number(m[2]), kbAmt(m[1], R.zero))) return { name: name.slice(0, m.index), qty: Number(m[2]) || 1, kg: 0 };
+  m = R.tabQU.exec(name);
+  if (m && fits(Number(m[1]), kbAmt(m[2], R.zero))) return { name: name.slice(0, m.index), qty: Number(m[1]) || 1, kg: 0 };
+  m = /^(\d{1,2})\s+(?=\p{L})/u.exec(name); // Spain/Portugal: count in front of the name
+  if (m) {
+    const q = Number(m[1]) || 1;
+    let rest = name.slice(m[0].length);
+    const u = R.tailU.exec(rest);
+    if (u && fits(q, kbAmt(u[1], R.zero))) rest = rest.slice(0, u.index);
+    return { name: rest, qty: q, kg: 0 };
+  }
+  m = R.pre.exec(name);
+  if (m) return { name: m[3], qty: Number(m[1]) || 1, kg: 0 };
+  return null;
+}
+// Total line whose first word after the keyword is a tax word ("SUMA PTU", "TOTAL TVA") is the tax total, not the receipt total
+function kbTaxTotal(low) {
+  const w = /^[^\p{L}]*(\p{L}+)/u.exec(low.replace(KB_RE.total, ''));
+  return !!(w && KB_RE.tax.test(w[1]));
 }
 // lines: text lines of the PDF (top to bottom). -> receipt or null
 function kbParse(lines) {
   const texts = lines.map(l => String(l && l.text !== undefined ? l.text : l).replace(/\s+/g, ' ').trim()).filter(Boolean);
-  const all = texts.join('\n');
+  const zero = kbZeroDecimals(texts);
+  const R = kbRes(zero);
+  const tol = zero ? 1.01 : 0.021;
   const store = kbStoreOf(texts);
   const items = [];
   let phase = 'head';
-  let sum = 0, pay = 0;
+  let sum = 0, pay = 0, pendName = '', pendQty = null;
+  const applyQty = (it, q) => { if (q.kg) { it.kg = q.kg; it.qty = 1; } else it.qty = q.qty || 1; if (q.unit) it.unitPrice = q.unit; };
+  const addItem = (raw, price) => {
+    let name = kbCleanName(raw);
+    let qty = 1, kg = 0;
+    const iq = kbInlineQty(name, price, R, tol);
+    if (iq && /\p{L}/u.test(iq.name)) { name = kbCleanName(iq.name); qty = iq.qty; kg = iq.kg; }
+    const kind = KB_RE.deposit.test(kbLow(name)) ? 'deposit' : 'item';
+    const it = { raw: name, name: kbPretty(name), qty, price, kind };
+    if (kg) it.kg = kg;
+    items.push(it);
+    phase = 'items';
+    pendName = '';
+    if (pendQty) {
+      const target = Math.abs(Math.abs(price) - pendQty.tot) <= tol ? it : pendQty.prev;
+      if (target && target.kind === 'item') applyQty(target, pendQty);
+      pendQty = null;
+    }
+  };
   for (let i = 0; i < texts.length; i++) {
     const t = texts[i];
+    const low = kbLow(t);
     const last = items[items.length - 1];
-    // Amount lines under an item ("2 Stk x 2,99", "1,180 kg x 19,90 EUR/kg")
-    let q = KB_QTY_KG.exec(t);
-    if (q && last && phase === 'items') { last.kg = Number(q[1].replace(',', '.')) || 0; last.unitPrice = kbMoney(q[2]); continue; }
-    q = KB_QTY_PCS.exec(t);
-    if (q && last && phase === 'items' && !/[A-Za-zÄÖÜäöü]{3}/.test(t.slice(q[0].length))) { last.qty = Number(q[1]) || 1; last.unitPrice = kbMoney(q[2]); continue; }
-    if (KB_TOTAL.test(t)) {
-      const m = /(-?\d{1,3}(?:\.\d{3})*,\d{2})\s*$/.exec(t);
-      if (/^zu zahlen/i.test(t)) { if (m) pay = kbMoney(m[1]); phase = 'end'; continue; }
-      if (/^zwischensumme/i.test(t)) { phase = 'discounts'; continue; }
-      if (m && !sum) sum = kbMoney(m[1]);
-      phase = phase === 'end' ? 'end' : 'after';
+    if (KB_RE.save.test(low)) { pendName = ''; continue; } // "you saved …" – already in the prices
+    const em = R.end.exec(t);
+    const amt = em ? kbAmt(em[1], zero) : null;
+    // Amount lines for an item: under it (Germany), above it (France) or carrying the price (Russia, after the name line)
+    let q = R.qty.exec(t);
+    const qk = q ? null : R.qtyKg.exec(t);
+    if ((q || qk) && phase !== 'end' && phase !== 'after') {
+      const n = kbNum(q ? q[1] : qk[1]);
+      const unit = kbAmt(q ? q[3] : qk[2], zero);
+      const isKg = !q || /[.,]/.test(q[1]) || /kg|кг/i.test(q[2] || '');
+      const tot = q && q[4] ? Math.abs(kbAmt(q[4], zero)) : kbRound(n * unit);
+      const info = { qty: isKg ? 1 : (n || 1), kg: isKg ? n : 0, unit, tot };
+      if (pendName) { addItem(pendName, tot); applyQty(items[items.length - 1], info); continue; }
+      if (last && last.kind === 'item' && phase === 'items' && Math.abs(Math.abs(last.price) - tot) <= tol + tot * 0.01) { applyQty(last, info); continue; }
+      pendQty = { ...info, prev: last && phase === 'items' ? last : null };
       continue;
     }
-    if (KB_PAY.test(t)) {
-      if (/^zu zahlender betrag/i.test(t)) { const m = /(\d{1,3}(?:\.\d{3})*,\d{2})\s*$/.exec(t); if (m) pay = kbMoney(m[1]); }
-      if (phase !== 'head') phase = 'end';
-      continue;
-    }
+    if (amt !== null && KB_RE.due.test(low)) { pay = Math.abs(amt); phase = 'end'; continue; }
+    if (amt !== null && KB_RE.sub.test(low)) { if (phase !== 'end') phase = 'discounts'; pendName = ''; continue; }
+    if (amt !== null && KB_RE.total.test(low) && !kbTaxTotal(low)) { if (!sum) sum = Math.abs(amt); if (phase !== 'end') phase = 'after'; pendName = ''; continue; }
+    if ((sum || phase === 'after' || phase === 'discounts') && KB_RE.tender.test(low)) { phase = 'end'; continue; }
     if (phase === 'end') continue;
-    const m = KB_ITEM.exec(t);
-    if (!m || KB_NOT_ITEM.test(m[1]) || /^\d{2}\.\d{2}\.\d{4}/.test(m[1])) continue;
-    const price = kbMoney(m[2]);
-    let name = m[1].replace(/\s+(EUR|€)$/i, '').trim();
-    // Coupons and discounts: after the subtotal (dm) or right under an item (negative, not deposit)
-    if (price < 0 && !KB_DEPOSIT.test(name) && (phase === 'discounts' || phase === 'after' || KB_DISCOUNT.test(name))) {
-      // A discount right under an item belongs to that item (REWE "Rabatt", Lidl "Preisvorteil")
-      if (phase === 'items' && last && last.kind === 'item') { last.price = kbRound(last.price + price); last.discount = kbRound((last.discount || 0) + price); continue; }
-      items.push({ raw: name, name: kbPretty(name), qty: 1, price, kind: 'discount' });
+    const m = R.item.exec(t);
+    if (!m) {
+      // A name without a price – the price may follow on the next line
+      pendName = (phase === 'head' || phase === 'items') && /\p{L}{2}/u.test(t) && !KB_RE.tax.test(low) && !KB_RE.noitem.test(low) && !KB_RE.bonus.test(low) ? t : '';
       continue;
     }
-    if (phase === 'after' || phase === 'discounts') continue; // other lines between total and payment (tax, info)
-    phase = 'items';
-    let qty = 1;
-    const pre = /^(\d+)\s*x\s+(\d+,\d{2})\s+(.+)$/i.exec(name); // dm: "3x 4,95 babylove Öko Pants"
-    if (pre) { qty = Number(pre[1]) || 1; name = pre[3]; }
-    name = name.replace(/\s*\+\s*\d+,\d{2}\s*€?\s*pfand$/i, ''); // dm: "Vöslauer Limo Himb.+0,25€Pfand" (deposit is an own line)
-    const kind = KB_DEPOSIT.test(name) ? 'deposit' : 'item';
-    items.push({ raw: name, name: kbPretty(name), qty, price, kind });
+    const price = kbAmt(m[2], zero);
+    const name = m[1];
+    if (!/\p{L}/u.test(name)) { if (pendName && phase !== 'after' && phase !== 'discounts') addItem(pendName, price); continue; } // "=89.99"
+    if (KB_RE.noitem.test(low)) { pendName = ''; continue; }
+    const deposit = KB_RE.deposit.test(kbLow(kbCleanName(name)));
+    if (price < 0 && !deposit) {
+      // A discount right under an item belongs to that item (REWE "Rabatt", Lidl "Preisvorteil", AH "BONUS", 値引)
+      if (phase === 'items' && last && last.kind === 'item') { last.price = kbRound(last.price + price); last.discount = kbRound((last.discount || 0) + price); pendName = ''; continue; }
+      if (phase !== 'head' || KB_RE.discount.test(low)) items.push({ raw: kbCleanName(name), name: kbPretty(kbCleanName(name)), qty: 1, price, kind: 'discount' });
+      pendName = '';
+      continue;
+    }
+    if (KB_RE.tax.test(low) || (KB_RE.bonus.test(low) && !deposit)) { pendName = ''; continue; } // tax table, points info
+    if (phase === 'after' || phase === 'discounts') continue; // other lines between total and payment
+    addItem(name, price);
   }
+  if (pendQty && pendQty.prev && pendQty.prev.kind === 'item') applyQty(pendQty.prev, pendQty);
   if (!items.length) return null;
-  const total = pay || sum || kbRound(items.reduce((a, x) => a + x.price, 0));
-  const date = (() => { const d = /(\d{2})\.(\d{2})\.(\d{4})/.exec(all); return d ? d[3] + '-' + d[2] + '-' + d[1] : ''; })();
-  const time = (() => { const d = /uhrzeit:?\s*(\d{2}):(\d{2})/i.exec(all) || /\b(\d{2}):(\d{2})\b/.exec(all); return d ? d[1] + ':' + d[2] : ''; })();
-  const no = /(?:bon-?nr\.?|beleg-?nr\.?|ta-?nummer)\s*:?\s*(\d{2,})/i.exec(all);
   const calc = kbRound(items.reduce((a, x) => a + x.price, 0));
+  const total = pay || sum || calc;
+  const d = kbDate(texts);
+  const allLow = kbLow(texts.join('\n'));
+  const no = /(?:bon-?nr|beleg-?nr|ta-?nummer|bonnummer|ticket|receipt|transaction|trans|paragon|чек|fis|uctenka|kvitto|kvittering|kuitti|nyugta|单号|レシート|영수증)\.?\s*(?:nr\.?|no\.?|n°|#|№)?\s*:?\s*(\d{2,})/.exec(allLow);
   return {
-    store, date, time, total: kbRound(total), sumOk: Math.abs(calc - total) < 0.02, calc,
-    receiptNo: no ? no[1] : '', note: kbBonusNote(all, store), items,
+    store, date: d.date, time: kbTime(texts, d.line), total: kbRound(total), sumOk: Math.abs(calc - total) <= (zero ? 1 : 0.02), calc,
+    receiptNo: no ? no[1] : '', note: kbBonusNote(texts, store), items, zero,
   };
 }
 
 /* ---------- Comparing names ---------- */
-const KB_STOP = new Set(['bio', 'ja', 'rewe', 'beste', 'wahl', 'dm', 'dmbio', 'gut', 'guenstig', 'classic', 'mw', 'eg', 'mehrweg', 'einweg',
-  'vf', 'und', 'mit', 'der', 'die', 'das', 'fuer', 'von', 'stk', 'st', 'pck', 'gr', 'kg', 'ml', 'ltr', 'eur', 'xl', 'xxl']);
+// Filler and brand words that say nothing about the product (already folded like kbTokens)
+const KB_STOP = new Set(['bio', 'eko', 'eco', 'organic', 'organique', 'biologico', 'biologisch', 'ekologiczne', 'ekologisk', 'okologisk',
+  'luomu', 'organik', 'ja', 'rewe', 'beste', 'wahl', 'dm', 'dmbio', 'gut', 'gunstig', 'classic', 'mw', 'eg', 'mehrweg', 'einweg', 'vf',
+  'und', 'mit', 'der', 'die', 'das', 'fur', 'fuer', 'von', 'stk', 'st', 'pck', 'gr', 'kg', 'ml', 'ltr', 'eur', 'xl', 'xxl', 'pcs', 'pc', 'pz',
+  'szt', 'шт', 'ks', 'kpl', 'db', 'adet', 'uds', 'ud', 'un', 'pack', 'pk', 'and', 'with', 'the', 'of', 'de', 'la', 'le', 'les', 'du', 'des',
+  'et', 'con', 'di', 'del', 'della', 'en', 'het', 'van', 'met', 'na', 'och', 'med', 'og', 'ile', 've', 'ah', 'tesco', 'finest', 'value',
+  'sainsbury', 'carrefour', 'auchan', 'hacendado', 'coop', 'ica', 'pirkka', 'rainbow', 'spar', 'kirkland', 'migros', 'eldorado', 'rema',
+  'та', 'для']);
 function kbNorm(s) {
-  return String(s || '').toLowerCase().replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss')
-    .replace(/\d+(?:[.,]\d+)?\s*(%|g|kg|ml|l|st|stk)\b/g, ' ').replace(/[^a-z]+/g, ' ').trim();
+  return kbLow(s)
+    .replace(/\d+(?:[.,]\d+)?\s*(?:%|g|gr|kg|mg|ml|cl|dl|l|lt|ltr|st|stk|szt|шт|г|кг|мл|л|ks|kpl|db|pz|pcs|pc|oz|lb|pt|枚|个|個|개|입)(?![\p{L}])/gu, ' ')
+    .replace(/[^\p{L}]+/gu, ' ').trim();
 }
 // Umlauts are folded twice: "Äpfel" (list) and "AEPFEL"/"APFEL" (receipt) must meet
 function kbFold(t) { return t.replace(/ae/g, 'a').replace(/oe/g, 'o').replace(/ue/g, 'u'); }
-function kbTokens(s) { return kbNorm(s).split(' ').filter(t => t.length >= 2 && !KB_STOP.has(t)).map(kbFold); }
+// Words; Chinese/Japanese/Korean have no spaces – they are compared in pairs of characters ("おいしい牛乳" contains "牛乳")
+function kbTokens(s) {
+  const out = [];
+  kbNorm(s).replace(/([\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}ー]+)/gu, ' $1 ').split(' ').forEach(t => {
+    if (!t) return;
+    if (KB_CJK.test(t)) {
+      const ch = Array.from(t);
+      if (ch.length === 1) out.push(t); else for (let i = 0; i < ch.length - 1; i++) out.push(ch[i] + ch[i + 1]);
+      return;
+    }
+    const f = kbFold(t);
+    if (t.length >= 2 && !KB_STOP.has(t) && !KB_STOP.has(f)) out.push(f);
+  });
+  return out;
+}
 function kbKey(s) { return kbTokens(s).join(' '); }
-function kbStem(t) { return t.length > 4 ? t.replace(/(en|n|e|s)$/, '') : t; }
+// Rough stem for plural/case endings of the app languages ("tomatoes"/"tomato", "яблоки"/"яблоко", "elmalar"/"elma")
+function kbStem(t) {
+  if (KB_CJK.test(t)) return t;
+  for (let i = 0; i < 2 && t.length > 4; i++) {
+    const s = t.replace(/(lar|ler|en|er|es|ok|ek|ak|n|e|s|a|o|i|y|t|ы|и|а|я|о|е|ь|й|у|ю|і|ї)$/u, '');
+    if (s === t) break;
+    t = s;
+  }
+  return t;
+}
 function kbSim(r, c) {
-  if (r === c || kbStem(r) === kbStem(c)) return 1;
+  if (r === c) return 1;
+  if (KB_CJK.test(c)) return Array.from(c).length === 1 && r.includes(c) ? 0.8 : 0;
+  if (kbStem(r) === kbStem(c)) return 1;
   if (c.length >= 4 && r.length >= 3 && c.startsWith(r)) return 0.85;      // receipt abbreviation: "kart" -> "kartoffeln"
-  // German compounds end with the thing itself: "schlagsahne" is a "sahne", but "tomatenmark" is no "tomaten"
-  if (c.length >= 4 && (r.endsWith(c) || r.endsWith(kbStem(c)))) return 0.85;
+  // Compounds end with the thing itself: "schlagsahne" is a "sahne", but "tomatenmark" is no "tomaten"
+  const cs = kbStem(c);
+  if (c.length >= 4 && (r.endsWith(c) || (cs.length >= 4 && r.endsWith(cs)))) return 0.85;
   if (r.length >= 5 && c.includes(r)) return 0.7;                           // "traub" in "weintrauben"
   return 0;
 }
