@@ -75,6 +75,8 @@ function applyFamilyData(data) {
   shoppingMealTarget = normalizeShoppingMealTarget(data.shoppingMealTarget);
   shoppingIngredientRules = normalizeShoppingIngredientRules(data.shoppingIngredientRules);
   shoppingCategoryOrder = Array.isArray(data.shoppingCategoryOrder) ? data.shoppingCategoryOrder.filter(x => typeof x === 'string' && x) : [];
+  shoppingReceiptRules = Array.isArray(data.shoppingReceiptRules) ? data.shoppingReceiptRules.filter(x => x && typeof x.k === 'string') : [];
+  shoppingReceipts = Array.isArray(data.shoppingReceipts) ? data.shoppingReceipts.filter(x => x && x.id && Array.isArray(x.items)) : [];
   pantryItems = Array.isArray(data.pantryItems) ? data.pantryItems.filter(x => x && x.id && x.name) : [];
   pantryCategories = (Array.isArray(data.pantryCategories) && data.pantryCategories.length) ? data.pantryCategories.filter(x => x && x.id) : PANTRY_DEFAULT_CATEGORIES.map(c => ({ ...c }));
   pantryLocations = (Array.isArray(data.pantryLocations) && data.pantryLocations.length) ? data.pantryLocations.filter(x => x && x.id) : PANTRY_DEFAULT_LOCATIONS.map(c => ({ ...c }));

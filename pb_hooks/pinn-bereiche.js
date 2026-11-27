@@ -12,7 +12,9 @@
 //   essensplan  mealPlan                                           (since 1.104.0)
 //   einkauf     shoppingItems, shoppingHistory, shoppingLists, shoppingTransferred, shoppingPlans,
 //               shoppingListOrder, shoppingMealTarget, shoppingIngredientRules,
-//               shoppingCategoryOrder                              (since 1.105.0)
+//               shoppingCategoryOrder                              (since 1.105.0),
+//               shoppingReceiptRules, shoppingReceipts (e-receipts: learned assignments, receipts of the last 48 h;
+//               since 1.169.0)
 //   vorrat      pantryItems, pantryCategories, pantryLocations, pantrySettings (since 1.105.0)
 //   pinnwand    pinboard                                           (since 1.106.0)
 //   listen      familyLists, listTemplates                         (since 1.106.0)
@@ -66,7 +68,8 @@ const AREAS = {
     rezepte: ["recipes", "recipeFavorites", "recipeCategories", "recipeTrash"],
     essensplan: ["mealPlan"],
     einkauf: ["shoppingItems", "shoppingHistory", "shoppingLists", "shoppingTransferred", "shoppingPlans",
-        "shoppingListOrder", "shoppingMealTarget", "shoppingIngredientRules", "shoppingCategoryOrder"],
+        "shoppingListOrder", "shoppingMealTarget", "shoppingIngredientRules", "shoppingCategoryOrder",
+        "shoppingReceiptRules", "shoppingReceipts"],
     vorrat: ["pantryItems", "pantryCategories", "pantryLocations", "pantrySettings"],
     pinnwand: ["pinboard"],
     listen: ["familyLists", "listTemplates"],
@@ -660,6 +663,11 @@ function save(familyId, body, opts) {
             return;
         }
         previous = pick(parse(rec.get("data")), keysOf(name));
+        // A key the app did not send at all (an app that does not know it yet, e.g. an open window of an older
+        // version) keeps its stored value - otherwise saving there would delete newer keys (since 1.169.0)
+        keysOf(name).forEach(k => {
+            if (!Object.prototype.hasOwnProperty.call(incoming, k) && previous[k] !== undefined) incoming[k] = previous[k];
+        });
         if (opts && opts.guest) {
             // A guest cannot change these keys: keep what is stored
             (GUEST_LOCKED[name] || []).forEach(k => {

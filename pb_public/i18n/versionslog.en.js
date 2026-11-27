@@ -3,6 +3,11 @@
    language other than German. One entry per version of PINN_CHANGELOG: t = title, p = points in the same order
    (null = no translation, the German text is shown). Older versions are not translated. */
 window.PINN_CHANGELOG_EN = {
+  "1.169": {"t": "Read e-receipts: shopping, pantry and finance in one step", "p": [
+"Read e-receipts: in Lists \u2192 Shopping (and in every shopping list) \ud83e\uddfe reads the PDF receipt from REWE, dm, Lidl, ALDI, EDEKA, Rossmann & co. right on the device. pinn. ticks off the matching entries of the shopping list, adds the amounts to the pantry if you like (choice per receipt, loose goods in kg) and books the shopping with all items in Finance.",
+"Different spellings like \u201eKART. DRILLINGE\u201c or \u201eBIO H-MILCH 3,8%\u201c are recognised. Unsure matches are marked \u201cPlease check\u201d, every item can be tapped and assigned by hand \u2013 pinn. remembers it and assigns it correctly on the next receipt.",
+"Bonus credit, PAYBACK points and the like are never deducted, they only go into the note of the booking. Real coupons on the receipt (e.g. at dm) count, deposits and returns count for the amount but never go onto lists or into the pantry.",
+"Check later: a receipt stays at the top of the shopping overview for 48 hours. \u201cBook now, check later\u201d books right away and leaves the ticking open; an applied receipt can still be corrected in that time without booking twice. The same receipt is not read a second time."]},
   "1.168": {"t": "Lock areas, more ticking off with an input, travel pharmacy, a week from the pantry", "p": [
 "Lock single areas: Settings \u2192 Unlock & lock \u2192 Lock menus now also offers single areas \u2013 in Family School, Pets, Location and Health, in Finance Expenses, Savings, Pocket money and Contracts, in Home Defects, Costs, Meters, Maintenance and Garden. The menu stays open, only the locked area shows a lock and opens with Face ID/fingerprint or the PIN. Health also locks the emergency pass in the profile, School also the school cards.",
 "What is locked stays hidden elsewhere too: overview tiles, shortcuts, the search and the activities under the bell show nothing from locked menus or areas (e.g. no notice deadlines with locked contracts). SOS always stays.",

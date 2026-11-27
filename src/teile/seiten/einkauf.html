@@ -5,6 +5,7 @@
           <div class="flex items-center justify-between gap-3">
             <h2 data-tk="lists.title" class="font-serif text-lg">Lists</h2>
             <div class="flex items-center gap-2 shrink-0">
+              <button data-kbpick="0" data-tk-attr="aria-label:kb.readReceipt;title:kb.readReceipt" type="button" class="w-8 h-8 rounded-lg border border-ink/15 text-base leading-none grid place-items-center hover:border-pine hover:bg-pine/10 transition shrink-0" aria-label="Read e-receipt" title="Read e-receipt">🧾</button>
               <button data-tk="shop.planShopping" id="openShoppingPlanBtn" type="button" class="px-3 py-1.5 rounded-lg border border-pine text-pine text-xs font-medium hover:bg-pine/10 transition whitespace-nowrap shrink-0">🗓️ Plan shopping</button>
               <button data-tk="lists.newListBtn" id="openNewShoppingListBtn" type="button" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap shrink-0">+ New list</button>
             </div>
@@ -12,6 +13,7 @@
           <div data-tk-attr="aria-label:lists.listType" class="lists-tabbar ls-tabs mt-3" role="tablist" aria-label="List type"></div>
         </div>
         <div class="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 py-4">
+          <div id="kbPendingBox"></div>
           <div id="shoppingListGrid" class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3"></div>
           <p data-tk="shop.reorderHint" id="shoppingReorderHint" class="text-[11px] text-ink/35 text-center mt-4 select-none">Press and hold a list and drag to change the order</p>
         </div>
@@ -24,6 +26,7 @@
             <button data-tk-attr="aria-label:lists.backToAll" id="shoppingBackBtn" type="button" class="shrink-0 w-9 h-9 -ml-1 rounded-full text-ink/60 hover:text-pine hover:bg-ink/5 grid place-items-center text-2xl leading-none select-none" aria-label="Back to all lists">‹</button>
             <div id="shoppingDetailLogo" class="shrink-0"></div>
             <h2 id="shoppingDetailTitle" class="font-serif text-lg flex-1 min-w-0 truncate"></h2>
+            <button data-kbpick="1" data-tk-attr="aria-label:kb.readReceipt;title:kb.readReceipt" type="button" class="shrink-0 w-9 h-9 rounded-full text-ink/55 hover:text-pine hover:bg-ink/5 grid place-items-center text-lg leading-none select-none" aria-label="Read e-receipt" title="Read e-receipt">🧾</button>
             <button data-tk="shop.move" id="openShoppingMoveBtn" type="button" class="shrink-0 px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition whitespace-nowrap">⇄ Move</button>
             <button data-tk-attr="aria-label:lists.editList" id="editShoppingListBtn" type="button" class="shrink-0 w-9 h-9 rounded-full text-ink/50 hover:text-pine hover:bg-ink/5 grid place-items-center text-lg leading-none select-none" aria-label="Edit list">✎</button>
           </div>

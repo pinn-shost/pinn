@@ -606,6 +606,7 @@ document.getElementById('resetDataBtn').addEventListener('click', async () => {
   shoppingMealTarget = fresh.shoppingMealTarget;
   shoppingIngredientRules = [];
   shoppingCategoryOrder = [];
+  shoppingReceiptRules = []; shoppingReceipts = [];
   pantryItems = fresh.pantryItems; pantryCategories = []; pantryLocations = []; pantrySettings = normalizePantrySettings(null);
   familyLists = []; listTemplates = [];
   documentCategories = [];

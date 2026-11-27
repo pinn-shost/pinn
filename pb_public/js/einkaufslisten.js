@@ -157,6 +157,7 @@ function renderShoppingOverview() {
     `;
   }).join('');
   grid.innerHTML = cards + ('\n    <button type="button" id="shoppingNewListCard" class="rounded-2xl border-2 border-dashed border-ink/15 text-ink/40 hover:text-pine hover:border-pine transition p-4 min-h-[11rem] flex flex-col items-center justify-center gap-2 select-none">\n      <span class="text-3xl leading-none">+</span>\n      <span class="text-sm">' + tk('lists.modal.newTitle') + '</span>\n    </button>\n  ');
+  if (typeof kbRenderPending === 'function') kbRenderPending(); // e-receipts of the last 48 h (js/kassenbon.js)
   grid.querySelectorAll('.shopping-list-card').forEach(card => {
     card.addEventListener('click', () => {
       if (shoppingDragSuppressClick) return;

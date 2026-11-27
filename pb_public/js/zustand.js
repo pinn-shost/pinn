@@ -169,6 +169,8 @@ function defaultFamilyData() {
     shoppingMealTarget: { listId: '', mode: 'mirror' }, // main store: where the ingredients of the meal plan go
     shoppingIngredientRules: [], // special lists: { id, preset, name, icon, listId, keywords, exclude, active }
     shoppingCategoryOrder: [],   // shopping lists: order of the categories (IDs, empty = default)
+    shoppingReceiptRules: [],    // e-receipts: learned assignments { k, s, p, x, xp, t } (js/kassenbon.js, since 1.169.0)
+    shoppingReceipts: [],        // e-receipts of the last 48 h (review / correct later, js/kassenbon.js)
     pantryItems: [],         // pantry: { id, name, qty, unit, minQty, category, location, stores, note, updatedAt }
     pantryCategories: [],    // pantry: own categories (empty = default)
     pantryLocations: [],     // pantry: own storage locations (empty = default)
@@ -256,6 +258,8 @@ let shoppingMealTarget = { listId: '', mode: 'mirror' };
 // special lists: recipe ingredients with matching keywords (e.g. "hack") go to another list
 let shoppingIngredientRules = []; // { id, preset, name, icon, listId, keywords:[..], exclude:[..], active }
 let shoppingCategoryOrder = [];   // order of the categories on the shopping lists (IDs)
+let shoppingReceiptRules = [];    // e-receipts: learned assignments (js/kassenbon.js, since 1.169.0)
+let shoppingReceipts = [];        // e-receipts of the last 48 h (js/kassenbon.js)
 let shoppingPlans = [];  // { id: <task ID>, listIds: [...], createdAt, bookedAt } - "Einkauf planen": task linked to shopping lists
 let pantryItems = [];      // pantry items { id, name, qty, unit, minQty, category, location, stores:[listIds], note, bestBefore, barcodes:[..], updatedAt }
 let pantryCategories = []; // { id, label, icon }

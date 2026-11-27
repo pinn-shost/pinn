@@ -22,6 +22,15 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.169', datum: '26.11.2026', titel: 'E-Bon einlesen: Einkauf, Vorrat und Finanzen in einem Schritt',
+    punkte: [
+      ['neu', 'E-Bon einlesen: In Listen → Einkauf (und in jeder Einkaufsliste) liest 🧾 den PDF-Kassenbon von REWE, dm, Lidl, ALDI, EDEKA, Rossmann & Co. direkt auf dem Gerät. Pinn. hakt die passenden Einträge der Einkaufsliste ab, bucht die Mengen auf Wunsch in den Vorrat (bei jedem Bon wählbar, Kiloware in kg) und trägt den Einkauf mit allen Artikeln in Finanzen ein.'],
+      ['info', 'Abweichende Schreibweisen wie „KART. DRILLINGE“ oder „BIO H-MILCH 3,8%“ werden erkannt. Unsichere Treffer sind mit „Bitte prüfen“ markiert, jeder Artikel lässt sich antippen und von Hand zuordnen – pinn. merkt sich das und ordnet beim nächsten Bon selbst richtig zu.'],
+      ['info', 'Bonus-Guthaben, PAYBACK-Punkte und Ähnliches werden nie abgezogen, sondern nur in die Notiz der Buchung geschrieben. Echte Coupons auf dem Bon (z. B. bei dm) zählen mit, Pfand und Leergut zählen beim Betrag, landen aber nicht auf Listen oder im Vorrat.'],
+      ['neu', 'Später prüfen: Ein Bon bleibt 48 Stunden oben in der Einkaufsübersicht. „Jetzt buchen, später prüfen“ bucht sofort und lässt das Abhaken offen; ein übernommener Bon lässt sich in dieser Zeit noch korrigieren, ohne doppelt zu buchen. Derselbe Bon wird kein zweites Mal eingelesen.'],
+    ],
+  },
+  {
     v: '1.168', datum: '26.11.2026', titel: 'Bereiche sperren, mehr Abhaken mit Eingabe, Reiseapotheke, Woche aus dem Vorrat',
     punkte: [
       ['neu', 'Einzelne Bereiche sperren: Unter Einstellungen → Entsperren & Sperren → Menüs sperren lassen sich jetzt auch einzelne Bereiche wählen – in Familie Schule, Haustiere, Ortung und Gesundheit, in Finanzen Ausgaben, Sparen, Taschengeld und Verträge, in Zuhause Mängel, Kosten, Zähler, Wartung und Garten. Das Menü bleibt offen, nur der gesperrte Bereich zeigt ein Schloss und öffnet mit Face ID/Fingerabdruck oder PIN. Gesundheit sperrt auch den Notfallpass im Profil, Schule auch die Schulkarten.'],

@@ -195,3 +195,36 @@ html.dark .shop-imp-check.is-on { background: rgba(217,74,69,.16); border-color:
 html.dark .ls-imp-top { background: transparent; border-color: rgba(255,255,255,.2); color: rgba(255,255,255,.65); }
 html.dark .ls-imp-top.is-on { background: rgba(217,74,69,.18); border-color: #F07870; color: #FFB4AD; }
 html.dark .ls-sec-imp span, html.dark .shop-group-imp { color: #FFB4AD; }
+
+/* E-receipts (js/kassenbon.js, since 1.169.0): review popup and receipts of the last 48 h */
+.kb-bonus { font-size: 12px; line-height: 1.35; padding: 6px 10px; border-radius: 10px; background: rgba(94,140,49,.1); color: #3F6420; }
+.kb-opts { display: flex; flex-direction: column; gap: 2px; padding: 8px 10px; border-radius: 12px; background: rgba(0,0,0,.035); }
+.kb-opt { display: flex; align-items: center; gap: 8px; font-size: 13px; padding: 3px 0; cursor: pointer; }
+.kb-opt input { width: 16px; height: 16px; accent-color: #2F5D50; }
+.kb-unsure-hint { font-size: 12px; color: #9A5B00; }
+.kb-list { display: flex; flex-direction: column; gap: 4px; max-height: 46vh; overflow-y: auto; }
+.kb-row { border-radius: 10px; border: 1px solid rgba(0,0,0,.07); }
+.kb-row.kb-unsure { border-color: rgba(217,130,43,.55); background: rgba(217,130,43,.07); }
+.kb-row-main { display: flex; align-items: center; gap: 8px; width: 100%; padding: 6px 8px; }
+.kb-chips { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; max-width: 55%; }
+.kb-chip { font-size: 11px; padding: 1px 7px; border-radius: 999px; background: rgba(47,93,80,.1); color: #2F5D50; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.kb-chip-p { background: rgba(142,107,191,.12); color: #6A4C96; }
+.kb-check { font-size: 11px; color: #9A5B00; font-weight: 600; }
+.kb-none { font-size: 11px; color: rgba(0,0,0,.35); }
+.kb-edit { padding: 2px 8px 8px; }
+.kb-pending { display: flex; flex-direction: column; gap: 6px; }
+.kb-pending-row { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 12px; border: 1px solid rgba(0,0,0,.08); background: rgba(255,255,255,.7); }
+.kb-pending-row.is-open { border-color: rgba(217,130,43,.55); background: rgba(217,130,43,.07); }
+html.dark .kb-bonus { background: rgba(140,190,90,.14); color: #CFE6B4; }
+html.dark .kb-opts { background: rgba(255,255,255,.05); }
+html.dark .kb-row { border-color: rgba(255,255,255,.1); }
+html.dark .kb-chip { background: rgba(120,190,170,.15); color: #A9D8C8; }
+html.dark .kb-chip-p { background: rgba(170,140,220,.16); color: #CDB8F0; }
+html.dark .kb-none { color: rgba(255,255,255,.4); }
+html.dark .kb-unsure-hint, html.dark .kb-check { color: #F2B866; }
+html.dark .kb-pending-row { background: rgba(255,255,255,.04); border-color: rgba(255,255,255,.1); }
+.kb-rest > summary { cursor: pointer; font-size: 12px; color: rgba(0,0,0,.5); padding: 6px 4px; list-style: none; }
+.kb-rest > summary::before { content: '▸ '; }
+.kb-rest[open] > summary::before { content: '▾ '; }
+.kb-list-inner { display: flex; flex-direction: column; gap: 4px; }
+html.dark .kb-rest > summary { color: rgba(255,255,255,.55); }
